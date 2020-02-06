@@ -1,0 +1,3 @@
+[submodule "firmware/submodules/gbt-fpga"]
+	path = firmware/submodules/gbt-fpga
+	url = https://gitlab.cern.ch/gbt-fpga/gbt-fpga.git
