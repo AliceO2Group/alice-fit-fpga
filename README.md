@@ -1,4 +1,7 @@
-# ALICE FIT firmware repository
+![PM_TCM](https://repository-images.githubusercontent.com/238522341/aca2c500-48cf-11ea-95b5-4a498a732d8e?dl=0)
+
+----
+# ALICE Fast Interaction Trigger (FIT) firmware repository
 
 Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
 
