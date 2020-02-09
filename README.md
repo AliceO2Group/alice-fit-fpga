@@ -24,5 +24,8 @@ Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
 ----
 ## Generate bitstreams
 
-TODO
+FIT/FT0/PM
+
+     cd alice-fit-fpga/firmware/FT0/PM
+     vivado -mode batch -source make.tcl 
 
