@@ -223,18 +223,20 @@ set proj_dir [get_property directory [current_project]]
 # None
 
 # Set project properties
-set obj [current_project]
-set_property -name "corecontainer.enable" -value "1" -objects $obj
-set_property -name "default_lib" -value "xil_defaultlib" -objects $obj
-set_property -name "ip_cache_permissions" -value "read write" -objects $obj
-set_property -name "ip_output_repo" -value "$proj_dir/${project_name}.cache/ip" -objects $obj
-set_property -name "part" -value "xc7k160tffg676-3" -objects $obj
-set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
-set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "source_mgmt_mode" -value "DisplayOnly" -objects $obj
-set_property -name "target_language" -value "VHDL" -objects $obj
-set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
-set_property -name "xsim.array_display_limit" -value "64" -objects $obj
+set_property \
+    -dict [list \
+	       "corecontainer.enable"  "1" \
+	       "default_lib"           "xil_defaultlib" \
+	       "ip_cache_permissions"  "read write" \
+	       "ip_output_repo"        "$proj_dir/${project_name}.cache/ip" \
+	       "part"                  $part \
+	       "sim.ip.auto_export_scripts" "1" \
+	       "simulator_language"    "Mixed" \
+	       "source_mgmt_mode"      "DisplayOnly" \
+	       "target_language"       "VHDL" \
+	       "xpm_libraries"         "XPM_CDC XPM_MEMORY" \
+	       "xsim.array_display_limit"  "64"] \
+    [current_project]
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -243,15 +245,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/ip/Xmega_buf/Xmega_buf.xci" ]\
- [file normalize "${origin_dir}/ip/EVENTID_FIFO/EVENTID_FIFO.xci" ]\
- [file normalize "${origin_dir}/ip/CHAN_RD_FIFO/CHAN_RD_FIFO.xci" ]\
- [file normalize "${origin_dir}/ip/EVENT_FIFO/EVENT_FIFO.xci" ]\
- [file normalize "${origin_dir}/ip/TDC_FIFO/TDC_FIFO.xci"]\
- [file normalize "${origin_dir}/ip/PLL320/PLL320.xci" ]\
- [file normalize "${origin_dir}/ip/CLK600_pll/CLK600_pll.xci" ]\
- [file normalize "${origin_dir}/../../common/gbt-fpga/ip/tx_dpram/xlx_k7v7_tx_dpram.xci" ]\
- [file normalize "${origin_dir}/../../common/gbt-fpga/ip/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm.xci" ]\
  [file normalize "${origin_dir}/hdl/Channel.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd" ]\
@@ -334,137 +327,53 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/ip/trg_fifo_comp/trg_fifo_comp.xci" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/ip/raw_data_fifo/raw_data_fifo.xci" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/ip/slct_data_fifo/slct_data_fifo.xci" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/ip/cntpck_fifo_comp/cntpck_fifo_comp.xci" ]\
 ]
+
 if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset object
     set obj [get_filesets sources_1]
     add_files -norecurse -fileset $obj $files
-    #import_files -fileset sources_1 $files
-}
 
-if {[string equal $proj_create "yes"]} {
-    proc add_vhdl_file fn {
-	set file [file normalize $fn]
-	set file_obj [get_files -of_objects [get_filesets sources_1] [list "$file"]]
-	set_property -name "file_type" -value "VHDL" -objects $file_obj
-    }
-    add_vhdl_file "hdl/Channel.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank_package.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/phaligner_mmcm_controller.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/phaligner_phase_computing.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/phaligner_phase_comparator.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/xlx_k7v7_phalgnr_std_mmcm.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/gbt_rx_frameclk_phalgnr.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/core_sources/gbt_bank_reset.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler_21bit.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler_16bit.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_polydiv.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_rsencode.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_intlver.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std_rdwrctrl.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_phasemon.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_std.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/mgt/mgt_latopt_bitslipctrl.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/mgt/multi_gigabit_transceivers.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_wraddr.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_pattsearch.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_bscounter.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_rightshift.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox_std_rdctrl.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_rx/xlx_k7v7_gbt_rx_gearbox_std_dpram.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox_std.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox_latopt.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_deintlver.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_lmbddet.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_errlcpoly.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_elpeval.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_chnsrch.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_rs2errcor.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_rsdec.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler_21bit.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler_16bit.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_status.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd"
-    add_vhdl_file "hdl/TDCCHAN.vhd"
-    add_vhdl_file "hdl/counters.vhd"
-    add_vhdl_file "hdl/trigger.vhd"
-    add_vhdl_file "hdl/pin_capt.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_auto_phase_align.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_cpll_railing.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_gt.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_init.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_multi_gt.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_rx_startup_fsm.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_block.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_pulse.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_manual_phase_align.vhd"
-    add_vhdl_file "../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd"
-    add_vhdl_file "hdl/fit.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/DataCLK_strobe.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/DataConverter_PM.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/RX_Data_Decoder.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/BC_counter.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/Reset_Generator.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/FIT_GBT_project.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/Module_Data_Gen_PM.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/TX_Data_Gen.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/Event_selector.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/fit_gbt_common_package.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/RXDataClkSync.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/CRU_packet_Builder.vhd"
-    add_vhdl_file "../../common/gbt-readout/hdl/Data_Packager.vhd"
+    set_property -name "file_type" -value "VHDL" -objects [get_files [list "*.vhd"]]
 
-    proc add_ipcore_file fn {
-	# Set 'sources_1' fileset file properties for local files
-	##set file [file normalize $fn]
-	set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$fn"]]
-	if { ![get_property "is_locked" $file_obj] } {
-	    set_property -name "generate_synth_checkpoint" -value "0" -objects $file_obj
-	}
+
+    set ip_files [list \
+		      [file normalize "${origin_dir}/ip/Xmega_buf/Xmega_buf.xci" ]\
+		      [file normalize "${origin_dir}/ip/EVENTID_FIFO/EVENTID_FIFO.xci" ]\
+		      [file normalize "${origin_dir}/ip/CHAN_RD_FIFO/CHAN_RD_FIFO.xci" ]\
+		      [file normalize "${origin_dir}/ip/EVENT_FIFO/EVENT_FIFO.xci" ]\
+		      [file normalize "${origin_dir}/ip/TDC_FIFO/TDC_FIFO.xci"]\
+		      [file normalize "${origin_dir}/ip/PLL320/PLL320.xci" ]\
+		      [file normalize "${origin_dir}/ip/CLK600_pll/CLK600_pll.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-fpga/ip/tx_dpram/xlx_k7v7_tx_dpram.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-fpga/ip/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-readout/ip/trg_fifo_comp/trg_fifo_comp.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-readout/ip/raw_data_fifo/raw_data_fifo.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-readout/ip/slct_data_fifo/slct_data_fifo.xci" ]\
+		      [file normalize "${origin_dir}/../../common/gbt-readout/ip/cntpck_fifo_comp/cntpck_fifo_comp.xci" ]\
+		     ]
+
+    # remove any .xcix files; add_files below refuses to overwrite them
+    foreach ip_file $ip_files {
+	file delete -force ${ip_file}x
     }
 
-    add_ipcore_file "Xmega_buf/Xmega_buf.xci"
-    add_ipcore_file "EVENTID_FIFO/EVENTID_FIFO.xci"
-    add_ipcore_file "CHAN_RD_FIFO/CHAN_RD_FIFO.xci"
-    add_ipcore_file "EVENT_FIFO/EVENT_FIFO.xci"
-    add_ipcore_file "TDC_FIFO/TDC_FIFO.xci"
-    add_ipcore_file "PLL320/PLL320.xci"
-    add_ipcore_file "CLK600_pll/CLK600_pll.xci"
-    add_ipcore_file "tx_dpram/xlx_k7v7_tx_dpram.xci"
-    add_ipcore_file "xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm.xci"
-    add_ipcore_file "trg_fifo_comp/trg_fifo_comp.xci"
-    add_ipcore_file "raw_data_fifo/raw_data_fifo.xci"
-    add_ipcore_file "slct_data_fifo/slct_data_fifo.xci"
-    add_ipcore_file "cntpck_fifo_comp/cntpck_fifo_comp.xci"
+    # add IP files
+    # - adds a compressed xcix file to the original xci file location
+    # - puts the full xcix file into ${origin_dir}/build
+    add_files -norecurse -force -copy_to ${origin_dir}/build $ip_files
+
+    # the following is needed in order to have parallel IP synthesis and implementation runs
+    set_property GENERATE_SYNTH_CHECKPOINT TRUE [get_files "*.xci"]
 
     # Set 'sources_1' fileset properties
-    set obj [get_filesets sources_1]
-    set_property -name "edif_extra_search_paths" -value "D:/proj/fit/ipcore_dir" -objects $obj
-    set_property -name "top" -value "fit" -objects $obj
+    set_property \
+	-dict [list \
+		   "top"                     "fit"\
+		   "edif_extra_search_paths" "D:/proj/fit/ipcore_dir"] \
+	[get_filesets sources_1]
 
     # Create 'constrs_1' fileset (if not found)
     if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -503,6 +412,15 @@ if {[string equal $proj_create "yes"]} {
     set obj [get_filesets constrs_1]
     set_property -name "target_constrs_file" -value "[get_files *xdc/ios.xdc]" -objects $obj
 }
+
+# upgrade_ip [get_ips]
+generate_target synthesis [get_ips] -force
+
+foreach ip [get_ips] {
+    puts $ip
+    create_ip_run [get_files ${ip}.xci]
+}
+
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {
     create_fileset -simset sim_1
@@ -518,7 +436,7 @@ set_property -name "top" -value "fit" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7k160tffg676-3 -flow {Vivado Synthesis 2017} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part $part -flow {Vivado Synthesis 2017} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
 } else {
     set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
     set_property flow "Vivado Synthesis 2017" [get_runs synth_1]
@@ -628,5 +546,5 @@ puts "INFO: Project created:${project_name}"
 
 update_compile_order -fileset sources_1
 reset_run -quiet synth_1
-launch_runs impl_1 -to_step write_bitstream -jobs 6
+launch_runs impl_1 -to_step write_bitstream -jobs 7
 wait_on_run impl_1

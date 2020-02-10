@@ -2,3 +2,6 @@
 *.jou
 *.log
 build
+*.xcix
+*.pb
+.Xil
