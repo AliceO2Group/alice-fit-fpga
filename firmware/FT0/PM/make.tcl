@@ -335,9 +335,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset object
     set obj [get_filesets sources_1]
     add_files -norecurse -fileset $obj $files
-
     set_property -name "file_type" -value "VHDL" -objects [get_files [list "*.vhd"]]
-
 
     set ip_files [list \
 		      [file normalize "${origin_dir}/ip/Xmega_buf/Xmega_buf.xci" ]\
@@ -481,7 +479,6 @@ set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
 set_property report_strategy {Vivado Implementation Default Reports} $obj
 set_property set_report_strategy_name 0 $obj
-
 
 gen_report impl_1_init_report_timing_summary_0 report_timing_summary:1.0 init_design impl_1
 gen_report impl_1_opt_report_drc_0 report_drc:1.0 opt_design impl_1
