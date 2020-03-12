@@ -24,8 +24,28 @@ Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
 ----
 ## Generate bitstreams
 
-FIT/FT0/PM
+### FIT/FT0/PM
 
      cd alice-fit-fpga/firmware/FT0/PM
      vivado -mode batch -source make.tcl 
+
+### FIT/FT0/TCM
+
+     cd alice-fit-fpga/firmware/FT0/PM
+     vivado -mode batch -source make.tcl 
+
+----
+## After any change to IP cores
+
+Open the TCL console in the Vivado window and type in the following commands:
+
+    source ../../tcl/fit.tcl
+    fit::update_ip_properties
+
+Then git add/commit any new/changed files in the directory `ipcore_properties`
+
+----
+## After any change to IP cores and/or to VHDL source files
+
+git add/commit any new/changed VHDL files
 
