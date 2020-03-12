@@ -39,7 +39,7 @@ entity hdmirx is
            RST : in STD_LOGIC;
            ena : in STD_LOGIC;
            link_rdy : out STD_LOGIC;
-           trig_ena: in STD_LOGIC;
+           trig_ena : in STD_LOGIC;
            clk320 : in STD_LOGIC;
            clk320_90 : in STD_LOGIC;
            TDO : out STD_LOGIC_VECTOR (3 downto 0);
@@ -60,7 +60,8 @@ entity hdmirx is
            dl_high : out  STD_LOGIC;
            mast_dl_err : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
-           dly_ctrl_ena : in  STD_LOGIC
+           dly_ctrl_ena : in  STD_LOGIC;
+           syn_err : out  STD_LOGIC
            );
 end hdmirx;
 
@@ -86,14 +87,14 @@ signal TDV, TDS : STD_LOGIC_VECTOR (7 downto 0);
 signal idle_cou  : STD_LOGIC_VECTOR (5 downto 0);
 signal TD_pos, TD_nbt, TD_bpos, TD_bpos_0  : STD_LOGIC_VECTOR (2 downto 0);
 signal trig_data, status_bits  : STD_LOGIC_VECTOR (31 downto 0);
-signal TD_bpstable, dis : STD_LOGIC;
+signal TD_bpstable, dis, sync_err : STD_LOGIC;
 
 attribute IODELAY_GROUP : STRING;
 
 
 begin
 
-link_rdy<= l_rdy; status<=status_bits; bitpos<=TD_bpos; bitpos_ok<=bitpos_ok_i; dl_low<=dl_low1; dl_high<=dl_high1;
+link_rdy<= l_rdy; status<=status_bits; bitpos<=TD_bpos; bitpos_ok<=bitpos_ok_i; dl_low<=dl_low1; dl_high<=dl_high1; syn_err<=sync_err;
 DATA_OUT<=trig_data; ena_ph<=dl_ce0; inc_ph<= dl_inc0; is_idle<= TD_idle; bp_stable<= TD_bpstable; mast_stable<=mast_stable_i or (not master); 
  
 TDO<=TDO_i;  
@@ -165,7 +166,7 @@ if (CLK320'event and CLK320='1') then
        else if (sig_lost(i)='0') then sig_loss_cou(i)<= sig_loss_cou(i)+1; end if;
     end if;
        
-    if (rst='1') or (err(i)='1') or (sig_lost(i)='1') or (ena='0') then sig_stable_cou(i)<="000000";
+    if (rst='1') or (err(i)='1') or ((sig_lost(i)='1') and (trig_ena='0')) or (ena='0') or (sync_err='1') then sig_stable_cou(i)<="000000";
        else if (sig_stable(i)='0') and (edge(i)='1') then sig_stable_cou(i)<= sig_stable_cou(i)+1; end if;
     end if;
        
@@ -219,26 +220,27 @@ if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
       
     if (rd_lock='0') then status_bits<= link_ok & sig_stable(3) & sig_lost(3) & dvalue(3) & bitpos_ok_i & sig_stable(2) & sig_lost(2)  & dvalue(2) & '0' & sig_stable(1) & sig_lost(1) & dvalue(1) & '0' & sig_stable(0) & sig_lost(0) & dvalue(0); end if;
      
-         
    
-    if (mt_cou="000") then 
-       if (TD_eq and TD_bits and l_rdy)='1' then TD_idle<='1'; TD_bpos<=TD_pos; TD_bpos_0<=TD_bpos; 
-           else TD_idle<='0'; end if;
-    end if;
-   
-   if (mt_cou="001") then
-       if (TD_idle='1') then 
-           if (TD_bpos=TD_bpos_0) then TD_bpstable<='1';
-            if (TD_bpos="011") then bitpos_ok_i<='1'; else bitpos_ok_i<='0'; end if; 
-            else TD_bpstable<='0'; end if;
-        end if;
-   end if;
 
   
    if (mt_cou="010") then
       trig_data<=TTsr(3)(7) & TTsr(2)(7) & TTsr(3)(6) & TTsr(2)(6) & TTsr(3)(5) & TTsr(2)(5) & TTsr(3)(4) & TTsr(2)(4) & TTsr(3)(3) & TTsr(2)(3) & TTsr(3)(2) & TTsr(2)(2) & TTsr(3)(1) & TTsr(2)(1) & TTsr(1)(7) & TTsr(0)(7) & TTsr(1)(6) &
        TTsr(0)(6) & TTsr(1)(5) & TTsr(0)(5) & TTsr(1)(4) & TTsr(0)(4) & TTsr(1)(3) & TTsr(0)(3) & TTsr(1)(2) & TTsr(0)(2) & TTsr(1)(1) & TTsr(0)(1) & TTsr(3)(0) & TTsr(2)(0) & TTsr(1)(0) & TTsr(0)(0); 
+
+       if (TD_eq and TD_bits and l_rdy)='1' then TD_idle<='1'; TD_bpos<=TD_pos; TD_bpos_0<=TD_bpos; 
+           else TD_idle<='0'; end if;
    end if;
+
+   if (mt_cou="011") then
+       if (TD_idle='1') then 
+           if (TD_bpos=TD_bpos_0) then TD_bpstable<='1';
+            if (TD_bpos="001") then bitpos_ok_i<='1'; else bitpos_ok_i<='0'; end if; 
+            else TD_bpstable<='0'; end if;
+        end if;
+   end if;
+
+
+if (((TD_eq and TD_bits)='0') or (TD_bpos/="001")) and (mt_cou="010") and ((ena and trig_ena)='1') and (TTsr(3)(0) or TTsr(2)(0) or TTsr(1)(0) or TTsr(0)(0))='0' then sync_err<='1'; else sync_err<='0'; end if;
    
 end if;
 end process;

@@ -179,7 +179,7 @@ signal ipb_out: ipb_wbus;
 signal ipb_in: ipb_rbus;
 signal ipb_leds : STD_LOGIC_VECTOR (1 downto 0);
 signal ipb_stp : std_logic :='1';
-signal TX_CLK, RX_CLK, GBT_is_TXD, GBT_is_RXD, GBTRX_ready, RX_err, RX_err1, rxerr0, txled0, rxled0, IsRXData0, GBTRX_ready0, t100ms, TXact, RXact, GBT_rdy, GBT_rdy0, GBTX_rdy0,  GBT_chg, GBTRXerr, GBTRXerr_ipb, ipb_stat_rd, IPB_rdy0, IPB_chg : std_logic;
+signal TX_CLK, RX_CLK, GBT_is_TXD, GBT_is_RXD, GBTRX_ready, RX_err, RX_err1, rxerr0, txled0, rxled0, IsRXData0, GBTRX_ready0, t100ms, TXact, RXact, GBT_rdy, GBT_rdy0, GBT_chg, GBTRXerr, GBTRXerr_ipb, ipb_stat_rd, IPB_rdy0, IPB_chg : std_logic;
 signal GBT_TX_D, GBT_RX_D :  STD_LOGIC_VECTOR (79 downto 0);
 signal cou_100ms :  STD_LOGIC_VECTOR (21 downto 0);
 signal spi_buf_out, mem_out_ipb : STD_LOGIC_VECTOR (15 downto 0);
@@ -195,7 +195,7 @@ signal Tdiff, TimeC, TimeC0, TimeC1, TimeC2, TimeA : STD_LOGIC_VECTOR (8 downto 
 signal TimeA_o, TimeC_o :  STD_LOGIC_VECTOR (15 downto 0);
 signal AvgA, AvgC : STD_LOGIC_VECTOR (13 downto 0);
 signal TresbM, TdiffM : STD_LOGIC_VECTOR (22 downto 0);
-signal hdmiac_select, hdmicc_select, hdmias_select, hdmics_select, pll_lock_a, pll_lock_c, hdmis_ack, mul_ena, mul_enc, sideA_OK, sideC_OK, stat_clrA, stat_clrC : STD_LOGIC;
+signal hdmiac_select, hdmicc_select, hdmias_select, hdmics_select, pll_lock_a, pll_lock_c, hdmis_ack, mul_ena, mul_enc, sideA_OK, sideC_OK, stat_clrA, stat_clrC, as_chg, cs_chg, rst_fl : STD_LOGIC;
 signal dly_rst, cnt_rd, pm_adr_sel, pm_rdy, cnt_ctrl_sel, cnt_ctrl_rdy, ipb_locked, cnt_clr, cnt_lock, Tcnt_sel, Tcnt_0_rd, cnt_lock0, cnt_lock1, cnt_lock2, Tcnt_clr, cnt_clr0, cnt_clr1, cnt_clr2, Tcnt_ack, Tcnt_err : STD_LOGIC;
 signal fifo_sel, fifo_csel, f_rd, f_empty, f_wr, f_full, lclk160, lmode_sel, lpatt0_sel, lpatt1_sel, l_on, l_on0, l_on1, l_tg1, l_tg, l_fbin, l_fbout, a_t, a0_t : STD_LOGIC;
 signal l_cnt : STD_LOGIC_VECTOR (1 downto 0);
@@ -208,7 +208,7 @@ signal lfreq_cnt : STD_LOGIC_VECTOR (23 downto 0);
 signal BC_cou : STD_LOGIC_VECTOR(11 downto 0);
 signal Tmode, ldr : STD_LOGIC_VECTOR(3 downto 0);
 signal Rd_word, FIFO_in : STD_LOGIC_VECTOR(159 downto 0);
-signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_ack : STD_LOGIC;
+signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_ack, RST_req : STD_LOGIC;
 --signal readout_conf :  rdout_conf_arr;
 --signal readout_stat :  rdout_stat_arr;
 signal readout_conf :  cntr_reg_addrreg_type;
@@ -225,6 +225,7 @@ component tcm_side is
         Status : out STD_LOGIC_VECTOR (31 downto 0);
         Stat_adr : in STD_LOGIC_VECTOR (3 downto 0);
         stat_clr : in STD_LOGIC;
+        stat_chg : in STD_LOGIC;
         side_OK : out STD_LOGIC;
         TDD : out Trgdat;
         rd_lock : in STD_LOGIC;
@@ -318,6 +319,9 @@ end component;
    signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
    
    signal TCM_data_toreadout		:  board_data_type;
+   
+   signal gbt_glabal_status : std_logic_vector(3 downto 0);
+   signal readout_laser_out, readout_laser_out_ff0, readout_laser_out_ff1 : std_logic;
    
    signal    ipbus_control_reg : cntr_reg_addrreg_type;
    signal    ipbus_status_reg: status_reg_addrreg_type;
@@ -716,6 +720,38 @@ ipbus_status_reg <= func_STATREG_getaddrreg(FIT_GBT_status);
 ipbus_control_reg <= readout_conf;
 readout_stat <= ipbus_status_reg;
 
+gbt_glabal_status(0) <=  FIT_GBT_status.GBT_status.Rx_Phase_error;
+--gbt_glabal_status(1) <=  '1' when FIT_GBT_status.BCIDsync_Mode = mode_LOST else '0';
+--gbt_glabal_status(2) <=  '1' when FIT_GBT_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
+gbt_glabal_status(3) <=  '0';
+
+
+process (clksys40)
+begin
+    if (clksys40'event and clksys40='1') then
+         if ( FIT_GBT_status.BCIDsync_Mode = mode_LOST) then
+         gbt_glabal_status(1) <=  '1';
+        else 
+         gbt_glabal_status(1) <=  '0';
+        end if;
+
+
+        if ( FIT_GBT_status.hits_rd_counter_selector.hits_skipped = x"0000_0000") then
+         gbt_glabal_status(2) <=  '0';
+        else 
+         gbt_glabal_status(2) <=  '1';
+        end if;
+        
+        if ( FIT_GBT_status.Trigger_from_CRU and FIT_GBT_control.Data_Gen.trigger_resp_mask ) /= 0 then
+         readout_laser_out <=  '1';
+        else 
+         readout_laser_out <=  '0';
+        end if;
+    end if;
+end process;
+--gbt_glabal_status <=  x"0";
+
+
 -- #################################################################################################
 -- #################################################################################################
 
@@ -746,7 +782,6 @@ if (TX_CLK'event and TX_CLK='1') then
 
 
 IsRXData0<=GBT_is_RXD;
-GBTx_rdy0<=GBTRX_ready;
 
 if t100ms='0' then cou_100ms<=cou_100ms+1; 
     if RX_err='1' then RX_err1<='1'; end if; 
@@ -795,8 +830,8 @@ Tout_sel <= ipb_str when (ipb_addr(31 downto 4)= x"0000006") and (ipb_addr(3 dow
 Tmode_sel <= ipb_str when ipb_addr(31 downto 0)= x"0000006A"  else '0';
 Tcnt_sel <= ipb_str when (ipb_addr(31 downto 3)= x"0000006" & '1') and (ipb_addr(2 downto 0)>2)  else '0';
 Tcnt_0_rd <= ipb_str when (ipb_addr(31 downto 0)= x"0000006B") and (ipb_isrd='1')  else '0';
-rdoutc_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000D8") and (ipb_addr(31 downto 0)<= x"000000E3")  else '0';
-rdouts_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000E4") and (ipb_addr(31 downto 0)<= x"000000EB")  else '0';
+rdoutc_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000D8") and (ipb_addr(31 downto 0)<= x"000000E7")  else '0';
+rdouts_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000E8") and (ipb_addr(31 downto 0)<= x"000000f7")  else '0';
 fifo_sel <= ipb_str when (ipb_addr(31 downto 0)= x"00000100") and (ipb_isrd='1')  else '0';
 fifo_csel <= ipb_str when (ipb_addr(31 downto 0)= x"00000101") and (ipb_isrd='1')  else '0';
 pm_adr_sel <= ipb_str when (ipb_addr(31 downto 14)= 0) and (ipb_addr(13 downto 9)/=0) and (ipb_addr(13 downto 9)<=20) else '0' ;
@@ -850,7 +885,7 @@ else trg_r(to_integer(unsigned(ipb_addr(3 downto 1)))) when  (Tout_sel='1') and 
 else x"0000" & '0' & trig_mod when (Tmode_sel='1') and (ipb_isrd='1')
 else count_r(to_integer(unsigned(ipb_addr(2 downto 0)))-3) when (Tcnt_sel='1') and (ipb_isrd='1')
 else readout_conf(to_integer(unsigned(ipb_addr(5 downto 0)))-16#18#) when (rdoutc_sel='1') and (ipb_isrd='1')
-else readout_stat(to_integer(unsigned(ipb_addr(5 downto 0)))-16#24#) when (rdouts_sel='1') and (ipb_isrd='1')
+else readout_stat(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#) when (rdouts_sel='1') and (ipb_isrd='1')
 else f_out when (fifo_sel='1')
 else x"000000" & f_cnt when (fifo_csel='1')
 else spi_bus_in(to_integer(unsigned(ipb_addr(13 downto 9)))-1) when (pm_adr_sel='1') and (ipb_isrd='1')
@@ -864,7 +899,7 @@ local_reg_rd<= x"0000" & std_logic_vector(resize(signed(Tlow),16)) when "000",
                x"0000" & C_A when "100",
                x"0000" & C_C when "101",
                x"0000" & x"000" & Tmode when "110",
-               x"000000" & "00" & GBTRXerr_ipb & GBTRX_ready &  "00" & pll_lock_c & pll_lock_a when "111";
+               x"00000" &  RST_req & "0" & gbt_glabal_status & GBTRXerr_ipb & GBTRX_ready & '0' & rst_fl & pll_lock_c & pll_lock_a when "111";
  
 Tcnt_clr<= ipb_str when (ipb_addr(31 downto 0)= x"0000000F") and (ipb_iswr='1') and (ipb_data_out(9)='1') else '0';
 
@@ -900,7 +935,15 @@ process(CLKA)
 begin
 if (CLKA'event) and (CLKA='1') then
 
-a_t<=not a_t; l_on1<=l_on0; l_on0<=lpatt_sreg(63);
+a_t<=not a_t; l_on1<=l_on0; 
+readout_laser_out_ff0 <= readout_laser_out;
+readout_laser_out_ff1 <= readout_laser_out_ff0;
+
+if(l_mode(31)='0') then
+    l_on0 <= readout_laser_out_ff1;
+else
+    l_on0<=lpatt_sreg(63);
+end if;
 
  if (l_mode(31)='0') then  lfreq_cnt<=(others=>'0'); lpatt_cnt<=(others=>'0');
   else
@@ -936,10 +979,10 @@ end if;
 end if;
 end process;
 
-tcma: tcm_side port map(CLKA=>CLKA,  RST=>reset, SRST=>sreset, TD_P=>TDA_P, TD_N=>TDA_N, Config=>hdmia_config, Status=>Status_a, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrA, side_OK=>sideA_OK, TDD=>TDA, rd_lock=> rd_lock_a,
+tcma: tcm_side port map(CLKA=>CLKA,  RST=>reset, SRST=>sreset, TD_P=>TDA_P, TD_N=>TDA_N, Config=>hdmia_config, Status=>Status_a, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrA, stat_chg=>as_chg, side_OK=>sideA_OK, TDD=>TDA, rd_lock=> rd_lock_a,
                          Or_o=>OrA_i, CLK320_o=>CLK320A, clksys40_o => clksys40, pll_lock=> pll_lock_a, mt_cou_o=>bitcnt_A, Time_o=>TimeA_o, Avg_o=>AvgA, Ampl_O=>AmplA, Nchan=> Nchan_A);
 
-tcmc: tcm_side port map(CLKA=>CLKC,  RST=>reset, SRST=>sreset, TD_P=>TDC_P, TD_N=>TDC_N, Config=>hdmic_config, Status=>Status_C, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrC, side_OK=>sideC_OK, TDD=>TDC0, rd_lock=> rd_lock_c, 
+tcmc: tcm_side port map(CLKA=>CLKC,  RST=>reset, SRST=>sreset, TD_P=>TDC_P, TD_N=>TDC_N, Config=>hdmic_config, Status=>Status_C, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrC, stat_chg=>cs_chg, side_OK=>sideC_OK, TDD=>TDC0, rd_lock=> rd_lock_c, 
                         Or_o=>OrC_B, CLK320_o=>CLK320C, clksys40_o=> open, pll_lock=> pll_lock_c, mt_cou_o=>bitcnt_c, Time_o=>TimeC_o, Avg_o=>AvgC, Ampl_o=>AmplC0, Nchan=> Nchan_C0);
 
 TresbM<=TimeC & "00000000000000";
@@ -998,7 +1041,7 @@ if (SCKi'event and SCKi='0') then
                         
             when 16#10# to 16#17# => SPI_DATA<=spi_buf_out;
             when 16#18# => SPI_DATA<= x"000" & ldr;
-            when 16#7F#  => SPI_DATA<= "000000" & dcs_irq & "00" & ipb_leds(0) & GBTRXerr & GBTRX_ready & "00" & pll_lock_c & pll_lock_a;
+            when 16#7F#  => SPI_DATA<= "0000" & RST_req & '0' & dcs_irq & "00" & ipb_leds(0) & GBTRXerr & GBTRX_ready & "00" & pll_lock_c & pll_lock_a;
 
             when 16#F0# =>  SPI_DATA<=ip_addr(15 downto 0);
             when 16#F1# =>  SPI_DATA<=ip_addr(31 downto 16);
@@ -1019,17 +1062,25 @@ rd_lock_spi <= '1' when (spi_bit_count(3 downto 0)=x"F") and (spi_rd='1') and (s
 buf_lock <= '1' when (spi_bit_count(3 downto 0)=x"A") and (spi_rd='1') and (spi_addr='0' & x"F8") else '0';
 irq_clr <= '1' when (spi_bit_count="10000") and (spi_rd='1') and (spi_addr='0' & x"80") else '0';
 
-irqi<=  dcs_irq or IPB_chg or GBT_chg or GBTRXerr when (irq_cnt="11") else '0';
+irqi<=  dcs_irq or IPB_chg or GBT_chg or GBTRXerr or RST_req when (irq_cnt="11") else '0';
 
-process(ipb_clk, sreset)
+process(ipb_clk)
 begin
 if (ipb_clk'event and ipb_clk='1') then
 
 GBTRX_ready0<=GBTRX_ready;
 IPB_rdy0<=ipb_leds(0);
 
-if (hdmiac_select='1') and (ipb_iswr='1') then hdmia_config<=ipb_data_out; end if;
-if (hdmicc_select='1') and (ipb_iswr='1') then hdmic_config<=ipb_data_out; end if;
+if (rst_spi1='1') then RST_req<='0';
+  else
+   if (tcmr_select='1') and (ipb_iswr='1') and (ipb_addr(2 downto 0)=7) and (ipb_data_out(11)='1') then RST_req<='1'; end if;
+end if;
+
+if (hdmiac_select='1') and (ipb_iswr='1') then hdmia_config<=ipb_data_out; as_chg<='1'; end if;
+if (hdmicc_select='1') and (ipb_iswr='1') then hdmic_config<=ipb_data_out; cs_chg<='1'; end if;
+
+if (as_chg='1') then as_chg<='0'; end if; if (cs_chg='1') then cs_chg<='0'; end if;
+
 if (Tmode_sel='1') and (ipb_iswr='1') then trig_mod<=ipb_data_out(14 downto 0); end if;
 if (rst_spi1='1') then l_mode<=(others=>'0');
   else
@@ -1055,6 +1106,10 @@ if (GBTRX_ready='1') and (RX_err='1') and (GBT_rdy='1') then GBTRXerr<='1'; GBTR
     if (ipb_stat_rd='1') then GBTRXerr_ipb<='0'; end if;
 end if;
 
+if (rst_spi1='1') then rst_fl<='1';
+  else 
+    if (ipb_stat_rd='1') then rst_fl<='0'; end if;
+end if;
 
  if (stat_clr1='1') and (stat_clr='0') then irq_cnt<="00"; 
    else if (irq_cnt/="11") then irq_cnt<=irq_cnt+1; end if;
@@ -1067,7 +1122,7 @@ spibuf_wr2<=spibuf_wr1; spibuf_wr1<=spibuf_wr0; spibuf_wr0<=spibuf_wr;
 spibuf_rd2<=spibuf_rd1; spibuf_rd1<=spibuf_rd0; spibuf_rd0<=spibuf_rd;
 stat_clr0<=irq_clr; stat_clr1<=stat_clr0; stat_clr<=stat_clr1;
 buf_lock2<=buf_lock1; buf_lock1<=buf_lock0; buf_lock0<=buf_lock;
-
+--gbt_glabal_status
 if rst_spi1='1' then buf_vector<="00000"; buf_b<="11"; dcs_irq<='0'; vect_clr_req<='0';
 
 else 

@@ -793,6 +793,8 @@ set_property PULLUP true [get_ports HSEL]
 
 set_property DRIVE 4 [get_ports EVNT]
 
+set_property PULLDOWN true [get_ports EVNT]
+
 set_property OFFCHIP_TERM NONE [get_ports HMISO]
 set_property OFFCHIP_TERM NONE [get_ports IRQ]
 set_property OFFCHIP_TERM NONE [get_ports LACK0]
@@ -868,4 +870,3 @@ set_property OFFCHIP_TERM NONE [get_ports LA3[3]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[2]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[1]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[0]]
-set_property PULLDOWN true [get_ports EVNT]

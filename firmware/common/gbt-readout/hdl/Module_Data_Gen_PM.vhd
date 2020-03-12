@@ -229,10 +229,14 @@ pword_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						pword_counter + 1;
 
 						
-wchannel_counter_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						 (others => '0')	WHEN (FSM_STATE = s0_wait) ELSE
-						 (others => '0')	WHEN (FSM_STATE = s1_header) ELSE
+wchannel_counter_next <= x"1" 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+						 x"1"	WHEN (FSM_STATE = s0_wait) ELSE
+						 x"1"	WHEN (FSM_STATE = s1_header) ELSE
 						 wchannel_counter + x"2";
+--wchannel_counter_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+--                                                  (others => '0')    WHEN (FSM_STATE = s0_wait) ELSE
+--                                                  (others => '0')    WHEN (FSM_STATE = s1_header) ELSE
+--                                                  wchannel_counter + x"2";
 						
 
 FSM_STATE_NEXT <= 	s0_wait		WHEN (FSM_Clocks_I.Reset = '1') ELSE	

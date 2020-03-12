@@ -126,7 +126,7 @@ architecture Behavioral of Event_selector is
 	signal data_header_nwrd_ff, data_header_nwrd_ff_next : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 	signal wcnt_inpck, wcnt_inpck_next : std_logic_vector(GEN_count_bitdepth-1 downto 0);
 	signal pages_counter, pages_counter_next : std_logic_vector(RDH_pages_counter_bitdepth-1 downto 0);
-	signal wcnt_fullpck, wcnt_fullpck_next : std_logic_vector(GEN_count_bitdepth-1 downto 0);
+	signal wcnt_fullpck, wcnt_fullpck_next, wcnt_fullpck_ff : std_logic_vector(GEN_count_bitdepth-1 downto 0);
 	signal max_data_packet_payload : std_logic_vector(GEN_count_bitdepth-1 downto 0);
 	signal crutrg_delay_comp : std_logic_vector(BC_id_bitdepth-1 downto 0);
 	
@@ -191,6 +191,7 @@ architecture Behavioral of Event_selector is
 
 begin
 	crutrg_delay_comp <= Control_register_I.crutrg_delay_comp;
+	--crutrg_delay_comp <= x"00f";
 	max_data_packet_payload <= Control_register_I.max_data_payload;
 --	max_data_packet_payload <= x"01c2";
 	Readout_Mode_ff00 <= FIT_GBT_status_I.Readout_Mode;
@@ -225,7 +226,8 @@ begin
 						'0' WHEN (RAWFIFO_Is_Empty_I = '1') ELSE
 						'0' WHEN (trgfifo_out_orbit = ORBIT_const_void) ELSE
 						'0' WHEN (rawfifo_packet_orbit_ff = ORBIT_const_void) ELSE
-						'1' WHEN (  (trgfifo_out_orbit = rawfifo_packet_orbit_ff) and (trgfifo_out_bc = rawfifo_packet_bc_ff)  ) ELSE
+		--				'1' WHEN (  (trgfifo_out_orbit = rawfifo_packet_orbit_ff) and (trgfifo_out_bc = rawfifo_packet_bc_ff)  and (trgfifo_out_trigger = Control_register_I.trg_data_select) ) ELSE
+						'1' WHEN (  (trgfifo_out_orbit = rawfifo_packet_orbit_ff) and (trgfifo_out_bc = rawfifo_packet_bc_ff)   ) ELSE
 						'0';
 						
 	is_trg_first_data_late <= 	'0' WHEN (trgfifo_empty = '1') ELSE
@@ -263,7 +265,7 @@ begin
  
 -- RAW FIFO ******************************************
 is_fullpacket_in_rawfifo <= 	'0' WHEN (RAWFIFO_Is_Empty_I = '1') ELSE
-								'1' when (unsigned(RAWFIFO_data_count_I) >= unsigned(rawfifo_packet_ndwords_ff)) else
+								'1' when (unsigned(RAWFIFO_data_count_I) > unsigned(rawfifo_packet_ndwords_ff)) else
 								'0';
 
 rawfifo_packet_ndwords <= func_FITDATAHD_ndwords(RAWFIFO_data_word_I);
@@ -383,6 +385,7 @@ port map(
 				data_header_nwrd_ff <= (others => '0');
 				wcnt_inpck <= (others => '0');
 				wcnt_fullpck <= (others => '0');
+				wcnt_fullpck_ff <= (others => '0');
 				is_sending_packet_ff <= '0';
 				is_frame_open <= '0';
 				pages_counter <= (others => '0');
@@ -414,6 +417,7 @@ port map(
 				data_header_nwrd_ff <= data_header_nwrd_ff_next;
 				wcnt_inpck <= wcnt_inpck_next;
 				wcnt_fullpck <= wcnt_fullpck_next;
+				wcnt_fullpck_ff <= wcnt_fullpck;
 				is_sending_packet_ff <= is_sending_packet_ff_next;
 				is_frame_open <= is_frame_open_next;
 				pages_counter <= pages_counter_next;
@@ -463,7 +467,7 @@ port map(
 					  
 					  s2_send_wpacket	WHEN (FSM_STATE = s0_DT_comp) and (is_trg_first_data_late = '1') ELSE -- send trg
 					  
-					  s2_send_wpacket	WHEN (FSM_STATE = s0_DT_comp) and (wcnt_fullpck >= max_data_packet_payload)  ELSE -- send by payload
+					  s2_send_wpacket	WHEN (FSM_STATE = s0_DT_comp) and (wcnt_fullpck_ff >= max_data_packet_payload)  ELSE -- send by payload
 					  
 					  
 					  s1_dread			WHEN (FSM_STATE = s0_DT_comp) and (is_trg_late_data_first = '1') ELSE -- send data
@@ -481,7 +485,7 @@ port map(
 									'0' WHEN 												(FSM_STATE = s1_dread) and (rdata_state = s0_start) and (SLCTFIFO_Is_spacefpacket_I = '0') ELSE
 --									'0' WHEN 												(FSM_STATE = s1_dread) and (rdata_state = s0_start) and (data_header_orbit_ff /= current_hb_orbit) ELSE
 					-- ------------------- TRG -------------------
-									'1' WHEN (is_trg_eq_data = '1')	 					and (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (Readout_Mode_manage = mode_TRG) ELSE
+									'1' WHEN (is_trg_eq_data = '1')	and ((trgfifo_out_trigger and Control_register_I.trg_data_select) > 1) 					and (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (Readout_Mode_manage = mode_TRG) ELSE
 									'0' WHEN (is_trg_first_data_late = '1') 			and (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (Readout_Mode_manage = mode_TRG) ELSE
 									'0' WHEN (is_trg_late_data_first = '1') 			and (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (Readout_Mode_manage = mode_TRG) ELSE
 									'0' WHEN (is_trg_forrawdata_must_present = '1') 	and (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (Readout_Mode_manage = mode_TRG) ELSE
@@ -506,7 +510,7 @@ port map(
 	cntpckws_state_next <= 	s0_simpl_pcw	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 							s1_closefr_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (is_hb_response = '1') and (is_frame_open = '1') ELSE
-							s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (wcnt_fullpck >= max_data_packet_payload) ELSE
+							s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 							cntpckws_state;
 	
 
@@ -549,13 +553,18 @@ port map(
 						wcnt_inpck + 1 	WHEN (FSM_STATE = s1_dread) ELSE
 						(others => '0');
 	
+--	wcnt_fullpck_next <=  	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+--                                                (others => '0')     WHEN (FSM_STATE = s2_send_wpacket) and (Readout_Mode_manage = mode_CNT) ELSE
+--                                                wcnt_fullpck         WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) and (Readout_Mode_manage = mode_TRG) ELSE
+--                                                (others => '0')        WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) and (Readout_Mode_manage = mode_TRG) ELSE
+--                                                wcnt_fullpck + 1     WHEN (slck_fifo_we = '1') ELSE
+--                                                wcnt_fullpck;
+                        
 	wcnt_fullpck_next <=  	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							(others => '0') 	WHEN (FSM_STATE = s2_send_wpacket) and (Readout_Mode_manage = mode_CNT) ELSE
-							wcnt_fullpck 		WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) and (Readout_Mode_manage = mode_TRG) ELSE
-							(others => '0')		WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) and (Readout_Mode_manage = mode_TRG) ELSE
-							wcnt_fullpck + 1 	WHEN (slck_fifo_we = '1') ELSE
-							wcnt_fullpck;
-	
+                            (others => '0')     WHEN (FSM_STATE = s2_send_wpacket) and (cntpckfifo_we = '1') ELSE
+                            wcnt_fullpck + 1    WHEN (slck_fifo_we = '1') ELSE
+                            wcnt_fullpck;
+    
 	data_header_nwrd_ff_next <= (others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							rawfifo_packet_ndwords_ff	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
 							data_header_nwrd_ff;
@@ -585,7 +594,7 @@ port map(
 					
 	trgfifo_re  <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 					'1' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) ELSE
-					'0' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) and (wcnt_fullpck >= max_data_packet_payload) ELSE
+					'0' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 					'0';
 					
 						
@@ -607,7 +616,8 @@ port map(
 						
 	cntpckfifo_we <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						'0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
-						'1' WHEN (FSM_STATE = s2_send_wpacket) ELSE
+						'1' WHEN (FSM_STATE = s2_send_wpacket) and (is_hb_response = '1') and (Control_register_I.is_hb_response = '1') ELSE
+						'1' WHEN (FSM_STATE = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 						'0';
 						
 
@@ -618,7 +628,7 @@ port map(
 		WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 				
 		func_CNTPCKword_get_word('0', pages_counter, wcnt_fullpck, TRG_const_void, ORBIT_const_void, BC_const_void, current_hb_orbit, current_hb_bc)	-- data overload 
-		WHEN (FSM_STATE = s2_send_wpacket) and (wcnt_fullpck >= max_data_packet_payload) ELSE
+		WHEN (FSM_STATE = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 		
 		func_CNTPCKword_get_word('0', pages_counter, wcnt_fullpck, trgfifo_out_trigger, trgfifo_out_orbit, trgfifo_out_bc, current_hb_orbit, current_hb_bc)	-- trigger response
 		WHEN (FSM_STATE = s2_send_wpacket) ELSE

@@ -54,12 +54,13 @@ entity tcm_side is
         Status : out STD_LOGIC_VECTOR (31 downto 0);
         stat_adr : in STD_LOGIC_VECTOR (3 downto 0);
         stat_clr : in STD_LOGIC;
+        stat_chg : in STD_LOGIC;
         side_OK : out STD_LOGIC;
         TDD : out TrgDat;
         rd_lock : in STD_LOGIC;
         Or_o : out STD_LOGIC;
         CLK320_o : out STD_LOGIC;
-        CLKsys40_o : out STD_LOGIC;
+		CLKsys40_o : out STD_LOGIC;
         pll_lock : out STD_LOGIC;
         mt_cou_o : out STD_LOGIC_VECTOR (2 downto 0);
         Time_o : out STD_LOGIC_VECTOR (15 downto 0);
@@ -74,7 +75,7 @@ architecture RTL of tcm_side is
 type vect3_arr is array (9 downto 0) of std_logic_vector (2 downto 0);
 
 signal HDMI_in, NC : HDMI_trig;
-signal ready, wt_sync, SC, SC_0, C, C_0, pllrdy, end_sync, error  : STD_LOGIC;
+signal SC, SC_0, C, C_0  : STD_LOGIC;
 signal bitcnt : STD_LOGIC_VECTOR (2 downto 0);
 signal syn_cnt : STD_LOGIC_VECTOR (8 downto 0);
 signal Nchan_A1, Nchan_A2, Nchan_A0, Nchan_A : STD_LOGIC_VECTOR (6 downto 0);
@@ -92,11 +93,11 @@ signal M0sumA, M1sumA : STD_LOGIC_VECTOR (3 downto 0);
 signal inp_act  : STD_LOGIC_VECTOR (9 downto 1);
 signal  HDMI_status : Trgdat;
 
-signal clk320, clk320_90, trig_ena, done, done0, done_toggle, ena_dly, inc_dly, psen, ph_inc, link_OK, side_on, dly_inc, dly_dec, dly_err, bitpos_ok, mdl_err, dly_ctrl_ena, stat_clr0, stat_clr1, stat_clr2 : STD_LOGIC;
+signal clk320, clk320_90, trig_ena, done, done0, done_toggle, ena_dly, inc_dly, psen, ph_inc, link_OK, side_on, dly_inc, dly_dec, dly_err,dly_err_s,  bitpos_ok, mdl_err, mdl_err_s, dly_ctrl_ena, stat_clr0, stat_clr1, stat_clr2 : STD_LOGIC;
 signal rd_lock1, rd_lock0 : STD_LOGIC;
 signal idle_cou : STD_LOGIC_VECTOR (5 downto 0);
 signal mt_cou  : STD_LOGIC_VECTOR (2 downto 0);
-signal link_ena, link_OK_in, link_OK_act, master_sel, psen_o, ph_inc_o, is_idle, bp_stable, dl_low, dl_high, bitpos_ok_in, bitpos_ok_act, sig_empty, mast_dlerr, mast_stable: STD_LOGIC_VECTOR (9 downto 0);
+signal link_ena, link_OK_in, link_OK_act, master_sel, psen_o, ph_inc_o, is_idle, bp_stable, dl_low, dl_high, bitpos_ok_in, bitpos_ok_act, sig_empty, mast_dlerr, mast_stable, sync_err, sync_err_s: STD_LOGIC_VECTOR (9 downto 0);
 signal bitpos : vect3_arr;
 signal master_n, N_empty0 : STD_LOGIC_VECTOR (3 downto 0);
 signal adj_count : STD_LOGIC_VECTOR (7 downto 0);
@@ -129,7 +130,8 @@ component hdmirx is
            dl_high : out  STD_LOGIC;
            mast_dl_err : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
-           dly_ctrl_ena : in  STD_LOGIC
+           dly_ctrl_ena : in  STD_LOGIC;
+           syn_err : out  STD_LOGIC
             );
 end component;
 
@@ -139,9 +141,9 @@ port
   -- Clock out ports
   CLK320          : out    std_logic;
   CLK320_90          : out    std_logic;
-  clksys40           : out    std_logic;
   -- Dynamic phase shift ports
   psclk             : in     std_logic;
+  clksys40          : out    std_logic;
   psen              : in     std_logic;
   psincdec          : in     std_logic;
   psdone            : out    std_logic;
@@ -168,14 +170,16 @@ PLL1 : MMCM320_PH
    port map ( CLK320 => CLK320, CLK320_90=> CLK320_90, psclk => CLK320, clksys40 => clksys40_o, psen => psen, psincdec => ph_inc, psdone => open, reset => rst, lock => pll_lock, MCLK => CLKA);
 
 HDMIA:  for i in 0 to 9 generate
+
+link_ena(i)<=config(i) and not stat_chg ;
+
 HDMI_RX: hdmirx  port map(TD_P=>TD_P(i), TD_N=>TD_N(i), RST=>SRST, ena=>link_ena(i), link_rdy=>link_OK_in(i), trig_ena=>done, clk320=>clk320, clk320_90=>clk320_90, TDO=>HDMI_in(i), rd_lock=>rd_lock1, DATA_OUT=> TDD(i), 
             status => HDMI_status(i),  master=> master_sel(i), mt_cou=>mt_cou, bitpos=>bitpos(i), bitpos_ok=>bitpos_ok_in(i), ena_dly=>ena_dly, inc_dly=>inc_dly, ena_ph=>psen_o(i), inc_ph=>ph_inc_o(i), is_idle=>is_idle(i), bp_stable=>bp_stable(i),
-            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena);
+            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i));
 end generate;
 
 ROM1 : ROM7x15  PORT MAP (clka => CLK320, addra => Nchan_A, douta => Avg_0); 
 
-link_ena<=config(9 downto 0);
 
 master_n<=x"0" when config(0)='1'
        else x"1" when config(1)='1'
@@ -189,7 +193,7 @@ master_n<=x"0" when config(0)='1'
        else x"9";
        
 Status<=HDMI_status(to_integer(unsigned(stat_adr))) when (stat_adr<x"A") else
-        done & done_toggle & dly_err & side_on & mdl_err & x"0000" & '0' & config(9 downto 0) when (stat_adr=x"A") else       
+        done & done_toggle & dly_err_s & side_on & mdl_err_s & sync_err_s & x"0" & "000" & config(9 downto 0) when (stat_adr=x"A") else       
         (others=>'0');
         
 msel: for i in 0 to 9 generate
@@ -222,38 +226,50 @@ mdl_err<= mast_dlerr(to_integer(unsigned(master_n))) when (side_on='1') else '0'
        if (done xor done0)='1' then done_toggle<='1';
          else if (stat_clr2='1') and (stat_clr1='0') then done_toggle<='0'; end if;
        end if;   
+       if dly_err='1' then dly_err_s<='1';
+         else if (stat_clr2='1') and (stat_clr1='0') then dly_err_s<='0'; end if;
+       end if;   
+       if mdl_err='1' then mdl_err_s<='1';
+         else if (stat_clr2='1') and (stat_clr1='0') then mdl_err_s<='0'; end if;
+       end if;   
+       
+ for i in 0 to 9 loop
+       if sync_err(i)='1' then sync_err_s(i)<='1';
+         else if (stat_clr2='1') and (stat_clr1='0') then sync_err_s(i)<='0'; end if;
+       end if;   
+ end loop;       
 
-   if (idle_cou="111111") and (done='0') and (side_on='1') then mt_cou<="111"-bitpos(to_integer(unsigned(master_n)));  idle_cou<="000000";
+   if (idle_cou="111111") and (done='0') and (side_on='1') then mt_cou<="111"-bitpos(to_integer(unsigned(master_n))); idle_cou<="000000"; 
        else mt_cou<=mt_cou+1; end if;
     
-    if (side_on='1') then                
-       if (mt_cou="010") then
-              if (is_idle(to_integer(unsigned(master_n)))='1') then 
-                  if (bp_stable(to_integer(unsigned(master_n)))='1') then
-                      if (idle_cou/="111111") then idle_cou<=idle_cou+1; end if;
-                  else idle_cou<="000000"; end if;
-              end if;
-          end if;
+if (side_on='1') and (srst='0') then  
+
+    if (done='1') or (link_OK='0') then idle_cou<="000000";
+     else
+       if (mt_cou="100") and (is_idle(to_integer(unsigned(master_n)))='1') then 
+                if (bp_stable(to_integer(unsigned(master_n)))='1') then idle_cou<=idle_cou+1; 
+                  else idle_cou<="000000"; 
+                end if;
+       end if;
+    end if;
        
-   if (done='1') and ((link_OK='0') or (srst='1') or (dly_err='1') or (bitpos_OK='0')) then done<='0'; idle_cou<="000000"; 
-             else if (done='0') and (bitpos_OK='1') and (idle_cou>"010000") then done<='1'; end if;
-            end if; 
+     if (done='1') and ((link_OK='0') or (dly_err='1') or (bitpos_OK='0')) then done<='0'; 
+        else if (done='0') and (bitpos_OK='1') and (idle_cou>"010000") then done<='1'; end if;
+     end if; 
             
-if (link_OK_in(to_integer(unsigned(master_n)))='1') and (dly_err='0') and (srst='0') then 
-  if (adj_count/=x"FF") then adj_count<=adj_count+1; 
+if (link_OK_in(to_integer(unsigned(master_n)))='1') and (dly_err='0') then 
+   if (adj_count/=x"FF") then adj_count<=adj_count+1; 
     else  
          if (dly_inc or dly_dec)='1' then adj_count<=x"00"; ena_dly<=dly_ctrl_ena; inc_dly<=dly_inc; end if;
-  end if;
-  else adj_count<=x"00";
-  end if;
+   end if;
+ else adj_count<=x"00";
+ end if;
   
     if (ena_dly='1') then ena_dly<='0'; end if;
-  else done<='0'; idle_cou<="000000"; adj_count<=x"00";
-  end if;
+ else done<='0'; idle_cou<="000000"; adj_count<=x"00";
+end if;
   
-  if (idle_cou="111111") and (done='0') then mt_cou<="111"-bitpos(to_integer(unsigned(master_n)));  idle_cou<="000000";
-    else mt_cou<=mt_cou+1; end if;
-  
+ 
  end if;
   end process;
 
@@ -289,12 +305,6 @@ if (mt_cou="110") then Nchan_A<=Nchan_A0; end if;
 
 if (mt_cou="000") then 
 
-  if (ready='1') then 
-     if (syn_cnt/="111111111") then syn_cnt<=syn_cnt+1; wt_sync<='1'; 
-     else wt_sync<='0'; end if;
-    else syn_cnt<="000000000"; wt_sync<='0';
-   end if;
-   
 Time_o<=TsumA_0(3 downto 0) & TtimeA(13 downto 2);
 Ampl_o<=MsumA_0 & MamplA(13 downto 2); 
    

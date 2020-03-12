@@ -122,8 +122,6 @@ attribute mark_debug of RX_Data_from_datagen : signal is "true";
 attribute mark_debug of TX_IsData_from_packager : signal is "true";
 attribute mark_debug of TX_Data_from_packager : signal is "true";
 
-
-
 begin
 -- WIRING ======================================================
 	FSM_Clocks.System_Clk 	<= SysClk_I;

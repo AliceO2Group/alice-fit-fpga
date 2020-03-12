@@ -46,7 +46,6 @@ entity TDCCHAN is
            bc_time : in STD_LOGIC_VECTOR (6 downto 0);
            tdc_out : out STD_LOGIC_VECTOR (11 downto 0);
            tdc_rdy : out STD_LOGIC;
-           fifo_full : out STD_LOGIC;
            tdc_raw : out STD_LOGIC_VECTOR (12 downto 0);
            tdc_raw_lock : in STD_LOGIC
            );
@@ -54,7 +53,7 @@ end TDCCHAN;
 
 architecture RTL of TDCCHAN is
 
-signal C_STR, C_STR1, C_STR2, TDCFIFO_wr,TDCFIFO_rd,TDCFIFO_full,TDCFIFO_empty,rs300_0,rs300_1,rs300_2,TDCF_cou_40,rs_1, TDC_rdy1, TDC_raw_wr, reset300 : STD_LOGIC;
+signal C_STR, C_STR1, C_STR2, STR_wr, TDCFIFO_wr,TDCFIFO_rd,TDCFIFO_full,TDCFIFO_empty,rs300_0,rs300_1,rs300_2,TDCF_cou_40, TDCF_delay, rs_1, TDC_rdy1, TDC_raw_wr, reset300 : STD_LOGIC;
 signal C_BITS, TDC_bitcount : STD_LOGIC_VECTOR (2 downto 0);
 signal C_TIME, C_PER, TDC : STD_LOGIC_VECTOR (6 downto 0);
 signal C_FIFO, TDCF_cou : STD_LOGIC_VECTOR (5 downto 0);
@@ -88,29 +87,31 @@ begin
 tdc_raw<=tdc_raw_i;
 
 PINCAPT: pin_capt port map ( pin_in => pin_in, pin_out => pin_out, clk600 => clk600, clk600_90 => clk600_90, clk300 => clk300, str => C_STR, ptime => C_BITS);
-TDCFIFO: TDC_FIFO port map (clk => clk300,  srst =>reset300, din =>C_TIME(6 downto 1), wr_en => TDCFIFO_wr, rd_en =>TDCFIFO_rd, dout => C_FIFO, full =>TDCFIFO_full, empty =>TDCFIFO_empty);
+TDCFIFO: TDC_FIFO port map (clk => clk300,  srst =>reset300, din =>C_TIME(6 downto 1), wr_en => TDCFIFO_wr, rd_en =>TDCFIFO_rd, dout => C_FIFO, full=>TDCFIFO_full, empty =>TDCFIFO_empty);
 
 process (clk300)
 begin
 if (clk300'event and clk300='1') then 
 
-reset300<=reset;
+reset300<=reset or TDCF_cou_40;
+TDCF_delay <=TDCF_cou_40;
 		
 	C_STR1<=C_STR;  C_STR2<=C_STR1;  
 	if (C_STR='1' and C_STR1='0') then C_PER<= tdc_count & C_BITS; end if;
 	
-	if (TDCFIFO_wr='1') then fifo_full<=TDCFIFO_full; end if;	
-	if (rs300_1='0') or (TDCFIFO_empty='1') or (TDCF_cou_40='1') then TDCF_cou<="000000";
-           else TDCF_cou <= TDCF_cou + 1; end if;
+	if (rs300_1='0') or (TDCFIFO_empty='1')  then TDCF_cou<="000000";
+         else TDCF_cou <= TDCF_cou + 1;  
+    end if;
                           
      rs300_0<=rstr; rs300_2<=rs300_1; rs300_1<=rs300_0;
 end if;
 end process;
 
-C_TIME<= (C_PER - bc_time);  TDCFIFO_wr<= C_STR1 and not C_STR2;
+C_TIME<= (C_PER - bc_time);  STR_wr<= C_STR1 and not C_STR2; TDCFIFO_wr<= STR_wr and not (TDCFIFO_full or TDCF_delay or reset300) ;
 
-TDCF_cou_40<=TDCF_cou(5) and TDCF_cou(3);
-TDCFIFO_rd<='1' when (rs300_1='0' and rs300_2='1') OR (TDCF_cou_40='1')  else '0';
+TDCF_cou_40<= '1' when (TDCF_cou=40) else '0';
+
+TDCFIFO_rd<='1' when (rs300_1='0' and rs300_2='1') and (TDCFIFO_empty ='0') and (reset300='0') else '0';
 
 process (tdcclk)
 begin

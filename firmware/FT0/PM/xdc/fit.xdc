@@ -63,6 +63,9 @@ set_property ASYNC_REG true [get_cells stat_clr?_reg]
 set_property ASYNC_REG true [get_cells spi_lock320_reg]
 set_property ASYNC_REG true [get_cells spi_lock320_0_reg]
 
+set_property ASYNC_REG true [get_cells hclr??_reg]
+set_property ASYNC_REG true [get_cells hstat_clr?_reg]
+
 set_property ASYNC_REG true [get_cells CHANNEL??/TDC_rdy320_0_reg]
 set_property ASYNC_REG true [get_cells CHANNEL??/TDC_rdy320_reg]
 

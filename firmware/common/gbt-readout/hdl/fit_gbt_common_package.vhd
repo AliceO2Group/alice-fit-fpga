@@ -125,7 +125,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 
 
 -- ===== CONTROL REGISTER ======================================
-	constant cntr_reg_n_32word		: integer := 12;
+	constant cntr_reg_n_32word		: integer := 13;
 	type cntr_reg_addrreg_type is array (0 to cntr_reg_n_32word-1) of std_logic_vector(31 downto 0);
 	
 	type Type_Gen_use_type is (use_NO_generator, use_MAIN_generator, use_TX_generator);
@@ -161,6 +161,9 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		Data_Gen 		: Data_Gen_CONTROL_type;
 		Trigger_Gen 	: Trigger_Gen_CONTROL_type;
 		RDH_data 		: RDH_data_type;
+		
+		is_hb_response  : std_logic;
+		trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
 		
 		n_BCID_delay 	: std_logic_vector(BC_id_bitdepth-1 downto 0); -- delay between ID from TX and ID in module data
 		crutrg_delay_comp 	: std_logic_vector(BC_id_bitdepth-1 downto 0); -- how long data keeped in raw fifo waiting trigger
@@ -201,7 +204,10 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 			PAR 					=> x"ffff",
 			DET_Field 				=> x"1234"
 			),
-	
+			
+	    is_hb_response              => '1',
+        trg_data_select             => x"00000010",
+
 		n_BCID_delay 				=> x"01f",
 		crutrg_delay_comp 			=> x"00f",
 		max_data_payload			=> x"00f0",
@@ -374,13 +380,15 @@ function func_FITDATAHD_get_header
 return std_logic_vector is
 
 begin
-    return  channel_n_words & x"000_0000" & ORBIT & BCID;
+    --return  channel_n_words & x"000_0000" & ORBIT & BCID;
+      return  x"F"&channel_n_words(3 downto 0) & x"000_0000" & ORBIT & BCID;
+
 end function;
 
 
 
 function func_FITDATAHD_ndwords (header_w: std_logic_vector(fifo_data_bitdepth-1 downto 0) ) return std_logic_vector is
-begin return header_w(fifo_data_bitdepth-1 downto fifo_data_bitdepth-n_pckt_wrds_bitdepth); end function;
+begin return x"0"&header_w(fifo_data_bitdepth-1-4 downto fifo_data_bitdepth-n_pckt_wrds_bitdepth); end function;
 
 function func_FITDATAHD_orbit (header_w: std_logic_vector(fifo_data_bitdepth-1 downto 0) ) return std_logic_vector is
 begin return header_w(BC_id_bitdepth+Orbit_id_bitdepth-1 downto BC_id_bitdepth); end function;
@@ -458,7 +466,9 @@ function func_CNTRREG_getaddrreg (cntrl_reg: CONTROL_REGISTER_type ) return cntr
 	variable data_gen_cntr : std_logic_vector( 3 downto 0 );
 	variable trg_gen_cntr : std_logic_vector( 3 downto 0 );
 	variable start_rd_command : std_logic_vector( 3 downto 0 );
+	variable rd_mode : std_logic_vector( 3 downto 0 );
 	variable reset_contr	:std_logic_vector( 7 downto 0);
+	
 
 begin
 
@@ -494,13 +504,18 @@ begin
 		trg_gen_cntr := x"f";
 	end if;
 
+	if cntrl_reg.is_hb_response = '0' then
+		rd_mode := x"0";
+	else
+		rd_mode := x"1";
+	end if;
 
 		
 	reset_contr := "00" & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gen_offset & cntrl_reg.reset_drophit_counter & cntrl_reg.reset_orbc_synd;
 
 	
 
-cntr_reg_addrreg(0) := x"000" & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
+cntr_reg_addrreg(0) := x"00" & rd_mode & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
 
 cntr_reg_addrreg(1) := cntrl_reg.Data_Gen.trigger_resp_mask;
 cntr_reg_addrreg(2) := cntrl_reg.Data_Gen.bunch_pattern;
@@ -515,6 +530,7 @@ cntr_reg_addrreg(9) := cntrl_reg.RDH_data.FEE_ID & cntrl_reg.RDH_data.PAR;
 cntr_reg_addrreg(10) := cntrl_reg.max_data_payload & cntrl_reg.RDH_data.DET_Field;
 
 cntr_reg_addrreg(11) := x"0"&cntrl_reg.crutrg_delay_comp & x"0"&cntrl_reg.n_BCID_delay;
+cntr_reg_addrreg(12) := cntrl_reg.trg_data_select;
 
 return cntr_reg_addrreg;
 
@@ -566,7 +582,8 @@ begin
 		cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
 	end if;
 
-	
+	cntr_reg.is_hb_response 				:=  cntrl_reg_addrreg(0)(20);
+
 	
 	cntr_reg.reset_orbc_synd 				:=  cntrl_reg_addrreg(0)(8);
 	cntr_reg.reset_drophit_counter			:=  cntrl_reg_addrreg(0)(9);
@@ -599,6 +616,7 @@ begin
 	cntr_reg.crutrg_delay_comp					:=  cntrl_reg_addrreg(11)(27 downto 16);
 	cntr_reg.n_BCID_delay						:=  cntrl_reg_addrreg(11)(11 downto 0);
 	
+	cntr_reg.trg_data_select                    :=  cntrl_reg_addrreg(12)(31 downto 0);
 	return cntr_reg;
 end function;
 
@@ -618,17 +636,16 @@ begin
 
 
 	gbt_status :=	"000000" 
-            &    status_reg.GBT_status.Rx_Phase_error
-            &    status_reg.GBT_status.gbtRx_ErrorLatch
-            &    status_reg.GBT_status.gbtRx_ErrorDet
-            &    status_reg.GBT_status.gbtRx_Ready
-            &    status_reg.GBT_status.tx_fsmResetDone
-            &    status_reg.GBT_status.tx_resetDone
-            &    status_reg.GBT_status.mgtLinkReady
-            &    status_reg.GBT_status.rxFrameClkReady
-            &    status_reg.GBT_status.rxWordClkReady
-            &    status_reg.GBT_status.mgt_phalin_cplllock;
-
+				&	status_reg.GBT_status.Rx_Phase_error
+				&	status_reg.GBT_status.gbtRx_ErrorLatch
+				&	status_reg.GBT_status.gbtRx_ErrorDet
+				&	status_reg.GBT_status.gbtRx_Ready
+				&	status_reg.GBT_status.tx_fsmResetDone
+				&	status_reg.GBT_status.tx_resetDone
+				&	status_reg.GBT_status.mgtLinkReady
+				&	status_reg.GBT_status.rxFrameClkReady
+				&	status_reg.GBT_status.rxWordClkReady
+				&	status_reg.GBT_status.mgt_phalin_cplllock;
 				
 				
 	if status_reg.Readout_Mode = mode_IDLE then

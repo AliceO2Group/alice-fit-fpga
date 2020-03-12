@@ -105,7 +105,8 @@ begin
 -- Data format ***************************************
 	is_close_frame <= func_CNTPCKword_isclf(CNTPTFIFO_data_word_I);
 	pages_counter <= func_CNTPCKword_pgcounter(CNTPTFIFO_data_word_I);
-	header_size <= std_logic_vector(to_unsigned((nwords_in_SOP-1), 8));
+--	header_size <= std_logic_vector(to_unsigned((nwords_in_SOP-1), 8));
+	header_size <= x"28";
 	block_lenght <= std_logic_vector(to_unsigned((  data_payload_bytes ), 16));
 	HB_Orbit    <= func_CNTPCKword_hborbit(CNTPTFIFO_data_word_I);
 	HB_BC       <= func_CNTPCKword_hbbc(CNTPTFIFO_data_word_I);
@@ -117,17 +118,19 @@ begin
 	SOP_format(0) <= '0' & x"10000000000000000000"; -- SOP CRU
 	--SOP_format(0) <= '0' & x"00000000000000000001"; -- SOP G-RORC
 	--SOP_format(0) <= '0' & data_word_cnst_SOP;
-	
-	 --            is data      reserved      priority bit      FEE ID                 Block lenght    header size   header versions
-	SOP_format(1) <= '1' &      x"000000"&       x"01"&    Control_register_I.RDH_data.FEE_ID&  block_lenght&   header_size&       x"02";
-	
-	SOP_format(2) <= '1' &      x"0000"&  HB_Orbit &  TRG_Orbit;
-	
-	SOP_format(3) <= '1' &      x"0000"& TRG_Type   &   x"0"&HB_BC   &   x"0"&TRG_BC;
-	--             is data      reserved     pages counter   stop bit                           PAR               detector field
-	SOP_format(4) <= '1' &      x"000000"&    pages_counter&       "0000000"&is_close_frame&   Control_register_I.RDH_data.PAR&   Control_register_I.RDH_data.DET_Field;
-	
-	
+
+
+    -- v4 ===================================================================================	
+     --            is data      reserved      priority bit      FEE ID                 Block lenght    header size        header versions
+    SOP_format(1) <= '1' &      x"000000"&       x"01"&    Control_register_I.RDH_data.FEE_ID&  block_lenght&   header_size&       x"04";
+    
+    SOP_format(2) <= '1' &      x"0000"&  HB_Orbit &  TRG_Orbit;
+    
+    SOP_format(3) <= '1' &      x"0000"& TRG_Type   &   x"0"&HB_BC   &   x"0"&TRG_BC;
+    --             is data      reserved     pages counter   stop bit                           PAR               detector field
+    SOP_format(4) <= '1' &      x"000000"&    pages_counter&       "0000000"&is_close_frame&   Control_register_I.RDH_data.PAR&   Control_register_I.RDH_data.DET_Field;
+    -- ======================================================================================    
+    
 	EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
 	
 	EOP_format(1) <= '0' & x"20000000000000000000"; -- eop CRU

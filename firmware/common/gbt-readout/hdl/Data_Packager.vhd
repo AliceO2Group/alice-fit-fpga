@@ -144,32 +144,13 @@ end generate;
 
 
 -- Raw_data_fifo =============================================
-raw_data_fifo_comp : entity work.raw_data_fifo
-port map(
-           wr_clk        => FSM_Clocks_I.System_Clk,
-           rd_clk        => FSM_Clocks_I.System_Clk,
-     	   wr_data_count => raw_data_fifo_words_count_wr,
-     	   rd_data_count => raw_data_fifo_words_count_rd,
-           rst           => raw_data_fifo_reset,
-           WR_EN 		 => raw_data_fifo_wren,
-           RD_EN         => raw_data_fifo_rden,
-           DIN           => raw_data_fifo_data_tofifo,
-           DOUT          => raw_data_fifo_data_fromfifo,
-           FULL          => open,
-           EMPTY         => raw_data_fifo_isempty
-        );
-GPIO_O(15) <= raw_data_fifo_wren;
-GPIO_O(14) <= raw_data_fifo_rden;
-GPIO_O(4 downto 0) <= raw_data_fifo_words_count_rd(4 downto 0);
-
--- ===========================================================
-
----- Raw_data_fifo =============================================
 --raw_data_fifo_comp : entity work.raw_data_fifo
 --port map(
---           clk        => FSM_Clocks_I.System_Clk,
---     	   data_count => raw_data_fifo_words_count_wr,
---           srst           => raw_data_fifo_reset,
+--           wr_clk        => FSM_Clocks_I.System_Clk,
+--           rd_clk        => FSM_Clocks_I.System_Clk,
+--     	   wr_data_count => raw_data_fifo_words_count_wr,
+--     	   rd_data_count => raw_data_fifo_words_count_rd,
+--           rst           => raw_data_fifo_reset,
 --           WR_EN 		 => raw_data_fifo_wren,
 --           RD_EN         => raw_data_fifo_rden,
 --           DIN           => raw_data_fifo_data_tofifo,
@@ -177,7 +158,26 @@ GPIO_O(4 downto 0) <= raw_data_fifo_words_count_rd(4 downto 0);
 --           FULL          => open,
 --           EMPTY         => raw_data_fifo_isempty
 --        );
---raw_data_fifo_words_count_rd <= raw_data_fifo_words_count_wr;
+--GPIO_O(15) <= raw_data_fifo_wren;
+--GPIO_O(14) <= raw_data_fifo_rden;
+--GPIO_O(4 downto 0) <= raw_data_fifo_words_count_rd(4 downto 0);
+
+-- ===========================================================
+
+---- Raw_data_fifo =============================================
+raw_data_fifo_comp : entity work.raw_data_fifo
+port map(
+           clk        => FSM_Clocks_I.System_Clk,
+     	   data_count => raw_data_fifo_words_count_wr,
+           srst           => raw_data_fifo_reset,
+           WR_EN 		 => raw_data_fifo_wren,
+           RD_EN         => raw_data_fifo_rden,
+           DIN           => raw_data_fifo_data_tofifo,
+           DOUT          => raw_data_fifo_data_fromfifo,
+           FULL          => open,
+           EMPTY         => raw_data_fifo_isempty
+        );
+raw_data_fifo_words_count_rd <= raw_data_fifo_words_count_wr;
 ---- ===========================================================
 
 

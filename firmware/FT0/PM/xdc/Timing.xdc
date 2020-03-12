@@ -15,9 +15,9 @@ set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK2 CLK300_2}] -to [get_cells {{CHANNEL2?/CH_TIME1_reg[*]} CHANNEL2?/CH_t_trig1_reg CHANNEL2?/CH_trig_f_reg}] 3.800
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK3 CLK300_3}] -to [get_cells {{CHANNEL3?/CH_TIME1_reg[*]} CHANNEL3?/CH_t_trig1_reg CHANNEL3?/CH_trig_f_reg}] 3.800
 
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_1] -to [get_cells CHANNEL1?/FEV_0_reg] 1.500
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_2] -to [get_cells CHANNEL2?/FEV_0_reg] 1.500
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_3] -to [get_cells CHANNEL3?/FEV_0_reg] 1.500
+#set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_1] -to [get_cells CHANNEL1?/FEV_0_reg] 1.500
+#set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_2] -to [get_cells CHANNEL2?/FEV_0_reg] 1.500
+#set_max_delay -datapath_only -from [get_clocks -include_generated_clocks CLK300_3] -to [get_cells CHANNEL3?/FEV_0_reg] 1.500
 
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK1] -to [get_cells CHANNEL1?/TDC_rdy320_0_reg] 1.000
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK2] -to [get_cells CHANNEL2?/TDC_rdy320_0_reg] 1.000
@@ -38,16 +38,17 @@ set_max_delay -datapath_only -from [get_ports DI*] -to [get_clocks CLK320] 5.000
 set_max_delay -datapath_only -from [get_ports STR*] -to [get_clocks CLK320] 2.500
 set_false_path -from [get_ports RST]
 
-set_multicycle_path -setup -from [get_clocks CLK320] -to [get_cells CHANNEL??/Ampl_corr] 2
-set_multicycle_path -hold -from [get_clocks CLK320] -to [get_cells CHANNEL??/Ampl_corr] 1
+set_false_path -from [get_cells sreset_reg]
+set_multicycle_path -setup -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 2
+set_multicycle_path -hold -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 1
 
 set_multicycle_path -setup -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 2
 set_multicycle_path -hold -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 1
 
-set_false_path -from [get_cells {{CH*_shift_reg[*]} {CH*_zero_reg[*]} {CH*_rc_reg[*]} {ampl_sat_reg[*]} {gate_time_high_reg[*]} {chans_ena_reg[*]} {ipbus_control_reg_reg[*][*]}}] -to [get_clocks CLK320]
-set_false_path -from [get_cells sreset_reg]
+set_false_path -from [get_cells {{CH*_shift_reg[*]} {CH*_zero_reg[*]} {CH*_rc_reg[*]} {ampl_sat_reg[*]} {gate_time_high_reg[*]} {chans_ena_reg[*]}}] -to [get_clocks CLK320]
 
-set_max_delay -from [get_clocks RXDataCLK] -to [get_pins IsRXData0_reg/D] 5.000
+
+set_max_delay  -datapath_only -from [get_clocks RXDataCLK] -to [get_pins IsRXData0_reg/D] 5.000
 
 
 
@@ -73,11 +74,16 @@ set_max_delay -from [get_clocks RXDataCLK] -to [get_pins FitGbtPrg/gbtBankDsgn/g
 # GBT readout
 #####################################################################
 
+set_false_path -from [get_cells ipbus_control_reg_reg[*][*]]  -to [all_registers]
+
 # Reset generator multipath -------------------------------------
 set_false_path -from [get_cells FitGbtPrg/Reset_Generator_comp/GenRes_DataClk_ff*_reg]  -to [all_registers]
 set_false_path -from [get_cells FitGbtPrg/gbtBankDsgn/gbtBank_gbtBankRst/gbtResetRx_from_generalRstFsm_reg]
 set_false_path -from [get_cells FitGbtPrg/gbtBankDsgn/gbtBank_gbtBankRst/mgtResetRx_from_generalRstFsm_reg]
 set_false_path -from [get_cells FitGbtPrg/gbtBankDsgn/gbtBank_gbtBankRst/gbtResetTx_from_generalRstFsm_reg]
+
+set_multicycle_path -setup -from [get_cells {FitGbtPrg/Data_Packager_comp/Event_Selector_comp/fromcru_dec_orbit_ff_reg[*]}] -to [get_cells  FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_sending_packet_ff_reg] 7
+set_multicycle_path -hold -end -from [get_cells {FitGbtPrg/Data_Packager_comp/Event_Selector_comp/fromcru_dec_orbit_ff_reg[*]}] -to [get_cells FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_sending_packet_ff_reg] 6
 
 # RX Sync comp -------------------------------------
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_ffsc_reg[*]}] 3.000
