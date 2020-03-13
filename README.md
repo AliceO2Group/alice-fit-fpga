@@ -31,7 +31,12 @@ Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
 
 ### FIT/FT0/TCM
 
-     cd alice-fit-fpga/firmware/FT0/PM
+     cd alice-fit-fpga/firmware/FT0/TCM
+     vivado -mode batch -source make.tcl 
+
+### FIT/FT0/FTM
+
+     cd alice-fit-fpga/firmware/FT0/FTM
      vivado -mode batch -source make.tcl 
 
 ----
