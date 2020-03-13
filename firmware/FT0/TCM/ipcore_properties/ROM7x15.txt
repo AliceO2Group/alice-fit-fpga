@@ -7,7 +7,7 @@ CONFIG.Algorithm                                   string  false      Minimum_Ar
 CONFIG.Assume_Synchronous_Clk                      string  false      false
 CONFIG.Byte_Size                                   string  false      9
 CONFIG.CTRL_ECC_ALGO                               string  false      NONE
-CONFIG.Coe_File                                    string  false      ../../ip/ROM7x15/div7x14.coe
+CONFIG.Coe_File                                    string  false      ../../../ip/ROM7x15/div7x14.coe
 CONFIG.Collision_Warnings                          string  false      ALL
 CONFIG.Component_Name                              string  false      ROM7x15
 CONFIG.Disable_Collision_Warnings                  string  false      true
