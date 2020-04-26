@@ -20,7 +20,7 @@ set_false_path -through [get_pins ipbus_module/clocks/rst_reg/Q]
 create_clock -period 5.000 -name USER_CLK_P -waveform {0.000 2.500} [get_ports USER_CLK_P]
 
 create_clock -period 25.000 -name FMC_HPC_DATACLK [get_ports FMC_HPC_clk_A_p]
-#create_clock -period 25.000 -name CLK40IN [get_ports FMC_HPC_clk_A_p]
+create_clock -period 25.000 -name CLK40_PM [get_ports CLKPM_P]
 
 create_clock -period 5.000 -name FMC_HPC_REFCLK [get_ports FMC_HPC_clk_200_p]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets FMC_HPC_clk_200_p]
@@ -41,7 +41,7 @@ set_clock_groups -name ASYNC_CLOCKS -asynchronous -group [get_clocks -include_ge
 												  -group [get_clocks -include_generated_clocks eth_refclk]\
 												  -group [get_clocks -include_generated_clocks ipbus_module/eth/phy/U0/transceiver_inst/gtwizard_inst/U0/gtwizard_i/gt0_GTWIZARD_i/gtxe2_i/TXOUTCLK]\ 
 												  -group [get_clocks -include_generated_clocks ipbus_module/eth/phy/U0/transceiver_inst/gtwizard_inst/U0/gtwizard_i/gt0_GTWIZARD_i/gtxe2_i/RXOUTCLK]\ 
-												  -group [get_clocks -include_generated_clocks {FMC_HPC_REFCLK FMC_HPC_DATACLK}]
+												  -group [get_clocks -include_generated_clocks {FMC_HPC_REFCLK FMC_HPC_DATACLK CLK40_PM}]
 
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks eth_refclk] -group [get_clocks -include_generated_clocks FMC_HPC_DATACLK]
 
@@ -134,6 +134,9 @@ set_property IOB TRUE [get_cells  Laser_Signal_out_reg]
 set_property IOB TRUE [get_cells -hierarchical {TDi_reg[?]}]
 set_property IOB TRUE [get_cells {PM_T??_reg}]
 set_property ASYNC_REG TRUE [get_cells -hierarchical {rd_lock0_reg rd_lock1_reg}]
+
+set_property ASYNC_REG TRUE [get_cells {PM_req0_reg PM_req1_reg}]
+set_property ASYNC_REG TRUE [get_cells {rq_irq0_reg rq_irq1_reg}]
 
 set_max_delay -datapath_only -from [get_clocks *] -to [get_ports {{LA[*]} GPIO_LED_*}] 15.000
 
