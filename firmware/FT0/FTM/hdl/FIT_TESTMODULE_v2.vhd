@@ -188,7 +188,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal HDMI0_P, HDMI0_N, HDMI0_o : std_logic_vector(3 downto 0);
     signal HDMI0_d, HDMI0_s : std_logic_vector(31 downto 0);
     signal HDMI_clkout_320 : std_logic;
-    signal rd_status, hdmi_ready : std_logic;
+    signal rd_status, st_rq, st_rq_cmd, hdmi_ready, PM_req, PM_req0, PM_req1, PM_req2, PM_rq, rq_irq0, rq_irq1, rq_irq2, rq_irq : std_logic;
 	
 -- TEST Module signals
 	signal FSM_Clocks_signal : FSM_Clocks_type;
@@ -196,12 +196,13 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal TESTM_control : CONTROL_REGISTER_type;
 	signal Laser_Signal_out, Laser_Signal_out_ff : std_logic;
 	
-	signal tt0_p, tt0_n, tt1_p, tt1_n, ta0_p, ta0_n, ta1_p, ta1_n, PM_TT0, PM_TT1, PM_TA0, PM_TA1, CLK_PM  : std_logic;
+	signal tt0_p, tt0_n, tt1_p, tt1_n, ta0_p, ta0_n, ta1_p, ta1_n, PM_TT0, PM_TT1, PM_TA0, PM_TA1, CLK_PM, CLK_PMi  : std_logic;
 	signal tcm_sel, tcm_sck, tcm_miso, tcm_mosi, pm_spi_rdy, tcm_sc_rdy, clk320_tcm, pm_sel, pm_sck, pm_miso, pm_mosi : std_logic;
     signal cnt_rd, t40, t40_0, t40_1 : std_logic;
     signal TCM_bitcnt : std_logic_vector(2 downto 0);
     signal TAmpl, TTime : std_logic_vector(13 downto 0);
     signal T_cnt : std_logic_vector(15 downto 0);
+    signal B_cnt : std_logic_vector(16 downto 0);
     signal Nchan : std_logic_vector(3 downto 0);
     signal T0, T1, A0, A1 : std_logic_vector(7 downto 0);
 	
@@ -288,7 +289,8 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
               Dready : out STD_LOGIC;
               rd_lock : in STD_LOGIC;
               DATA_OUT : out STD_LOGIC_VECTOR (31 downto 0);
-              status :  out STD_LOGIC_VECTOR (31 downto 0)
+              status :  out STD_LOGIC_VECTOR (31 downto 0);
+              PM_req : out STD_LOGIC
               );
    end component;
    
@@ -448,9 +450,13 @@ TA1i_buf: obufds generic map (IOSTANDARD => "LVDS_25")
            port map (I=> PM_TA1, O=> PM_TA1_P, OB=> PM_TA1_N);
 
 CLKi_buf: ibufds_diff_out generic map (DIFF_TERM =>TRUE,  IBUF_LOW_PWR => FALSE, IOSTANDARD => "LVDS_25")
-          port map (O=> CLK_PM, OB=> open, I=> CLKPM_P, IB => CLKPM_N);
+          port map (O=> CLK_PMi, OB=> open, I=> CLKPM_P, IB => CLKPM_N);
 
 TCM_PLL : TCM_PLL320 port map (clk_out1 => clk320_TCM, reset => RESET, locked => open, clk_in1 => CLK_PM);
+
+MCLKB1: BUFG 
+      port map (O => CLK_PM, I => CLK_PMi);
+
 
  process (CLK_PM)
   begin
@@ -460,25 +466,47 @@ TCM_PLL : TCM_PLL320 port map (clk_out1 => clk320_TCM, reset => RESET, locked =>
   end process;
 
 TAmpl<= std_logic_vector(to_signed(500, 14));
-TTime<= std_logic_vector(to_signed(100, 14));
+TTime(12 downto 0)<= std_logic_vector(to_signed(100, 13));
 Nchan<= std_logic_vector(to_unsigned(2, 4));
+
+TTime(13)<='1' when (B_cnt=0) else '0'; 
 
  process (CLK320_TCM)
   begin
   if (CLK320_TCM'event and CLK320_TCM='1') then
+  
+  rq_irq2<=rq_irq1; rq_irq1<=rq_irq0; rq_irq0<=st_rq_cmd;
+  
+  if (rq_irq2='0') and (rq_irq1='1') and (rq_irq='0') then rq_irq<='1'; end if;
+  
   t40_1<=t40_0; t40_0<=t40;
   if (t40_1/=t40_0) then TCM_bitcnt<="000"; 
   else TCM_bitcnt<= TCM_bitcnt+1; end if;
   
   if (TCM_bitcnt="000") then
-   if (T_cnt=0) then T_cnt<=std_logic_vector(to_unsigned(39999, 16));
+  
+if (T_cnt/=0) and (B_cnt/=0) then 
+      T1<=x"02"; A0<=x"02"; A1<=x"02";
+     if (rq_irq='0') then T0<=x"02"; else T0<=x"00"; rq_irq<='0'; end if;  
+else   
+   if (T_cnt=0) then
         T0<=TTime(12) &TTime(10) &TTime(8) &TTime(6) &TTime(4) &TTime(2) & TTime(0) & Nchan(0);
         T1<=TTime(13) &TTime(11) &TTime(9) &TTime(7) &TTime(5) &TTime(1) & TTime(1) & Nchan(1);
         A0<=TAmpl(12) &TAmpl(10) &TAmpl(8) &TAmpl(6) &TAmpl(4) &TAmpl(2) & TAmpl(0) & Nchan(2);
         A1<=TAmpl(13) &TAmpl(11) &TAmpl(9) &TAmpl(7) &TAmpl(5) &TAmpl(1) & TAmpl(1) & Nchan(3);
-      else T_cnt<=T_cnt-1; 
-        T0<=x"02"; T1<=x"02"; A0<=x"02"; A1<=x"02";
-    end if;
+     else
+      T0<=x"01"; T1<=x"80"; A0<=x"01"; A1<=x"01";
+   end if;
+ end if;
+
+   if (T_cnt=0) then T_cnt<=std_logic_vector(to_unsigned(39999, 16));
+      else T_cnt<=T_cnt-1;
+   end if; 
+    
+    if (B_cnt=0) then B_cnt<=std_logic_vector(to_unsigned(59999, 17));
+     else B_cnt<=B_cnt-1;
+    end if; 
+    
   else 
   
   T0<='0'& T0(7 downto 1); T1<='0'& T1(7 downto 1); A0<='0'& A0(7 downto 1); A1<='0'& A1(7 downto 1);
@@ -568,7 +596,8 @@ HDMI0: tcm_sync
       
       rd_lock=>rd_status,
       DATA_OUT=> HDMI0_d, -- to fifo
-      status => HDMI0_s
+      status => HDMI0_s,
+      PM_req => PM_req
   );
   
  LAI(7) <= hdmi_ready;
@@ -589,9 +618,9 @@ HDMI0: tcm_sync
 
 sfp_rate_sel(1 downto 0) <= B"00";
 mac_addr <= X"020ddba11504"; -- Careful here, arbitrary addresses do not always work
-ip_addr <= X"ac144baf"; -- 172.20.75.175
+--ip_addr <= X"ac144baf"; -- 172.20.75.175
 --ip_addr <= X"ac144b5f"; -- 172.20.75.95
---ip_addr <= X"c0a80029"; -- 192.168.0.41  
+ip_addr <= X"c0a80029"; -- 192.168.0.41  
 
 
 ipbus_module:  entity work.kc705_basex_infra port map(
@@ -633,12 +662,29 @@ ipb_data_out<=ipb_out.ipb_wdata; ipb_addr<=ipb_out.ipb_addr;
 
 ipb_str<=ipb_out.ipb_strobe; ipb_wr<= ipb_out.ipb_write; 
 
-rd_status<= '1' when (bus_select(4)='1') and (ipb_addr(4 downto 0)="00000") and (ipb_wr='0') else '0'; 
+rd_status <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"00") and (ipb_wr='0') else '0';
+st_rq  <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") else '0'; 
+st_rq_cmd  <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") and (ipb_wr='1') and (ipb_data_out(1)='1') else '0'; 
+
+ process (ipb_clk)
+  begin
+  if (ipb_clk'event and ipb_clk='1') then
+  
+PM_req2<=PM_req1;  PM_req1<=PM_req0; PM_req0<=PM_req;
+if (PM_req2='0') and (PM_req1='1') then PM_rq<='1';
+ else
+  if (st_rq='1') and (ipb_wr='0') then PM_rq<='0'; end if;
+end if;
+  
+  end if;
+  end process;
 
 
-with ipb_addr(4 downto 0) select
-loc_data<=   HDMI0_s when "00000",
-             HDMI0_d when "00001",
+
+with ipb_addr(8 downto 0) select
+loc_data<=   HDMI0_s when '0' & x"00",
+             HDMI0_d when '0' & x"01",
+             x"0000000" & "000" & PM_rq when '0' & x"02",
              x"00000000" when others;
 
 

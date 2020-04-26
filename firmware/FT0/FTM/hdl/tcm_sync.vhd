@@ -47,7 +47,8 @@ entity tcm_sync is
            Dready : out STD_LOGIC;
            rd_lock : in STD_LOGIC;
            DATA_OUT : out STD_LOGIC_VECTOR (31 downto 0);
-           status :  out STD_LOGIC_VECTOR (31 downto 0)
+           status :  out STD_LOGIC_VECTOR (31 downto 0);
+           PM_req : out STD_LOGIC
            );
 end tcm_sync;
 
@@ -72,7 +73,7 @@ signal sig_loss_cou0, sig_loss_cou1, sig_loss_cou2, sig_loss_cou3  : STD_LOGIC_V
 signal sig_stable_cou0, sig_stable_cou1, sig_stable_cou2, sig_stable_cou3 : STD_LOGIC_VECTOR (5 downto 0);
 signal bit_cou, TD_pos, TD_nbt, TD_bpos, TD_bpos_0  : STD_LOGIC_VECTOR (2 downto 0);
 signal trig_data, status_bits  : STD_LOGIC_VECTOR (31 downto 0);
-signal DValid : STD_LOGIC;
+signal DValid, PM_req0, PM_req1 : STD_LOGIC;
 
 
 component MMCM320_PH
@@ -101,6 +102,7 @@ begin
 
 rdy<=done;  bitcnt<=bit_cou; status<=status_bits; Dready<=Dvalid;
 clkout<=CLK320; clkout_90<=CLK320_90; TDO<=TDi; pllrdy<=not clk_unst; DATA_OUT<=trig_data;
+PM_req<=PM_req0 or PM_req1;
 
 IDL0P : IDELAYE2
    generic map (
@@ -288,7 +290,7 @@ ISERDES4 : ISERDESE2
       SHIFTIN1 => '0',  SHIFTIN2 => '0' 
    );
 
-process(CLKA, RST)
+process(CLKA, RST, lock)
 begin
 if (RST='1') or (lock ='0') then srst<='1'; rstcount<="0000"; else
 if (CLKA'event) and (CLKA='1') then
@@ -301,7 +303,8 @@ end process;
 process (CLK320)
 begin
 if (CLK320'event and CLK320='1') then
-  
+
+ 
     sample0(7 downto 4)<=sample0(3 downto 0); sample1(7 downto 4)<=sample1(3 downto 0); sample2(7 downto 4)<=sample2(3 downto 0); sample3(7 downto 4)<=sample3(3 downto 0);
    
     dl_inc1<=el1; dl_inc2<=el2; dl_inc3<=el3; ph_inc<=el0;
@@ -390,8 +393,23 @@ if (CLK320'event and CLK320='1') then
   
    if (bit_cou="010") then
       trig_data<=TT3sr(7) & TT2sr(7) & TT3sr(6) & TT2sr(6) & TT3sr(5) & TT2sr(5) & TT3sr(4) & TT2sr(4) & TT3sr(3) & TT2sr(3) & TT3sr(2) & TT2sr(2) & TT3sr(1) & TT2sr(1) & TT1sr(7) & TT0sr(7) & TT1sr(6) & TT0sr(6) & TT1sr(5) & TT0sr(5) & TT1sr(4) & TT0sr(4) & TT1sr(3) & TT0sr(3) & TT1sr(2) & TT0sr(2) & TT1sr(1) & TT0sr(1) & TT3sr(0) & TT2sr(0) & TT1sr(0) & TT0sr(0); 
-       if (TD_eq and TD_bits and link_ok)='1' then TD_idle<='1'; TD_bpos<=TD_pos; TD_bpos_0<=TD_bpos; 
-          else TD_idle<='0'; end if;
+      if (TD_eq and TD_bits and link_ok)='1' then TD_idle<='1'; TD_bpos<=TD_pos; TD_bpos_0<=TD_bpos; 
+          else TD_idle<='0'; 
+      end if;
+         
+      if (done='1')  then
+        if (((TD_eq and TD_bits)='0') or (TD_bpos/="001")) and ((TT3sr(0) or TT2sr(0) or TT1sr(0) or TT0sr(0))='0') then 
+            if (PM_req0='0') and ((TT3sr(1) and TT2sr(1) and TT1sr(1))='1') and (TT0sr(1)='0') then PM_req0<='1';
+               else sync_err0<= '1';
+            end if;
+         end if;
+        else sync_err0<='0';
+      end if;
+      
+      if (PM_req0='1') then PM_req0<='0'; end if;
+      
+      PM_req1<=PM_req0;
+      
    end if;
    
    if (done='1') and (bit_cou="010") and (TT3sr(0) or TT2sr(0) or TT1sr(0) or TT0sr(0))='1' then Dvalid<='1'; 
@@ -409,9 +427,7 @@ if (CLK320'event and CLK320='1') then
    
    if (bit_cou="100") and (idle_cou="111111") and (done='0') then bit_cou<="110"-TD_bpos;  
      else bit_cou<=bit_cou+1; end if;
-      
- if (((TD_eq and TD_bits)='0') or (TD_bpos/="001")) and (bit_cou="010") and (done='1') and (TT3sr(0) or TT2sr(0) or TT1sr(0) or TT0sr(0))='0'  then sync_err0<= '1'; else sync_err0<= '0'; end if;
-   
+    
 end if;
 end process;
 
