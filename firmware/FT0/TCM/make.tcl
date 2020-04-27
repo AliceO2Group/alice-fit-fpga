@@ -120,6 +120,8 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
+ [file normalize "${origin_dir}/hdl/counter32.vhd" ]\
+ [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm.vhd" ]\
  [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
  [file normalize "${origin_dir}/hdl/cnt_ctrl.vhd" ]\
