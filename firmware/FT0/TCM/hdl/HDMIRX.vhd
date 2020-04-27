@@ -61,7 +61,8 @@ entity hdmirx is
            mast_dl_err : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
            dly_ctrl_ena : in  STD_LOGIC;
-           syn_err : out  STD_LOGIC
+           syn_err : out  STD_LOGIC;
+           PM_req : out STD_LOGIC
            );
 end hdmirx;
 
@@ -87,7 +88,7 @@ signal TDV, TDS : STD_LOGIC_VECTOR (7 downto 0);
 signal idle_cou  : STD_LOGIC_VECTOR (5 downto 0);
 signal TD_pos, TD_nbt, TD_bpos, TD_bpos_0  : STD_LOGIC_VECTOR (2 downto 0);
 signal trig_data, status_bits  : STD_LOGIC_VECTOR (31 downto 0);
-signal TD_bpstable, dis, sync_err : STD_LOGIC;
+signal TD_bpstable, dis, sync_err, PM_req0, PM_req1 : STD_LOGIC;
 
 attribute IODELAY_GROUP : STRING;
 
@@ -95,7 +96,9 @@ attribute IODELAY_GROUP : STRING;
 begin
 
 link_rdy<= l_rdy; status<=status_bits; bitpos<=TD_bpos; bitpos_ok<=bitpos_ok_i; dl_low<=dl_low1; dl_high<=dl_high1; syn_err<=sync_err;
-DATA_OUT<=trig_data; ena_ph<=dl_ce0; inc_ph<= dl_inc0; is_idle<= TD_idle; bp_stable<= TD_bpstable; mast_stable<=mast_stable_i or (not master); 
+DATA_OUT<=trig_data; ena_ph<=dl_ce0; inc_ph<= dl_inc0; is_idle<= TD_idle; bp_stable<= TD_bpstable; mast_stable<=mast_stable_i or (not master);
+
+PM_req<=PM_req0 or PM_req1; 
  
 TDO<=TDO_i;  
 
@@ -229,7 +232,21 @@ if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
 
        if (TD_eq and TD_bits and l_rdy)='1' then TD_idle<='1'; TD_bpos<=TD_pos; TD_bpos_0<=TD_bpos; 
            else TD_idle<='0'; end if;
-   end if;
+ 
+     if ((trig_ena and ena)='1')  then
+        if (((TD_eq and TD_bits)='0') or (TD_bpos/="001")) and ((TTsr(3)(0) or TTsr(2)(0) or TTsr(1)(0) or TTsr(0)(0))='0') then 
+           if (PM_req0='0') and ((TTsr(3)(1) and TTsr(2)(1) and TTsr(1)(1))='1') and (TTsr(0)(1)='0') then PM_req0<='1';
+                 else sync_err<= '1';
+            end if;
+          end if;
+         else sync_err<='0';
+        end if;
+                 
+       if (PM_req0='1') then PM_req0<='0'; end if;
+               
+       PM_req1<=PM_req0;     
+         
+     end if;
 
    if (mt_cou="011") then
        if (TD_idle='1') then 
@@ -239,9 +256,7 @@ if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
         end if;
    end if;
 
-
-if (((TD_eq and TD_bits)='0') or (TD_bpos/="001")) and (mt_cou="010") and ((ena and trig_ena)='1') and (TTsr(3)(0) or TTsr(2)(0) or TTsr(1)(0) or TTsr(0)(0))='0' then sync_err<='1'; else sync_err<='0'; end if;
-   
+  
 end if;
 end process;
 

@@ -140,7 +140,10 @@ entity tcm is
        ETH_RX_P : in  STD_LOGIC;
        ETH_RX_N : in  STD_LOGIC;
        ETH_TX_P : out  STD_LOGIC;
-       ETH_TX_N : out  STD_LOGIC
+       ETH_TX_N : out  STD_LOGIC;
+       FSEL : out  STD_LOGIC;
+       FMOSI : out  STD_LOGIC;
+       FMISO : in  STD_LOGIC 
         );
 end tcm;
 
@@ -148,15 +151,17 @@ architecture RTL of tcm is
 
 type spi_arr is array (19 downto 0) of std_logic_vector (31 downto 0);
 type Tout_arr is array (4 downto 0) of std_logic_vector (31 downto 0);
+type cou_arr is array (14 downto 0) of std_logic_vector (31 downto 0);
 type rdout_conf_arr is array (11 downto 0) of std_logic_vector (31 downto 0);
 type rdout_stat_arr is array (7 downto 0) of std_logic_vector (31 downto 0);
 
 signal HDMIA_P, HDMIA_N, HDMIC_P, HDMIC_N, TDA_P, TDA_N, TDC_P, TDC_N  : HDMI_trig;
 signal TDA, TDC, TDC0, TDC1, TDC2 : Trgdat;
-signal hdmia_config, hdmic_config, Status_A, Status_C, f_out, f_inp, l_mode, l_patt0, l_patt1, Orbit_ID : STD_LOGIC_VECTOR (31 downto 0);
+signal hdmia_config, hdmic_config, Status_A, Status_C, f_out, f_inp, l_mode, l_patt0, l_patt1, Orbit_ID, flash_data_out : STD_LOGIC_VECTOR (31 downto 0);
 signal trig_mod: STD_LOGIC_VECTOR (14 downto 0);
 signal trg_r_wr : STD_LOGIC_VECTOR (4 downto 0);
-signal trg_r, count_r : Tout_arr;
+signal trg_r : Tout_arr;
+signal count_r : cou_arr;
 signal Tout_sel, Tmode_sel : STD_LOGIC;
 signal CLK320A, CLK320C, Vertex, Vertex_0, OrA_i, OrC_i, OrA,S, OrC, SC, SC_0, C, C_0, B_rdy, B_rdy0, B_rdy1, B_rdy2, B_rdy3, OrC_B, OrC_B0, OrC_B1, OrC_B2, reset, rsti, lasi, irqi, mgtclk, clka, clkc : STD_LOGIC;
 signal clksys40 : std_logic;
@@ -164,7 +169,8 @@ signal CSi, MOSIi, MISOi, SCKi :  STD_LOGIC;
 signal bitcnt_A, bitcnt_C, Tcnt_cnt : STD_LOGIC_VECTOR (2 downto 0);
 signal Thigh : STD_LOGIC_VECTOR (8 downto 0);
 signal Tlow : STD_LOGIC_VECTOR (8 downto 0);
-signal selai, selci, sckai, sckci, mosiai, mosici, misoai, misoci  : STD_LOGIC_VECTOR (9 downto 0);
+signal selai, selci, sckai, sckci, mosiai, mosici, misoai, misoci, reqA, reqC, reqA2, reqA1, reqA0, reqC2, reqC1, reqC0 : STD_LOGIC_VECTOR (9 downto 0);
+signal PM_rq : STD_LOGIC_VECTOR (19 downto 0);
 signal spi_bit_count : STD_LOGIC_VECTOR (4 downto 0);
 signal spi_addr, spi_wr_addr : STD_LOGIC_VECTOR (8 downto 0);
 signal spi_rd, spi_wr_rdy, spi_wr0, spi_wr1, spi_wr2, spi_wr_req, spi_na, rd_lock_spi : STD_LOGIC;
@@ -199,7 +205,7 @@ signal hdmiac_select, hdmicc_select, hdmias_select, hdmics_select, pll_lock_a, p
 signal dly_rst, cnt_rd, pm_adr_sel, pm_rdy, cnt_ctrl_sel, cnt_ctrl_rdy, ipb_locked, cnt_clr, cnt_lock, Tcnt_sel, Tcnt_0_rd, cnt_lock0, cnt_lock1, cnt_lock2, Tcnt_clr, cnt_clr0, cnt_clr1, cnt_clr2, Tcnt_ack, Tcnt_err : STD_LOGIC;
 signal fifo_sel, fifo_csel, f_rd, f_empty, f_wr, f_full, lclk160, lmode_sel, lpatt0_sel, lpatt1_sel, l_on, l_on0, l_on1, l_tg1, l_tg, l_fbin, l_fbout, a_t, a0_t : STD_LOGIC;
 signal l_cnt : STD_LOGIC_VECTOR (1 downto 0);
-signal f_cnt : STD_LOGIC_VECTOR (7 downto 0);
+signal f_cnt : STD_LOGIC_VECTOR (9 downto 0);
 signal spi_bus_in : spi_arr; 
 signal pm_select, pm_rdy_a : STD_LOGIC_VECTOR (19 downto 0);
 signal lpatt_cnt, Nchan_A, Nchan_C, Nchan_C0, Nchan_C1, Nchan_C2 : STD_LOGIC_VECTOR (6 downto 0);
@@ -214,6 +220,7 @@ signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_
 signal readout_conf :  cntr_reg_addrreg_type;
 signal readout_stat :  status_reg_addrreg_type;
 signal New_BCID : STD_LOGIC;
+signal las_o, flshreg_sel, bkgndA, bkgndC, bkgndC0, bkgndC1, bkgndC2, bgA_inc, bgC_inc, bgOr, bgAnd, orA_str, orA_cnt, orC_cnt, Or_or, Or_and, Bg_Aclr, Bg_Cclr, Bg_Orclr, Bg_Andclr : STD_LOGIC;
 
 component tcm_side is
  Port (CLKA : in STD_LOGIC;
@@ -237,7 +244,9 @@ component tcm_side is
         Time_o : out STD_LOGIC_VECTOR (15 downto 0);
         Ampl_o : out STD_LOGIC_VECTOR (17 downto 0);
         Avg_o : out STD_LOGIC_VECTOR (13 downto 0);
-        Nchan : out STD_LOGIC_VECTOR (6 downto 0)
+        Nchan : out STD_LOGIC_VECTOR (6 downto 0);
+        req : out STD_LOGIC_VECTOR (9 downto 0);
+        bkgnd : out STD_LOGIC 
         );
 end component;
 
@@ -303,6 +312,31 @@ end component;
          -- RX_errors : out  STD_LOGIC
          -- );
 -- end component;
+
+  component FLASH
+     PORT (
+    rst : IN STD_LOGIC;
+    clk : IN STD_LOGIC;
+    data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    data_out : out STD_LOGIC_VECTOR(31 DOWNTO 0);
+    A : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+    wr_flshreg : IN STD_LOGIC;
+    rd_flshreg : IN STD_LOGIC;
+    flshreg_sel : IN STD_LOGIC;
+    FSEL : out  STD_LOGIC;
+    FMOSI : out  STD_LOGIC;
+    FMISO : in  STD_LOGIC
+     );
+  END COMPONENT;
+
+component counter32
+ Port (clk320 : in STD_LOGIC;
+       cout : out STD_LOGIC_VECTOR (31 downto 0);
+       rd : in STD_LOGIC;
+       clr : in STD_LOGIC;
+       inc : in STD_LOGIC
+       );
+end component;        
 
 
 
@@ -442,7 +476,7 @@ END COMPONENT;
         );
    end component;
    
-   COMPONENT TCM_CNT_FIFO
+   COMPONENT COUNTER_FIFO
      PORT (
        clk : IN STD_LOGIC;
        srst : IN STD_LOGIC;
@@ -452,7 +486,7 @@ END COMPONENT;
        dout : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
        full : OUT STD_LOGIC;
        empty : OUT STD_LOGIC;
-       data_count : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+       data_count : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
      );
    END COMPONENT;
    
@@ -637,6 +671,8 @@ ipbus_module:  IPBUS_basex_infra port map(
     locked=>ipb_locked
 );
 
+fl_upg: FLASH port map (rst=>ipb_rst, clk  => ipb_clk, data_in =>ipb_data_out, data_out =>flash_data_out, A =>ipb_addr(1 downto 0), wr_flshreg =>ipb_iswr, rd_flshreg  =>ipb_isrd, flshreg_sel=>flshreg_sel, FSEL =>FSEL, FMOSI =>FMOSI, FMISO =>FMISO); 
+
 TX_CLK<=CLKA;
 
 
@@ -810,11 +846,11 @@ end generate;
 
 cnt_ctr:   cnt_ctrl  Port map ( CLK => ipb_clk, RST  => ipb_rst, DI => ipb_data_out, DO => cnt_ctrl_data, A => ipb_addr(3 downto 0), wr => ipb_iswr, rd => ipb_isrd, cs => cnt_ctrl_sel, rdy => cnt_ctrl_rdy, cnt_rd => cnt_rd);		
                     
-Tfifo: TCM_CNT_FIFO  PORT MAP (clk => ipb_clk, srst => ipb_rst , din =>f_inp ,  wr_en =>f_wr , rd_en =>f_rd , dout =>f_out , full =>f_full , empty =>f_empty , data_count => f_cnt );
+Tfifo: COUNTER_FIFO  PORT MAP (clk => ipb_clk, srst => ipb_rst , din =>f_inp ,  wr_en =>f_wr , rd_en =>f_rd , dout =>f_out , full =>f_full , empty =>f_empty , data_count => f_cnt );
 
 f_rd<= fifo_sel and (not f_empty); 
-f_wr<= '1' when (Tcnt_cnt/=5) and (f_full='0') else '0';
-f_inp<= count_r(to_integer(unsigned(Tcnt_cnt))) when (Tcnt_cnt/=5) else (others=>'0');
+f_wr<= '1' when (Tcnt_cnt/=15) and (f_full='0') else '0';
+f_inp<= count_r(to_integer(unsigned(Tcnt_cnt))) when (Tcnt_cnt/=15) else (others=>'0');
 
 tcmx_select <= ipb_str when ipb_addr(31 downto 3)= x"0000000" & '0' else '0';
 tcmr_select <= ipb_str when ipb_addr(31 downto 3)= x"0000000" & '1' else '0';
@@ -828,10 +864,11 @@ hdmicc_select  <= ipb_str when ipb_addr(31 downto 0)= x"0000003A"  else '0';
 cnt_ctrl_sel  <= ipb_str when ipb_addr(31 downto 4)= x"0000005"  else '0';
 Tout_sel <= ipb_str when (ipb_addr(31 downto 4)= x"0000006") and (ipb_addr(3 downto 0)<x"A") else '0';
 Tmode_sel <= ipb_str when ipb_addr(31 downto 0)= x"0000006A"  else '0';
-Tcnt_sel <= ipb_str when (ipb_addr(31 downto 3)= x"0000006" & '1') and (ipb_addr(2 downto 0)>2)  else '0';
-Tcnt_0_rd <= ipb_str when (ipb_addr(31 downto 0)= x"0000006B") and (ipb_isrd='1')  else '0';
+Tcnt_sel <= ipb_str when (ipb_addr(31 downto 4)= x"0000007") and (ipb_addr(3 downto 0)<=x"E")  else '0';
+Tcnt_0_rd <= ipb_str when (ipb_addr(31 downto 0)= x"00000070") and (ipb_isrd='1')  else '0';
 rdoutc_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000D8") and (ipb_addr(31 downto 0)<= x"000000E7")  else '0';
 rdouts_sel <= ipb_str when (ipb_addr(31 downto 0)>= x"000000E8") and (ipb_addr(31 downto 0)<= x"000000f7")  else '0';
+flshreg_sel <= ipb_str when (ipb_addr(31 downto 2)= x"000000F" & "10") else '0';
 fifo_sel <= ipb_str when (ipb_addr(31 downto 0)= x"00000100") and (ipb_isrd='1')  else '0';
 fifo_csel <= ipb_str when (ipb_addr(31 downto 0)= x"00000101") and (ipb_isrd='1')  else '0';
 pm_adr_sel <= ipb_str when (ipb_addr(31 downto 14)= 0) and (ipb_addr(13 downto 9)/=0) and (ipb_addr(13 downto 9)<=20) else '0' ;
@@ -856,7 +893,7 @@ pm_rdy<=pm_rdy_a(to_integer(unsigned(ipb_addr(14 downto 9)))-1);
 
 ipb_in.ipb_ack<= tcmx_ack when (tcmx_select='1') 
 else tcmr_ack when (tcmr_select='1')
-else '1' when (hdmiac_select='1') or (hdmicc_select='1')
+else '1' when (hdmiac_select='1') or (hdmicc_select='1') or (flshreg_sel='1') 
 else hdmis_ack when (hdmias_select='1') or (hdmics_select='1')
 else cnt_ctrl_rdy when (cnt_ctrl_sel='1')
 else pm_rdy when (pm_adr_sel='1')
@@ -887,8 +924,9 @@ else count_r(to_integer(unsigned(ipb_addr(2 downto 0)))-3) when (Tcnt_sel='1') a
 else readout_conf(to_integer(unsigned(ipb_addr(5 downto 0)))-16#18#) when (rdoutc_sel='1') and (ipb_isrd='1')
 else readout_stat(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#) when (rdouts_sel='1') and (ipb_isrd='1')
 else f_out when (fifo_sel='1')
-else x"000000" & f_cnt when (fifo_csel='1')
+else x"00000" & "00" & f_cnt when (fifo_csel='1')
 else spi_bus_in(to_integer(unsigned(ipb_addr(13 downto 9)))-1) when (pm_adr_sel='1') and (ipb_isrd='1')
+else flash_data_out when (flshreg_sel='1')  and (ipb_isrd='1')
 else (others =>'0'); 
 
 with ipb_addr(2 downto 0) select 
@@ -899,7 +937,7 @@ local_reg_rd<= x"0000" & std_logic_vector(resize(signed(Tlow),16)) when "000",
                x"0000" & C_A when "100",
                x"0000" & C_C when "101",
                x"0000" & x"000" & Tmode when "110",
-               x"00000" &  RST_req & "0" & gbt_glabal_status & GBTRXerr_ipb & GBTRX_ready & '0' & rst_fl & pll_lock_c & pll_lock_a when "111";
+               PM_rq & RST_req & "0" & gbt_glabal_status & GBTRXerr_ipb & GBTRX_ready & '0' & rst_fl & pll_lock_c & pll_lock_a when "111";
  
 Tcnt_clr<= ipb_str when (ipb_addr(31 downto 0)= x"0000000F") and (ipb_iswr='1') and (ipb_data_out(9)='1') else '0';
 
@@ -980,10 +1018,10 @@ end if;
 end process;
 
 tcma: tcm_side port map(CLKA=>CLKA,  RST=>reset, SRST=>sreset, TD_P=>TDA_P, TD_N=>TDA_N, Config=>hdmia_config, Status=>Status_a, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrA, stat_chg=>as_chg, side_OK=>sideA_OK, TDD=>TDA, rd_lock=> rd_lock_a,
-                         Or_o=>OrA_i, CLK320_o=>CLK320A, clksys40_o => clksys40, pll_lock=> pll_lock_a, mt_cou_o=>bitcnt_A, Time_o=>TimeA_o, Avg_o=>AvgA, Ampl_O=>AmplA, Nchan=> Nchan_A);
+                         Or_o=>OrA_i, CLK320_o=>CLK320A, clksys40_o => clksys40, pll_lock=> pll_lock_a, mt_cou_o=>bitcnt_A, Time_o=>TimeA_o, Avg_o=>AvgA, Ampl_O=>AmplA, Nchan=> Nchan_A, req=> reqA, bkgnd=> bkgndA);
 
 tcmc: tcm_side port map(CLKA=>CLKC,  RST=>reset, SRST=>sreset, TD_P=>TDC_P, TD_N=>TDC_N, Config=>hdmic_config, Status=>Status_C, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrC, stat_chg=>cs_chg, side_OK=>sideC_OK, TDD=>TDC0, rd_lock=> rd_lock_c, 
-                        Or_o=>OrC_B, CLK320_o=>CLK320C, clksys40_o=> open, pll_lock=> pll_lock_c, mt_cou_o=>bitcnt_c, Time_o=>TimeC_o, Avg_o=>AvgC, Ampl_o=>AmplC0, Nchan=> Nchan_C0);
+                        Or_o=>OrC_B, CLK320_o=>CLK320C, clksys40_o=> open, pll_lock=> pll_lock_c, mt_cou_o=>bitcnt_c, Time_o=>TimeC_o, Avg_o=>AvgC, Ampl_o=>AmplC0, Nchan=> Nchan_C0, req=> reqC, bkgnd=> bkgndC0);
 
 TresbM<=TimeC & "00000000000000";
 Tdiff<=TdiffM(22 downto 14);
@@ -1002,7 +1040,9 @@ process (SCKi, CSi)
 begin
 if (CSi='1') then spi_bit_count<="00000"; spibuf_wr<='0'; spi_wr_rdy<='0'; spibuf_rd<='0'; spi_na<='0';  else
 
-if (SCKi'event and SCKi='0') then 
+if (SCKi'event and SCKi='0') then MISOI<=SPI_DATA(15); end if;
+
+if (SCKi'event and SCKi='1') then 
         if (spi_bit_count="11111") then spi_bit_count<="10000"; spi_na<='1';
           if  (spi_rd='0') then spi_wr_data<=SPI_DATA(14 downto 0) & MOSII;  
             case to_integer(unsigned(spi_addr(7 downto 0))) is
@@ -1067,6 +1107,23 @@ irqi<=  dcs_irq or IPB_chg or GBT_chg or GBTRXerr or RST_req when (irq_cnt="11")
 process(ipb_clk)
 begin
 if (ipb_clk'event and ipb_clk='1') then
+
+for i in 0 to 9 loop 
+
+reqA2(i)<=reqA1(i);  reqA1(i)<=reqA0(i); reqA0(i)<=reqA(i);
+reqC2(i)<=reqC1(i);  reqC1(i)<=reqC0(i); reqC0(i)<=reqC(i);
+
+if (reqA2(i)='0') and (reqA1(i)='1') then PM_rq(i)<='1';
+ else
+  if (ipb_stat_rd='1') then PM_rq(i)<='0'; end if;
+end if;
+
+if (reqC2(i)='0') and (reqC1(i)='1') then PM_rq(i+10)<='1';
+ else
+  if (ipb_stat_rd='1') then PM_rq(i+10)<='0'; end if;
+end if;
+
+end loop; 
 
 GBTRX_ready0<=GBTRX_ready;
 IPB_rdy0<=ipb_leds(0);
@@ -1185,7 +1242,31 @@ C_SC  : trigger_out port map ( clk320 => clk320A,   T_in=>SC_0, T_out =>SC, mode
 C_FC : trigger_out port map ( clk320 => clk320A,   T_in=>C_0, T_out =>C, mode=>trig_mod(11 downto 9), ipb_clk=>ipb_clk, DI=>ipb_data_out, DO=>trg_r(3), CO=>count_r(3), A=>ipb_addr(0), wr=>trg_r_wr(3), c_rd=>cnt_lock, c_clr=>cnt_clr, mt_cnt=>bitcnt_A, T_r=>trigs(3));
 C_vertex : trigger_out port map ( clk320 => clk320A,   T_in=>Vertex_0, T_out =>Vertex, mode=>trig_mod(14 downto 12), ipb_clk=>ipb_clk, DI=>ipb_data_out, CO=>count_r(4), DO=>trg_r(4), A=>ipb_addr(0), wr=>trg_r_wr(4), c_rd=>cnt_lock, c_clr=>cnt_clr, mt_cnt=>bitcnt_A, T_r=>trigs(4));
         
+bgA_inc<= '1' when (bkgndA='1') and (bitcnt_A="011") else '0';
+bgC_inc<= '1' when (bkgndC='1') and (bitcnt_A="011") else '0';
+bgAnd<= bgA_inc and bgC_inc; 
+bgOr<= bgA_inc or bgC_inc;        
 
+orA_cnt<= '1' when (orA_str='1') and (bitcnt_A="011") else '0';
+orC_cnt<= '1' when (OrC_i='1') and (bitcnt_A="011") else '0';
+
+Or_or<= orA_cnt or orC_cnt;
+Or_and<= orA_cnt and orC_cnt;
+Bg_Aclr<= bgA_inc and not orA_cnt; 
+Bg_Cclr<= bgC_inc and not orC_cnt;
+Bg_Orclr<= Bg_Aclr or Bg_Cclr;
+Bg_Andclr<= Bg_Aclr and Bg_Cclr;
+
+cou_bA: counter32  port map (clk320=> clk320A, cout=> count_r(5), rd=> cnt_lock, clr=> cnt_clr, inc=> bgA_inc);
+cou_bC: counter32  port map (clk320=> clk320A, cout=> count_r(6), rd=> cnt_lock, clr=> cnt_clr, inc=> bgC_inc);
+cou_bAnd: counter32  port map (clk320=> clk320A, cout=> count_r(7), rd=> cnt_lock, clr=> cnt_clr, inc=> bgAnd);
+cou_bor: counter32  port map (clk320=> clk320A, cout=> count_r(8), rd=> cnt_lock, clr=> cnt_clr, inc=> bgOr);
+cou_oror: counter32  port map (clk320=> clk320A, cout=> count_r(9), rd=> cnt_lock, clr=> cnt_clr, inc=> Or_or);
+cou_orand: counter32  port map (clk320=> clk320A, cout=> count_r(10), rd=> cnt_lock, clr=> cnt_clr, inc=> Or_and);
+cou_AC: counter32  port map (clk320=> clk320A, cout=> count_r(11), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Aclr);
+cou_CC: counter32  port map (clk320=> clk320A, cout=> count_r(12), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Cclr);
+cou_orc: counter32  port map (clk320=> clk320A, cout=> count_r(13), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Orclr);
+cou_andc: counter32  port map (clk320=> clk320A, cout=> count_r(14), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Andclr); 
    
 Vertex_0<= '1' when ((signed(Tdiff)>=signed(Tlow)) and (signed(Tdiff)<=signed(Thigh)) and (OrA_i='1') and (OrC_i='1')) else '0';
          
@@ -1205,19 +1286,19 @@ process (CLK320A)
 
 B_rdy3<=B_rdy2; B_rdy2<=B_rdy1; B_rdy1<=B_rdy0; B_rdy0<=B_rdy;
 
-if (B_rdy1='1') and (B_rdy2='0') then TimeC1<=TimeC0; AmplC1<=AmplC0; OrC_B1<=OrC_B; Nchan_C1<=Nchan_C0; end if;
+if (B_rdy1='1') and (B_rdy2='0') then TimeC1<=TimeC0; AmplC1<=AmplC0; OrC_B1<=OrC_B; Nchan_C1<=Nchan_C0; bkgndC1<= bkgndC0; end if;
 if (B_rdy2='1') and (B_rdy3='0') then TDC1<=TDC0; end if;
 
 if (bitcnt_A="000") then 
 
     if (Tmode(0)='1') then 
-         if (B_rdy1='1') and (B_rdy2='0') then TimeC2<=TimeC0; AmplC2<=AmplC0; OrC_B2<=OrC_B; Nchan_C2<=Nchan_C0; 
-            else TimeC2<=TimeC1; AmplC2<=AmplC1; OrC_B2<=OrC_B1; Nchan_C2<=Nchan_C1;
+         if (B_rdy1='1') and (B_rdy2='0') then TimeC2<=TimeC0; AmplC2<=AmplC0; OrC_B2<=OrC_B; Nchan_C2<=Nchan_C0; bkgndC2<= bkgndC0; 
+            else TimeC2<=TimeC1; AmplC2<=AmplC1; OrC_B2<=OrC_B1; Nchan_C2<=Nchan_C1; bkgndC2<= bkgndC1;
             end if;
-       TimeC<=TimeC2; AmplC<=AmplC2; OrC_i<=OrC_B2; Nchan_C<=Nchan_C2;
+       TimeC<=TimeC2; AmplC<=AmplC2; OrC_i<=OrC_B2; Nchan_C<=Nchan_C2; bkgndC<= bkgndC2; 
        else 
-         if (B_rdy1='1') and (B_rdy2='0') then TimeC<=TimeC0; AmplC<=AmplC0; ORC_i<=OrC_B; Nchan_C<=Nchan_C0;
-            else TimeC<=TimeC1; AmplC<=AmplC1; OrC_i<=OrC_B1; Nchan_C<=Nchan_C1;
+         if (B_rdy1='1') and (B_rdy2='0') then TimeC<=TimeC0; AmplC<=AmplC0; ORC_i<=OrC_B; Nchan_C<=Nchan_C0; bkgndC<= bkgndC0;
+            else TimeC<=TimeC1; AmplC<=AmplC1; OrC_i<=OrC_B1; Nchan_C<=Nchan_C1; bkgndC<= bkgndC1; 
          end if;
    end if;
 end if;    
@@ -1249,6 +1330,9 @@ if (bitcnt_A="010") then
  Rd_Word<= x"F" & Tmode(3) &"001" & x"0000000" & Orbit_ID & BC_COU & "0" & TimeC & "0" & TimeA  & AmplC  & AmplA & '0' & Nchan_C & '0' & Nchan_A & "000" & trigs;
  gbt_wr<='1';
  end if;
+ 
+ orA_str<= OrA_i;
+  
 end if;    
 
 if (bitcnt_A="011") then
