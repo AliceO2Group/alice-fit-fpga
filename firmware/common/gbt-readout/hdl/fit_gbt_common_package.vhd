@@ -35,7 +35,7 @@ package fit_gbt_common_package is
 	constant Orbit_id_bitdepth		: integer := 32;
 	constant BC_id_bitdepth			: integer := 12;
 	constant Trigger_bitdepth		: integer := 32;
-	constant rx_phase_bitdepth		: integer := 4;
+	constant rx_phase_bitdepth		: integer := 3;
 	constant RDH_pages_counter_bitdepth	: integer := 16;
 	constant FEE_ID_bitdepth		: integer := 16;
 	constant PAR_bitdepth		    : integer := 16;
@@ -110,6 +110,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 -- ===== FIT GBT Readout types =================================
 	type FSM_Clocks_type is record
 		Reset 			: std_logic;
+		Reset40 		: std_logic;
 		Data_Clk 		: std_logic;
 		System_Clk		: std_logic;
 		System_Counter	: std_logic_vector(3 downto 0);
@@ -162,6 +163,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		Trigger_Gen 	: Trigger_Gen_CONTROL_type;
 		RDH_data 		: RDH_data_type;
 		
+		readout_bypass  : std_logic;
 		is_hb_response  : std_logic;
 		trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
 		
@@ -174,6 +176,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		reset_gbt_rxerror: std_logic; -- reset gbt rx error bit
 		reset_gbt 		:std_logic; -- reset gbt (not ready)
 		reset_rxph_error:std_logic; -- reset gbt (not ready)
+		strt_rdmode_lock  : std_logic;
 	end record;
 	
 	constant test_CONTROL_REG : CONTROL_REGISTER_type :=
@@ -205,6 +208,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 			DET_Field 				=> x"1234"
 			),
 			
+		readout_bypass              => '0',
 	    is_hb_response              => '1',
         trg_data_select             => x"00000010",
 
@@ -216,7 +220,8 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		reset_gen_offset			=> '0',
 		reset_gbt_rxerror			=> '0',
 		reset_gbt					=> '0',
-		reset_rxph_error			=> '0'
+		reset_rxph_error			=> '0',
+		strt_rdmode_lock			=> '0'
 	);	
 -- =============================================================
 
@@ -310,7 +315,9 @@ function func_FITDATAHD_get_header
 (
         channel_n_words: std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
         ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
-        BCID : std_logic_vector(BC_id_bitdepth-1 downto 0)
+        BCID : std_logic_vector(BC_id_bitdepth-1 downto 0);
+		rx_phase : std_logic_vector(rx_phase_bitdepth-1 downto 0);
+		rx_phase_error : std_logic
 )
 return std_logic_vector;
 
@@ -350,7 +357,7 @@ function func_CNTPCKword_hbbc (cntpck_w: std_logic_vector(cntpckfifo_data_bitdep
 
 -- Control Register addres reg ------------------------------------
 function func_CNTRREG_getaddrreg (cntrl_reg: CONTROL_REGISTER_type ) return cntr_reg_addrreg_type;
-function func_CNTRREG_getcntrreg (cntrl_reg_addrreg: cntr_reg_addrreg_type ) return CONTROL_REGISTER_type;
+function func_CNTRREG_getcntrreg (cntrl_reg_addrreg: cntr_reg_addrreg_type) return CONTROL_REGISTER_type;
 function func_STATREG_getaddrreg (status_reg: FIT_GBT_status_type ) return status_reg_addrreg_type;
 -- ----------------------------------------------------------------
 
@@ -375,13 +382,15 @@ function func_FITDATAHD_get_header
 (
         channel_n_words: std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 		ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
-		BCID : std_logic_vector(BC_id_bitdepth-1 downto 0)
+		BCID : std_logic_vector(BC_id_bitdepth-1 downto 0);
+		rx_phase : std_logic_vector(rx_phase_bitdepth-1 downto 0);
+		rx_phase_error : std_logic
 )
 return std_logic_vector is
 
 begin
     --return  channel_n_words & x"000_0000" & ORBIT & BCID;
-      return  x"F"&channel_n_words(3 downto 0) & x"000_0000" & ORBIT & BCID;
+      return  x"F"&channel_n_words(3 downto 0) & x"000_00" & "000" & rx_phase_error & "0"&rx_phase & ORBIT & BCID;
 
 end function;
 
@@ -466,7 +475,6 @@ function func_CNTRREG_getaddrreg (cntrl_reg: CONTROL_REGISTER_type ) return cntr
 	variable data_gen_cntr : std_logic_vector( 3 downto 0 );
 	variable trg_gen_cntr : std_logic_vector( 3 downto 0 );
 	variable start_rd_command : std_logic_vector( 3 downto 0 );
-	variable rd_mode : std_logic_vector( 3 downto 0 );
 	variable reset_contr	:std_logic_vector( 7 downto 0);
 	
 
@@ -504,18 +512,12 @@ begin
 		trg_gen_cntr := x"f";
 	end if;
 
-	if cntrl_reg.is_hb_response = '0' then
-		rd_mode := x"0";
-	else
-		rd_mode := x"1";
-	end if;
-
 		
 	reset_contr := "00" & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gen_offset & cntrl_reg.reset_drophit_counter & cntrl_reg.reset_orbc_synd;
 
 	
 
-cntr_reg_addrreg(0) := x"00" & rd_mode & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
+cntr_reg_addrreg(0) := x"00" & "0"&cntrl_reg.strt_rdmode_lock&cntrl_reg.readout_bypass&cntrl_reg.is_hb_response & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
 
 cntr_reg_addrreg(1) := cntrl_reg.Data_Gen.trigger_resp_mask;
 cntr_reg_addrreg(2) := cntrl_reg.Data_Gen.bunch_pattern;
@@ -540,7 +542,7 @@ end function;
 
 
 
-function func_CNTRREG_getcntrreg (cntrl_reg_addrreg: cntr_reg_addrreg_type ) return CONTROL_REGISTER_type is
+function func_CNTRREG_getcntrreg (cntrl_reg_addrreg: cntr_reg_addrreg_type) return CONTROL_REGISTER_type is
 
 variable cntr_reg : CONTROL_REGISTER_type;
 
@@ -583,7 +585,8 @@ begin
 	end if;
 
 	cntr_reg.is_hb_response 				:=  cntrl_reg_addrreg(0)(20);
-
+    cntr_reg.readout_bypass                 :=  cntrl_reg_addrreg(0)(21);
+    cntr_reg.strt_rdmode_lock               :=  cntrl_reg_addrreg(0)(22);
 	
 	cntr_reg.reset_orbc_synd 				:=  cntrl_reg_addrreg(0)(8);
 	cntr_reg.reset_drophit_counter			:=  cntrl_reg_addrreg(0)(9);
@@ -617,6 +620,7 @@ begin
 	cntr_reg.n_BCID_delay						:=  cntrl_reg_addrreg(11)(11 downto 0);
 	
 	cntr_reg.trg_data_select                    :=  cntrl_reg_addrreg(12)(31 downto 0);
+	
 	return cntr_reg;
 end function;
 
@@ -672,7 +676,7 @@ begin
     raw_fifo_count_reg  := "000" & status_reg.fifo_status.raw_fifo_count;
     
     
-    status_reg_addrreg(0) := x"0" & status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
+    status_reg_addrreg(0) := x"0" & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
     status_reg_addrreg(2) :=  "00000" & status_reg.BCID_from_CRU;
     status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;

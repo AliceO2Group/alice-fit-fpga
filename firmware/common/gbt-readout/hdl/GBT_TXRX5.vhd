@@ -343,6 +343,15 @@ begin                 --========####   Architecture Body   ####========--
      -- Status --
    --============--
    
+ process(TXDataClk)
+ begin
+   
+ if TXDataClk'event and (TXDataClk='1') then
+   GBT_Status_O.gbtRx_Ready    <= from_gbtBank_gbtRx(1).ready;
+   GBT_Status_O.gbtRx_ErrorDet    <= from_gbtBank_gbtRx(1).rxErrorDetected;
+end if;
+end process;   
+
    
    
    GBT_Status_O.txWordClk <= from_gbtBank_clks.mgt_clks.tx_wordClk(1);
@@ -360,8 +369,6 @@ begin                 --========####   Architecture Body   ####========--
    GBT_Status_O.tx_fsmResetDone    <= from_gbtBank_mgt.mgtLink(1).tx_fsmResetDone;
 
    
-   GBT_Status_O.gbtRx_Ready    <= from_gbtBank_gbtRx(1).ready;
-   GBT_Status_O.gbtRx_ErrorDet    <= from_gbtBank_gbtRx(1).rxErrorDetected;
   
   
   

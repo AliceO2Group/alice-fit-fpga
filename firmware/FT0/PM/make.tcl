@@ -120,6 +120,13 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Import local files from the original project
 set files [list \
  [file normalize "${origin_dir}/hdl/Channel.vhd" ]\
+ [file normalize "${origin_dir}/hdl/TDCCHAN.vhd" ]\
+ [file normalize "${origin_dir}/hdl/counters.vhd" ]\
+ [file normalize "${origin_dir}/hdl/trigger.vhd" ]\
+ [file normalize "${origin_dir}/hdl/pin_capt.vhd" ]\
+ [file normalize "${origin_dir}/hdl/autophase.vhd" ]\
+ [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
+ [file normalize "${origin_dir}/hdl/fit.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank_package.vhd" ]\
@@ -172,10 +179,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_status.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd" ]\
- [file normalize "${origin_dir}/hdl/TDCCHAN.vhd" ]\
- [file normalize "${origin_dir}/hdl/counters.vhd" ]\
- [file normalize "${origin_dir}/hdl/trigger.vhd" ]\
- [file normalize "${origin_dir}/hdl/pin_capt.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_auto_phase_align.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_cpll_railing.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_gt.vhd" ]\
@@ -186,7 +189,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_pulse.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_manual_phase_align.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd" ]\
- [file normalize "${origin_dir}/hdl/fit.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_PM.vhd" ]\

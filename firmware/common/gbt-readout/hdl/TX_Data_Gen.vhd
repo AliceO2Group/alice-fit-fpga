@@ -81,7 +81,7 @@ count_val_data <= x"0f0a";
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset = '1') THEN
+			IF (FSM_Clocks_I.Reset40 = '1') THEN
 				gen_counter_ff		<= (others => '0');
 				cont_counter_ff		<= (others => '0');
 			ELSE

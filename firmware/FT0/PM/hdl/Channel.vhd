@@ -51,6 +51,7 @@ entity Channel is
            CH1_zero : in STD_LOGIC_VECTOR (11 downto 0);
            CH_trig_outt : out STD_LOGIC;
            CH_trig_outa : out STD_LOGIC;
+           CH_trig_bgnd : out STD_LOGIC;
            CH_TIME : out STD_LOGIC_VECTOR (9 downto 0);
            CH_ampl  : out STD_LOGIC_VECTOR (12 downto 0);
            DATA_out : out STD_LOGIC_VECTOR (32 downto 0);
@@ -243,7 +244,7 @@ if (mt_cou="011") then
     EV_am_en<=EV_dly(2)(8); 
 end if;
 
-if (mt_cou="100") then EV_am_fl0<='0'; EV_am_fl<=EV_am_fl0; CH_trig_a<=EV_dly(3)(8) and  EV_am_fl0;
+if (mt_cou="100") then EV_am_fl0<='0'; EV_am_fl<=EV_am_fl0; CH_trig_a<=EV_dly(3)(8) and  EV_am_fl0; CH_trig_bgnd<= EV_dly(3)(8) and  not EV_am_fl0;
    else if (CSTR_1='1') and (CSTR_2='0') then  EV_am_fl0<=EV_am_en; end if;
 end if;
 
