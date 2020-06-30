@@ -1,10 +1,16 @@
 set_property PROHIBIT true [get_sites B25]
 set_property PROHIBIT true [get_sites A22]
 set_property PROHIBIT true [get_sites B22]
-set_property PROHIBIT true [get_sites C23]
 set_property PROHIBIT true [get_sites B26]
-set_property PROHIBIT true [get_sites A25]
-set_property PROHIBIT true [get_sites B24]
+
+set_property IOSTANDARD LVCMOS33 [get_ports FMISO]
+set_property IOSTANDARD LVCMOS33 [get_ports FMOSI]
+set_property IOSTANDARD LVCMOS33 [get_ports FSEL]
+set_property PACKAGE_PIN A25 [get_ports FMISO]
+set_property PACKAGE_PIN B24 [get_ports FMOSI]
+set_property PACKAGE_PIN C23 [get_ports FSEL]
+
+
 set_property IOSTANDARD LVDS [get_ports TDCCLK1_P]
 set_property IOSTANDARD LVDS [get_ports RDA1_P]
 set_property IOSTANDARD LVDS [get_ports RDB1_P]
@@ -306,7 +312,6 @@ set_property PACKAGE_PIN AB12 [get_ports TT1_P]
 set_property PACKAGE_PIN AC12 [get_ports TT1_N]
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]
-set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
 set_property PACKAGE_PIN AB2 [get_ports TDCCLK1_P]
 set_property PACKAGE_PIN AC2 [get_ports TDCCLK1_N]
 
@@ -782,7 +787,6 @@ set_property DRIVE 16 [get_ports LED4]
 
 
 
-set_property BITSTREAM.CONFIG.CONFIGRATE 12 [current_design]
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
 
@@ -794,6 +798,10 @@ set_property PULLUP true [get_ports HSEL]
 set_property DRIVE 4 [get_ports EVNT]
 
 set_property PULLDOWN true [get_ports EVNT]
+
+set_property BITSTREAM.CONFIG.CONFIGRATE 16 [current_design]
+set_property BITSTREAM.CONFIG.SPI_FALL_EDGE NO [current_design]
+set_property BITSTREAM.CONFIG.USR_ACCESS TIMESTAMP [current_design]
 
 set_property OFFCHIP_TERM NONE [get_ports HMISO]
 set_property OFFCHIP_TERM NONE [get_ports IRQ]
@@ -870,3 +878,4 @@ set_property OFFCHIP_TERM NONE [get_ports LA3[3]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[2]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[1]]
 set_property OFFCHIP_TERM NONE [get_ports LA3[0]]
+set_property BITSTREAM.GENERAL.XADCENHANCEDLINEARITY ON [current_design]

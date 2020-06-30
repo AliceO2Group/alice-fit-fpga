@@ -122,7 +122,7 @@ Current_Trigger_from_O <= TRG_result;
 -- BC Counter ==================================================
 	BC_counter_datagen_comp : entity work.BC_counter
 	port map (
-		RESET_I			=> FSM_Clocks_I.Reset,
+		RESET_I			=> FSM_Clocks_I.Reset40,
 		DATA_CLK_I		=> FSM_Clocks_I.Data_Clk,
 		
 		IS_INIT_I		=> EV_ID_counter_set,
@@ -155,7 +155,7 @@ Current_Trigger_from_O <= TRG_result;
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset = '1') THEN
+			IF (FSM_Clocks_I.Reset40 = '1') THEN
 				RX_Data_gen_ff 		<= (others => '0');
 				RX_IsData_gen_ff	<= '0';
 --				phtrg_counter_ff		<= (others => '0');

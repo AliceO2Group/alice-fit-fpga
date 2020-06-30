@@ -20,7 +20,10 @@ create_clock -period 8.333 -name RxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtB
 create_clock -period 8.333 -name TxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
 
 create_generated_clock -name RXDataCLK [get_pins FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
-set_clock_groups -name ASYNC_CLOCKS -asynchronous -group [get_clocks -include_generated_clocks {RxWordCLK RXDataCLK}] -group [get_clocks -include_generated_clocks TxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
+
+#set_clock_groups -name ASYNC_CLOCKS -asynchronous -group [get_clocks -include_generated_clocks {RxWordCLK RXDataCLK}] -group [get_clocks -include_generated_clocks TxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
+set_clock_groups -name ASYNC_CLOCKS1 -asynchronous -group [get_clocks RxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
+set_clock_groups -name ASYNC_CLOCKS2 -asynchronous -group [get_clocks TxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
 
 set_clock_groups -name SPI_ASYNC -asynchronous -group [get_clocks SPI]
 set_clock_groups -name HSPI_ASYNC -asynchronous -group [get_clocks HSPI]
@@ -31,16 +34,6 @@ set_input_delay -clock [get_clocks TDCCLK2] -min 1.200 [get_ports {RDA2_N RDA2_P
 set_input_delay -clock [get_clocks TDCCLK2] -max 1.800 [get_ports {RDA2_N RDA2_P RDB2_N RDB2_P RDC2_N RDC2_P RDD2_N RDD2_P RSA2_N RSA2_P RSB2_N RSB2_P RSC2_N RSC2_P RSD2_N RSD2_P}]
 set_input_delay -clock [get_clocks TDCCLK3] -min 1.200 [get_ports {RDA3_N RDA3_P RDB3_N RDB3_P RDC3_N RDC3_P RDD3_N RDD3_P RSA3_N RSA3_P RSB3_N RSB3_P RSC3_N RSC3_P RSD3_N RSD3_P}]
 set_input_delay -clock [get_clocks TDCCLK3] -max 1.800 [get_ports {RDA3_N RDA3_P RDB3_N RDB3_P RDC3_N RDC3_P RDD3_N RDD3_P RSA3_N RSA3_P RSB3_N RSB3_P RSC3_N RSC3_P RSD3_N RSD3_P}]
-
-set_input_delay -clock [get_clocks SPI] -max -5.000 [get_ports {MOSI CS}]
-set_input_delay -clock [get_clocks SPI] -min -10.000 [get_ports {MOSI CS}]
-set_output_delay -clock [get_clocks SPI] -max 5.000 [get_ports MISO]
-set_output_delay -clock [get_clocks SPI] -min 0.000 [get_ports MISO]
-
-set_input_delay -clock [get_clocks HSPI] -max -5.000 [get_ports {HMOSI HSEL}]
-set_input_delay -clock [get_clocks HSPI] -min -10.000 [get_ports {HMOSI HSEL}]
-set_output_delay -clock [get_clocks HSPI] -max 5.000 [get_ports HMISO]
-set_output_delay -clock [get_clocks HSPI] -min 0.000 [get_ports HMISO]
 
 create_generated_clock -name CLK600_1 -source [get_pins PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLK1 [get_pins PLL1/inst/mmcm_adv_inst/CLKOUT0]
 create_generated_clock -name CLK600_90_1 -source [get_pins PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLK1 [get_pins PLL1/inst/mmcm_adv_inst/CLKOUT1]
@@ -53,6 +46,7 @@ create_generated_clock -name CLK600_90_3 -source [get_pins PLL3/inst/mmcm_adv_in
 create_generated_clock -name CLK300_3 -source [get_pins PLL3/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLK3 [get_pins PLL3/inst/mmcm_adv_inst/CLKOUT2]
 
 create_generated_clock -name CLK320 -source [get_pins PLL4/inst/plle2_adv_inst/CLKIN1] -master_clock MCLK1 [get_pins PLL4/inst/plle2_adv_inst/CLKOUT0]
+create_generated_clock -name TX_CLK -source [get_pins PLL4/inst/plle2_adv_inst/CLKIN1] -master_clock MCLK1 [get_pins PLL4/inst/plle2_adv_inst/CLKOUT1]
 
 set_property ASYNC_REG true [get_cells spi_lock_?_reg]
 set_property ASYNC_REG true [get_cells spi_lock0_?_reg]
@@ -76,8 +70,11 @@ set_property ASYNC_REG true [get_cells CHANNEL??/CSTR_0_reg]
 set_property ASYNC_REG true [get_cells CHANNEL??/CSTR_1_reg]
 
 set_property ASYNC_REG true [get_cells {TDC?_CH?/rs300_0_reg TDC?_CH?/rs300_1_reg}]
-set_property ASYNC_REG true [get_cells reg32_wr0_reg]
-set_property ASYNC_REG true [get_cells reg32_wr1_reg]
+set_property ASYNC_REG true [get_cells {reg32_wr0_reg reg32_wr1_reg}]
+set_property ASYNC_REG true [get_cells reg32_rd0_reg]
+set_property ASYNC_REG true [get_cells reg32_rd1_reg]
+set_property ASYNC_REG true [get_cells TCM_req0_reg]
+set_property ASYNC_REG true [get_cells TCM_req1_reg]
 set_property ASYNC_REG true [get_cells spi_wr0_reg]
 set_property ASYNC_REG true [get_cells spi_wr1_reg]
 set_property ASYNC_REG true [get_cells hspi_wr0_reg]
@@ -97,8 +94,12 @@ set_property ASYNC_REG true [get_cells count1/rd_en1_reg]
 set_property ASYNC_REG true [get_cells count1/hrd_en0_reg]
 set_property ASYNC_REG true [get_cells count1/hrd_en1_reg]
 
+set_property ASYNC_REG true [get_cells {xadc_rq0_reg xadc_rq1_reg}]
 
 set_property IOB TRUE [get_cells {{tto_reg[?]} {tao_reg[?]}}]
 
 set_property BEL PLLE2_ADV [get_cells PLL4/inst/plle2_adv_inst]
 set_property LOC PLLE2_ADV_X1Y2 [get_cells PLL4/inst/plle2_adv_inst]
+
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]

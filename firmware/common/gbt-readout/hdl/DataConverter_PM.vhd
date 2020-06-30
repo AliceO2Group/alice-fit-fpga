@@ -127,7 +127,7 @@ begin
 	--is_data_word_header <= func_PMHEADER_is_header( Board_data_sysclkff.data_word );	
 	header_orbit <=func_PMHEADER_getORBIT(Board_data_sysclkff.data_word);
 	header_bc <= func_PMHEADER_getBC(Board_data_sysclkff.data_word);
-	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc);
+	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error);
 	data_word <= Board_data_sysclkff.data_word;
 -- ***************************************************
 
