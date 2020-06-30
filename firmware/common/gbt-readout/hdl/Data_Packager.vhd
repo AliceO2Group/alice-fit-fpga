@@ -56,9 +56,13 @@ architecture Behavioral of Data_Packager is
 	signal raw_data_fifo_data_fromfifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
 	signal raw_data_fifo_isempty : std_logic;
 	signal raw_data_fifo_wren : std_logic;
+	signal raw_data_fifo_rden_selector : std_logic;
 	signal raw_data_fifo_rden : std_logic;
 	signal raw_data_fifo_space_is_for_packet : STD_LOGIC;
 	signal raw_data_fifo_reset : std_logic;
+	signal raw_data_fifo_rden_txgenerator : std_logic;
+	signal readout_bypass_s : std_logic;
+
 
 	signal slct_data_fifo_words_count_wr : std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
 	signal slct_data_fifo_data_tofifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
@@ -109,6 +113,14 @@ fifo_status_O.raw_fifo_count <= raw_data_fifo_words_count_wr;
 fifo_status_O.slct_fifo_count <= slct_data_fifo_words_count_wr;
 fifo_status_O.trg_fifo_count <= trg_fifo_count;
 fifo_status_O.cntr_fifo_count <= cntr_fifo_count;
+
+
+process(FSM_Clocks_I.System_Clk)	
+begin									
+if (FSM_Clocks_I.System_Clk'event) and (FSM_Clocks_I.System_Clk='1') then
+          readout_bypass_s <=Control_register_I.readout_bypass;
+end if;
+end process;
 
 -- -- ===========================================================
 
@@ -178,6 +190,10 @@ port map(
            EMPTY         => raw_data_fifo_isempty
         );
 raw_data_fifo_words_count_rd <= raw_data_fifo_words_count_wr;
+
+raw_data_fifo_rden <= raw_data_fifo_rden_txgenerator WHEN (readout_bypass_s = '1')
+	               ELSE raw_data_fifo_rden_selector;
+
 ---- ===========================================================
 
 
@@ -210,7 +226,7 @@ port map	(
 			RAWFIFO_data_word_I => raw_data_fifo_data_fromfifo,
 			RAWFIFO_Is_Empty_I => raw_data_fifo_isempty,
 			RAWFIFO_data_count_I => raw_data_fifo_words_count_rd,
-			RAWFIFO_RE_O => raw_data_fifo_rden,
+			RAWFIFO_RE_O => raw_data_fifo_rden_selector,
 			RAWFIFO_RESET_O => raw_data_fifo_reset,
 			
 			SLCTFIFO_data_word_O => slct_data_fifo_data_tofifo,
@@ -262,6 +278,10 @@ port map(
 			
 			TX_IsData_I => is_data_from_cru_constructor,
 			TX_Data_I => data_from_cru_constructor,
+			
+			RAWFIFO_data_word_I => raw_data_fifo_data_fromfifo,
+			RAWFIFO_Is_Empty_I => raw_data_fifo_isempty,
+			RAWFIFO_RE_O => raw_data_fifo_rden_txgenerator,
 			
 			TX_IsData_O => TX_IsData_O,
 			TX_Data_O => TX_Data_O
