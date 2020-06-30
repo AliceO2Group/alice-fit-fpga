@@ -287,12 +287,10 @@ set_property -name "top" -value "fit" -objects $obj
 config_webtalk -user off
 
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part $part -flow {Vivado Synthesis 2017} -strategy "Flow_PerfOptimized_high" -report_strategy {Timing Closure Reports} -constrset constrs_1
+    create_run -name synth_1 -part $part -flow {Vivado Synthesis 2019} -strategy "Flow_PerfOptimized_high" -report_strategy {Timing Closure Reports} -constrset constrs_1
 } else {
     set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
-    set_property flow "Vivado Synthesis 2017" [get_runs synth_1]
-	set_property report_strategy {Timing Closure Reports} [get_runs impl_1]
-
+    set_property flow "Vivado Synthesis 2019" [get_runs synth_1]
 }
 
 
@@ -327,14 +325,14 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2018} -strategy "Performance_NetDelay_low" -report_strategy {Timing Closure Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part ${part} -flow {Vivado Synthesis 2019} -strategy "Performance_NetDelay_low" -report_strategy {Timing Closure Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Performance_NetDelay_low" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2018" [get_runs impl_1]
+  set_property flow {Vivado Implementation 2019} [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
-set_property report_strategy {Timing Closure Reports} $obj
+set_property report_strategy {Vivado Implementation Default Reports} $obj
 set_property set_report_strategy_name 0 $obj
 
 gen_report impl_1_init_report_timing_summary_0 report_timing_summary:1.0 init_design impl_1
