@@ -53,16 +53,26 @@ end trigger_out;
 
 architecture RTL of trigger_out is
 
-signal tgl, rndm, T_i, T_o, T_c, rfb : STD_LOGIC;
+signal tgl, rndm, T_i, T_c, T_o, rfb, c_inc : STD_LOGIC;
 signal s_cou : STD_LOGIC_VECTOR (9 downto 0);
 signal sgn : STD_LOGIC_VECTOR (21 downto 0);
 signal ts : STD_LOGIC_VECTOR (13 downto 0);
 signal rate, rreg : STD_LOGIC_VECTOR (30 downto 0);
-signal count, c_buf : STD_LOGIC_VECTOR (31 downto 0);
+
+component counter32
+ Port (clk320 : in STD_LOGIC;
+       cout : out STD_LOGIC_VECTOR (31 downto 0);
+       rd : in STD_LOGIC;
+       clr : in STD_LOGIC;
+       inc : in STD_LOGIC
+       );
+end component;       
+
+
 begin
 
-T_out<=T_o; CO<=c_buf;
- 
+T_out<=T_o;
+
 T_r <= T_in when (mode="100") else '0';
 
 DO<=x"0000" & "00" & ts when (A='0') else '0' & rate;
@@ -89,17 +99,13 @@ end if;
 end if;
 end process;
 
+c_inc<= '1' when (T_c='1') and (mt_cnt="011") else '0';
+
+cou0: counter32 port map (clk320=> clk320, cout=> CO, rd=> c_rd, clr=> c_clr, inc=> c_inc);
 
 process (clk320)
 begin
 if (clk320'event) and (clk320='1') then
-
-if (c_rd='1') then c_buf<=count; end if;  
-
-if (c_clr='1') then count<=(others=>'0'); 
-  else  if (T_c='1') and (mt_cnt="011") then count<=count+1; end if;
-end if;
-
 
 if (mt_cnt="010") then 
 

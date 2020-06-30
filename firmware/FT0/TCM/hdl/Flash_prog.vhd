@@ -33,6 +33,11 @@ library UNISIM;
 use UNISIM.VComponents.all;
 
 entity FLASH is
+
+generic (   
+      clk_freq                               : integer := 31250
+   );
+
   Port (
     rst : IN STD_LOGIC;
     clk : IN STD_LOGIC;
@@ -198,15 +203,15 @@ else
        end case;
     when "10" => 
           case to_integer(unsigned(cmd_stat)) is
-           when 0 => fcs<='1'; spi_act<='0';
+           when 0 => fcs<='1'; spi_act<='0'; timeout <= std_logic_vector(to_unsigned(2, 21));
            when 1 => spi_out<=cmd_adr(23 downto 16);
            when 2 => spi_out<=cmd_adr(15 downto 8);
            when 3 => spi_out<=cmd_adr(7 downto 0); 
-           when 4 => fcs<='1'; spi_act<='0'; timeout <= std_logic_vector(to_unsigned(1562500, 21));  
+           when 4 => fcs<='1'; spi_act<='0'; timeout <= std_logic_vector(to_unsigned(clk_freq*50, 21));  
            
            when 6 => fcs<='1'; spi_act<='0'; 
-                         if (spi_in(0)='1') then timeout <= std_logic_vector(to_unsigned(1562500, 21)); end if;
-           when 7 => fcs<='1'; spi_act<='0';
+                         if (spi_in(0)='1') then timeout <= std_logic_vector(to_unsigned(clk_freq*50, 21)); end if;
+           when 7 => fcs<='1'; spi_act<='0'; timeout <= std_logic_vector(to_unsigned(2, 21));
            when 8 => spi_out<=cmd_adr(23 downto 16);
            when 9 => spi_out<=cmd_adr(15 downto 8);
            when 10 => spi_out<=cmd_adr(7 downto 0);  keep_state<='1';
@@ -219,11 +224,11 @@ else
                      else
                         fcs<='1'; spi_act<='0';
                         if (cmd_adr(23 downto 0)=end_adr) then fl_busy<='0'; 
-                          else timeout <= std_logic_vector(to_unsigned(6250, 21));
+                          else timeout <= std_logic_vector(to_unsigned(clk_freq/5, 21));
                         end if;
                      end if;                      
            when 13 => fcs<='1'; spi_act<='0';
-                                  if (spi_in(0)='1') then timeout <= std_logic_vector(to_unsigned(6250, 21)); end if; 
+                                  if (spi_in(0)='1') then timeout <= std_logic_vector(to_unsigned(clk_freq/5, 21)); end if; 
                         
                               
            when others=> null;
