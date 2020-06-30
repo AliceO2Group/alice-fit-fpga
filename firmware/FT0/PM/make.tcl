@@ -261,7 +261,8 @@ generate_target synthesis [get_ips] -force
 foreach ip [get_ips] {
     puts $ip
     create_ip_run [get_files ${ip}.xci]
-}
+	set_property generate_synth_checkpoint false [get_files ${ip}.xci]
+    generate_target all [get_files ${ip}.xci]}
 
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {

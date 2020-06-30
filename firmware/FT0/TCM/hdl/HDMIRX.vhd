@@ -174,7 +174,7 @@ if (CLK320'event and CLK320='1') then
     end if;
        
      
-   TTsr(i)<=(not sample(i)(3)) &  TTsr(i)(7 downto 1) ; 
+   if (ena='1') then TTsr(i)<=(not sample(i)(3)) &  TTsr(i)(7 downto 1); else TTsr(i)<= (others=>'0'); end if; 
 
 if (dvalue(i)="00000") then dl_low_i(i)<= '1'; else dl_low_i(i)<='0'; end if;
 if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
