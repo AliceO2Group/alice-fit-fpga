@@ -296,7 +296,7 @@ if {[string equal [get_runs -quiet synth_1] ""]} {
 
 set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
-set_property report_strategy {Timing Closure Reports} $obj
+set_property report_strategy {Vivado Synthesis Default Reports} $obj
 set_property set_report_strategy_name 0 $obj
 
 proc gen_report {name type steps runs} {
