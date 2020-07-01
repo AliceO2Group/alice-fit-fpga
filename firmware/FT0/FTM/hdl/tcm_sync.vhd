@@ -81,7 +81,7 @@ port
  (-- Clock in ports
   -- Clock out ports
   CLK320          : out    std_logic;
-  CLK320_90          : out    std_logic;
+  CLK320_90       : out    std_logic;
   -- Dynamic phase shift ports
   psclk             : in     std_logic;
   psen              : in     std_logic;
@@ -100,57 +100,57 @@ attribute IODELAY_GROUP of IDL0P, IDL0N, IDL1P, IDL1N, IDL2P, IDL2N, IDL3P, IDL3
 
 begin
 
-rdy<=done;  bitcnt<=bit_cou; status<=status_bits; Dready<=Dvalid;
+rdy<=done;  bitcnt<=bit_cou; status<=status_bits; Dready<=DValid;
 clkout<=CLK320; clkout_90<=CLK320_90; TDO<=TDi; pllrdy<=not clk_unst; DATA_OUT<=trig_data;
 PM_req<=PM_req0 or PM_req1;
 
 IDL0P : IDELAYE2
    generic map (
-      CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "FIXED", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+      CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "FIXED", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
    port map (
       CNTVALUEOUT => open, DATAOUT => TDD_P(0), C => '0', CE => '0', CINVCTRL => '0', CNTVALUEIN => "00000", DATAIN => '0', IDATAIN => TD_P(0), INC => '0', LD => '0', LDPIPEEN => '0', REGRST => '0');
 IDL0N : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "FIXED", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "FIXED", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => open, DATAOUT => TDD_N(0), C => '0', CE => '0', CINVCTRL => '0', CNTVALUEIN => "00000", DATAIN => '0', IDATAIN => TD_N(0), INC => '0', LD => '0', LDPIPEEN => '0', REGRST => '0');
 
 IDL1P : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => open, DATAOUT => TDD_P(1), C => CLK320, CE => dl_ce1, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_P(1), INC => dl_inc1, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
 IDL1N : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => dvalue1, DATAOUT => TDD_N(1), C => CLK320, CE => dl_ce1, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_N(1), INC => dl_inc1, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
                         
 IDL2P : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => open, DATAOUT => TDD_P(2), C => CLK320, CE => dl_ce2, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_P(2), INC => dl_inc2, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
 IDL2N : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => dvalue2, DATAOUT => TDD_N(2), C => CLK320, CE => dl_ce2, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_N(2), INC => dl_inc2, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
 
 IDL3P : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => open, DATAOUT => TDD_P(3), C => CLK320, CE => dl_ce3, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_P(3), INC => dl_inc3, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
 IDL3N : IDELAYE2
          generic map (
-            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 400.0, SIGNAL_PATTERN => "DATA")
+            CINVCTRL_SEL => "FALSE", DELAY_SRC => "IDATAIN", HIGH_PERFORMANCE_MODE => "TRUE", IDELAY_TYPE => "VARIABLE", IDELAY_VALUE => 16, PIPE_SEL => "FALSE", REFCLK_FREQUENCY => 200.0, SIGNAL_PATTERN => "DATA")
          port map (
             CNTVALUEOUT => dvalue3, DATAOUT => TDD_N(3), C => CLK320, CE => dl_ce3, CINVCTRL => '0', CNTVALUEIN => "10000", DATAIN => '0', IDATAIN => TD_N(3), INC => dl_inc3, LD => clk_unst, LDPIPEEN => '0', REGRST => '0');
             
   
 PLL1 : MMCM320_PH
-   port map ( CLK320 => CLK320, CLK320_90=> CLK320_90, psclk => CLK320, psen => psen, psincdec => ph_inc, psdone => open, reset => RST, lock => lock, MCLK => CLKA);
+   port map ( CLK320 => CLK320, CLK320_90=> CLK320_90,  psclk => CLK320, psen => psen, psincdec => ph_inc, psdone => open, reset => RST, lock => lock, MCLK => CLKA);
  
  CLK320B<= not CLK320; CLK320_90B<= not CLK320_90;    
 
@@ -412,9 +412,9 @@ if (CLK320'event and CLK320='1') then
       
    end if;
    
-   if (done='1') and (bit_cou="010") and (TT3sr(0) or TT2sr(0) or TT1sr(0) or TT0sr(0))='1' then Dvalid<='1'; 
+   if (done='1') and (bit_cou="010") and (TT3sr(0) or TT2sr(0) or TT1sr(0) or TT0sr(0))='1' then DValid<='1'; 
       else 
-         Dvalid<='0';
+         if (DValid='1') and (bit_cou="110") then DValid<='0'; end if;
      end if; 
 
    if (link_ok='0') or (done='1') then idle_cou<="000000";

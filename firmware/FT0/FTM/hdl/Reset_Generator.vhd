@@ -51,14 +51,16 @@ General_reset_O <= GenRes_DataClk_ff1;
 
 
 -- Sys clk ***********************************
-	PROCESS (DataClk_I)
+	PROCESS (DataClk_I, RESET_I)
 	BEGIN
-		IF rising_edge(DataClk_I)THEN
-			IF(RESET_I = '1') THEN
-				GenRes_DataClk_ff <= '1';
-				General_reset_ff <= '1';
-				Cntr_reset_ff <= '1';
-			ELSE
+	IF(RESET_I = '1') THEN
+        GenRes_DataClk_ff <= '1';
+        General_reset_ff <= '1';
+        Cntr_reset_ff <= '1';
+        GenRes_DataClk_ff1 <= '1';
+        Cntr_reset_ff1 <= '1';
+      else  
+      IF rising_edge(DataClk_I)THEN
 				GenRes_DataClk_ff <= GenRes_DataClk_ff_next;
 				General_reset_ff <= General_reset_ff_next;
 				Cntr_reset_ff <= Cntr_reset_ff_next;
@@ -66,19 +68,16 @@ General_reset_O <= GenRes_DataClk_ff1;
 				Cntr_reset_ff1 <= Cntr_reset_ff;
 				GenRes_DataClk_ff1 <= GenRes_DataClk_ff;
 			END IF;
-		END IF;
+    END IF;
 	END PROCESS;
 -- ********************************************
 
 -- FSM ***********************************************
-GenRes_DataClk_ff_next <= '1' WHEN (RESET_I = '1') ELSE
-						General_reset_ff;
+GenRes_DataClk_ff_next <= General_reset_ff;
 	
-Cntr_reset_ff_next <=	'1'     WHEN (RESET_I = '1') ELSE
-						'0';
+Cntr_reset_ff_next <=	'0';
 						
-General_reset_ff_next <= 	'1' WHEN (RESET_I = '1') ELSE
-							'1' WHEN (General_reset_ff = '1') and (Sys_Cntr_ready_I = '0') ELSE
+General_reset_ff_next <= 	'1' WHEN (General_reset_ff = '1') and (Sys_Cntr_ready_I = '0') ELSE
 							'0';
 
 

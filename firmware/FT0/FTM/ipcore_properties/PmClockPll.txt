@@ -215,8 +215,11 @@ CONFIG.PSCLK_PORT                    string  false      PSCLK
 CONFIG.PSDONE_PORT                   string  false      PSDONE
 CONFIG.PSEN_PORT                     string  false      PSEN
 CONFIG.PSINCDEC_PORT                 string  false      PSINCDEC
+CONFIG.REF_CLK.INSERT_VIP            string  false      0
 CONFIG.REF_CLK_FREQ                  string  false      100.0
 CONFIG.RELATIVE_INCLK                string  false      REL_PRIMARY
+CONFIG.RESET.INSERT_VIP              string  false      0
+CONFIG.RESETN.INSERT_VIP             string  false      0
 CONFIG.RESET_BOARD_INTERFACE         string  false      Custom
 CONFIG.RESET_PORT                    string  false      RESET
 CONFIG.RESET_TYPE                    string  false      ACTIVE_HIGH
@@ -230,6 +233,9 @@ CONFIG.SS_MOD_FREQ                   string  false      250
 CONFIG.SS_MOD_TIME                   string  false      0.004
 CONFIG.STATUS_PORT                   string  false      STATUS
 CONFIG.SUMMARY_STRINGS               string  false      empty
+CONFIG.S_AXI_ACLK.INSERT_VIP         string  false      0
+CONFIG.S_AXI_LITE.INSERT_VIP         string  false      0
+CONFIG.S_AXI_RESETN.INSERT_VIP       string  false      0
 CONFIG.USER_CLK_FREQ0                string  false      100.0
 CONFIG.USER_CLK_FREQ1                string  false      100.0
 CONFIG.USER_CLK_FREQ2                string  false      100.0

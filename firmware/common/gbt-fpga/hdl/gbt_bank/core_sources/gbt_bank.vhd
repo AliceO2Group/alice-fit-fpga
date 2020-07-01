@@ -159,39 +159,39 @@ begin                 --========####   Architecture Body   ####========--
    --========--
    -- GBT TX --
    --========--
-	gbtTx_param_generic_src_gen: if GBT_BANK_ID = 0 generate		
-		gbtTx_gen: for i in 1 to NUM_LINKS generate 
-			gbtTx: entity work.gbt_tx        
-				generic map (			
-						GBT_BANK_ID                         => GBT_BANK_ID,
-						NUM_LINKS									=> NUM_LINKS,
-						TX_OPTIMIZATION							=> TX_OPTIMIZATION,
-						RX_OPTIMIZATION							=> RX_OPTIMIZATION,
-						TX_ENCODING									=> TX_ENCODING,
-						RX_ENCODING									=> RX_ENCODING
-				)
-				port map (            
-					-- Reset & Clocks:
-					TX_RESET_I                          => GBT_TX_I(i).reset,
-					TX_FRAMECLK_I                       => CLKS_I.tx_frameClk(i),
-					TX_WORDCLK_I                        => tx_wordclk(i),
-					-- Control:              
-					TX_MGT_READY_I                      => txReady_from_mgt(i),
-					PHASE_ALIGNED_O							=> phaligned_from_gbtTx(i),
-					PHASE_COMPUTING_DONE_O					=> phcomputing_from_gbtTx(i),
-					TX_ISDATA_SEL_I                     => GBT_TX_I(i).isDataSel, 
-					-- Data & Word:        
-					TX_DATA_I                           => GBT_TX_I(i).data,
-					TX_WORD_O                           => tx_wordNbit_from_gbtTx(i),
-					------------------------------------
-					TX_EXTRA_DATA_WIDEBUS_I             => GBT_TX_I(i).extraData_widebus
-				); 
+--	gbtTx_param_generic_src_gen: if GBT_BANK_ID = 0 generate		
+--		gbtTx_gen: for i in 1 to NUM_LINKS generate 
+--			gbtTx: entity work.gbt_tx        
+--				generic map (			
+--						GBT_BANK_ID                         => GBT_BANK_ID,
+--						NUM_LINKS									=> NUM_LINKS,
+--						TX_OPTIMIZATION							=> TX_OPTIMIZATION,
+--						RX_OPTIMIZATION							=> RX_OPTIMIZATION,
+--						TX_ENCODING									=> TX_ENCODING,
+--						RX_ENCODING									=> RX_ENCODING
+--				)
+--				port map (            
+--					-- Reset & Clocks:
+--					TX_RESET_I                          => GBT_TX_I(i).reset,
+--					TX_FRAMECLK_I                       => CLKS_I.tx_frameClk(i),
+--					TX_WORDCLK_I                        => tx_wordclk(i),
+--					-- Control:              
+--					TX_MGT_READY_I                      => txReady_from_mgt(i),
+--					PHASE_ALIGNED_O							=> phaligned_from_gbtTx(i),
+--					PHASE_COMPUTING_DONE_O					=> phcomputing_from_gbtTx(i),
+--					TX_ISDATA_SEL_I                     => GBT_TX_I(i).isDataSel, 
+--					-- Data & Word:        
+--					TX_DATA_I                           => GBT_TX_I(i).data,
+--					TX_WORD_O                           => tx_wordNbit_from_gbtTx(i),
+--					------------------------------------
+--					TX_EXTRA_DATA_WIDEBUS_I             => GBT_TX_I(i).extraData_widebus
+--				); 
 				
-				GBT_TX_O(i).txGearboxAligned_o			<= phaligned_from_gbtTx(i);
-				GBT_TX_O(i).txGearboxAligned_done		<= phcomputing_from_gbtTx(i);
+--				GBT_TX_O(i).txGearboxAligned_o			<= phaligned_from_gbtTx(i);
+--				GBT_TX_O(i).txGearboxAligned_done		<= phcomputing_from_gbtTx(i);
 				
-			end generate;
-	end generate;   
+--			end generate;
+--	end generate;   
 		
 	gbtTx_param_pacakge_src_gen: if GBT_BANK_ID > 0 generate	
 		gbtTx_gen: for i in 1 to GBT_BANKS_USER_SETUP(GBT_BANK_ID).NUM_LINKS generate 
@@ -229,42 +229,42 @@ begin                 --========####   Architecture Body   ####========--
    --============================--  
    -- Multi Gigabit Transceivers --
    --============================--          
-	mgt_param_generic_src_gen: if GBT_BANK_ID = 0 generate
-		mgt: entity work.multi_gigabit_transceivers  
-			generic map (
-				GBT_BANK_ID                            => GBT_BANK_ID,
-				NUM_LINKS										=> NUM_LINKS,
-				TX_OPTIMIZATION								=> TX_OPTIMIZATION,
-				RX_OPTIMIZATION								=> RX_OPTIMIZATION,
-				TX_ENCODING										=> TX_ENCODING,
-				RX_ENCODING										=> RX_ENCODING
-			)
-			port map (        
-				-- Clocks:    
-				MGT_CLKS_I                             => CLKS_I.mgt_clks,
-				MGT_CLKS_O                             => CLKS_O.mgt_clks,
-				-- MGT I/O:                
-				MGT_I                                  => MGT_I,
-				MGT_O                                  => MGT_O,
+--	mgt_param_generic_src_gen: if GBT_BANK_ID = 0 generate
+--		mgt: entity work.multi_gigabit_transceivers  
+--			generic map (
+--				GBT_BANK_ID                            => GBT_BANK_ID,
+--				NUM_LINKS										=> NUM_LINKS,
+--				TX_OPTIMIZATION								=> TX_OPTIMIZATION,
+--				RX_OPTIMIZATION								=> RX_OPTIMIZATION,
+--				TX_ENCODING										=> TX_ENCODING,
+--				RX_ENCODING										=> RX_ENCODING
+--			)
+--			port map (        
+--				-- Clocks:    
+--				MGT_CLKS_I                             => CLKS_I.mgt_clks,
+--				MGT_CLKS_O                             => CLKS_O.mgt_clks,
+--				-- MGT I/O:                
+--				MGT_I                                  => MGT_I,
+--				MGT_O                                  => MGT_O,
 				
-				-- Control:
-				PHASE_ALIGNED_I								=> phaligned_from_gbtTx(1),
-				PHASE_COMPUTING_DONE_I						=> phcomputing_from_gbtTx(1),
+--				-- Control:
+--				PHASE_ALIGNED_I								=> phaligned_from_gbtTx(1),
+--				PHASE_COMPUTING_DONE_I						=> phcomputing_from_gbtTx(1),
 				
-				TX_WORDCLK_O									=> tx_wordclk,
-				RX_WORDCLK_O									=> rx_wordclk,
+--				TX_WORDCLK_O									=> tx_wordclk,
+--				RX_WORDCLK_O									=> rx_wordclk,
 				
-				GBTTX_MGTTX_RDY_O                      => txReady_from_mgt,
-				---------------------------------------
-				GBTRX_MGTRX_RDY_O                      => rxReady_from_mgt,
-				GBTRX_RXWORDCLK_READY_O                => rxWordClkReady_from_mgt,
-				GBTRX_HEADER_LOCKED_I                  => rxHeaderLocked_from_gbtRx,
-				GBTRX_BITSLIP_NBR_I                    => rxBitSlipNbr_from_gbtRx,
-				-- Words:      
-				GBTTX_WORD_I                           => tx_wordNbit_from_gbtTx,      
-				GBTRX_WORD_O                           => rx_wordNbit_from_mgt
-			);
-   end generate;
+--				GBTTX_MGTTX_RDY_O                      => txReady_from_mgt,
+--				---------------------------------------
+--				GBTRX_MGTRX_RDY_O                      => rxReady_from_mgt,
+--				GBTRX_RXWORDCLK_READY_O                => rxWordClkReady_from_mgt,
+--				GBTRX_HEADER_LOCKED_I                  => rxHeaderLocked_from_gbtRx,
+--				GBTRX_BITSLIP_NBR_I                    => rxBitSlipNbr_from_gbtRx,
+--				-- Words:      
+--				GBTTX_WORD_I                           => tx_wordNbit_from_gbtTx,      
+--				GBTRX_WORD_O                           => rx_wordNbit_from_mgt
+--			);
+--   end generate;
 	 
 	mgt_param_package_src_gen: if GBT_BANK_ID > 0 generate
 		mgt: entity work.multi_gigabit_transceivers  
@@ -305,48 +305,48 @@ begin                 --========####   Architecture Body   ####========--
    --========--              
    -- GBT RX --              
    --========--
-	gbtRx_param_generic_src_gen: if GBT_BANK_ID = 0 generate
-		gbtRx_gen: for i in 1 to NUM_LINKS generate    
+--	gbtRx_param_generic_src_gen: if GBT_BANK_ID = 0 generate
+--		gbtRx_gen: for i in 1 to NUM_LINKS generate    
 		
-			gbtRx: entity work.gbt_rx            
-				generic map (
-					GBT_BANK_ID                         => GBT_BANK_ID,
-					NUM_LINKS									=> NUM_LINKS,
-					TX_OPTIMIZATION							=> TX_OPTIMIZATION,
-					RX_OPTIMIZATION							=> RX_OPTIMIZATION,
-					TX_ENCODING									=> TX_ENCODING,
-					RX_ENCODING									=> RX_ENCODING
-				)         
-				port map (              
-					-- Reset & Clocks:
-					RX_RESET_I                          => GBT_RX_I(i).reset,
-					RX_WORDCLK_I                        => rx_wordclk(i),
-					RX_FRAMECLK_I                       => CLKS_I.rx_frameClk(i),                  
-					-- Control:    
-					RX_MGT_RDY_I                        => rxReady_from_mgt(i),        
-					RX_WORDCLK_READY_I                  => rxWordClkReady_from_mgt(i),
-					RX_FRAMECLK_READY_I                 => GBT_RX_I(i).rxFrameClkReady,
-					------------------------------------
-					RX_BITSLIP_NBR_O                    => rxBitSlipNbr_from_gbtRx(i),            
-					RX_HEADER_LOCKED_O                  => rxHeaderLocked_from_gbtRx(i),                 
-					RX_HEADER_FLAG_O                    => GBT_RX_O(i).header_flag,
-					RX_ISDATA_FLAG_O                    => GBT_RX_O(i).isDataFlag,            
-					RX_READY_O                          => GBT_RX_O(i).ready,
-					-- Word & Data:                  
-					RX_WORD_I                           => rx_wordNbit_from_mgt(i),                  
-					RX_DATA_O                           => GBT_RX_O(i).data,
-					------------------------------------
-					RX_EXTRA_DATA_WIDEBUS_O             => GBT_RX_O(i).extraData_widebus,
-					------------------------------------
-					RX_BIT_MODIFIED_CNTER					=> GBT_RX_O(i).rxBitModifiedCnter,
-					RX_ERROR_DETECTED							=> GBT_RX_O(i).rxErrorDetected
-				);             
+--			gbtRx: entity work.gbt_rx            
+--				generic map (
+--					GBT_BANK_ID                         => GBT_BANK_ID,
+--					NUM_LINKS									=> NUM_LINKS,
+--					TX_OPTIMIZATION							=> TX_OPTIMIZATION,
+--					RX_OPTIMIZATION							=> RX_OPTIMIZATION,
+--					TX_ENCODING									=> TX_ENCODING,
+--					RX_ENCODING									=> RX_ENCODING
+--				)         
+--				port map (              
+--					-- Reset & Clocks:
+--					RX_RESET_I                          => GBT_RX_I(i).reset,
+--					RX_WORDCLK_I                        => rx_wordclk(i),
+--					RX_FRAMECLK_I                       => CLKS_I.rx_frameClk(i),                  
+--					-- Control:    
+--					RX_MGT_RDY_I                        => rxReady_from_mgt(i),        
+--					RX_WORDCLK_READY_I                  => rxWordClkReady_from_mgt(i),
+--					RX_FRAMECLK_READY_I                 => GBT_RX_I(i).rxFrameClkReady,
+--					------------------------------------
+--					RX_BITSLIP_NBR_O                    => rxBitSlipNbr_from_gbtRx(i),            
+--					RX_HEADER_LOCKED_O                  => rxHeaderLocked_from_gbtRx(i),                 
+--					RX_HEADER_FLAG_O                    => GBT_RX_O(i).header_flag,
+--					RX_ISDATA_FLAG_O                    => GBT_RX_O(i).isDataFlag,            
+--					RX_READY_O                          => GBT_RX_O(i).ready,
+--					-- Word & Data:                  
+--					RX_WORD_I                           => rx_wordNbit_from_mgt(i),                  
+--					RX_DATA_O                           => GBT_RX_O(i).data,
+--					------------------------------------
+--					RX_EXTRA_DATA_WIDEBUS_O             => GBT_RX_O(i).extraData_widebus,
+--					------------------------------------
+--					RX_BIT_MODIFIED_CNTER					=> GBT_RX_O(i).rxBitModifiedCnter,
+--					RX_ERROR_DETECTED							=> GBT_RX_O(i).rxErrorDetected
+--				);             
             
-			GBT_RX_O(i).bitSlipNbr                    <= rxBitSlipNbr_from_gbtRx(i);                         
-			GBT_RX_O(i).header_lockedFlag             <= rxHeaderLocked_from_gbtRx(i);
+--			GBT_RX_O(i).bitSlipNbr                    <= rxBitSlipNbr_from_gbtRx(i);                         
+--			GBT_RX_O(i).header_lockedFlag             <= rxHeaderLocked_from_gbtRx(i);
 	 
-		end generate;
-	end generate;
+--		end generate;
+--	end generate;
 
 	gbtRx_param_package_src_gen: if GBT_BANK_ID > 0 generate
 		gbtRx_gen: for i in 1 to GBT_BANKS_USER_SETUP(GBT_BANK_ID).NUM_LINKS generate    

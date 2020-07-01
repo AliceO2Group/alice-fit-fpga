@@ -152,25 +152,25 @@ begin                 --========####   Architecture Body   ####========--
    -- Latency-optimized --
    --===================--
    
-   txGearboxLatOpt_gen: if TX_OPTIMIZATION = LATENCY_OPTIMIZED generate   
+--   txGearboxLatOpt_gen: if TX_OPTIMIZATION = LATENCY_OPTIMIZED generate   
    
-      txGearboxLatOpt: entity work.gbt_tx_gearbox_latopt
-         port map (
-            TX_RESET_I                          => TX_RESET_I,   
-            TX_FRAMECLK_I                       => TX_FRAMECLK_I,      
-            TX_WORDCLK_I                        => TX_WORDCLK_I,   
-            ------------------------------------
-            TX_MGT_READY_I                      => TX_MGT_READY_I,
-            ------------------------------------
-            TX_FRAME_I                          => TX_FRAME_I,    
-            TX_WORD_O                           => TX_WORD_O,    
-				------------------------------------
-				TX_GEARBOX_READY_O						=> TX_GEARBOX_READY_O,
-				TX_PHALIGNED_O								=> TX_PHALIGNED_O,
-				TX_PHCOMPUTED_O							=> TX_PHCOMPUTED_O
-         );
+--      txGearboxLatOpt: entity work.gbt_tx_gearbox_latopt
+--         port map (
+--            TX_RESET_I                          => TX_RESET_I,   
+--            TX_FRAMECLK_I                       => TX_FRAMECLK_I,      
+--            TX_WORDCLK_I                        => TX_WORDCLK_I,   
+--            ------------------------------------
+--            TX_MGT_READY_I                      => TX_MGT_READY_I,
+--            ------------------------------------
+--            TX_FRAME_I                          => TX_FRAME_I,    
+--            TX_WORD_O                           => TX_WORD_O,    
+--				------------------------------------
+--				TX_GEARBOX_READY_O						=> TX_GEARBOX_READY_O,
+--				TX_PHALIGNED_O								=> TX_PHALIGNED_O,
+--				TX_PHCOMPUTED_O							=> TX_PHCOMPUTED_O
+--         );
    
-   end generate;  
+--   end generate;  
    
    --=====================================================================================--     
 end structural;
