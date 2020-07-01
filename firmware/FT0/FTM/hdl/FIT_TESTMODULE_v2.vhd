@@ -66,6 +66,7 @@ entity FIT_TESTMODULE_v2 is
 		GPIO_LED_6 : 	out  STD_LOGIC;
 		GPIO_LED_7 : 	out  STD_LOGIC;
 		GPIO_BUTTON_SW_C: in STD_LOGIC;
+		GPIO_DIP_SW0 : in STD_LOGIC;
 		
 		-- FTM V1.0
 		LAS_EN : out STD_LOGIC;
@@ -147,7 +148,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
 	signal CDM_clk_200 : std_logic;
 	signal CDM_pll_SysClk : std_logic;
 	signal CDM_pll_clk_A : std_logic;
-	signal clk400 : std_logic;
+
 
 -- FIT PM clocks
 	signal SysClk_pll : std_logic;   
@@ -175,7 +176,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
 	signal ipb_clk, ipb_rst : std_logic;
 	signal ipb_data_in, ipb_data_in_tm, ipb_data_out, spi_data_r, pm_spi_data, tcm_sc_data, loc_data : STD_LOGIC_VECTOR (31 downto 0);
 	signal ipb_addr : STD_LOGIC_VECTOR(31 downto 0);
-	signal ipb_iswr, ipb_isrd, ipb_wr, ipb_str, spi_sel, spi_err, spi_ack, tm_sel, ipb_ack_tm, ipb_err_tm : std_logic;
+	signal ipb_iswr, ipb_isrd, ipb_wr, ipb_str, spi_sel, spi_err, spi_ack, tm_sel, ipb_ack_tm, ipb_err_tm, loc_rdy : std_logic;
 	signal ipb_out: ipb_wbus;
     signal ipb_in: ipb_rbus;
     signal bus_select : STD_LOGIC_VECTOR(4 downto 0);
@@ -186,9 +187,12 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal ip_addr: std_logic_vector(31 downto 0);
 
     signal HDMI0_P, HDMI0_N, HDMI0_o : std_logic_vector(3 downto 0);
-    signal HDMI0_d, HDMI0_s : std_logic_vector(31 downto 0);
-    signal HDMI_clkout_320 : std_logic;
-    signal rd_status, st_rq, st_rq_cmd, hdmi_ready, PM_req, PM_req0, PM_req1, PM_req2, PM_rq, rq_irq0, rq_irq1, rq_irq2, rq_irq : std_logic;
+    signal HDMI0_d, HDMI0_s, t_stmp, HDMI0_d_sysclk : std_logic_vector(31 downto 0);
+    signal HDMI_clkout_320, HDMI_clk40 : std_logic;
+    signal rd_status, st_rq, st_rq_cmd, hdmi_ready, hdmi_ready0, hdmi_ready1, hdmi_ready2, hdmi_ready_sysclk, PM_req, PM_req0, PM_req1, PM_req2, PM_rq, rq_irq0, rq_irq1, rq_irq2, rq_irq : std_logic;
+    signal d_addr : STD_LOGIC_VECTOR(6 DOWNTO 0);
+    signal d_sns : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    signal d_rd, d_rdy, adc_sel, adc_sel1 : std_logic;
 	
 -- TEST Module signals
 	signal FSM_Clocks_signal : FSM_Clocks_type;
@@ -197,7 +201,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
 	signal Laser_Signal_out, Laser_Signal_out_ff : std_logic;
 	
 	signal tt0_p, tt0_n, tt1_p, tt1_n, ta0_p, ta0_n, ta1_p, ta1_n, PM_TT0, PM_TT1, PM_TA0, PM_TA1, CLK_PM, CLK_PMi  : std_logic;
-	signal tcm_sel, tcm_sck, tcm_miso, tcm_mosi, pm_spi_rdy, tcm_sc_rdy, clk320_tcm, pm_sel, pm_sck, pm_miso, pm_mosi : std_logic;
+	signal tcm_sel, tcm_sck, tcm_miso, tcm_mosi, pm_spi_rdy, tcm_sc_rdy, clk320_tcm, pm_sel, pm_sck, pm_miso, pm_mosi, PM_rst, addr_sw : std_logic;
     signal cnt_rd, t40, t40_0, t40_1 : std_logic;
     signal TCM_bitcnt : std_logic_vector(2 downto 0);
     signal TAmpl, TTime : std_logic_vector(13 downto 0);
@@ -236,7 +240,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
       CLK_IN1_40: in std_logic;
       CLK_OUT1_40: out std_logic;
       CLK_OUT2_320: out std_logic;
-      CLK400DLY   : out    std_logic;
+      CLK200DLY   : out    std_logic;
       LOCKED : out std_logic
    );
    END COMPONENT;
@@ -256,7 +260,8 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
            spi_clk : out STD_LOGIC;
            spi_mosi : out STD_LOGIC;
            spi_miso : in STD_LOGIC;
-           cnt_rd : in STD_LOGIC
+           cnt_rd : in STD_LOGIC;
+           PM_rst : in STD_LOGIC
            );
            
    end component; 
@@ -313,6 +318,27 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
      clk_in1           : in     std_logic
     );
    end component;
+   
+   COMPONENT SENSOR
+     PORT (
+       di_in : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+       daddr_in : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
+       den_in : IN STD_LOGIC;
+       dwe_in : IN STD_LOGIC;
+       drdy_out : OUT STD_LOGIC;
+       do_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+       dclk_in : IN STD_LOGIC;
+       reset_in : IN STD_LOGIC;
+       vp_in : IN STD_LOGIC;
+       vn_in : IN STD_LOGIC;
+       channel_out : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+       eoc_out : OUT STD_LOGIC;
+       alarm_out : OUT STD_LOGIC;
+       eos_out : OUT STD_LOGIC;
+       busy_out : OUT STD_LOGIC
+     );
+   END COMPONENT;
+
 
 
 attribute IODELAY_GROUP : STRING;
@@ -320,6 +346,9 @@ attribute IODELAY_GROUP of IDL1: label is "TCM_DLY";
 
    
 begin
+
+sw0: IBUF port map (O => addr_sw, I =>GPIO_DIP_SW0);
+
 -- wiring ==============================================
 -- PLL clocking source
 source_gen <= USERCLK_gen;
@@ -329,8 +358,8 @@ source_gen <= USERCLK_gen;
 -- DataClk_to_FIT_GBT <= DataClk_pll;   
 -- MgtRefClk_to_FIT_GBT <= MgtRefClk_pll;   
 
-SysClk_to_FIT_GBT <= CDM_pll_SysClk;   
-DataClk_to_FIT_GBT <= CDM_pll_clk_A;
+SysClk_to_FIT_GBT <=  CDM_pll_SysClk;   
+DataClk_to_FIT_GBT <=   CDM_pll_clk_A;
 --DataClk_to_FIT_GBT <= CDM_clk_A;
 MgtRefClk_to_FIT_GBT <= CDM_clk_200;   
 
@@ -565,7 +594,7 @@ port map(
      locked=> SDclk_pll_ready,
      CLK_IN1_40  => CDM_clk_A,
 	 CLK_OUT1_40  => CDM_pll_clk_A,
-	 CLK400DLY => clk400,
+	 CLK200DLY => clk200,
 	 CLK_OUT2_320  => CDM_pll_SysClk
 );
 -- =====================================================
@@ -574,7 +603,7 @@ port map(
    IDL1 : IDELAYCTRL
    port map (
       RDY => dly_rdy,       -- 1-bit output: Ready output
-      REFCLK => clk400, -- 1-bit input: Reference clock input
+      REFCLK => clk200, -- 1-bit input: Reference clock input
       RST => (RESET and (not SDclk_pll_ready))        -- 1-bit input: Active high reset input
    );
 
@@ -600,18 +629,26 @@ HDMI0: tcm_sync
       PM_req => PM_req
   );
   
- LAI(7) <= hdmi_ready;
- LAI(6) <=CLK_PM;
   
   process (HDMI_clkout_320)
   begin
   if (HDMI_clkout_320'event and HDMI_clkout_320='1') then
-  
+    
   LAI(3 downto 0)<=HDMI0_o;
   end if;
   end process;
 
+  process (SysClk_to_FIT_GBT)
+  begin
+  if ( SysClk_to_FIT_GBT'event and  SysClk_to_FIT_GBT='1') then
+  
+  hdmi_ready2 <=hdmi_ready1; hdmi_ready1 <=hdmi_ready0; hdmi_ready0 <=hdmi_ready;
+  if (hdmi_ready_sysclk='1') then HDMI0_d_sysclk <=HDMI0_d; end if; 
 
+  end if;
+  end process;
+  
+  hdmi_ready_sysclk<=(not hdmi_ready2) and hdmi_ready1;
 
 
 -- IP-BUS module ===============================================
@@ -620,8 +657,8 @@ sfp_rate_sel(1 downto 0) <= B"00";
 mac_addr <= X"020ddba11504"; -- Careful here, arbitrary addresses do not always work
 --ip_addr <= X"ac144baf"; -- 172.20.75.175
 --ip_addr <= X"ac144b5f"; -- 172.20.75.95
-ip_addr <= X"c0a80029"; -- 192.168.0.41  
-
+ip_addr <= X"c0a80029" when (addr_sw='1')  else -- 192.168.0.41  
+           X"ac144baf"; -- 172.20.75.175
 
 ipbus_module:  entity work.kc705_basex_infra port map(
     eth_clk_p => eth_clk_p,
@@ -664,11 +701,14 @@ ipb_str<=ipb_out.ipb_strobe; ipb_wr<= ipb_out.ipb_write;
 
 rd_status <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"00") and (ipb_wr='0') else '0';
 st_rq  <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") else '0'; 
-st_rq_cmd  <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") and (ipb_wr='1') and (ipb_data_out(1)='1') else '0'; 
+st_rq_cmd  <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") and (ipb_wr='1') and (ipb_data_out(1)='1') else '0';
+PM_rst <= '1' when (bus_select(4)='1') and (ipb_addr(8 downto 0)='0' & x"02") and (ipb_wr='1') and (ipb_data_out(2)='1') else '0';
 
  process (ipb_clk)
   begin
   if (ipb_clk'event and ipb_clk='1') then
+  
+  adc_sel1<=adc_sel and not d_rdy;
   
 PM_req2<=PM_req1;  PM_req1<=PM_req0; PM_req0<=PM_req;
 if (PM_req2='0') and (PM_req1='1') then PM_rq<='1';
@@ -678,14 +718,27 @@ end if;
   
   end if;
   end process;
+  
+UA2 : USR_ACCESSE2   port map (CFGCLK => open, DATA => t_stmp, DATAVALID => open );
+
+SNS : SENSOR  PORT MAP ( di_in => (others=>'0'), daddr_in => d_addr, den_in => d_rd, dwe_in => '0', drdy_out => d_rdy, do_out => d_sns, dclk_in => ipb_clk,
+             reset_in => ipb_rst, vp_in => '0', vn_in => '0', channel_out => open,  eoc_out => open, alarm_out => open, eos_out => open, busy_out => open);
+
+d_addr<="00000" & ipb_addr(1 downto 0);
+
+adc_sel<= '1' when bus_select(4)='1' and ipb_addr(8 downto 2)="0000001" and ipb_addr(1 downto 0)/="11" and (ipb_wr='0') else '0';
+
+d_rd<= adc_sel  and not adc_sel1;
+
+loc_rdy<= d_rdy when adc_sel='1' else '1';  
 
 
-
-with ipb_addr(8 downto 0) select
-loc_data<=   HDMI0_s when '0' & x"00",
-             HDMI0_d when '0' & x"01",
-             x"0000000" & "000" & PM_rq when '0' & x"02",
-             x"00000000" when others;
+loc_data<=   HDMI0_s when ipb_addr(8 downto 0) = '0' & x"00" else
+             HDMI0_d when ipb_addr(8 downto 0) = '0' & x"01" else
+             x"0000000" & "000" & PM_rq when ipb_addr(8 downto 0) = '0' & x"02" else
+             t_stmp when ipb_addr(8 downto 0) =  '0' & x"03" else
+             x"0000" & d_sns when adc_sel='1' else 
+             x"00000000";
 
 
 
@@ -694,7 +747,7 @@ ipb_in.ipb_ack<=    spi_ack when "00001",
                     ipb_ack_tm when "00010",
                     pm_spi_rdy when "00100",
                     tcm_sc_rdy when "01000",
-                    '1' when "10000",
+                    loc_rdy when "10000",
                     '0' when others;
 
 
@@ -741,8 +794,18 @@ pm_sc:    pm_spi
                    spi_clk =>tcm_sck,
                    spi_mosi =>tcm_mosi,
                    spi_miso =>tcm_miso,
-                   cnt_rd => cnt_rd
-                   );		
+                   cnt_rd => cnt_rd,
+                   PM_rst => PM_rst
+                   );	
+                   
+ LAI(7) <= tcm_sel;
+ LAI(6) <= tcm_sck;
+ LAI(5) <= tcm_mosi;
+ LAI(4) <= not tcm_miso;
+ 
+ LAI(8) <= reset_aft_pllready;
+ LAI(9) <= FSM_Clocks_signal.Reset;
+                    	
 
 tcm_sc1:   tcm_sc 
             Port map ( CLK => ipb_clk, 
@@ -808,9 +871,9 @@ FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
 		GBTTX_IsData_dataclk_O => GBTTX_IsData_dataclk_signal,
 		GBTTX_Data_dataclk_O => GBTTX_Data_dataclk_signal,
 		
-		hdmi_fifo_datain_I => x"E" & TESTM_status.ORBIT_from_CRU & TESTM_status.BCID_from_CRU & HDMI0_d,
-        hdmi_fifo_wren_I => hdmi_ready,
-        hdmi_fifo_wrclk_I => HDMI_clkout_320,
+		hdmi_fifo_datain_I => x"E" & TESTM_status.ORBIT_from_CRU & TESTM_status.BCID_from_CRU & HDMI0_d_sysclk,
+        hdmi_fifo_wren_I => hdmi_ready_sysclk,
+        hdmi_fifo_wrclk_I => SysClk_to_FIT_GBT,
 		
 		GBT_Status_I => from_gbt_bank_prj_GBT_status,
 

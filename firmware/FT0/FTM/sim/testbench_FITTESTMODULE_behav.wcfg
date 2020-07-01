@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="testbench_FITTESTMODULE_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="fit_gbt_board_package" />
+            <top_module name="fit_gbt_common_package" />
+            <top_module name="glbl" />
+            <top_module name="testbench_FITTESTMODULE" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="422676450fs"></ZoomStartTime>
+      <ZoomEndTime time="1115464711fs"></ZoomEndTime>
+      <Cursor1Time time="1000000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="338"></NameColumnWidth>
+      <ValueColumnWidth column_width="311"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TESTM_control" type="array">
+      <obj_property name="ElementShortName">TESTM_control</obj_property>
+      <obj_property name="ObjectShortName">TESTM_control</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TESTM_status" type="array">
+      <obj_property name="ElementShortName">TESTM_status</obj_property>
+      <obj_property name="ObjectShortName">TESTM_status</obj_property>
+   </wvobject>
+   <wvobject fp_name="group223" type="group">
+      <obj_property name="label">TESTBENCH_IPBUS</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_CLK" type="logic">
+         <obj_property name="ElementShortName">IPBUS_CLK</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_CLK</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_gen_rst" type="logic">
+         <obj_property name="ElementShortName">IPBUS_gen_rst</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_gen_rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_gen_isrd" type="logic">
+         <obj_property name="ElementShortName">IPBUS_gen_isrd</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_gen_isrd</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_gen_addr" type="array">
+         <obj_property name="ElementShortName">IPBUS_gen_addr[11:0]</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_gen_addr[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_ackn" type="logic">
+         <obj_property name="ElementShortName">IPBUS_ackn</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_ackn</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_data_out" type="array">
+         <obj_property name="ElementShortName">IPBUS_data_out[31:0]</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_data_out[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group12" type="group">
+      <obj_property name="label">TESTBENCH_GBT</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/GBTRX_Data_rxclk_signal" type="array">
+         <obj_property name="ElementShortName">GBTRX_Data_rxclk_signal[79:0]</obj_property>
+         <obj_property name="ObjectShortName">GBTRX_Data_rxclk_signal[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/GBTRX_IsData_rxclk_signal" type="logic">
+         <obj_property name="ElementShortName">GBTRX_IsData_rxclk_signal</obj_property>
+         <obj_property name="ObjectShortName">GBTRX_IsData_rxclk_signal</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/GBTTX_IsData_dataclk_signal" type="logic">
+         <obj_property name="ElementShortName">GBTTX_IsData_dataclk_signal</obj_property>
+         <obj_property name="ObjectShortName">GBTTX_IsData_dataclk_signal</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/GBTTX_Data_dataclk_signal" type="array">
+         <obj_property name="ElementShortName">GBTTX_Data_dataclk_signal[79:0]</obj_property>
+         <obj_property name="ObjectShortName">GBTTX_Data_dataclk_signal[79:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/testbench_FITTESTMODULE/FSM_Clocks_signal" type="array">
+      <obj_property name="ElementShortName">FSM_Clocks_signal</obj_property>
+      <obj_property name="ObjectShortName">FSM_Clocks_signal</obj_property>
+   </wvobject>
+   <wvobject fp_name="group57" type="group">
+      <obj_property name="label">CRU_Data_gen</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/CRU_ORBC_Gen_comp/TRG_result" type="array">
+         <obj_property name="ElementShortName">TRG_result[31:0]</obj_property>
+         <obj_property name="ObjectShortName">TRG_result[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/CRU_ORBC_Gen_comp/EV_ID_counter" type="array">
+         <obj_property name="ElementShortName">EV_ID_counter[43:0]</obj_property>
+         <obj_property name="ObjectShortName">EV_ID_counter[43:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/CRU_ORBC_Gen_comp/RX_Data_O" type="array">
+         <obj_property name="ElementShortName">RX_Data_O[79:0]</obj_property>
+         <obj_property name="ObjectShortName">RX_Data_O[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/CRU_ORBC_Gen_comp/RX_IsData_O" type="logic">
+         <obj_property name="ElementShortName">RX_IsData_O</obj_property>
+         <obj_property name="ObjectShortName">RX_IsData_O</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group19" type="group">
+      <obj_property name="label">DATA_FIFO</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/rd_clk" type="logic">
+         <obj_property name="ElementShortName">rd_clk</obj_property>
+         <obj_property name="ObjectShortName">rd_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/rd_en" type="logic">
+         <obj_property name="ElementShortName">rd_en</obj_property>
+         <obj_property name="ObjectShortName">rd_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/rd_rst_busy" type="logic">
+         <obj_property name="ElementShortName">rd_rst_busy</obj_property>
+         <obj_property name="ObjectShortName">rd_rst_busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/dout" type="array">
+         <obj_property name="ElementShortName">dout[191:0]</obj_property>
+         <obj_property name="ObjectShortName">dout[191:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/wr_clk" type="logic">
+         <obj_property name="ElementShortName">wr_clk</obj_property>
+         <obj_property name="ObjectShortName">wr_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/wr_en" type="logic">
+         <obj_property name="ElementShortName">wr_en</obj_property>
+         <obj_property name="ObjectShortName">wr_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/wr_rst_busy" type="logic">
+         <obj_property name="ElementShortName">wr_rst_busy</obj_property>
+         <obj_property name="ObjectShortName">wr_rst_busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/din" type="array">
+         <obj_property name="ElementShortName">din[95:0]</obj_property>
+         <obj_property name="ObjectShortName">din[95:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/fifo_generator_0_comp/rd_data_count" type="array">
+         <obj_property name="ElementShortName">rd_data_count[10:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_data_count[10:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group234" type="group">
+      <obj_property name="label">DATA_sender</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBT_DATA_sender_comp/RX_IsData_ORBCgen_I" type="logic">
+         <obj_property name="ElementShortName">RX_IsData_ORBCgen_I</obj_property>
+         <obj_property name="ObjectShortName">RX_IsData_ORBCgen_I</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBT_DATA_sender_comp/RX_Data_ORBCgen_I" type="array">
+         <obj_property name="ElementShortName">RX_Data_ORBCgen_I[79:0]</obj_property>
+         <obj_property name="ObjectShortName">RX_Data_ORBCgen_I[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="group99" type="group">
+         <obj_property name="label">Control</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_map_ipbclk" type="array">
+            <obj_property name="ElementShortName">Control_register_reg_map_ipbclk</obj_property>
+            <obj_property name="ObjectShortName">Control_register_reg_map_ipbclk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc" type="array">
+            <obj_property name="ElementShortName">Control_register_reg_dc</obj_property>
+            <obj_property name="ObjectShortName">Control_register_reg_dc</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/ipbus_control_reg" type="array">
+            <obj_property name="ElementShortName">ipbus_control_reg[0:11][31:0]</obj_property>
+            <obj_property name="ObjectShortName">ipbus_control_reg[0:11][31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_rdmap_dc" type="array">
+            <obj_property name="ElementShortName">Control_register_rdmap_dc[0:11][31:0]</obj_property>
+            <obj_property name="ObjectShortName">Control_register_rdmap_dc[0:11][31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_rdmap_ipbclk" type="array">
+            <obj_property name="ElementShortName">Control_register_rdmap_ipbclk[0:11][31:0]</obj_property>
+            <obj_property name="ObjectShortName">Control_register_rdmap_ipbclk[0:11][31:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_160bit_map" type="array">
+         <obj_property name="ElementShortName">Data_FIFO_160bit_map[0:5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_160bit_map[0:5][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_160bit_map_ff" type="array">
+         <obj_property name="ElementShortName">Data_FIFO_160bit_map_ff[0:5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_160bit_map_ff[0:5][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_map_counter_ff" type="other">
+         <obj_property name="ElementShortName">Data_FIFO_map_counter_ff</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_map_counter_ff</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Is_DATA_Readign" type="logic">
+         <obj_property name="ElementShortName">Is_DATA_Readign</obj_property>
+         <obj_property name="ObjectShortName">Is_DATA_Readign</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/FIFO_RDEN_O" type="logic">
+         <obj_property name="ElementShortName">FIFO_RDEN_O</obj_property>
+         <obj_property name="ObjectShortName">FIFO_RDEN_O</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/IPBUS_data_out_O" type="array">
+         <obj_property name="ElementShortName">IPBUS_data_out_O[31:0]</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_data_out_O[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBT_DATA_sender_comp/IsData_O" type="logic">
+         <obj_property name="ElementShortName">IsData_O</obj_property>
+         <obj_property name="ObjectShortName">IsData_O</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBT_DATA_sender_comp/Data_O" type="array">
+         <obj_property name="ElementShortName">Data_O[79:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_O[79:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group126" type="group">
+      <obj_property name="label">Data_Gen</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/Module_Data_Gen_comp/Board_data_O.data_word" type="array">
+         <obj_property name="ElementShortName">.data_word[79:0]</obj_property>
+         <obj_property name="ObjectShortName">.data_word[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/Module_Data_Gen_comp/Board_data_O" type="array">
+         <obj_property name="ElementShortName">Board_data_O</obj_property>
+         <obj_property name="ObjectShortName">Board_data_O</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group109" type="group">
+      <obj_property name="label">TX_gen</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_IsData_I" type="logic">
+         <obj_property name="ElementShortName">TX_IsData_I</obj_property>
+         <obj_property name="ObjectShortName">TX_IsData_I</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_Data_I" type="array">
+         <obj_property name="ElementShortName">TX_Data_I[79:0]</obj_property>
+         <obj_property name="ObjectShortName">TX_Data_I[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_IsData_O" type="logic">
+         <obj_property name="ElementShortName">TX_IsData_O</obj_property>
+         <obj_property name="ObjectShortName">TX_IsData_O</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_Data_O" type="array">
+         <obj_property name="ElementShortName">TX_Data_O[79:0]</obj_property>
+         <obj_property name="ObjectShortName">TX_Data_O[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_generation" type="array">
+         <obj_property name="ElementShortName">TX_generation[79:0]</obj_property>
+         <obj_property name="ObjectShortName">TX_generation[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_data_gen" type="array">
+         <obj_property name="ElementShortName">TX_data_gen[79:0]</obj_property>
+         <obj_property name="ObjectShortName">TX_data_gen[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/TX_IsData_generation" type="logic">
+         <obj_property name="ElementShortName">TX_IsData_generation</obj_property>
+         <obj_property name="ObjectShortName">TX_IsData_generation</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/gen_counter_ff" type="array">
+         <obj_property name="ElementShortName">gen_counter_ff[15:0]</obj_property>
+         <obj_property name="ObjectShortName">gen_counter_ff[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/cont_counter_ff" type="array">
+         <obj_property name="ElementShortName">cont_counter_ff[79:0]</obj_property>
+         <obj_property name="ObjectShortName">cont_counter_ff[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/count_val_void" type="array">
+         <obj_property name="ElementShortName">count_val_void[15:0]</obj_property>
+         <obj_property name="ObjectShortName">count_val_void[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/TX_Data_Gen_comp/count_val_data" type="array">
+         <obj_property name="ElementShortName">count_val_data[15:0]</obj_property>
+         <obj_property name="ObjectShortName">count_val_data[15:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group131" type="group">
+      <obj_property name="label">IPBUS_sender</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/DATA_CLK" type="logic">
+         <obj_property name="ElementShortName">DATA_CLK</obj_property>
+         <obj_property name="ObjectShortName">DATA_CLK</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_CLK" type="logic">
+         <obj_property name="ElementShortName">IPBUS_CLK</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_CLK</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_gen_addr" type="array">
+         <obj_property name="ElementShortName">IPBUS_gen_addr[11:0]</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_gen_addr[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_data_out" type="array">
+         <obj_property name="ElementShortName">IPBUS_data_out[31:0]</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_data_out[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/IPBUS_ackn" type="logic">
+         <obj_property name="ElementShortName">IPBUS_ackn</obj_property>
+         <obj_property name="ObjectShortName">IPBUS_ackn</obj_property>
+      </wvobject>
+      <wvobject fp_name="group137" type="group">
+         <obj_property name="label">FIFO</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/data_fifo_datain" type="array">
+            <obj_property name="ElementShortName">data_fifo_datain[95:0]</obj_property>
+            <obj_property name="ObjectShortName">data_fifo_datain[95:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/data_fifo_wren" type="logic">
+            <obj_property name="ElementShortName">data_fifo_wren</obj_property>
+            <obj_property name="ObjectShortName">data_fifo_wren</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/DATA_from_FIFO" type="array">
+            <obj_property name="ElementShortName">DATA_from_FIFO[191:0]</obj_property>
+            <obj_property name="ObjectShortName">DATA_from_FIFO[191:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIFO_RDEN" type="logic">
+            <obj_property name="ElementShortName">FIFO_RDEN</obj_property>
+            <obj_property name="ObjectShortName">FIFO_RDEN</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_160bit_map" type="array">
+         <obj_property name="ElementShortName">Data_FIFO_160bit_map[0:5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_160bit_map[0:5][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_160bit_map_ff" type="array">
+         <obj_property name="ElementShortName">Data_FIFO_160bit_map_ff[0:5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_160bit_map_ff[0:5][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Data_FIFO_map_counter_ff" type="other">
+         <obj_property name="ElementShortName">Data_FIFO_map_counter_ff</obj_property>
+         <obj_property name="ObjectShortName">Data_FIFO_map_counter_ff</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/Is_DATA_Readign" type="logic">
+         <obj_property name="ElementShortName">Is_DATA_Readign</obj_property>
+         <obj_property name="ObjectShortName">Is_DATA_Readign</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/FIT_TESTMODULE_IPBUS_sender_comp/gbt_word_counter" type="array">
+         <obj_property name="ElementShortName">gbt_word_counter[15:0]</obj_property>
+         <obj_property name="ObjectShortName">gbt_word_counter[15:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group544" type="group">
+      <obj_property name="label">HDMI</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/hdmi_fifo_datain" type="array">
+         <obj_property name="ElementShortName">hdmi_fifo_datain[79:0]</obj_property>
+         <obj_property name="ObjectShortName">hdmi_fifo_datain[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/hdmi_fifo_wren" type="logic">
+         <obj_property name="ElementShortName">hdmi_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">hdmi_fifo_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/hdmi_fifo_dataout" type="array">
+         <obj_property name="ElementShortName">hdmi_fifo_dataout[79:0]</obj_property>
+         <obj_property name="ObjectShortName">hdmi_fifo_dataout[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/hdmi_fifo_rden" type="logic">
+         <obj_property name="ElementShortName">hdmi_fifo_rden</obj_property>
+         <obj_property name="ObjectShortName">hdmi_fifo_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/hdmi_fifo_isempty" type="logic">
+         <obj_property name="ElementShortName">hdmi_fifo_isempty</obj_property>
+         <obj_property name="ObjectShortName">hdmi_fifo_isempty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBTRX_Data_rxclk_I" type="array">
+         <obj_property name="ElementShortName">GBTRX_Data_rxclk_I[79:0]</obj_property>
+         <obj_property name="ObjectShortName">GBTRX_Data_rxclk_I[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/GBTRX_IsData_rxclk_I" type="logic">
+         <obj_property name="ElementShortName">GBTRX_IsData_rxclk_I</obj_property>
+         <obj_property name="ObjectShortName">GBTRX_IsData_rxclk_I</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/data_fifo_datain" type="array">
+         <obj_property name="ElementShortName">data_fifo_datain[95:0]</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_datain[95:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_FITTESTMODULE/FIT_TESTMODULE/data_fifo_wren" type="logic">
+         <obj_property name="ElementShortName">data_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_wren</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
