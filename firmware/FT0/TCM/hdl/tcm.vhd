@@ -1339,8 +1339,8 @@ AmplS<= (AmplA(16) & AmplA) + (AmplC(16) & AmplC);
 SC_0<=       '1'  when  ((unsigned('0' & AmplA(15 downto 0))>unsigned(SC_A & '0')) and (unsigned('0' & AmplC(15 downto 0))>unsigned(SC_C & '0')) and (AmplA(16)='0') and (AmplC(16)='0') and (Tmode(2)='0')) 
                   or ((unsigned(AmplS(16 downto 0))>unsigned(SC_A & '0')) and (AmplS(17)='0') and (Tmode(2)='1')) else '0';
          
-C_0<=        '1'  when  ((unsigned('0' & AmplA(15 downto 0))>unsigned(C_A & '0')) and (unsigned('0' & AmplC(15 downto 0))>unsigned(C_C & '0')) and (AmplA(16)='0') and (AmplC(16)='0') and (Tmode(2)='0')) 
-                  or ((unsigned(AmplS(16 downto 0))>unsigned(C_A & '0')) and (AmplS(17)='0') and (Tmode(2)='1')) else '0';
+C_0<=        '1'  when  ((unsigned('0' & AmplA(15 downto 0))>unsigned(C_A & '0')) and (unsigned('0' & AmplC(15 downto 0))>unsigned(C_C & '0')) and (AmplA(16)='0') and (AmplC(16)='0') and (Tmode(1)='0')) 
+                  or ((unsigned(AmplS(16 downto 0))>unsigned(C_A & '0')) and (AmplS(17)='0') and (Tmode(1)='1')) else '0';
                 
          
 cnt_lock<=(cnt_lock1 and (not cnt_lock2)) or cnt_rd; cnt_clr<=cnt_clr1 and (not cnt_clr2);                            
