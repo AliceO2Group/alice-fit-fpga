@@ -134,7 +134,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal reset_to_syscount 		: std_logic;
     signal Is_SysClkCounter_ready   : std_logic;
     signal reset_aft_pllready : std_logic;
-    signal SDclk_pll_ready : std_logic;
+    signal SDclk_pll_ready, clk200_rdy : std_logic;
     signal gbt_reset    :std_logic;
 
 -- generators cloks
@@ -240,7 +240,6 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
       CLK_IN1_40: in std_logic;
       CLK_OUT1_40: out std_logic;
       CLK_OUT2_320: out std_logic;
-      CLK200DLY   : out    std_logic;
       LOCKED : out std_logic
    );
    END COMPONENT;
@@ -594,7 +593,6 @@ port map(
      locked=> SDclk_pll_ready,
      CLK_IN1_40  => CDM_clk_A,
 	 CLK_OUT1_40  => CDM_pll_clk_A,
-	 CLK200DLY => clk200,
 	 CLK_OUT2_320  => CDM_pll_SysClk
 );
 -- =====================================================
@@ -604,7 +602,7 @@ port map(
    port map (
       RDY => dly_rdy,       -- 1-bit output: Ready output
       REFCLK => clk200, -- 1-bit input: Reference clock input
-      RST => (RESET and (not SDclk_pll_ready))        -- 1-bit input: Active high reset input
+      RST => (RESET and (not clk200_rdy))        -- 1-bit input: Active high reset input
    );
 
 
@@ -660,7 +658,10 @@ mac_addr <= X"020ddba11504"; -- Careful here, arbitrary addresses do not always 
 ip_addr <= X"c0a80029" when (addr_sw='1')  else -- 192.168.0.41  
            X"ac144baf"; -- 172.20.75.175
 
-ipbus_module:  entity work.kc705_basex_infra port map(
+ipbus_module:  entity work.IPBUS_basex_infra 
+generic map (USE_BUFG  => 1)
+       
+port map(
     eth_clk_p => eth_clk_p,
     eth_clk_n => eth_clk_n,
     eth_tx_p => eth_tx_p,
@@ -670,18 +671,17 @@ ipbus_module:  entity work.kc705_basex_infra port map(
     
     clk_ipb_o => ipb_clk,
     rst_ipb_o => ipb_rst,
-   
-    sfp_los => sfp_los,
-    
-    nuke => FSM_Clocks_signal.Reset,
-    soft_rst => FSM_Clocks_signal.Reset,
+          
+    RESET => FSM_Clocks_signal.Reset,
     
     leds => open, -- status LEDs
     mac_addr => mac_addr,
     
     ip_addr => ip_addr,
     ipb_in => ipb_in,
-    ipb_out => ipb_out
+    ipb_out => ipb_out,
+    clk200 => clk200,
+    locked=> clk200_rdy 
 );
 
 
