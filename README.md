@@ -17,9 +17,13 @@ Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
     git pull --recurse-submodules
 
 ----
-### Set up Vivado 2018.1
-
-    source /opt/Xilinx/Vivado/2018.1/settings64.sh
+### Set up Vivado 2019.2.1 (NEW !!!)
+    source /opt/Xilinx/Vivado/2019.2/settings64.sh
+	
+	used vivado version:
+	Vivado v2019.2.1 (64-bit)
+	SW Build: 2729669 on Thu Dec 5 04:49:17 MST 2019
+	IP Build: 2729494 on Thu Dec 5 07:38:25 MST 2019
 
 ----
 ## Generate bitstreams

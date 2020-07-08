@@ -146,7 +146,7 @@ begin
 	PROCESS (FSM_Clocks_I.Data_Clk)
 	BEGIN
 		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset = '1') THEN
+			IF(FSM_Clocks_I.Reset40 = '1') THEN
 				IsData_ff <= '0';
 				Data_ff <= (others => '0');
 --				dataheader_ff <= (others => '0');

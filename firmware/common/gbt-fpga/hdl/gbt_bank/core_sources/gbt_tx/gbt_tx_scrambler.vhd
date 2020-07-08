@@ -191,26 +191,26 @@ begin                 --========####   Architecture Body   ####========--
    -- 32 bit scrambler (Wide-Bus):
    ------------------------------
    
-   wideBus_gen: if TX_ENCODING = WIDE_BUS generate
+--   wideBus_gen: if TX_ENCODING = WIDE_BUS generate
    
-      gbtTxScrambler32bit_gen: for i in 0 to 1 generate
+--      gbtTxScrambler32bit_gen: for i in 0 to 1 generate
          
-         -- Comment: [31:16] & [15:0]
+--         -- Comment: [31:16] & [15:0]
         
-         gbtTxScrambler16bit: entity work.gbt_tx_scrambler_16bit
-            port map(
-               TX_RESET_I                       => TX_RESET_I,
-               RESET_PATTERN_I                  => SCRAMBLER_16BIT_RESET_PATTERNS(i),
-               ---------------------------------
-               TX_FRAMECLK_I                    => TX_FRAMECLK_I,
-               ---------------------------------
-               TX_EXTRA_DATA_WIDEBUS_I          => TX_EXTRA_DATA_WIDEBUS_I(((16*i)+15) downto (16*i)),
-               TX_EXTRA_FRAME_WIDEBUS_O         => TX_EXTRA_FRAME_WIDEBUS_O(((16*i)+15) downto (16*i))
-            );
+--         gbtTxScrambler16bit: entity work.gbt_tx_scrambler_16bit
+--            port map(
+--               TX_RESET_I                       => TX_RESET_I,
+--               RESET_PATTERN_I                  => SCRAMBLER_16BIT_RESET_PATTERNS(i),
+--               ---------------------------------
+--               TX_FRAMECLK_I                    => TX_FRAMECLK_I,
+--               ---------------------------------
+--               TX_EXTRA_DATA_WIDEBUS_I          => TX_EXTRA_DATA_WIDEBUS_I(((16*i)+15) downto (16*i)),
+--               TX_EXTRA_FRAME_WIDEBUS_O         => TX_EXTRA_FRAME_WIDEBUS_O(((16*i)+15) downto (16*i))
+--            );
 
-      end generate;
+--      end generate;
    
-   end generate;
+--   end generate;
    
    wideBus_no_gen: if TX_ENCODING /= WIDE_BUS generate
    

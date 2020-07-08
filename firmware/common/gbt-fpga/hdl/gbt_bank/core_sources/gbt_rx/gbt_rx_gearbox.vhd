@@ -120,23 +120,23 @@ begin                 --========####   Architecture Body   ####========--
    -- Standard --
    --==========--
    
-   rxGearboxStd_gen: if RX_OPTIMIZATION = STANDARD generate
+--   rxGearboxStd_gen: if RX_OPTIMIZATION = STANDARD generate
    
-      rxGearboxStd: entity work.gbt_rx_gearbox_std
-         port map (      
-            RX_RESET_I                          => RX_RESET_I,     
-            RX_WORDCLK_I                        => RX_WORDCLK_I, 
-            RX_FRAMECLK_I                       => RX_FRAMECLK_I, 
-            ------------------------------------
-            RX_HEADER_LOCKED_I                  => RX_HEADER_LOCKED_I,
-            RX_WRITE_ADDRESS_I                  => RX_WRITE_ADDRESS_I,
-            READY_O                             => READY_O,
-            ------------------------------------
-            RX_WORD_I                           => RX_WORD_I,
-            RX_FRAME_O                          => RX_FRAME_O      
-         );   
+--      rxGearboxStd: entity work.gbt_rx_gearbox_std
+--         port map (      
+--            RX_RESET_I                          => RX_RESET_I,     
+--            RX_WORDCLK_I                        => RX_WORDCLK_I, 
+--            RX_FRAMECLK_I                       => RX_FRAMECLK_I, 
+--            ------------------------------------
+--            RX_HEADER_LOCKED_I                  => RX_HEADER_LOCKED_I,
+--            RX_WRITE_ADDRESS_I                  => RX_WRITE_ADDRESS_I,
+--            READY_O                             => READY_O,
+--            ------------------------------------
+--            RX_WORD_I                           => RX_WORD_I,
+--            RX_FRAME_O                          => RX_FRAME_O      
+--         );   
       
-   end generate;   
+--   end generate;   
    
    --===================--
    -- Latency-optimized --

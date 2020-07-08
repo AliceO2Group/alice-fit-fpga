@@ -82,7 +82,6 @@ architecture Behavioral of gbt_rx_frameclk_phalgnr is
     signal pllLocked_from_pll: std_logic := '0';  
     signal phaseShift_to_pll: std_logic := '0';
     signal shiftDone_from_pll: std_logic := '0'; 
-    signal rst_ph_comp :  std_logic;
         
 begin
    
@@ -103,8 +102,7 @@ begin
              SHIFT_DONE            => shiftDone
          );
          
-         rst_ph_comp<=RESET_I or not(pllLocked_from_pll);
-         
+        
        phase_computing_inst: entity work.phaligner_phase_computing
            Generic map (
                wordclk_freq          => WORDCLK_FREQ
@@ -127,7 +125,7 @@ begin
               )
               Port map ( 
                   RX_WORDCLK_I          => RX_WORDCLK_I,
-                  RESET_I               => rst_ph_comp,
+                  RESET_I               => RESET_I,
                   
                   PLL_LOCKED            => pllLocked_from_pll,
                   

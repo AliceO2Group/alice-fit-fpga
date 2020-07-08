@@ -76,7 +76,7 @@ architecture Behavioral of Event_selector is
 	signal is_trg_first_data_late : std_logic;
 	signal is_trg_eq_data : std_logic;
 	signal is_trg_late_data_first : std_logic;
-	signal is_hb_response : std_logic;
+	signal is_hb_response, is_hb_response_s : std_logic;
 	
 	-- TRG from CRU comp ----------
 	signal fromcru_orbit_ff, fromcru_dec_orbit_ff, fromcru_dec_orbit_ff_next : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
@@ -333,14 +333,17 @@ port map(
 	PROCESS (FSM_Clocks_I.Data_Clk)
 	BEGIN
 		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset = '1') THEN
+		
+		is_hb_response_s<=Control_register_I.is_hb_response;
+		
+			IF(FSM_Clocks_I.Reset40 = '1') THEN
 				Readout_Mode_ff01 <= mode_IDLE;
 				
 				trgfifo_we_ff01 <= '0';
 				trgfifo_we_ff02 <= '0';
 				trgfifo_we_ff03 <= '0';
 				
-				Readout_Mode_manage_DtClk <= mode_IDLE;
+				--Readout_Mode_manage_DtClk <= mode_IDLE;
 
 				fromcru_orbit_ff <= (others => '0');
 				fromcru_bc_ff <= (others => '0');
@@ -354,7 +357,7 @@ port map(
 				trgfifo_we_ff02 <= trgfifo_we_ff01;
 				trgfifo_we_ff03 <= trgfifo_we_ff02;
 				
-				Readout_Mode_manage_DtClk <= Readout_Mode_manage;
+				--Readout_Mode_manage_DtClk <= Readout_Mode_manage;
 				
 				fromcru_orbit_ff <= FIT_GBT_status_I.ORBIT_from_CRU;
 				fromcru_bc_ff <= FIT_GBT_status_I.BCID_from_CRU;
@@ -451,7 +454,9 @@ port map(
 	FSM_STATE_NEXT <= s0_DT_comp 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 	
 					-- ------------------- IDL -------------------
---					  s0_DT_comp		WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+					  s0_DT_comp		WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+					  s0_DT_comp		WHEN (FIT_GBT_status_I.BCIDsync_Mode = mode_STR) ELSE
+					  s0_DT_comp		WHEN (FIT_GBT_status_I.BCIDsync_Mode = mode_LOST) ELSE
 					  
 					  s1_dread			WHEN (FSM_STATE = s1_dread)   and (rdata_state /= s3_lastw)  ELSE -- reading data
 					  s0_DT_comp		WHEN (FSM_STATE = s1_dread)   and (rdata_state = s3_lastw)  ELSE -- return to s0
@@ -616,7 +621,7 @@ port map(
 						
 	cntpckfifo_we <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						'0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
-						'1' WHEN (FSM_STATE = s2_send_wpacket) and (is_hb_response = '1') and (Control_register_I.is_hb_response = '1') ELSE
+						'1' WHEN (FSM_STATE = s2_send_wpacket) and (is_hb_response = '1') and (is_hb_response_s = '1') ELSE
 						'1' WHEN (FSM_STATE = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 						'0';
 						

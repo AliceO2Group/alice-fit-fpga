@@ -51,7 +51,21 @@ architecture Behavioral of phaligner_phase_computing is
     signal deserializerReset: std_logic;
     signal valueComputed: std_logic;
     signal serialToParallel: std_logic_vector((wordclk_freq/40)-1 downto 0);
+    signal rx_clock_t, rx_clock_tn, rx_clock_d : std_logic;
 begin
+
+process (RX_FRAMECLK)
+begin
+ if RX_FRAMECLK'event and (RX_FRAMECLK='1') then
+   rx_clock_t<=not rx_clock_t;
+ end if;
+
+ if RX_FRAMECLK'event and (RX_FRAMECLK='0') then
+   rx_clock_tn<=not rx_clock_t;
+ end if;
+end process;
+
+ rx_clock_d<=rx_clock_t xor rx_clock_tn;
 
    --==================================--
    -- Frameclock deserializer          --
@@ -63,7 +77,7 @@ begin
            valueComputed <= '0';
        elsif falling_edge(RX_WORDCLK_I) then
            serialToParallel((wordclk_freq/40)-1 downto 1) <= serialToParallel((wordclk_freq/40)-2 downto 0);
-           serialToParallel(0) <= RX_FRAMECLK;
+           serialToParallel(0) <= rx_clock_d;
            valueComputed <= '1';
        end if;
    end process;

@@ -183,23 +183,23 @@ begin                 --========####   Architecture Body   ####========--
    -- 32 bit scrambler (Wide-Bus):
    ------------------------------
    
-    wideBus_gen: if RX_ENCODING = WIDE_BUS generate
+--    wideBus_gen: if RX_ENCODING = WIDE_BUS generate
       
-      gbtRxDescrambler32bit_gen: for i in 0 to 1 generate
+--      gbtRxDescrambler32bit_gen: for i in 0 to 1 generate
       
-      -- Comment: [31:16] & [15:0]
+--      -- Comment: [31:16] & [15:0]
       
-         gbtRxDescrambler16bit: entity work.gbt_rx_descrambler_16bit
-            port map(
-               RX_RESET_I                       => RX_RESET_I,
-               RX_FRAMECLK_I                    => RX_FRAMECLK_I,
-               RX_EXTRA_FRAME_WIDEBUS_I         => RX_EXTRA_FRAME_WIDEBUS_I(((16*i)+15) downto (16*i)),
-               RX_EXTRA_DATA_WIDEBUS_O          => RX_EXTRA_DATA_WIDEBUS_O(((16*i)+15) downto (16*i))
-            );
+--         gbtRxDescrambler16bit: entity work.gbt_rx_descrambler_16bit
+--            port map(
+--               RX_RESET_I                       => RX_RESET_I,
+--               RX_FRAMECLK_I                    => RX_FRAMECLK_I,
+--               RX_EXTRA_FRAME_WIDEBUS_I         => RX_EXTRA_FRAME_WIDEBUS_I(((16*i)+15) downto (16*i)),
+--               RX_EXTRA_DATA_WIDEBUS_O          => RX_EXTRA_DATA_WIDEBUS_O(((16*i)+15) downto (16*i))
+--            );
          
-      end generate; 
+--      end generate; 
      
-   end generate;     
+--   end generate;     
    
    wideBus_no_gen: if RX_ENCODING /= WIDE_BUS generate
    

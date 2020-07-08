@@ -31,7 +31,10 @@ entity Reset_Generator is
 		Sys_Cntr_ready_I: in  STD_LOGIC;
 		
 		Reset_DClk_O	: out std_logic;
-		General_reset_O : out std_logic
+		General_reset_O : out std_logic;
+		Reset_DClk40_O	: out std_logic;
+		General_reset40_O : out std_logic
+		
 		);
 end Reset_Generator;
 
@@ -46,9 +49,17 @@ architecture Behavioral of Reset_Generator is
 	
 begin
 
-Reset_DClk_O <= Cntr_reset_ff1;
-General_reset_O <= GenRes_DataClk_ff1;
+Reset_DClk40_O<= Cntr_reset_ff1; General_reset40_O<= GenRes_DataClk_ff1;
 
+PROCESS (SysClk_I)
+BEGIN
+ IF rising_edge(SysClk_I)THEN
+ 
+ Reset_DClk_O <= Cntr_reset_ff1;
+ General_reset_O <= GenRes_DataClk_ff1;
+ 
+ END IF;
+END PROCESS;
 
 -- Sys clk ***********************************
 	PROCESS (DataClk_I)

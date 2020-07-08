@@ -7,6 +7,7 @@ CONFIG.Almost_Empty_Flag                            string  false      false
 CONFIG.Almost_Full_Flag                             string  false      false
 CONFIG.BUSER_Width                                  string  false      0
 CONFIG.CORE_CLK.FREQ_HZ                             string  false      100000000
+CONFIG.CORE_CLK.INSERT_VIP                          string  false      0
 CONFIG.C_SELECT_XPM                                 string  false      0
 CONFIG.Clock_Enable_Type                            string  false      Slave_Interface_Clock_Enable
 CONFIG.Clock_Type_AXI                               string  false      Common_Clock
@@ -95,6 +96,9 @@ CONFIG.Input_Depth_wach                             string  false      16
 CONFIG.Input_Depth_wdch                             string  false      1024
 CONFIG.Input_Depth_wrch                             string  false      16
 CONFIG.MASTER_ACLK.FREQ_HZ                          string  false      100000000
+CONFIG.MASTER_ACLK.INSERT_VIP                       string  false      0
+CONFIG.M_AXI.INSERT_VIP                             string  false      0
+CONFIG.M_AXIS.INSERT_VIP                            string  false      0
 CONFIG.Master_interface_Clock_enable_memory_mapped  string  false      false
 CONFIG.Output_Data_Width                            string  false      76
 CONFIG.Output_Depth                                 string  false      512
@@ -120,6 +124,7 @@ CONFIG.Programmable_Full_Type_wach                  string  false      No_Progra
 CONFIG.Programmable_Full_Type_wdch                  string  false      No_Programmable_Full_Threshold
 CONFIG.Programmable_Full_Type_wrch                  string  false      No_Programmable_Full_Threshold
 CONFIG.READ_CLK.FREQ_HZ                             string  false      100000000
+CONFIG.READ_CLK.INSERT_VIP                          string  false      0
 CONFIG.READ_WRITE_MODE                              string  false      READ_WRITE
 CONFIG.RUSER_Width                                  string  false      0
 CONFIG.Read_Clock_Frequency                         string  false      1
@@ -134,6 +139,10 @@ CONFIG.Register_Slice_Mode_wrch                     string  false      Fully_Reg
 CONFIG.Reset_Pin                                    string  false      true
 CONFIG.Reset_Type                                   string  false      Asynchronous_Reset
 CONFIG.SLAVE_ACLK.FREQ_HZ                           string  false      100000000
+CONFIG.SLAVE_ACLK.INSERT_VIP                        string  false      0
+CONFIG.SLAVE_ARESETN.INSERT_VIP                     string  false      0
+CONFIG.S_AXI.INSERT_VIP                             string  false      0
+CONFIG.S_AXIS.INSERT_VIP                            string  false      0
 CONFIG.Slave_interface_Clock_enable_memory_mapped   string  false      false
 CONFIG.TDATA_NUM_BYTES                              string  false      1
 CONFIG.TDEST_WIDTH                                  string  false      0
@@ -152,6 +161,7 @@ CONFIG.Use_Extra_Logic                              string  false      true
 CONFIG.Valid_Flag                                   string  false      false
 CONFIG.Valid_Sense                                  string  false      Active_High
 CONFIG.WRITE_CLK.FREQ_HZ                            string  false      100000000
+CONFIG.WRITE_CLK.INSERT_VIP                         string  false      0
 CONFIG.WUSER_Width                                  string  false      0
 CONFIG.Write_Acknowledge_Flag                       string  false      false
 CONFIG.Write_Acknowledge_Sense                      string  false      Active_High
