@@ -12,6 +12,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 use work.ipbus.all;
 
 entity IPBUS_basex_infra is
+
+ generic (   
+      USE_BUFG                               : integer := 0
+        );
 	port(
 		eth_clk_p: in std_logic; -- 125MHz MGT clock
 		eth_clk_n: in std_logic;
@@ -61,7 +65,7 @@ component eth_7s_1000basex is
     	);
 end component;	
 
-	signal clk125, clk_ipb, clk_ipb_i, clk_locked, eth_locked, rst125, rst_ipb, rst_ipb_ctrl, rst_eth, onehz, pkt, link_ok, clk_drp, gt_clkin, clk_gt125: std_logic;
+	signal clk125, clk_ipb, clk_ipb_i, clk_locked, eth_locked, rst125, rst_ipb, rst_ipb_ctrl, rst_eth, onehz, pkt, link_ok, clk_drp, gt_clkin, clk_gt125, clk_cmt125: std_logic;
 	signal mac_tx_data, mac_rx_data: std_logic_vector(7 downto 0);
 	signal mac_tx_valid, mac_tx_last, mac_tx_error, mac_tx_ready, mac_rx_valid, mac_rx_last, mac_rx_error: std_logic;
 	signal led_p : std_logic_vector(0 downto 0);
@@ -75,18 +79,32 @@ begin
 		ceb => '0'
 	);
 	
-	bufh_gt: BUFH port map(
+gtgen0: if USE_BUFG=0 generate	
+	bufh_gt0: BUFH port map(
+            i => gt_clkin,
+            o => clk_gt125
+        );
+	bufh_gt1: BUFH port map(
+            i => gt_clkin,
+            o => clk_cmt125
+        );
+end generate;        
+
+gtgen1: if USE_BUFG=1 generate
+	bufg_gt: BUFG port map(
             i => gt_clkin,
             o => clk_gt125
         );
         
+    clk_cmt125 <= clk_gt125;
+end generate;        
+       
 
 --	DCM clock generation for internal bus, ethernet
 
 	clocks: entity work.clocks_7s_serdes
 		port map(
-		    gt_clk => gt_clkin,
-		   	clki_gt125 => clk_gt125,
+		   	clki_gt125 => clk_cmt125,
 			clki_125 => clk125,
 			clko_ipb => clk_ipb_i,
 			clko_drp => clk_drp,
