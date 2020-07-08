@@ -277,9 +277,9 @@ signal tt,ta,tto,tao : STD_LOGIC_VECTOR (1 downto 0);
 
 signal GBT_is_RXD, GBT_is_TXD, RX_CLK, TX_CLK, GBTRX_ready, GBTRX_ready0, GBT_chg, HGBT_chg, GBT_rdy, GBT_rdy0, t100ms, RX_err, RX_err1, RX_err_LED, rxerr0, TXact, RXact, RXLED, TXLED, txled0, rxled0, LNKLED, IsRXData0, GBTRXerr, stat_clr, stat_clr0, stat_clr1 : STD_LOGIC;
 signal cou_100ms :  STD_LOGIC_VECTOR (21 downto 0);
-signal alm_rst0, alm_rst : STD_LOGIC;
+signal alm_rst0, alm_rst, chans_block : STD_LOGIC;
 
-signal chans_ena : STD_LOGIC_VECTOR (11 downto 0);
+signal chans_ena, chans_ena_r : STD_LOGIC_VECTOR (11 downto 0);
 
 signal Zcal_done, Zcal_done0 : STD_LOGIC;
 signal CH1_Z0, CH1_Z1, CH2_Z0, CH2_Z1, CH3_Z0, CH3_Z1, CH4_Z0, CH4_Z1, CH5_Z0, CH5_Z1, CH6_Z0, CH6_Z1, CH7_Z0, CH7_Z1, CH8_Z0, CH8_Z1, CH9_Z0, CH9_Z1, CH10_Z0, CH10_Z1, CH11_Z0, CH11_Z1, CH12_Z0, CH12_Z1 : STD_LOGIC_VECTOR (11 downto 0);
@@ -1385,7 +1385,7 @@ if (HSCKI'event and HSCKI='0') then
             when 16#7A# =>  HSPI_DATA<=x"0" & CH12_0_rg;
             when 16#7B# =>  HSPI_DATA<=x"0" & CH12_1_rg;
             
-            when 16#7C# =>  HSPI_DATA<=x"0" & chans_ena;
+            when 16#7C# =>  HSPI_DATA<=x"0" & chans_ena_r;
 
             when 16#7F# =>  HSPI_DATA<= gbt_global_status & '0' & EVNTI & '0' &  HBC_JUMP3 & HBC_JUMP2 & HBC_JUMP1 & HGBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
             when 16#80# to 16#BF# => HSPI_DATA<=hspi_buf_out;
@@ -1584,7 +1584,7 @@ if (SCKI'event and SCKI='1') then
             when 16#7A# =>  SPI_DATA<=x"0" & CH12_0_rg;
             when 16#7B# =>  SPI_DATA<=x"0" & CH12_1_rg;
             
-            when 16#7C# =>  SPI_DATA<=x"0" & chans_ena;
+            when 16#7C# =>  SPI_DATA<=x"0" & chans_ena_r;
 
             when 16#7F# =>  SPI_DATA<=x"0" & '0'& EVNTI & dcs_irq & BC_JUMP3 & BC_JUMP2 & BC_JUMP1 & GBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
             when 16#80# to 16#BF# => SPI_DATA<=spi_buf_out;
@@ -1689,7 +1689,7 @@ if (cnt_rst='1') then cnt_rst<='0'; end if;
 Zcal_done<=Zcal_done0;
 if (EVNTI='1') and (((Zcal_done0='1') and (Zcal_done='0')) or (sreset='1')) then EVNTI<='0'; end if;
 
-   if (sreset='1') then chans_ena <= (others=>'0');
+   if (sreset='1') then chans_block <= '0';
      else
        if (spi_wr_req='1') or  (hspi_wr_req='1') then
        case reg_wr_addr(7 downto 0) is 
@@ -1761,10 +1761,11 @@ if (EVNTI='1') and (((Zcal_done0='1') and (Zcal_done='0')) or (sreset='1')) then
             when x"3C" => CH12_1_rc<=reg_wr_data(11 downto 0);
             when x"3D" => Ampl_sat <=reg_wr_data(11 downto 0);
             
-            when x"7C" => chans_ena <=reg_wr_data(11 downto 0);
+            when x"7C" => chans_ena_r <=reg_wr_data(11 downto 0);
                         
             when x"7F" => if (cnt_rst='0') and (reg_wr_data(9)='1') then cnt_rst<='1'; end if;
                           if (EVNTI='0') and (reg_wr_data(10)='1')  then EVNTI<='1'; end if;
+                          if (spi_wr_req='1') and (reg_wr_data(11)='1') then chans_block <= '1'; end if;
             
             when others => null;
          end case;
@@ -1783,6 +1784,12 @@ end process;
 gate_time_low<=(not gate_time_high)+1;
 
 rd_lock<= rd_lock_spi or rd_lock_hspi;
+
+ch_en: for i in 0 to 11 generate
+
+chans_ena(i) <= chans_ena_r(i) and chans_block;
+
+end generate;
 
 process (tdcclk1)
 begin
