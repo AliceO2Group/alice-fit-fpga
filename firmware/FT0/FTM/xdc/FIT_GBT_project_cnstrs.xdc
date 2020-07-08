@@ -4,18 +4,18 @@
 create_clock -period 8.000 -name eth_refclk [get_ports eth_clk_p]
 
 
-create_generated_clock -name decoupled_clk -source [get_pins ipbus_module/eth/decoupled_clk_reg/C] -divide_by 2 [get_pins ipbus_module/eth/decoupled_clk_reg/Q]
-
 # Ethernet driven by Ethernet txoutclk (i.e. via transceiver)
-create_generated_clock -name eth_clk_62_5 -source [get_pins ipbus_module/eth/mmcm/CLKIN1] [get_pins ipbus_module/eth/mmcm/CLKOUT1]
-create_generated_clock -name eth_clk_125 -source [get_pins ipbus_module/eth/mmcm/CLKIN1] [get_pins ipbus_module/eth/mmcm/CLKOUT2]
+create_generated_clock -name eth_clk_62_5 -source [get_pins ipbus_module/eth/mmcm/inst/mmcm_adv_inst/CLKIN1] [get_pins ipbus_module/eth/mmcm/inst/mmcm_adv_inst/CLKOUT0]
+create_generated_clock -name eth_clk_125 -source [get_pins ipbus_module/eth/mmcm/inst/mmcm_adv_inst/CLKIN1] [get_pins ipbus_module/eth/mmcm/inst/mmcm_adv_inst/CLKOUT1]
 
 # Clocks derived from MMCM driven by Ethernet RefClk directly (i.e. not via transceiver)
-create_generated_clock -name clk_ipb -source [get_pins ipbus_module/clocks/mmcm/CLKIN1] [get_pins ipbus_module/clocks/mmcm/CLKOUT1]
+create_generated_clock -name clk_ipb -source [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKIN1] [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKOUT0]
+create_generated_clock -name free_clk -source [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKIN1] [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKOUT1]
+create_generated_clock -name dly_clk -source [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKIN1] [get_pins ipbus_module/clocks/pll/inst/plle2_adv_inst/CLKOUT2]
 
 
 set_false_path -through [get_pins ipbus_module/clocks/nuke_i_reg/Q]
-set_false_path -through [get_pins ipbus_module/clocks/rst_reg/Q]
+
 
 create_clock -period 5.000 -name USER_CLK_P -waveform {0.000 2.500} [get_ports USER_CLK_P]
 
@@ -23,7 +23,7 @@ create_clock -period 25.000 -name FMC_HPC_DATACLK [get_ports FMC_HPC_clk_A_p]
 create_clock -period 25.000 -name CLK40_PM [get_ports CLKPM_P]
 
 create_clock -period 5.000 -name FMC_HPC_REFCLK [get_ports FMC_HPC_clk_200_p]
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets FMC_HPC_clk_200_p]
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets FMC_HPC_clk_200_p]
 
 
 
@@ -148,19 +148,4 @@ set_property LOC MMCME2_ADV_X0Y1 [get_cells HDMI0/PLL1/inst/mmcm_adv_inst]
 
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets pm_sck]
 create_clock -period 64.000 -name PM_sck [get_ports PM_SPI_SCK]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -276,7 +276,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_clock_div.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/led_stretcher.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/emac_hostbus_decl.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/kc705_basex_infra.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ipbus/hdl/IPBUS_basex.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/clocks_7s_serdes.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/eth_7s_1000basex.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_trans_decl.vhd" ]\
