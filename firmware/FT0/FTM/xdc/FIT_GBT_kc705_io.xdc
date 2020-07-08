@@ -1,3 +1,4 @@
+set_property PACKAGE_PIN AE23 [get_ports CLKPM_P]
 # FTM v1.0 10.01.19
 
 # J22 (P1) CONNECTOR
@@ -206,7 +207,6 @@ set_property PACKAGE_PIN H2 [get_ports SFP_TX_P]
 
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
-set_property BITSTREAM.CONFIG.CONFIGRATE 12 [current_design]
 
 
 
@@ -219,7 +219,6 @@ set_property PACKAGE_PIN AG27 [get_ports TCM_TA1_P]
 set_property PACKAGE_PIN AF26 [get_ports TCM_TA0_P]
 
 
-set_property PACKAGE_PIN AE23 [get_ports CLKPM_P]
 set_property PACKAGE_PIN AD23 [get_ports PM_TA0_P]
 set_property PACKAGE_PIN AH21 [get_ports PM_TA1_P]
 set_property PACKAGE_PIN AF20 [get_ports PM_TT0_P]
@@ -233,6 +232,16 @@ set_property IOSTANDARD LVCMOS25 [get_ports PM_SPI_MISO]
 set_property IOSTANDARD LVCMOS25 [get_ports PM_SPI_MOSI]
 set_property IOSTANDARD LVCMOS25 [get_ports PM_SPI_SCK]
 set_property IOSTANDARD LVCMOS25 [get_ports PM_SPI_SEL]
+
+
+set_property BITSTREAM.CONFIG.CONFIGRATE 16 [current_design]
+set_property BITSTREAM.GENERAL.XADCENHANCEDLINEARITY ON [current_design]
+set_property BITSTREAM.CONFIG.OVERTEMPPOWERDOWN ENABLE [current_design]
+set_property BITSTREAM.CONFIG.USR_ACCESS TIMESTAMP [current_design]
+
+set_property CONFIG_VOLTAGE 2.5 [current_design]
+set_property CFGBVS VCCO [current_design]
+
 
 set_property OFFCHIP_TERM NONE [get_ports GPIO_SMA_J13]
 set_property OFFCHIP_TERM NONE [get_ports TCM_SPI_MOSI]
@@ -256,3 +265,5 @@ set_property OFFCHIP_TERM NONE [get_ports LA[1]]
 set_property OFFCHIP_TERM NONE [get_ports LA[0]]
 set_property OFFCHIP_TERM NONE [get_ports sfp_rate_sel[1]]
 set_property OFFCHIP_TERM NONE [get_ports sfp_rate_sel[0]]
+set_property PACKAGE_PIN Y29 [get_ports GPIO_DIP_SW0]
+set_property IOSTANDARD LVCMOS25 [get_ports GPIO_DIP_SW0]

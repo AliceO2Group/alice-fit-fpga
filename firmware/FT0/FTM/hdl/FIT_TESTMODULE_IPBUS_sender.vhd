@@ -189,22 +189,24 @@ Data_FIFO_160bit_map(0) <= FIFO_Data_ibclk_I(191 downto 160);
 -- Data_FIFO_160bit_map(0) <= FIFO_Data_ibclk_I(159 downto 128);
 
 -- IP-BUS register ***********************************
-	PROCESS (FSM_Clocks_I.Data_Clk)
-	BEGIN
-		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
+--	PROCESS (FSM_Clocks_I.Data_Clk)
+--	BEGIN
+--		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
 		
-		rst_dclk <= rst_ipbus_ff;
+--		rst_dclk <= rst_ipbus_ff;
 		
-		IF(rst_dclk = '1') THEN
-            Control_register_reg_dc <= test_CONTROL_REG;
-        ELSE
+--		IF(rst_dclk = '1') THEN
+--            Control_register_reg_dc <= test_CONTROL_REG;
+--        ELSE
+--            Control_register_reg_dc <= Control_register_reg_map_ipbclk;
+--            ipbus_status_reg_map_dc <= ipbus_status_reg_map;
+--        END IF;
+		
+--		END IF;
+--	END PROCESS;
+
             Control_register_reg_dc <= Control_register_reg_map_ipbclk;
             ipbus_status_reg_map_dc <= ipbus_status_reg_map;
-        END IF;
-		
-		END IF;
-	END PROCESS;
-
 
 
 -- IP-BUS register ***********************************

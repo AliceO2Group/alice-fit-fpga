@@ -120,6 +120,8 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
+ [file normalize "${origin_dir}/hdl/counter32.vhd" ]\
+ [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm.vhd" ]\
  [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
  [file normalize "${origin_dir}/hdl/cnt_ctrl.vhd" ]\
@@ -229,8 +231,8 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt/Data_Packager.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt/Module_Data_Gen_PM.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager_tcm_temp.vhd" ]\
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
@@ -266,6 +268,9 @@ if {[string equal $proj_create "yes"]} {
     set file "[file normalize "$origin_dir/xdc/tcm_pins.xdc"]"
     add_files -fileset constrs_1 [list $file]
 
+    set file "[file normalize "$origin_dir/xdc/timing.xdc"]"
+    add_files -fileset constrs_1 [list $file]
+
     set_property -name "file_type" -value "XDC" -objects [get_files -of_objects [get_filesets constrs_1] [list "*/xdc/*.xdc"]]
 
     # Set 'constrs_1' fileset properties
@@ -280,6 +285,8 @@ generate_target synthesis [get_ips] -force
 foreach ip [get_ips] {
     puts $ip
     create_ip_run [get_files ${ip}.xci]
+	set_property generate_synth_checkpoint false [get_files ${ip}.xci]
+    generate_target all [get_files ${ip}.xci]
 }
 
 
@@ -290,12 +297,13 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
+
 # Import local files from the original project
-#set files [list \
-# [file normalize "${origin_dir}/TCM.srcs/sim_1/new/tcm_sim.vhd" ]\
-# [file normalize "${origin_dir}/tcm_sim_time_impl.wcfg" ]\
-#]
-#set imported_files [import_files -fileset sim_1 $files]
+set files [list \
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/testbench_DataPackager.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/TestBench_Data_Packager_PM.wcfg" ]\
+]
+set imported_files [import_files -fileset sim_1 $files]
 
 # Set 'sim_1' fileset file properties for remote files
 # None
@@ -308,14 +316,25 @@ set obj [get_filesets sim_1]
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "tcm_sim" -objects $obj
+set_property -name "top" -value "testbench_DataPackager.vhd" -objects $obj
+
+
+
+
+
+
+
+
+
+
+
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part ${part} -flow {Vivado Synthesis 2017} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part ${part} -flow {Vivado Synthesis 2019} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
-  set_property flow "Vivado Synthesis 2017" [get_runs synth_1]
+  set_property flow "Vivado Synthesis 2019" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
@@ -349,10 +368,10 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2018} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Performance_NetDelay_low" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2018" [get_runs impl_1]
+  set_property flow "Vivado Implementation 2019" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj

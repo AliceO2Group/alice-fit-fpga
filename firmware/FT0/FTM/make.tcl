@@ -255,27 +255,27 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/hdl/DataCLK_strobe.vhd" ]\
+ [file normalize "${origin_dir}/hdl/fit_gbt_boardPM_package.vhd" ]\
  [file normalize "${origin_dir}/hdl/gbt-readout/CRU_ORBC_Gen.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/hdl/gbt-readout/DataConverter_PM.vhd" ]\
  [file normalize "${origin_dir}/hdl/gbt-readout/fit_gbt_common_package.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd" ]\
- [file normalize "${origin_dir}/hdl/GBT_DATA_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/gbt-readout/Module_Data_Gen_PM.vhd" ]\
  [file normalize "${origin_dir}/hdl/gbt-readout/TX_Data_Gen.vhd" ]\
+ [file normalize "${origin_dir}/hdl/GBT_DATA_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/PLL_Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/hdl/TCM_SPI.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_sc.vhd" ]\
- [file normalize "${origin_dir}/../../FT0/TCM/hdl/pm-spi.vhd" ]\
+ [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_sync.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_core.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_v2.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_clock_div.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/led_stretcher.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/emac_hostbus_decl.vhd" ]\
+ [file normalize "${origin_dir}/hdl/ipbus/ipbus_clock_div.vhd" ]\
+ [file normalize "${origin_dir}/hdl/ipbus/led_stretcher.vhd" ]\
+ [file normalize "${origin_dir}/hdl/ipbus/emac_hostbus_decl.vhd" ]\
  [file normalize "${origin_dir}/hdl/ipbus/kc705_basex_infra.vhd" ]\
  [file normalize "${origin_dir}/hdl/ipbus/clocks_7s_serdes.vhd" ]\
  [file normalize "${origin_dir}/hdl/ipbus/eth_7s_1000basex.vhd" ]\
@@ -309,6 +309,8 @@ set files [list \
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_core/ipbus_package.vhd" ]\
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_core/dss_package.vhd" ]\
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/ipbus_reg_types.vhd" ]\
+ [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/spi_defines.v" ]\
+ [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/timescale.v" ]\
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/spi_clgen.v" ]\
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/spi_shift.v" ]\
  [file normalize "${origin_dir}/hdl/ipbus/ipbus_slaves/spi_top.v" ]\
@@ -319,7 +321,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/phaligner_phase_computing.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/phaligner_phase_comparator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/gbt_bank_reset.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/core_sources/rxframeclk_phalgnr/gbt_rx_frameclk_phalgnr.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/gbt_rx_frameclk_phalgnr.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler_21bit.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler.vhd" ]\
@@ -327,9 +329,9 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_rsencode.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_intlver.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std_rdwrctrl.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std_rdwrctrl.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_phasemon.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/mgt/mgt_latopt_bitslipctrl.vhd" ]\
@@ -354,13 +356,13 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_status.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/core_sources/gbt_bank.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-fpga/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_init.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_init.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_auto_phase_align.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_cpll_railing.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_gt.vhd" ]\
@@ -419,7 +421,18 @@ generate_target synthesis [get_ips] -force
 foreach ip [get_ips] {
     puts $ip
     create_ip_run [get_files ${ip}.xci]
+	set_property generate_synth_checkpoint false [get_files ${ip}.xci]
+    generate_target all [get_files ${ip}.xci]
 }
+
+
+
+
+
+
+
+
+
 
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {
@@ -433,15 +446,31 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
-# Empty (no sources present)
+# Import local files from the original project
+set files [list \
+ [file normalize "${origin_dir}/sim/testbench_FITTESTMODULE.vhd" ]\
+ [file normalize "${origin_dir}/sim/testbench_FITTESTMODULE_behav.wcfg" ]\
+]
+set imported_files [import_files -fileset sim_1 $files]
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "top" -value "testbench_FITTESTMODULE" -objects $obj
 
+
+
+
+
+
+
+
+
+
+
+
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7k325tffg900-2 -flow {Vivado Synthesis 2018} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7k325tffg900-2 -flow {Vivado Synthesis 2019} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
@@ -477,10 +506,10 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7k325tffg900-2 -flow {Vivado Implementation 2018} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7k325tffg900-2 -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Performance_NetDelay_low" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2018" [get_runs impl_1]
+  set_property flow "Vivado Implementation 2019" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj

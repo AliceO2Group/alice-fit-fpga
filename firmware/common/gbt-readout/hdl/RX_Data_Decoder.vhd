@@ -122,7 +122,7 @@ begin
 -- BC Counter ==================================================
 	BC_counter_rxdecoder_comp : entity work.BC_counter
 	port map (
-		RESET_I			=> FSM_Clocks_I.Reset,
+		RESET_I			=> FSM_Clocks_I.Reset40,
 		DATA_CLK_I		=> FSM_Clocks_I.Data_Clk,
 		
 		IS_INIT_I		=> ORBC_counter_init,
@@ -141,7 +141,7 @@ begin
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset = '1') THEN
+			IF (FSM_Clocks_I.Reset40 = '1') THEN
 				STATE_SYNC <= mode_STR;
 				STATE_RDMODE <= mode_IDLE;
 				Start_run_ff <= '0';
@@ -177,6 +177,7 @@ begin
 
 -- FSM ***********************************************
 STATE_RDMODE_NEXT <=	mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
+						mode_IDLE WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
 						mode_TRG WHEN (STATE_RDMODE = mode_IDLE) and ((TRGTYPE_received_ff and TRG_const_SOT) /= TRG_const_void) ELSE
 						mode_TRG WHEN (STATE_RDMODE = mode_IDLE) and ((Trigger_ff and TRG_const_SOT) /= TRG_const_void) ELSE
 						mode_CNT WHEN (STATE_RDMODE = mode_IDLE) and ((TRGTYPE_received_ff and TRG_const_SOC) /= TRG_const_void) ELSE
@@ -198,6 +199,7 @@ Stop_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 -- SYNC FSM
 STATE_SYNC_NEXT <=	mode_STR	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 --					mode_STR	WHEN (STATE_SYNC = mode_LOST) ELSE
+					mode_STR    WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
 					mode_STR	WHEN (Control_register_I.reset_orbc_synd = '1') ELSE
 					mode_SYNC	WHEN TRGTYPE_ORBCrsv_ff_next and (STATE_SYNC = mode_STR) ELSE
 					mode_LOST	WHEN (EV_ID_counter /= ORBC_ID_received_ff) and (STATE_SYNC = mode_SYNC) and TRGTYPE_ORBCrsv_ff ELSE

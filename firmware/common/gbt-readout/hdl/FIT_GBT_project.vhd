@@ -62,6 +62,9 @@ entity FIT_GBT_project is
 
 		-- FIT readour status, including BCOR_ID to PM/TCM
 		FIT_GBT_status_O : out FIT_GBT_status_type;
+		rx_ph320 : out std_logic_vector(2 downto 0);
+		ph_error320 : out std_logic;
+		
 		
 		GPIO_O : out std_logic_vector(15 downto 0)
 	);
@@ -71,8 +74,8 @@ architecture Behavioral of FIT_GBT_project is
 
 -- reset signals
 signal FSM_Clocks 				: FSM_Clocks_type;
-signal reset_to_syscount 		: std_logic;
-signal gbt_reset : std_logic;
+signal reset_to_syscount, reset_to_syscount40  : std_logic;
+signal gbt_reset, reset_l : std_logic;
 signal Is_SysClkCounter_ready   : std_logic;
 
 -- from rx sync
@@ -169,7 +172,9 @@ port map(
 			DataClk_I => DataClk_I,
 			Sys_Cntr_ready_I => Is_SysClkCounter_ready,
 			Reset_DClk_O => reset_to_syscount,
-			General_reset_O => FSM_Clocks.Reset
+			General_reset_O => FSM_Clocks.Reset,
+			Reset_DClk40_O => reset_to_syscount40,
+			General_reset40_O => FSM_Clocks.Reset40
 		);
 -- ===========================================================
 
@@ -177,6 +182,7 @@ port map(
 DataClk_I_strobe_comp: entity work.DataClk_strobe
 port map(
 			RESET_I => reset_to_syscount,
+			RESET40_I => reset_to_syscount40,
 			SysClk_I => SysClk_I,
 			DataClk_I => DataClk_I,
 			SysClk_count_O => FSM_Clocks.System_Counter,
@@ -191,13 +197,15 @@ port map (
 			Control_register_I => Control_register_I,
 			
 			RX_CLK_I  => RxDataClk_I,
-
+			
 			RX_IS_DATA_RXCLK_I   => IsRxData_rxclk_to_FITrd_I,
-			RX_DATA_RXCLK_I      => x"0"&RxData_rxclk_to_FITrd_I,
+			RX_DATA_RXCLK_I      => x"0" & RxData_rxclk_to_FITrd_I,
 			RX_IS_DATA_DATACLK_O => RX_IsData_DataClk,
 			RX_DATA_DataClk_O    => RX_exData_from_RXsync,
 			CLK_PH_CNT_O         => RX_Phase_Counter,
-			CLK_PH_ERROR_O 		 => FIT_GBT_STATUS.GBT_status.Rx_Phase_error
+			CLK_PH_ERROR_O 		 => FIT_GBT_STATUS.GBT_status.Rx_Phase_error,
+			rx_ph320             => rx_ph320,
+			ph_error320          => ph_error320
 );
 -- =============================================================
 
@@ -287,9 +295,12 @@ port map (
 -- Data ff data clk **********************************
 	process (FSM_Clocks.Data_Clk)
 	begin
-
+	
+	   
 		IF(rising_edge(FSM_Clocks.Data_Clk) )THEN
-			IF (FSM_Clocks.Reset = '1') THEN
+	     reset_l<=Control_register_I.reset_gbt;
+
+			IF (FSM_Clocks.Reset40 = '1') THEN
 				RX_ErrDet_latch <= '0';
 			ELSE
 				RX_ErrDet_latch <= RX_ErrDet_latch_next;	
@@ -304,17 +315,16 @@ port map (
 							'0' WHEN (Control_register_I.reset_gbt_rxerror = '1') ELSE
 							'1' WHEN (FIT_GBT_STATUS.GBT_status.gbtRx_ErrorDet = '1') ELSE
 							'1' WHEN (RX_ErrDet_latch = '1') ELSE
+							'0' WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
 							'0';
 -- ***************************************************
 
-gbt_reset <=    '1' when (RESET_I = '1') else
-                '1' when (Control_register_I.reset_gbt = '1') else
-                '0';
+gbt_reset <=    RESET_I or reset_l;
 
 
  gbtBankDsgn : entity work.GBT_TX_RX
      port map (
-     RESET => RESET_I,
+     RESET => gbt_reset,
             MgtRefClk => MgtRefClk_I,
             MGT_RX_P =>  MGT_RX_P_I,
             MGT_RX_N => MGT_RX_N_I,

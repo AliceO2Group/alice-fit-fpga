@@ -143,41 +143,41 @@ begin                 --========####   Architecture Body   ####========--
    -- Standard optimization:
    -------------------------
    
-   mgtStd_gen: if     TX_OPTIMIZATION = STANDARD
-                  and RX_OPTIMIZATION = STANDARD generate
+--   mgtStd_gen: if     TX_OPTIMIZATION = STANDARD
+--                  and RX_OPTIMIZATION = STANDARD generate
    
-      mgtStd: entity work.mgt_std
-         generic map (
-            GBT_BANK_ID                         => GBT_BANK_ID,
-				NUM_LINKS									=> NUM_LINKS,
-				TX_OPTIMIZATION							=> TX_OPTIMIZATION,
-				RX_OPTIMIZATION							=> RX_OPTIMIZATION,
-				TX_ENCODING									=> TX_ENCODING,
-				RX_ENCODING									=> RX_ENCODING
-			)
-         port map (
-            -- Clocks:         
-            MGT_CLKS_I                          => MGT_CLKS_I,
-            MGT_CLKS_O                          => MGT_CLKS_O,
+--      mgtStd: entity work.mgt_std
+--         generic map (
+--            GBT_BANK_ID                         => GBT_BANK_ID,
+--				NUM_LINKS									=> NUM_LINKS,
+--				TX_OPTIMIZATION							=> TX_OPTIMIZATION,
+--				RX_OPTIMIZATION							=> RX_OPTIMIZATION,
+--				TX_ENCODING									=> TX_ENCODING,
+--				RX_ENCODING									=> RX_ENCODING
+--			)
+--         port map (
+--            -- Clocks:         
+--            MGT_CLKS_I                          => MGT_CLKS_I,
+--            MGT_CLKS_O                          => MGT_CLKS_O,
 				
-				-- Clocks:
-				TX_WORDCLK_O								=> TX_WORDCLK_O,
-				RX_WORDCLK_O								=> RX_WORDCLK_O,
+--				-- Clocks:
+--				TX_WORDCLK_O								=> TX_WORDCLK_O,
+--				RX_WORDCLK_O								=> RX_WORDCLK_O,
 				
-            -- MGT I/O:                   
-            MGT_I                               => MGT_I,
-            MGT_O                               => MGT_O,
-            -- GBT control: 
-            GBTTX_MGTTX_RDY_O                   => GBTTX_MGTTX_RDY_O,
-            ------------------------------------
-            GBTRX_MGTRX_RDY_O                   => GBTRX_MGTRX_RDY_O,
-            GBTRX_RXWORDCLK_READY_O             => GBTRX_RXWORDCLK_READY_O,
-            -- Words:         
-            GBTTX_WORD_I                        => GBTTX_WORD_I,   
-            GBTRX_WORD_O                        => GBTRX_WORD_O
-         );
+--            -- MGT I/O:                   
+--            MGT_I                               => MGT_I,
+--            MGT_O                               => MGT_O,
+--            -- GBT control: 
+--            GBTTX_MGTTX_RDY_O                   => GBTTX_MGTTX_RDY_O,
+--            ------------------------------------
+--            GBTRX_MGTRX_RDY_O                   => GBTRX_MGTRX_RDY_O,
+--            GBTRX_RXWORDCLK_READY_O             => GBTRX_RXWORDCLK_READY_O,
+--            -- Words:         
+--            GBTTX_WORD_I                        => GBTTX_WORD_I,   
+--            GBTRX_WORD_O                        => GBTRX_WORD_O
+--         );
          
-   end generate;   
+--   end generate;   
       
    -- Latency optimization:
    ------------------------

@@ -52,19 +52,19 @@ RESET_O <= out_reset_ff;
 
 
 -- Data clk ***********************************
-	PROCESS (GDataClk_I)
+	PROCESS (GDataClk_I, GRESET_I)
 	BEGIN
+      IF(GRESET_I = '1') THEN
+    
+        delay_cntr <= (others => '0');
+        pll_ready_ff0 <= '0';
+        pll_ready_ff1 <= '0';
+        
+        out_reset <= '1';
+        out_reset_ff <= '1';
+       else
+
 		IF rising_edge(GDataClk_I)THEN
-			IF(GRESET_I = '1') THEN
-			
-				delay_cntr <= (others => '0');
-				pll_ready_ff0 <= '0';
-				pll_ready_ff1 <= '0';
-				
-				out_reset <= '1';
-				out_reset_ff <= '1';
-			
-			ELSE
 			
 				delay_cntr <= delay_cntr_next;
 				pll_ready_ff0 <= PLL_ready_I;
@@ -74,20 +74,18 @@ RESET_O <= out_reset_ff;
 				out_reset_ff <= out_reset;
 				
 			END IF;
-		END IF;
+	 END IF;
 	END PROCESS;
 -- ********************************************
 
 
 
 -- FSM ***********************************************
-delay_cntr_next <= 	x"0"	WHEN (GRESET_I = '1') ELSE
-					x"0"	WHEN (pll_ready_ff0 = '1') and (pll_ready_ff1 = '0') ELSE
+delay_cntr_next <= 	x"0"	WHEN (pll_ready_ff0 = '0') or (pll_ready_ff1 = '0') ELSE
 					x"f"	WHEN (delay_cntr = x"f") ELSE	
 					delay_cntr+1;
 
-out_reset_next <= 	'1' WHEN (GRESET_I = '1') ELSE
-					'0' WHEN delay_cntr = x"f" ELSE
+out_reset_next <= 	'0' WHEN delay_cntr = x"f" ELSE
 					out_reset;
 end Behavioral;
 

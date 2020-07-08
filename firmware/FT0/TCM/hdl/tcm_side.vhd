@@ -64,9 +64,11 @@ entity tcm_side is
         pll_lock : out STD_LOGIC;
         mt_cou_o : out STD_LOGIC_VECTOR (2 downto 0);
         Time_o : out STD_LOGIC_VECTOR (15 downto 0);
-        Ampl_o : out STD_LOGIC_VECTOR (17 downto 0);
+        Ampl_o : out STD_LOGIC_VECTOR (16 downto 0);
         Avg_o : out STD_LOGIC_VECTOR (13 downto 0);
-        Nchan : out STD_LOGIC_VECTOR (6 downto 0)
+        Nchan : out STD_LOGIC_VECTOR (6 downto 0);
+        req : out STD_LOGIC_VECTOR (9 downto 0);
+        bkgnd : out STD_LOGIC 
         );
 end tcm_side;
 
@@ -75,11 +77,13 @@ architecture RTL of tcm_side is
 type vect3_arr is array (9 downto 0) of std_logic_vector (2 downto 0);
 
 signal HDMI_in, NC : HDMI_trig;
-signal SC, SC_0, C, C_0  : STD_LOGIC;
+signal SC, SC_0, C, C_0, bkgnd_0 : STD_LOGIC;
 signal bitcnt : STD_LOGIC_VECTOR (2 downto 0);
-signal syn_cnt : STD_LOGIC_VECTOR (8 downto 0);
+
 signal Nchan_A1, Nchan_A2, Nchan_A0, Nchan_A : STD_LOGIC_VECTOR (6 downto 0);
-signal TsumA_0, MsumA_0: STD_LOGIC_VECTOR (5 downto 0);
+signal TsumA_0, MsumA_0 : STD_LOGIC_VECTOR (5 downto 0);
+signal MsumA_F : STD_LOGIC_VECTOR (4 downto 0);
+signal TsumA_F : STD_LOGIC_VECTOR (3 downto 0);
 signal TcarryA_out,TcarryA, McarryA, T0sumA, T1sumA, Nchan0A, Nchan1A, Nchan2A, Nchan3A : STD_LOGIC_VECTOR (3 downto 0);
 signal TtimeA, MamplA : STD_LOGIC_VECTOR (17 downto 0);
 signal TSsumA, MSsumA : STD_LOGIC_VECTOR (1 downto 0);
@@ -91,7 +95,7 @@ signal M00sumA, M01sumA,M10sumA, M11sumA : STD_LOGIC_VECTOR (2 downto 0);
 signal M0sumA, M1sumA : STD_LOGIC_VECTOR (3 downto 0);
 
 signal inp_act  : STD_LOGIC_VECTOR (9 downto 1);
-signal  HDMI_status : Trgdat;
+signal HDMI_status : Trgdat;
 
 signal clk320, clk320_90, trig_ena, done, done0, done_toggle, ena_dly, inc_dly, psen, ph_inc, link_OK, side_on, dly_inc, dly_dec, dly_err,dly_err_s,  bitpos_ok, mdl_err, mdl_err_s, dly_ctrl_ena, stat_clr0, stat_clr1, stat_clr2 : STD_LOGIC;
 signal rd_lock1, rd_lock0 : STD_LOGIC;
@@ -131,7 +135,8 @@ component hdmirx is
            mast_dl_err : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
            dly_ctrl_ena : in  STD_LOGIC;
-           syn_err : out  STD_LOGIC
+           syn_err : out  STD_LOGIC;
+           PM_req : out STD_LOGIC
             );
 end component;
 
@@ -175,7 +180,7 @@ link_ena(i)<=config(i) and not stat_chg ;
 
 HDMI_RX: hdmirx  port map(TD_P=>TD_P(i), TD_N=>TD_N(i), RST=>SRST, ena=>link_ena(i), link_rdy=>link_OK_in(i), trig_ena=>done, clk320=>clk320, clk320_90=>clk320_90, TDO=>HDMI_in(i), rd_lock=>rd_lock1, DATA_OUT=> TDD(i), 
             status => HDMI_status(i),  master=> master_sel(i), mt_cou=>mt_cou, bitpos=>bitpos(i), bitpos_ok=>bitpos_ok_in(i), ena_dly=>ena_dly, inc_dly=>inc_dly, ena_ph=>psen_o(i), inc_ph=>ph_inc_o(i), is_idle=>is_idle(i), bp_stable=>bp_stable(i),
-            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i));
+            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i), PM_req=>req(i));
 end generate;
 
 ROM1 : ROM7x15  PORT MAP (clka => CLK320, addra => Nchan_A, douta => Avg_0); 
@@ -305,14 +310,16 @@ if (mt_cou="110") then Nchan_A<=Nchan_A0; end if;
 
 if (mt_cou="000") then 
 
-Time_o<=TsumA_0(3 downto 0) & TtimeA(13 downto 2);
-Ampl_o<=MsumA_0 & MamplA(13 downto 2); 
+Time_o<=TsumA_F & TtimeA(13 downto 2);
+Ampl_o<= MsumA_F & MamplA(13 downto 2);
+bkgnd<=bkgnd_0; 
    
 end if;
 
 end if;
 end process;
 
+bkgnd_0<= HDMI_in(0)(1) or HDMI_in(1)(1) or HDMI_in(2)(1) or HDMI_in(3)(1) or HDMI_in(4)(1) or HDMI_in(5)(1) or HDMI_in(6)(1) or HDMI_in(7)(1) or HDMI_in(8)(1) or HDMI_in(9)(1);
 
 M00sumA<= ("00"&HDMI_in(0)(2))+("00"&HDMI_in(1)(2))+("00"&HDMI_in(2)(2))+("00"&HDMI_in(3)(2))+("00"&HDMI_in(4)(2));
 M10sumA<= ("00"&HDMI_in(5)(2))+("00"&HDMI_in(6)(2))+("00"&HDMI_in(7)(2))+("00"&HDMI_in(8)(2))+("00"&HDMI_in(9)(2));
@@ -320,16 +327,19 @@ M01sumA<= ("00"&HDMI_in(0)(3))+("00"&HDMI_in(1)(3))+("00"&HDMI_in(2)(3))+("00"&H
 M11sumA<= ("00"&HDMI_in(5)(3))+("00"&HDMI_in(6)(3))+("00"&HDMI_in(7)(3))+("00"&HDMI_in(8)(3))+("00"&HDMI_in(9)(3));
 
 
-MsumA_0<= ("000"&M00sumA)+("00" & M01sumA&"0") +("000"&M10sumA)+("00" & M11sumA&"0") +("00"& MamplA(17 downto 14));
+MsumA_0<= ("000"&M00sumA) + ("00" & M01sumA&"0") + ("000"&M10sumA) + ("00" & M11sumA&"0") + ("00"& MamplA(17 downto 14));
+
+MsumA_F<= ("00" & M00sumA) + ("0" & M01sumA&"0") +("00" & M10sumA) + ("0" & M11sumA & "0") + ("0" & MamplA(17 downto 14)) + (M01sumA & "00") + (M11sumA & "00") + (M01sumA(1 downto 0) & "000") + (M11sumA(1 downto 0) & "000") +
+          (M01sumA(0) & "0000") + ( M11sumA(0) & "0000");
 
 T00sumA<= ("00"&HDMI_in(0)(0))+("00"&HDMI_in(1)(0))+("00"&HDMI_in(2)(0))+("00"&HDMI_in(3)(0))+("00"&HDMI_in(4)(0));
 T10sumA<= ("00"&HDMI_in(5)(0))+("00"&HDMI_in(6)(0))+("00"&HDMI_in(7)(0))+("00"&HDMI_in(8)(0))+("00"&HDMI_in(9)(0));
 T01sumA<= ("00"&HDMI_in(0)(1))+("00"&HDMI_in(1)(1))+("00"&HDMI_in(2)(1))+("00"&HDMI_in(3)(1))+("00"&HDMI_in(4)(1));
 T11sumA<= ("00"&HDMI_in(5)(1))+("00"&HDMI_in(6)(1))+("00"&HDMI_in(7)(1))+("00"&HDMI_in(8)(1))+("00"&HDMI_in(9)(1));
 
+TsumA_0<=  ("000"&T00sumA) + ("00" & T01sumA&"0") + ("000"&T10sumA) + ("00" & T11sumA&"0") + ("00" & TtimeA(17 downto 14));
 
-
-TsumA_0<=  ("000"&T00sumA) + ("00" & T01sumA&"0") + ("000"&T10sumA) + ("00" & T11sumA&"0")+("00"&TtimeA(17 downto 14));
+TsumA_F<=  ("0" & T00sumA) + (T00sumA & "0") + ("0" & T10sumA) + (T10sumA & "0") + TtimeA(17 downto 14) + (T00sumA(0) & "000") + (T00sumA(1 downto 0) & "00") + (T10sumA(0) & "000") + (T10sumA(1 downto 0) & "00");
 
 Nchan00A<= ("00" & NC(0)(0))+ ("00" & NC(1)(0))+ ("00" & NC(2)(0))+ ("00" & NC(3)(0))+("00" & NC(4)(0));
 Nchan10A<= ("00" & NC(5)(0))+ ("00" & NC(6)(0))+ ("00" & NC(7)(0))+ ("00" & NC(8)(0))+("00" & NC(9)(0));
