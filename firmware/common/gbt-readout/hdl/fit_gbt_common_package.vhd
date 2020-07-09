@@ -52,16 +52,34 @@ package fit_gbt_common_package is
 
 
 -- Trigger constants -------------------------------------------
+	-- constant TRG_const_void		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000000";
+	-- constant TRG_const_Orbit	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000001";
+	-- constant TRG_const_HB		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000002";
+	-- constant TRG_const_HC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000003";
+	-- constant TRG_const_Ph		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000010";
+	-- constant TRG_const_SOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000080";
+	-- constant TRG_const_EOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000100";
+	-- constant TRG_const_SOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000200";
+	-- constant TRG_const_EOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000400";
+	-- constant TRG_const_ORBCrsv	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"0000000f";
+	-- constant TRG_const_response	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"ffffffff";
+	
 	constant TRG_const_void		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000000";
-	constant TRG_const_Orbit	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000001";
-	constant TRG_const_HB		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000002";
-	constant TRG_const_Ph		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000010";
-	constant TRG_const_SOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000080";
-	constant TRG_const_EOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000100";
-	constant TRG_const_SOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000200";
-	constant TRG_const_EOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000400";
-	constant TRG_const_ORBCrsv	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"0000000f";
-	constant TRG_const_response	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"ffffffff";
+	constant TRG_const_Orbit	: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 0;
+	constant TRG_const_HB		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 1;
+	constant TRG_const_HBr		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 2;
+	constant TRG_const_HC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 3; -- Health check
+	constant TRG_const_Ph		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 4; -- calibration
+	constant TRG_const_PP		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 5;
+	constant TRG_const_Cal		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 6;
+	constant TRG_const_SOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 7;
+	constant TRG_const_EOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 8;
+	constant TRG_const_SOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 9;
+	constant TRG_const_EOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 10;
+	constant TRG_const_TF		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 11; -- time frame delimiter
+	constant TRG_const_FErst	: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 12; -- FEE reset
+	constant TRG_const_RT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 13; -- Run Type; 1=Cont, 0=Trig
+	constant TRG_const_RS		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 14; --Running State; 1=Running
 -- -------------------------------------------------------------
 
 
@@ -140,7 +158,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 	
 	
 	type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator);
-	type Readout_command_type is (command_off, send_SOC, send_SOT, send_EOC, send_EOT); -- test01 - RD mode ignored
+	type Readout_command_type is (idle, continious, trigger);
 
 	type Trigger_Gen_CONTROL_type is record
 		usage_generator : Type_trgGen_use_type;
@@ -194,7 +212,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		Trigger_Gen => (
 			usage_generator		=> use_CONT_generator,
 			--usage_generator	=> use_NO_generator
-			Readout_command		 => command_off,
+			Readout_command		 => idle,
 			trigger_single_val 		=> x"00000000",
 			trigger_pattern 		=> x"0000000080000000",
 			trigger_cont_value 			=> TRG_const_Ph,
@@ -283,6 +301,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 	type FIT_GBT_status_type is record
 		GBT_status 					: Type_GBT_status;
 		Readout_Mode 				: Type_Readout_Mode;
+		CRU_Readout_Mode			: Type_Readout_Mode;
 		BCIDsync_Mode 				: Type_BCIDsync_Mode;
 		Start_run 					: std_logic;
 		Stop_run 					: std_logic;
@@ -490,16 +509,12 @@ begin
 		data_gen_cntr := x"f";
 	end if;
 
-	if cntrl_reg.Trigger_Gen.Readout_command = command_off then
+	if cntrl_reg.Trigger_Gen.Readout_command = idle then
 		start_rd_command := x"0";
-	elsif cntrl_reg.Trigger_Gen.Readout_command = send_SOC then
+	elsif cntrl_reg.Trigger_Gen.Readout_command = continious then
 		start_rd_command := x"1";
-	elsif cntrl_reg.Trigger_Gen.Readout_command = send_SOT then
+	elsif cntrl_reg.Trigger_Gen.Readout_command = trigger then
 		start_rd_command := x"2";
-	elsif cntrl_reg.Trigger_Gen.Readout_command = send_EOC then
-		start_rd_command := x"3";
-	elsif cntrl_reg.Trigger_Gen.Readout_command = send_EOT then
-		start_rd_command := x"4";
 	else
 		start_rd_command := x"f";
 	end if;
@@ -561,17 +576,13 @@ begin
 	
 	
 	if( cntrl_reg_addrreg(0)(19 downto 16) = x"0" ) then
-		cntr_reg.Trigger_Gen.Readout_command := command_off;
+		cntr_reg.Trigger_Gen.Readout_command := idle;
 	elsif( cntrl_reg_addrreg(0)(19 downto 16) = x"1" ) then
-		cntr_reg.Trigger_Gen.Readout_command := send_SOC;
+		cntr_reg.Trigger_Gen.Readout_command := continious;
 	elsif( cntrl_reg_addrreg(0)(19 downto 16) = x"2" ) then
-		cntr_reg.Trigger_Gen.Readout_command := send_SOT;
-	elsif( cntrl_reg_addrreg(0)(19 downto 16) = x"3" ) then
-		cntr_reg.Trigger_Gen.Readout_command := send_EOC;
-	elsif( cntrl_reg_addrreg(0)(19 downto 16) = x"4" ) then
-		cntr_reg.Trigger_Gen.Readout_command := send_EOT;
+		cntr_reg.Trigger_Gen.Readout_command := trigger;
 	else
-		cntr_reg.Trigger_Gen.Readout_command := command_off;
+		cntr_reg.Trigger_Gen.Readout_command := idle;
 	end if;
 
 	
@@ -633,6 +644,7 @@ function func_STATREG_getaddrreg (status_reg: FIT_GBT_status_type ) return statu
 	variable gbt_status		: std_logic_vector(15 downto 0);
 	variable bcid_sync_mode	: std_logic_vector( 3 downto 0 );
 	variable rd_mode 		: std_logic_vector( 3 downto 0 );
+	variable cru_rd_mode 		: std_logic_vector( 3 downto 0 );
 	variable slct_fifo_count_reg	: std_logic_vector(15 downto 0);
 	variable raw_fifo_count_reg		: std_logic_vector(15 downto 0);
 
@@ -662,6 +674,16 @@ begin
 		rd_mode := x"f";
 	end if;
 
+	if status_reg.CRU_Readout_Mode = mode_IDLE then
+		cru_rd_mode := x"0";
+	elsif status_reg.CRU_Readout_Mode = mode_CNT then
+		cru_rd_mode := x"1";
+	elsif status_reg.CRU_Readout_Mode = mode_TRG then
+		cru_rd_mode := x"2";
+	else
+		cru_rd_mode := x"f";
+	end if;
+
 	if status_reg.BCIDsync_Mode = mode_STR then
 		bcid_sync_mode := x"0";
 	elsif status_reg.BCIDsync_Mode = mode_SYNC then
@@ -676,7 +698,7 @@ begin
     raw_fifo_count_reg  := "000" & status_reg.fifo_status.raw_fifo_count;
     
     
-    status_reg_addrreg(0) := x"0" & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
+    status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
     status_reg_addrreg(2) :=  "00000" & status_reg.BCID_from_CRU;
     status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;

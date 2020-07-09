@@ -100,6 +100,7 @@ signal ORBC_ID_from_RXdecoder 			: std_logic_vector(Orbit_id_bitdepth + BC_id_bi
 signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID to PM/TCM
 signal Trigger_from_RXdecoder 			: std_logic_vector(Trigger_bitdepth-1 downto 0);
 signal Readout_Mode_from_RXdecoder 		: Type_Readout_Mode;
+signal CRU_Readout_Mode_from_RXdecoder 	: Type_Readout_Mode;
 signal Start_run_from_RXdecoder			: std_logic;
 signal Stop_run_from_RXdecoder			: std_logic;
 signal BCIDsync_Mode_from_RXdecoder 	: Type_BCIDsync_Mode;
@@ -138,6 +139,7 @@ begin
 	
 	FIT_GBT_STATUS.GBT_status 					<= from_gbt_bank_prj_GBT_status;
 	FIT_GBT_STATUS.Readout_Mode 				<= Readout_Mode_from_RXdecoder;
+	FIT_GBT_STATUS.CRU_Readout_Mode				<= CRU_Readout_Mode_from_RXdecoder
 	FIT_GBT_STATUS.BCIDsync_Mode 				<= BCIDsync_Mode_from_RXdecoder;
 	FIT_GBT_STATUS.Start_run 					<= Start_run_from_RXdecoder;
 	FIT_GBT_STATUS.Stop_run 					<= Stop_run_from_RXdecoder;
@@ -225,6 +227,7 @@ Port map (
 		Trigger_O => Trigger_from_RXdecoder,
 		
 		Readout_Mode_O => Readout_Mode_from_RXdecoder,
+		CRU_Readout_Mode_O => CRU_Readout_Mode_from_RXdecoder,
 		Start_run_O	=> Start_run_from_RXdecoder,
 		Stop_run_O => Stop_run_from_RXdecoder,
 		BCIDsync_Mode_O => BCIDsync_Mode_from_RXdecoder

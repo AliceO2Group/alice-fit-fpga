@@ -44,6 +44,7 @@ entity RX_Data_Decoder is
 		
 		BCIDsync_Mode_O					: out Type_BCIDsync_Mode;
 		Readout_Mode_O					: out Type_Readout_Mode;
+		CRU_Readout_Mode_O					: out Type_Readout_Mode;
 		Start_run_O						: out std_logic;
 		Stop_run_O						: out std_logic
 	 );
@@ -76,7 +77,9 @@ architecture Behavioral of RX_Data_Decoder is
 	signal ORBC_ID_from_CRU_ff, ORBC_ID_from_CRU_ff_next						:  std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID from CRU
 	signal ORBC_ID_from_CRU_corrected_ff, ORBC_ID_from_CRU_corrected_ff_next	:  std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID to PM/TCM
 	signal Trigger_ff, Trigger_ff_next											:  std_logic_vector(Trigger_bitdepth-1 downto 0);
-
+	signal Trigger_valid_bit : std_logic;
+	signal CRU_readout_mode, CRU_readout_mode_next : Type_Readout_Mode;
+	
 
 	
 	signal EV_ID_counter_corrected : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);
@@ -96,17 +99,22 @@ begin
 -- ***************************************************
 	-- equetion define by CRU, must be also defined in RX data generator
 	-- Orbit_ID(32) & x"0" & BC_IC(12) & TRGTYPE(32)
-	ORBC_ID_received <= RX_Data_I(GBT_data_word_bitdepth-1 downto GBT_data_word_bitdepth-Orbit_id_bitdepth) & RX_Data_I(GBT_data_word_bitdepth-Orbit_id_bitdepth-4-1 downto GBT_data_word_bitdepth-Orbit_id_bitdepth-BC_id_bitdepth-4) WHEN (RX_IsData_I = '1') ELSE
+	
+	
+	ORBC_ID_received <= RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth-1 downto Trigger_bitdepth) WHEN (RX_IsData_I = '1') ELSE
 						(others => '0');
-	TRGTYPE_received <= RX_Data_I(Trigger_bitdepth-1 downto 0) WHEN (RX_IsData_I = '1') ELSE
+	TRGTYPE_received <= RX_Data_I(Trigger_bitdepth-1 downto 0) WHEN (Trigger_valid_bit = '1') ELSE
 						(others => '0');
+	Trigger_valid_bit <= (RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth+1 downto Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth) when (RX_IsData_I = '1') else '0';
+	
 						
 	-- if recieved rx data contain Event counter
-	TRGTYPE_ORBCrsv_ff_next <= (TRGTYPE_received and TRG_const_ORBCrsv) /= TRG_const_void;
+	TRGTYPE_ORBCrsv_ff_next <= (TRGTYPE_received and x"0000000f") /= TRG_const_void;
 	ORBC_ID_received_ff_next <= ORBC_ID_received; -- delayed signal for comparison with counter
 	
 	BCIDsync_Mode_O <= STATE_SYNC;
 	Readout_Mode_O <= STATE_RDMODE;
+	CRU_Readout_Mode_O <= CRU_readout_mode;
 	Start_run_O <= Start_run_ff;
 	Stop_run_O <= Stop_run_ff;
 		
@@ -144,6 +152,8 @@ begin
 			IF (FSM_Clocks_I.Reset40 = '1') THEN
 				STATE_SYNC <= mode_STR;
 				STATE_RDMODE <= mode_IDLE;
+				CRU_readout_mode <= mode_IDLE;
+				
 				Start_run_ff <= '0';
 				Stop_run_ff <= '0';
 				
@@ -152,9 +162,13 @@ begin
 				TRGTYPE_received_ff <= (others => '0');
 				ORBC_ID_received_ff <= (others => '0');
 				
+				
+				
 			ELSE
 				STATE_SYNC <= STATE_SYNC_NEXT;
 				STATE_RDMODE <= STATE_RDMODE_NEXT;
+				CRU_readout_mode <= CRU_readout_mode_next;
+				
 				Start_run_ff <= Start_run_ff_next;
 				Stop_run_ff <= Stop_run_ff_next;
 				
@@ -240,5 +254,68 @@ EV_ID_counter_corrected <= EV_ID_counter_ORBIT_corrected & EV_ID_counter_BC_corr
 
 
 Trigger_ff_next <= TRGTYPE_received_ff;
+
+
+CRU_readout_mode_next <= CRU_readout_mode WHEN (STATE_SYNC /= mode_SYNC) or (Trigger_valid_bit = '0') ELSE
+						 mode_IDLE WHEN (TRGTYPE_received and TRG_const_RS) = TRG_const_void ELSE
+						 mode_TRG WHEN (TRGTYPE_received and TRG_const_RT) = TRG_const_void ELSE
+						 mode_CNT WHEN (TRGTYPE_received and TRG_const_RT) /= TRG_const_void ELSE
+						 CRU_readout_mode;
 	
 end Behavioral;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -594,7 +594,7 @@ port map(
 
 				
 	trgfifo_we <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN ((TRG_const_response and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00 /= mode_IDLE) ELSE
+					'1' WHEN ((x"ffffffff" and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00 /= mode_IDLE) ELSE
 					'0';
 					
 	trgfifo_re  <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE

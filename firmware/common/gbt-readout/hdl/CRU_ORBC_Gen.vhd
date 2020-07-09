@@ -57,15 +57,19 @@ architecture Behavioral of CRU_ORBC_Gen is
 	signal IS_Orbit_trg_counter : std_logic;
 
 	
-    type readout_trg_type is (s0_wait_cmd, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT, s2_cmd_send);
+    type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
     signal rd_trg_send_mode, rd_trg_send_mode_next : readout_trg_type;
     signal is_rd_trg_send : std_logic;
+	signal readout_command_ff : Readout_command_type;
+	signal runType_mode, running_mode : std_logic;
     
 	
     signal is_trigger_sending : std_logic; -- emulating CRU trigger messages
     signal TRG_evid	: std_logic_vector(Trigger_bitdepth-1 downto 0);
     signal TRG_readout_command	: std_logic_vector(Trigger_bitdepth-1 downto 0);
+    signal TRG_readout_state	: std_logic_vector(Trigger_bitdepth-1 downto 0);
     signal TRG_result	: std_logic_vector(Trigger_bitdepth-1 downto 0);
+	signal isTRG_valid : std_logic;
 	
 	
 	-- single trigger
@@ -167,6 +171,8 @@ Current_Trigger_from_O <= TRG_result;
 				
 				single_trg_val_ff <= (others => '0');
 				
+				readout_command_ff <= Control_register_I.Trigger_Gen.Readout_command;
+				
 			ELSE
 				RX_Data_gen_ff		<= RX_Data_gen_ff_next;
 				RX_IsData_gen_ff	<= RX_IsData_gen_ff_next;
@@ -176,6 +182,8 @@ Current_Trigger_from_O <= TRG_result;
 				bfreq_counter		<= bfreq_counter_next;
 				bpattern_counter	<= bpattern_counter_next;
 				is_boffset_sync <= is_boffset_sync_next;
+				
+				readout_command_ff <= Control_register_I.Trigger_Gen.Readout_command;
 				
 				single_trg_val_ff <= single_trg_val;
 			END IF;
@@ -229,9 +237,9 @@ EV_ID_counter_set <=	'1' WHEN (bpattern_counter < 2) and (EV_ID_counter = x"0000
 						'0';
 						
 ---------- CRU TX data gen  -------------------------
-TRG_result <= TRG_readout_command or TRG_evid or cont_trg_send or single_trg_send_val;
+TRG_result <= TRG_readout_command or TRG_readout_state or TRG_evid or cont_trg_send or single_trg_send_val;
 is_trigger_sending <= IS_Orbit_trg_counter or is_rd_trg_send or is_sentd_cont_trg or is_send_single_trg;
-
+isTRG_valid <= IS_Orbit_trg_counter or is_rd_trg_send or is_sentd_cont_trg or is_send_single_trg;
 
 
 
@@ -243,7 +251,7 @@ TRG_evid <=  (TRG_const_HB) WHEN (IS_Orbit_trg_counter = '1') ELSE
 
 RX_Data_gen_ff_next <=	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						(others => '0') WHEN (is_trigger_sending = '0') ELSE
-						EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & x"0" & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
+						"000" & isTRG_valid & EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
 
 RX_IsData_gen_ff_next <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							'1' WHEN (is_trigger_sending = '1') ELSE
@@ -255,10 +263,12 @@ RX_IsData_gen_ff_next <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 is_send_single_trg <= '0' WHEN  (FSM_Clocks_I.Reset = '1') ELSE
 					  '1' WHEN (single_trg_val /= x"00000000") and (single_trg_val_ff = x"00000000") ELSE
 					  '0';
-							
+						
 single_trg_send_val <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						single_trg_val  WHEN (single_trg_val /= x"00000000") and (single_trg_val_ff = x"00000000") ELSE
 						(others => '0');
+							
+							
 							
 							
 							
@@ -272,19 +282,69 @@ TRG_readout_command <=  TRG_const_SOT WHEN (rd_trg_send_mode = s1_trg_SOT) and (
                         TRG_const_EOC WHEN (rd_trg_send_mode = s1_trg_EOC) and (IS_Orbit_trg_counter = '1') ELSE
                         (others => '0');
 
+
+
+-- type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
+-- type Readout_command_type is (idle, continious, trigger);
 rd_trg_send_mode_next <= s0_wait_cmd WHEN (FSM_Clocks_I.Reset = '1') ELSE
-    s1_trg_SOT WHEN ((rd_trg_send_mode = s0_wait_cmd) and (Control_register_I.Trigger_Gen.Readout_command = send_SOT)) ELSE
-    s1_trg_SOC WHEN ((rd_trg_send_mode = s0_wait_cmd) and (Control_register_I.Trigger_Gen.Readout_command = send_SOC)) ELSE
-    s1_trg_EOT WHEN ((rd_trg_send_mode = s0_wait_cmd) and (Control_register_I.Trigger_Gen.Readout_command = send_EOT)) ELSE
-    s1_trg_EOC WHEN ((rd_trg_send_mode = s0_wait_cmd) and (Control_register_I.Trigger_Gen.Readout_command = send_EOC)) ELSE
-	s2_cmd_send WHEN ((rd_trg_send_mode = s1_trg_SOT) or (rd_trg_send_mode = s1_trg_SOC) or (rd_trg_send_mode = s1_trg_EOT) or (rd_trg_send_mode = s1_trg_EOC)) and (is_rd_trg_send = '1') ELSE
-    s0_wait_cmd WHEN (rd_trg_send_mode = s2_cmd_send) and (Control_register_I.Trigger_Gen.Readout_command = command_off) ELSE
+    s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff = idle)) ELSE
+    s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = continious)) ELSE
+    s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = trigger)) ELSE
+    s1_trg_EOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) and (readout_command_ff = idle)) ELSE
+	s0_idle	   WHEN (is_rd_trg_send = '1') ELSE
     rd_trg_send_mode;
 
-
-
-
+runType_mode <= TRG_const_RT WHEN (Control_register_I.Trigger_Gen.Readout_command = continious) and (rd_trg_send_mode = s0_idle) ELSE (others => '0');
+running_mode <= TRG_const_RS WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) or (Control_register_I.Trigger_Gen.Readout_command = trigger)) and (rd_trg_send_mode = s0_idle)  ELSE (others => '0');
+TRG_readout_state <= TRG_const_RS & TRG_const_RT WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
 -- ***************************************************
 
 end Behavioral;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
