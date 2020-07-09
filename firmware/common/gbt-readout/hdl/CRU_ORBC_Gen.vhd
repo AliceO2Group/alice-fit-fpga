@@ -61,7 +61,7 @@ architecture Behavioral of CRU_ORBC_Gen is
     signal rd_trg_send_mode, rd_trg_send_mode_next : readout_trg_type;
     signal is_rd_trg_send : std_logic;
 	signal readout_command_ff : Readout_command_type;
-	signal runType_mode, running_mode : std_logic;
+	signal runType_mode, running_mode : std_logic_vector(Trigger_bitdepth-1 downto 0);
     
 	
     signal is_trigger_sending : std_logic; -- emulating CRU trigger messages
@@ -163,7 +163,7 @@ Current_Trigger_from_O <= TRG_result;
 				RX_Data_gen_ff 		<= (others => '0');
 				RX_IsData_gen_ff	<= '0';
 --				phtrg_counter_ff		<= (others => '0');
-				rd_trg_send_mode <= s0_wait_cmd;
+				rd_trg_send_mode <= s0_idle;
 				
 				bfreq_counter <= (others => '0');
 				bpattern_counter <= 0;
@@ -286,7 +286,7 @@ TRG_readout_command <=  TRG_const_SOT WHEN (rd_trg_send_mode = s1_trg_SOT) and (
 
 -- type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
 -- type Readout_command_type is (idle, continious, trigger);
-rd_trg_send_mode_next <= s0_wait_cmd WHEN (FSM_Clocks_I.Reset = '1') ELSE
+rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset = '1') ELSE
     s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff = idle)) ELSE
     s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = continious)) ELSE
     s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = trigger)) ELSE
@@ -296,7 +296,7 @@ rd_trg_send_mode_next <= s0_wait_cmd WHEN (FSM_Clocks_I.Reset = '1') ELSE
 
 runType_mode <= TRG_const_RT WHEN (Control_register_I.Trigger_Gen.Readout_command = continious) and (rd_trg_send_mode = s0_idle) ELSE (others => '0');
 running_mode <= TRG_const_RS WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) or (Control_register_I.Trigger_Gen.Readout_command = trigger)) and (rd_trg_send_mode = s0_idle)  ELSE (others => '0');
-TRG_readout_state <= TRG_const_RS & TRG_const_RT WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
+TRG_readout_state <= TRG_const_RS or TRG_const_RT WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
 -- ***************************************************
 
 end Behavioral;

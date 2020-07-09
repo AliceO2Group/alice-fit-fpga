@@ -105,7 +105,7 @@ begin
 						(others => '0');
 	TRGTYPE_received <= RX_Data_I(Trigger_bitdepth-1 downto 0) WHEN (Trigger_valid_bit = '1') ELSE
 						(others => '0');
-	Trigger_valid_bit <= (RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth+1 downto Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth) when (RX_IsData_I = '1') else '0';
+	Trigger_valid_bit <= '1' when RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth+1 downto Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth) = "1" and (RX_IsData_I = '1') else '0';
 	
 						
 	-- if recieved rx data contain Event counter

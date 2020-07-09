@@ -139,7 +139,7 @@ begin
 	
 	FIT_GBT_STATUS.GBT_status 					<= from_gbt_bank_prj_GBT_status;
 	FIT_GBT_STATUS.Readout_Mode 				<= Readout_Mode_from_RXdecoder;
-	FIT_GBT_STATUS.CRU_Readout_Mode				<= CRU_Readout_Mode_from_RXdecoder
+	FIT_GBT_STATUS.CRU_Readout_Mode				<= CRU_Readout_Mode_from_RXdecoder;
 	FIT_GBT_STATUS.BCIDsync_Mode 				<= BCIDsync_Mode_from_RXdecoder;
 	FIT_GBT_STATUS.Start_run 					<= Start_run_from_RXdecoder;
 	FIT_GBT_STATUS.Stop_run 					<= Stop_run_from_RXdecoder;

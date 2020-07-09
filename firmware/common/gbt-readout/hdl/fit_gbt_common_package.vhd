@@ -19,7 +19,8 @@
 ----------------------------------------------------------------------------------
 
 library IEEE;
-use IEEE.STD_LOGIC_1164.all;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all ;
 
 package fit_gbt_common_package is
@@ -65,21 +66,21 @@ package fit_gbt_common_package is
 	-- constant TRG_const_response	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"ffffffff";
 	
 	constant TRG_const_void		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000000";
-	constant TRG_const_Orbit	: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 0;
-	constant TRG_const_HB		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 1;
-	constant TRG_const_HBr		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 2;
-	constant TRG_const_HC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 3; -- Health check
-	constant TRG_const_Ph		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 4; -- calibration
-	constant TRG_const_PP		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 5;
-	constant TRG_const_Cal		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 6;
-	constant TRG_const_SOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 7;
-	constant TRG_const_EOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 8;
-	constant TRG_const_SOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 9;
-	constant TRG_const_EOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 10;
-	constant TRG_const_TF		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 11; -- time frame delimiter
-	constant TRG_const_FErst	: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 12; -- FEE reset
-	constant TRG_const_RT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 13; -- Run Type; 1=Cont, 0=Trig
-	constant TRG_const_RS		: std_logic_vector(Trigger_bitdepth-1 downto 0) := '1' sll 14; --Running State; 1=Running
+	constant TRG_const_Orbit	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000001"; --0
+	constant TRG_const_HB		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000002"; --1
+	constant TRG_const_HBr		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000004"; --2
+	constant TRG_const_HC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000008"; --3
+	constant TRG_const_Ph		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000010"; --4
+	constant TRG_const_PP		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000020"; --5
+	constant TRG_const_Cal		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000040"; --6
+	constant TRG_const_SOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000080"; --7
+	constant TRG_const_EOT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000100"; --8
+	constant TRG_const_SOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000200"; --9
+	constant TRG_const_EOC		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000400"; --10
+	constant TRG_const_TF		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000800"; -- time frame delimiter
+	constant TRG_const_FErst	: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00001000"; -- FEE reset
+	constant TRG_const_RT		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00002000"; -- Run Type; 1=Cont, 0=Trig
+	constant TRG_const_RS		: std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00004000"; --Running State; 1=Running
 -- -------------------------------------------------------------
 
 
