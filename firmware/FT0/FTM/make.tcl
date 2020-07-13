@@ -141,10 +141,9 @@
 #    <none>
 #
 #*****************************************************************************************
+set part "xc7k325tffg900-2"
 
 source ../../tcl/fit.tcl
-
-set part "xc7k325tffg900-2"
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
@@ -251,22 +250,12 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
   create_fileset -srcset sources_1
 }
 
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
+
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/hdl/BC_counter.vhd" ]\
- [file normalize "${origin_dir}/hdl/DataCLK_strobe.vhd" ]\
- [file normalize "${origin_dir}/hdl/fit_gbt_boardPM_package.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-readout/CRU_ORBC_Gen.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-readout/DataConverter_PM.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-readout/fit_gbt_common_package.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-readout/Module_Data_Gen_PM.vhd" ]\
- [file normalize "${origin_dir}/hdl/gbt-readout/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/hdl/GBT_DATA_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/PLL_Reset_Generator.vhd" ]\
- [file normalize "${origin_dir}/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/hdl/TCM_SPI.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_sc.vhd" ]\
  [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
@@ -372,7 +361,24 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_pulse.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_manual_phase_align.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_PM.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_PM.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
+
 set imported_files [import_files -fileset sources_1 $files]
 
 #-------------------------------------------------------------------------------

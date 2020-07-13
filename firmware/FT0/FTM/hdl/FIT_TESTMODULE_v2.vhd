@@ -135,7 +135,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal Is_SysClkCounter_ready   : std_logic;
     signal reset_aft_pllready : std_logic;
     signal SDclk_pll_ready, clk200_rdy : std_logic;
-    signal gbt_reset    :std_logic;
+    signal gbt_reset, reset_to_syscount40    :std_logic;
 
 -- generators cloks
 	signal SYSCLK_gen : std_logic;
@@ -195,7 +195,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal d_rd, d_rdy, adc_sel, adc_sel1 : std_logic;
 	
 -- TEST Module signals
-	signal FSM_Clocks_signal : FSM_Clocks_type;
+	signal FSM_Clocks : FSM_Clocks_type;
     signal TESTM_status : FIT_GBT_status_type;
     signal TESTM_control : CONTROL_REGISTER_type;
 	signal Laser_Signal_out, Laser_Signal_out_ff : std_logic;
@@ -362,10 +362,10 @@ DataClk_to_FIT_GBT <=   CDM_pll_clk_A;
 --DataClk_to_FIT_GBT <= CDM_clk_A;
 MgtRefClk_to_FIT_GBT <= CDM_clk_200;   
 
-FSM_Clocks_signal.Data_Clk <= DataClk_to_FIT_GBT;
-FSM_Clocks_signal.System_Clk <= SysClk_to_FIT_GBT;
-FSM_Clocks_signal.GBT_RX_Clk <= GBT_RxFrameClk;
-FSM_Clocks_signal.IPBUS_Data_Clk <= ipb_clk;
+FSM_Clocks.Data_Clk <= DataClk_to_FIT_GBT;
+FSM_Clocks.System_Clk <= SysClk_to_FIT_GBT;
+FSM_Clocks.GBT_RX_Clk <= GBT_RxFrameClk;
+FSM_Clocks.IPBUS_Data_Clk <= ipb_clk;
 
 		
 -- USER OUTPUTS
@@ -383,9 +383,9 @@ GPIO_SMA_J14 <= GBT_RxFrameClk;
 
 Laser_Signal_out_ff <= '1' when (TESTM_status.Trigger_from_CRU and TESTM_control.Data_Gen.trigger_resp_mask) /= 0 else '0';
 
- process (FSM_Clocks_signal.Data_Clk)
+ process (FSM_Clocks.Data_Clk)
   begin
-  if (FSM_Clocks_signal.Data_Clk'event and FSM_Clocks_signal.Data_Clk='1') then
+  if (FSM_Clocks.Data_Clk'event and FSM_Clocks.Data_Clk='1') then
     Laser_Signal_out <= Laser_Signal_out_ff;
   end if;
   end process;
@@ -672,7 +672,7 @@ port map(
     clk_ipb_o => ipb_clk,
     rst_ipb_o => ipb_rst,
           
-    RESET => FSM_Clocks_signal.Reset,
+    RESET => FSM_Clocks.Reset,
     
     leds => open, -- status LEDs
     mac_addr => mac_addr,
@@ -804,7 +804,7 @@ pm_sc:    pm_spi
  LAI(4) <= not tcm_miso;
  
  LAI(8) <= reset_aft_pllready;
- LAI(9) <= FSM_Clocks_signal.Reset;
+ LAI(9) <= FSM_Clocks.Reset;
                     	
 
 tcm_sc1:   tcm_sc 
@@ -839,12 +839,14 @@ port map (
 -- Reset FSM =================================================
 Reset_Generator_comp: entity work.Reset_Generator
 port map(
-			RESET_I => reset_aft_pllready,
-			SysClk_I => FSM_Clocks_signal.System_Clk,
-			DataClk_I => FSM_Clocks_signal.Data_Clk,
+			RESET_I => RESET,
+			SysClk_I => FSM_Clocks.System_Clk,
+			DataClk_I => FSM_Clocks.Data_Clk,
 			Sys_Cntr_ready_I => Is_SysClkCounter_ready,
 			Reset_DClk_O => reset_to_syscount,
-			General_reset_O => FSM_Clocks_signal.Reset
+			General_reset_O => FSM_Clocks.Reset,
+			Reset_DClk40_O => reset_to_syscount40,
+			General_reset40_O => FSM_Clocks.Reset40
 		);
 -- ===========================================================
 
@@ -852,18 +854,20 @@ port map(
 DataClk_I_strobe_comp: entity work.DataClk_strobe
 port map(
 			RESET_I => reset_to_syscount,
-			SysClk_I => FSM_Clocks_signal.System_Clk,
-			DataClk_I => FSM_Clocks_signal.Data_Clk,
-			SysClk_count_O => FSM_Clocks_signal.System_Counter,
+			RESET40_I => FSM_Clocks.Reset40,
+			SysClk_I => FSM_Clocks.System_Clk,
+			DataClk_I => FSM_Clocks.Data_Clk,
+			SysClk_count_O => FSM_Clocks.System_Counter,
 			Counter_ready_O => Is_SysClkCounter_ready
 		);
+
 -- ===========================================================
 
 
 -- TEST module ===============================================
 FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
 
-		FSM_Clocks_I 	=> FSM_Clocks_signal,
+		FSM_Clocks_I 	=> FSM_Clocks,
 				
 		GBTRX_IsData_rxclk_I => GBTRX_IsData_rxclk_signal,
 		GBTRX_Data_rxclk_I => GBTRX_Data_rxclk_signal,
@@ -897,7 +901,7 @@ FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
 
 
 -- GBT BANK Designe ===========================================	
-gbt_reset <=    '1' when (FSM_Clocks_signal.Reset = '1') else
+gbt_reset <=    '1' when (FSM_Clocks.Reset = '1') else
                 '1' when (TESTM_control.reset_gbt = '1') else
                 '0';
 

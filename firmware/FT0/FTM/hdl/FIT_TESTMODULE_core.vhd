@@ -263,6 +263,10 @@ port map(
 			TX_IsData_I => '0',
 			TX_Data_I => (others => '0'),
 			
+			RAWFIFO_data_word_I => (others => '0'),
+			RAWFIFO_Is_Empty_I => '1',
+			RAWFIFO_RE_O => open,
+			
 			TX_IsData_O => IsData_from_TXgen,
 			TX_Data_O => Data_from_TXgen
 		);

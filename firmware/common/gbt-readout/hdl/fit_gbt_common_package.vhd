@@ -133,12 +133,9 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		Data_Clk 		: std_logic;
 		System_Clk		: std_logic;
 		System_Counter	: std_logic_vector(3 downto 0);
-	end record;
-	
--- FSM_Clocks_I.Reset
--- FSM_Clocks_I.Data_Clk
--- FSM_Clocks_I.System_Clk
--- FSM_Clocks_I.System_Counter
+		GBT_RX_Clk		: std_logic; --used in TESTB
+        IPBUS_Data_Clk    : std_logic; --used in TESTB
+	end record;	
 -- =============================================================
 
 
