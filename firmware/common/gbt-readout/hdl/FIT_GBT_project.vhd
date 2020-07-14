@@ -158,8 +158,9 @@ begin
 	
 	RX_Data_DataClk <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
 	
-	Data_from_FITrd_O 	<= TX_Data_from_packager;
-	IsData_from_FITrd_O	<= TX_IsData_from_packager;
+	Data_from_FITrd_O <= TX_Data_from_packager 				WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_EXT_generator) ELSE RX_Data_from_datagen;
+	IsData_from_FITrd_O <= TX_IsData_from_packager 			WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_EXT_generator) ELSE RX_IsData_from_datagen;
+	
 	
 	RxData_rxclk_from_GBT_O <= RX_Data_rxclk_from_GBT;
 	IsRxData_rxclk_from_GBT_O <= RX_IsData_rxclk_from_GBT;

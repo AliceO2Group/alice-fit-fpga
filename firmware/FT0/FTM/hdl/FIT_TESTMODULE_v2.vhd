@@ -30,6 +30,7 @@ library work;
 use work.ipbus.ALL;
 
 use work.fit_gbt_common_package.all;
+use work.fit_gbt_board_package.all;
 
 
 entity FIT_TESTMODULE_v2 is
@@ -163,11 +164,11 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
 	
 	
 -- GBT signals
-	signal	GBTRX_IsData_rxclk_signal 	:  STD_LOGIC;
-	signal	GBTRX_Data_rxclk_signal 	:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-		
-	signal	GBTTX_IsData_dataclk_signal :  STD_LOGIC;
-	signal	GBTTX_Data_dataclk_signal 	:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+   signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+   signal IsData_from_FITrd        : STD_LOGIC;
+   
+   signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+   signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
 	
 	signal from_gbt_bank_prj_GBT_status : Type_GBT_status;
 	
@@ -210,14 +211,6 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal Nchan : std_logic_vector(3 downto 0);
     signal T0, T1, A0, A1 : std_logic_vector(7 downto 0);
 	
-	attribute keep : string;
-	attribute keep of GBTRX_IsData_rxclk_signal : signal is "true";
-	attribute keep of GBTRX_Data_rxclk_signal : signal is "true";
-	attribute keep of GBTTX_IsData_dataclk_signal : signal is "true";
-	attribute keep of GBTTX_Data_dataclk_signal : signal is "true";
-	
-	attribute keep of from_gbt_bank_prj_GBT_status : signal is "true";
-	attribute keep of Laser_Signal_out : signal is "true";
 	
 
 	
@@ -369,13 +362,13 @@ FSM_Clocks.IPBUS_Data_Clk <= ipb_clk;
 
 		
 -- USER OUTPUTS
-GPIO_LED_0 <= TESTM_status.GBT_status.rxWordClkReady; -- from rxPgaseAlign_gen.rxBitSlipControl
-GPIO_LED_1 <= TESTM_status.GBT_status.rxFrameClkReady; -- from latOpt_phalgnr_gen.phase_conm_inst
-GPIO_LED_2 <= TESTM_status.GBT_status.mgtLinkReady; -- from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_txresetfsm_i
-GPIO_LED_3 <= TESTM_status.GBT_status.gbtRx_Ready; -- FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/status/statusLatOpt_gen.RX_READY_O_reg
-GPIO_LED_4 <= TESTM_status.GBT_status.mgt_phalin_cplllock; -- CPLLLOCK from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i 
-GPIO_LED_5 <= TESTM_status.GBT_status.tx_resetDone; -- TXRESETDONE from gtxe2_i
-GPIO_LED_6 <= TESTM_status.GBT_status.tx_fsmResetDone; -- gt0_txresetfsm_i
+-- GPIO_LED_0 <= TESTM_status.GBT_status.rxWordClkReady; -- from rxPgaseAlign_gen.rxBitSlipControl
+-- GPIO_LED_1 <= TESTM_status.GBT_status.rxFrameClkReady; -- from latOpt_phalgnr_gen.phase_conm_inst
+-- GPIO_LED_2 <= TESTM_status.GBT_status.mgtLinkReady; -- from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_txresetfsm_i
+-- GPIO_LED_3 <= TESTM_status.GBT_status.gbtRx_Ready; -- FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/status/statusLatOpt_gen.RX_READY_O_reg
+-- GPIO_LED_4 <= TESTM_status.GBT_status.mgt_phalin_cplllock; -- CPLLLOCK from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i 
+-- GPIO_LED_5 <= TESTM_status.GBT_status.tx_resetDone; -- TXRESETDONE from gtxe2_i
+-- GPIO_LED_6 <= TESTM_status.GBT_status.tx_fsmResetDone; -- gt0_txresetfsm_i
 
 GPIO_SMA_J13 <= DataClk_to_FIT_GBT;
 GPIO_SMA_J14 <= GBT_RxFrameClk;
@@ -864,25 +857,20 @@ port map(
 -- ===========================================================
 
 
--- TEST module ===============================================
-FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
-
-		FSM_Clocks_I 	=> FSM_Clocks,
-				
-		GBTRX_IsData_rxclk_I => GBTRX_IsData_rxclk_signal,
-		GBTRX_Data_rxclk_I => GBTRX_Data_rxclk_signal,
+-- IP-BUS data sender ==================================
+FIT_TESTMODULE_IPBUS_sender_comp : entity work.FIT_TESTMODULE_IPBUS_sender
+    Port map(
+		FSM_Clocks_I 		=> FSM_Clocks,
 		
-		GBTTX_IsData_dataclk_O => GBTTX_IsData_dataclk_signal,
-		GBTTX_Data_dataclk_O => GBTTX_Data_dataclk_signal,
+		FIT_GBT_status_I	=> TESTM_status,
+		Control_register_O	=> TESTM_control,
+		
+		GBTRX_IsData_rxclk_I => IsRxData_rxclk_from_GBT,
+		GBTRX_Data_rxclk_I => RxData_rxclk_from_GBT,
 		
 		hdmi_fifo_datain_I => x"E" & TESTM_status.ORBIT_from_CRU & TESTM_status.BCID_from_CRU & HDMI0_d_sysclk,
         hdmi_fifo_wren_I => hdmi_ready_sysclk,
         hdmi_fifo_wrclk_I => SysClk_to_FIT_GBT,
-		
-		GBT_Status_I => from_gbt_bank_prj_GBT_status,
-
-		TESTM_status_O=>TESTM_status,
-		Control_register_O=>TESTM_control,
 		
 		IPBUS_rst_I => ipb_rst,
 		IPBUS_data_out_O => ipb_data_in_tm,
@@ -894,39 +882,115 @@ FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
 		IPBUS_ack_O => ipb_ack_tm,
 		IPBUS_err_O => ipb_err_tm,
 		IPBUS_base_addr_I => (others => '0')
---		IPBUS_base_addr_I => x"100"
-);
--- =============================================================
+	);
+-- =====================================================
+
+
+-- FIT GBT project =====================================
+FitGbtPrg: entity work.FIT_GBT_project
+	generic map(
+		GENERATE_GBT_BANK	=> 1
+	)
+	
+	Port map(
+		RESET_I				=>	reset_to_syscount,
+		SysClk_I			=>	FSM_Clocks.System_Clk,
+		DataClk_I			=>	FSM_Clocks.Reset40,
+		MgtRefClk_I			=>	MgtRefClk_to_FIT_GBT,
+		RxDataClk_I			=>  GBT_RxFrameClk, -- 40MHz data clock in RX domain (loop back)
+		GBT_RxFrameClk_O	=>  GBT_RxFrameClk,
+		
+		Board_data_I		=> board_data_test_const,
+		Control_register_I	=> TESTM_control,
+		
+		MGT_RX_P_I => SFP_RX_P,
+		MGT_RX_N_I => SFP_RX_N,
+		MGT_TX_P_O => SFP_TX_P,
+		MGT_TX_N_O => SFP_TX_N,
+		MGT_TX_dsbl_O		=>	open,
+		
+		RxData_rxclk_to_FITrd_I 	=> RxData_rxclk_from_GBT, --loop back data
+		IsRxData_rxclk_to_FITrd_I	=> IsRxData_rxclk_from_GBT, --loop back data
+		Data_from_FITrd_O 			=> Data_from_FITrd,
+		IsData_from_FITrd_O			=> IsData_from_FITrd,
+		Data_to_GBT_I 				=> Data_from_FITrd, --loop back data
+		IsData_to_GBT_I				=> IsData_from_FITrd, --loop back data
+		
+		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
+		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
+		rx_ph320 => open,
+		ph_error320 => open, 
+
+		FIT_GBT_status_O 	=> TESTM_status
+		);		
+-- =====================================================
 
 
 
--- GBT BANK Designe ===========================================	
-gbt_reset <=    '1' when (FSM_Clocks.Reset = '1') else
-                '1' when (TESTM_control.reset_gbt = '1') else
-                '0';
 
- gbtBankDsgn : entity work.GBT_TX_RX
-   port map (
-   RESET => gbt_reset,
-   MgtRefClk => MgtRefClk_to_FIT_GBT,
+-- -- TEST module ===============================================
+-- FIT_TESTMODULE_core_comp: entity work.FIT_TESTMODULE_core port map(
+
+		-- FSM_Clocks_I 	=> FSM_Clocks,
+				
+		-- GBTRX_IsData_rxclk_I => GBTRX_IsData_rxclk_signal,
+		-- GBTRX_Data_rxclk_I => GBTRX_Data_rxclk_signal,
+		
+		-- GBTTX_IsData_dataclk_O => GBTTX_IsData_dataclk_signal,
+		-- GBTTX_Data_dataclk_O => GBTTX_Data_dataclk_signal,
+		
+		-- hdmi_fifo_datain_I => x"E" & TESTM_status.ORBIT_from_CRU & TESTM_status.BCID_from_CRU & HDMI0_d_sysclk,
+        -- hdmi_fifo_wren_I => hdmi_ready_sysclk,
+        -- hdmi_fifo_wrclk_I => SysClk_to_FIT_GBT,
+		
+		-- GBT_Status_I => from_gbt_bank_prj_GBT_status,
+
+		-- TESTM_status_O=>TESTM_status,
+		-- Control_register_O=>TESTM_control,
+		
+		-- IPBUS_rst_I => ipb_rst,
+		-- IPBUS_data_out_O => ipb_data_in_tm,
+		-- IPBUS_data_in_I => ipb_data_out,
+		-- IPBUS_addr_sel_I => bus_select(1),
+		-- IPBUS_addr_I => ipb_addr(11 downto 0),
+		-- IPBUS_iswr_I => ipb_iswr,
+		-- IPBUS_isrd_I => ipb_isrd,
+		-- IPBUS_ack_O => ipb_ack_tm,
+		-- IPBUS_err_O => ipb_err_tm,
+		-- IPBUS_base_addr_I => (others => '0')
+-- --		IPBUS_base_addr_I => x"100"
+-- );
+-- -- =============================================================
+
+
+
+-- -- GBT BANK Designe ===========================================	
+-- gbt_reset <=    '1' when (FSM_Clocks.Reset = '1') else
+                -- '1' when (TESTM_control.reset_gbt = '1') else
+                -- '0';
+
+ -- gbtBankDsgn : entity work.GBT_TX_RX
+   -- port map (
+   -- RESET => gbt_reset,
+   -- MgtRefClk => MgtRefClk_to_FIT_GBT,
    
-   MGT_RX_P =>  SFP_RX_P,
-   MGT_RX_N => SFP_RX_N,
-   MGT_TX_P => SFP_TX_P,
-   MGT_TX_N => SFP_TX_N,
+   -- MGT_RX_P =>  SFP_RX_P,
+   -- MGT_RX_N => SFP_RX_N,
+   -- MGT_TX_P => SFP_TX_P,
+   -- MGT_TX_N => SFP_TX_N,
    
-   TXDataClk => DataClk_to_FIT_GBT,
-   TXData => GBTTX_Data_dataclk_signal,
-   TXData_SC => x"0",
-   IsTXData => GBTTX_IsData_dataclk_signal,
+   -- TXDataClk => DataClk_to_FIT_GBT,
+   -- TXData => GBTTX_Data_dataclk_signal,
+   -- TXData_SC => x"0",
+   -- IsTXData => GBTTX_IsData_dataclk_signal,
    
-   RXDataClk => GBT_RxFrameClk,
-   RXData => GBTRX_Data_rxclk_signal,
-   RXData_SC => open,
-   IsRXData => GBTRX_IsData_rxclk_signal,
-   GBT_Status_O => from_gbt_bank_prj_GBT_status
-   );
--- =============================================================
+   -- RXDataClk => GBT_RxFrameClk,
+   -- RXData => GBTRX_Data_rxclk_signal,
+   -- RXData_SC => open,
+   -- IsRXData => GBTRX_IsData_rxclk_signal,
+   -- GBT_Status_O => from_gbt_bank_prj_GBT_status
+   -- );
+-- -- =============================================================
 
 		
  -- =============================================================

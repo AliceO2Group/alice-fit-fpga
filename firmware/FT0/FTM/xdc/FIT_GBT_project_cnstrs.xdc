@@ -27,10 +27,10 @@ create_clock -period 5.000 -name FMC_HPC_REFCLK [get_ports FMC_HPC_clk_200_p]
 
 
 
-create_clock -period 8.333 -name RxWordCLK [get_pins {gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/RXOUTCLK}]
-create_clock -period 8.333 -name TxWordCLK [get_pins {gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
+create_clock -period 8.333 -name RxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/RXOUTCLK}]
+create_clock -period 8.333 -name TxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
 
-create_generated_clock -name RXDataCLK [get_pins gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
+create_generated_clock -name RXDataCLK [get_pins FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
 create_generated_clock -name Data_clk_40 -source [get_pins CDMClkpllcomp/inst/plle2_adv_inst/CLKIN1] [get_pins CDMClkpllcomp/inst/plle2_adv_inst/CLKOUT0]
 create_generated_clock -name SystemCLK_320 -source [get_pins CDMClkpllcomp/inst/plle2_adv_inst/CLKIN1] [get_pins CDMClkpllcomp/inst/plle2_adv_inst/CLKOUT1]
 
@@ -54,73 +54,25 @@ set_false_path -from [get_cells Reset_Generator_comp/GenRes_DataClk_ff*_reg]
 
 
 
-#DATA GEN =======================================================================
-set_multicycle_path -setup -from [get_clocks Data_clk_40] -to [get_cells {FIT_TESTMODULE_core_comp/Module_Data_Gen_comp/n_words_in_packet_send_reg[?]}] 8
-set_multicycle_path -hold -end -from [get_clocks Data_clk_40] -to [get_cells {FIT_TESTMODULE_core_comp/Module_Data_Gen_comp/n_words_in_packet_send_reg[?]}] 7
-
-set_multicycle_path -setup -from [get_cells FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/bpattern_counter_reg[*]] -to [get_clocks SystemCLK_320] 8
-set_multicycle_path -hold -end -from [get_cells FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/bpattern_counter_reg[*]] -to [get_clocks SystemCLK_320] 7
-
-set_multicycle_path -setup -from [get_cells FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/single_trg_val_ff_reg[*]] -to [get_clocks SystemCLK_320] 8
-set_multicycle_path -hold -end -from [get_cells FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/single_trg_val_ff_reg[*]] -to [get_clocks SystemCLK_320] 7
-##================================================================================
-
 set_max_delay -datapath_only -from [get_cells HDMI0/trig_data_reg[*]] -to [get_clocks SystemCLK_320] 3.000
 set_max_delay -datapath_only -from [get_cells HDMI0/DValid_reg] -to [get_clocks SystemCLK_320] 1.000
 set_property ASYNC_REG true [get_cells {hdmi_ready0_reg hdmi_ready1_reg}]
 
-set_false_path -from [get_clocks RXDataCLK] -to [get_cells {gbtBankDsgn/GBT_Status_O_reg[gbtRx_ErrorDet] gbtBankDsgn/GBT_Status_O_reg[gbtRx_Ready]}]
-
-
-##IPBUS DATA SENDER ==============================================================
-#set_max_delay -datapath_only -from [get_cells {FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/ipbus_status_reg_map_dc_reg[*][*]}] -to [get_cells {FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/ipbus_status_reg_ipbclk_reg[*][*]}] 10.000
-#set_max_delay -datapath_only -from [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/ipbus_control_reg_reg[*][*]] -to [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc*] 10.000
-
-#set_max_delay -datapath_only -from [get_cells ipbus_module/clocks/rst_ipb_reg] -to [get_cells {FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/ipbus_status_reg_map_dc_reg[*][*]}] 10.000
-#set_max_delay -datapath_only -from [get_cells ipbus_module/clocks/rst_ipb_reg] -to [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc_reg*] 10.000
-
-#set_multicycle_path -setup -from [get_clocks SystemCLK_320] -through [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc*] 8
-#set_multicycle_path -hold -from [get_clocks SystemCLK_320] -through [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc*] 7
-
-#set_multicycle_path -setup -from [get_clocks Data_clk_40] -through [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc*] 8
-#set_multicycle_path -hold -from [get_clocks Data_clk_40] -through [get_cells FIT_TESTMODULE_core_comp/FIT_TESTMODULE_IPBUS_sender_comp/Control_register_reg_dc*] 7
-
-#set_multicycle_path -setup -from [get_cells {FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/BC_counter_datagen_comp/ORBC_ID_COUNT_ff_reg[*]}] -to [get_clocks CLK320_MMCM320_PH] 8
-#set_multicycle_path -hold -end -from [get_cells {FIT_TESTMODULE_core_comp/CRU_ORBC_Gen_comp/BC_counter_datagen_comp/ORBC_ID_COUNT_ff_reg[*]}] -to [get_clocks CLK320_MMCM320_PH] 7
-##================================================================================
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbtBankDsgn/GBT_Status_O_reg[gbtRx_ErrorDet] FitGbtPrg/gbtBankDsgn/GBT_Status_O_reg[gbtRx_Ready]}]
 
 
 
-# GBT ===========================================================================
-#create_pblock sfpQuad_area
-#resize_pblock [get_pblocks sfpQuad_area] -add {CLOCKREGION_X1Y5:CLOCKREGION_X1Y5}
-#add_cells_to_pblock [get_pblocks sfpQuad_area] [get_cells -quiet [list genRst]]
+set_multicycle_path -setup -start -from [get_clocks RxWordCLK] -to [get_cells {FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/*_O_reg
+                                                                    FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/RX_DATA_O_reg[*]
+                                                                    FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 3
+set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/*_O_reg 
+                                                                    FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/RX_DATA_O_reg[*]
+                                                                    FitGbtPrg/gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 2
 
 
-#used in exmpl ds; generate frame clk
-#set_property LOC PLLE2_ADV_X0Y6 [get_cells txPll/inst/plle2_adv_inst]
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]
 
-## Comment: The period of TX_FRAMECLK is 25ns but "TS_GBTTX_SCRAMBLER_TO_GEARBOX" is set to 16ns, providing 9ns for setup margin.
-#set_false_path -hold -from [get_clocks RXDataCLK] -to [get_pins {gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}]
-#set_max_delay  -datapath_only -from [get_clocks RXDataCLK] -to [get_pins {gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}] 1.000
-
-## Comment: The period of TX_FRAMECLK is 25ns but "TS_GBTTX_SCRAMBLER_TO_GEARBOX" is set to 16ns, providing 9ns for setup margin.
-#set_max_delay -datapath_only -from [get_pins -hier -filter {NAME =~ */*/*/scrambler/*/C}] -to [get_pins -hier -filter {NAME =~ */*/*/txGearbox/*/D}] 16.000
-
-set_multicycle_path -setup -start -from [get_clocks RxWordCLK] -to [get_cells {gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/*_O_reg
-                                                                    gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/RX_DATA_O_reg[*]
-                                                                    gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 3
-set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/*_O_reg 
-                                                                    gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/RX_DATA_O_reg[*]
-                                                                    gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 2
-
-
-
-## Comment: The period of RX_FRAMECLK is 25ns but "TS_GBTRX_GEARBOX_TO_DESCRAMBLER" is set to 20ns, providing 5ns for setup margin.
-#set_max_delay -datapath_only -from [get_pins -hier -filter {NAME =~ */*/*/rxGearbox/*/C}] -to [get_pins -hier -filter {NAME =~ */*/*/descrambler/*/D}] 20.000
-
-#set_property LOC MMCME2_ADV_X0Y6 [get_cells gbtBankDsgn/*/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst]
-#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets gbtBankDsgn/*/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clk_out1_xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm]
 #================================================================================
 
 

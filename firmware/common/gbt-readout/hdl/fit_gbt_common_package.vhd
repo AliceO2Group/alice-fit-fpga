@@ -155,7 +155,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 	end record;
 	
 	
-	type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator);
+	type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator, use_EXT_generator);
 	type Readout_command_type is (idle, continious, trigger);
 
 	type Trigger_Gen_CONTROL_type is record
@@ -281,6 +281,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 	type FIFO_STATUS_type is record
 		raw_fifo_count 				: std_logic_vector(rawfifo_count_bitdepth-1 downto 0);
 		slct_fifo_count				: std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
+		ftmipbus_fifo_count			: std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
 		trg_fifo_count				: std_logic_vector(trgfifo_count_bitdepth-1 downto 0);
 		cntr_fifo_count				: std_logic_vector(cntpckfifo_count_bitdepth-1 downto 0);
 	end record;
@@ -521,6 +522,8 @@ begin
 		trg_gen_cntr := x"0";
 	elsif cntrl_reg.Trigger_Gen.usage_generator = use_CONT_generator then
 		trg_gen_cntr := x"1";
+	elsif cntrl_reg.Trigger_Gen.usage_generator = use_EXT_generator then
+		trg_gen_cntr := x"2";
 	else
 		trg_gen_cntr := x"f";
 	end if;
@@ -589,6 +592,8 @@ begin
 		cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
 	elsif( cntrl_reg_addrreg(0)(7 downto 4) = x"1" ) then
 		cntr_reg.Trigger_Gen.usage_generator := use_CONT_generator;
+	elsif( cntrl_reg_addrreg(0)(7 downto 4) = x"2" ) then
+		cntr_reg.Trigger_Gen.usage_generator := use_EXT_generator;
 	else
 		cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
 	end if;
@@ -703,7 +708,7 @@ begin
     status_reg_addrreg(4) := status_reg.hits_rd_counter_selector.first_orbit_hdrop;
     status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
     status_reg_addrreg(6) := status_reg.hits_rd_counter_selector.hits_skipped;
-    status_reg_addrreg(7) := x"0000" & status_reg.hits_rd_counter_selector.hits_send_porbit;
+    status_reg_addrreg(7) :=  "000" & status_reg.fifo_status.ftmipbus_fifo_count & status_reg.hits_rd_counter_selector.hits_send_porbit;
 
 
 return status_reg_addrreg;

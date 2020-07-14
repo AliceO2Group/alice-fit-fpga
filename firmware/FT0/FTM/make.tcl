@@ -253,14 +253,12 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/hdl/GBT_DATA_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
  [file normalize "${origin_dir}/hdl/PLL_Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/hdl/TCM_SPI.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_sc.vhd" ]\
  [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_sync.vhd" ]\
- [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_core.vhd" ]\
  [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_v2.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_clock_div.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/led_stretcher.vhd" ]\

@@ -192,12 +192,21 @@ begin
 -- FSM ***********************************************
 STATE_RDMODE_NEXT <=	mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						mode_IDLE WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
+						mode_IDLE WHEN (STATE_SYNC = mode_LOST) ELSE
+						
 						mode_TRG WHEN (STATE_RDMODE = mode_IDLE) and ((TRGTYPE_received_ff and TRG_const_SOT) /= TRG_const_void) ELSE
 						mode_TRG WHEN (STATE_RDMODE = mode_IDLE) and ((Trigger_ff and TRG_const_SOT) /= TRG_const_void) ELSE
+						
 						mode_CNT WHEN (STATE_RDMODE = mode_IDLE) and ((TRGTYPE_received_ff and TRG_const_SOC) /= TRG_const_void) ELSE
 						mode_CNT WHEN (STATE_RDMODE = mode_IDLE) and ((Trigger_ff and TRG_const_SOC) /= TRG_const_void) ELSE
+						
 						mode_IDLE WHEN (STATE_RDMODE = mode_TRG) and ((Trigger_ff and TRG_const_EOT) /= TRG_const_void) ELSE
 						mode_IDLE WHEN (STATE_RDMODE = mode_CNT) and ((Trigger_ff and TRG_const_EOC) /= TRG_const_void) ELSE
+						
+						-- auto run restore
+						mode_CNT WHEN (STATE_RDMODE = mode_IDLE) and ((Trigger_ff and TRG_const_RS) /= TRG_const_void) and  ((Trigger_ff and TRG_const_RT) /= TRG_const_void) ELSE
+						mode_TRG WHEN (STATE_RDMODE = mode_IDLE) and ((Trigger_ff and TRG_const_RS) /= TRG_const_void) and  ((Trigger_ff and TRG_const_RT) = TRG_const_void) ELSE
+						
 						STATE_RDMODE;
 
 Start_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE

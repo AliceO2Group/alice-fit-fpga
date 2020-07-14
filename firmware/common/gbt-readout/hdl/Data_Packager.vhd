@@ -113,6 +113,7 @@ fifo_status_O.raw_fifo_count <= raw_data_fifo_words_count_wr;
 fifo_status_O.slct_fifo_count <= slct_data_fifo_words_count_wr;
 fifo_status_O.trg_fifo_count <= trg_fifo_count;
 fifo_status_O.cntr_fifo_count <= cntr_fifo_count;
+fifo_status_O.ftmipbus_fifo_count 	<= (others => '0');
 
 
 process(FSM_Clocks_I.System_Clk)	

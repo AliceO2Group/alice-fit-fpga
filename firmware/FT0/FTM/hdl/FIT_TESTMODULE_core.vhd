@@ -375,7 +375,6 @@ fifo_generator_0_comp : fifo_generator_0
 
 
 -- IP-BUS data sender ==================================
--- simulation
 FIT_TESTMODULE_IPBUS_sender_comp : entity work.FIT_TESTMODULE_IPBUS_sender
     Port map(
 		FSM_Clocks_I 		=> FSM_Clocks_I,
