@@ -114,34 +114,11 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
 	
 	attribute mark_debug : string;
 
-	attribute keep : string;
-	attribute MARK_DEBUG of debug_ipb_rst : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_iswr : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_isrd : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_ack : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_err : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_data_O : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_data_I : signal is "true";
-	attribute MARK_DEBUG of debug_ipb_addr : signal is "true";
-	attribute MARK_DEBUG of debug_data_fifo_out : signal is "true";
-	attribute MARK_DEBUG of debug_data_fifo_empty : signal is "true";
-	attribute MARK_DEBUG of debug_data_fifo_rden : signal is "true";
-
-	attribute MARK_DEBUG of ipbus_control_reg : signal is "true";
-    attribute MARK_DEBUG of ipbus_status_reg_map_dc : signal is "true";
-    attribute MARK_DEBUG of Is_DATA_Readign : signal is "true";
-    
-    attribute MARK_DEBUG of Control_register_rdmap_ipbclk : signal is "true";
-    attribute MARK_DEBUG of Control_register_reg_map_ipbclk : signal is "true";
-    attribute MARK_DEBUG of ipbus_status_reg_ipbclk : signal is "true";
-    attribute MARK_DEBUG of ipbus_status_reg_map : signal is "true";
     attribute MARK_DEBUG of Control_register_reg_dc : signal is "true";
+    attribute MARK_DEBUG of FIT_GBT_status : signal is "true";
 
-	attribute MARK_DEBUG of Data_FIFO_160bit_map_ff : signal is "true";
-	attribute MARK_DEBUG of Data_FIFO_map_counter_ff : signal is "true";
-	
-	attribute MARK_DEBUG of gbt_word_counter : signal is "true";
-
+    attribute MARK_DEBUG of data_fifo_datain : signal is "true";
+    attribute MARK_DEBUG of data_fifo_wren : signal is "true";
 
 
 begin

@@ -92,8 +92,8 @@ signal FIT_GBT_STATUS 				: FIT_GBT_status_type;
 -- from data generator
 signal Board_data_from_main_gen		: board_data_type;
 
-signal RX_IsData_from_datagen 		:  std_logic; 
-signal RX_Data_from_datagen 		:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0); 
+signal RX_IsData_from_orbcgen 		:  std_logic; 
+signal RX_Data_from_orbcgen 		:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0); 
 
 -- from rx data decoder
 signal ORBC_ID_from_RXdecoder 			: std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID from CRUS
@@ -120,11 +120,11 @@ attribute mark_debug of Board_data_from_main_gen : signal is "true";
 attribute mark_debug of RX_IsData_DataClk : signal is "true";
 attribute mark_debug of RX_Data_DataClk : signal is "true";
 
-attribute mark_debug of RX_IsData_from_datagen : signal is "true";
-attribute mark_debug of RX_Data_from_datagen : signal is "true";
-
 attribute mark_debug of TX_IsData_from_packager : signal is "true";
 attribute mark_debug of TX_Data_from_packager : signal is "true";
+
+attribute mark_debug of RX_IsData_from_orbcgen : signal is "true";
+attribute mark_debug of RX_Data_from_orbcgen : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -158,8 +158,8 @@ begin
 	
 	RX_Data_DataClk <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
 	
-	Data_from_FITrd_O <= TX_Data_from_packager 				WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_EXT_generator) ELSE RX_Data_from_datagen;
-	IsData_from_FITrd_O <= TX_IsData_from_packager 			WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_EXT_generator) ELSE RX_IsData_from_datagen;
+	Data_from_FITrd_O <= TX_Data_from_packager 				WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) ELSE RX_Data_from_orbcgen;
+	IsData_from_FITrd_O <= TX_IsData_from_packager 			WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) ELSE RX_IsData_from_orbcgen;
 	
 	
 	RxData_rxclk_from_GBT_O <= RX_Data_rxclk_from_GBT;
@@ -220,8 +220,8 @@ Port map (
 		FIT_GBT_status_I => FIT_GBT_STATUS,
 		Control_register_I => Control_register_I,
 			
-		RX_IsData_I => RX_IsData_from_datagen,
-		RX_Data_I => RX_Data_from_datagen,
+		RX_IsData_I => RX_IsData_from_orbcgen,
+		RX_Data_I => RX_Data_from_orbcgen,
 		
 		ORBC_ID_from_CRU_O => ORBC_ID_from_RXdecoder,
 		ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
@@ -262,8 +262,8 @@ CRU_ORBC_Gen_comp : entity work.CRU_ORBC_Gen
 		RX_IsData_I 		=> RX_IsData_DataClk,
 		RX_Data_I 			=> RX_Data_DataClk,
 		
-		RX_IsData_O 		=> RX_IsData_from_datagen,
-		RX_Data_O 			=> RX_Data_from_datagen,
+		RX_IsData_O 		=> RX_IsData_from_orbcgen,
+		RX_Data_O 			=> RX_Data_from_orbcgen,
 		
 		Current_BCID_from_O => open,
 		Current_ORBIT_from_O=> open,

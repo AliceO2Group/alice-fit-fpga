@@ -95,11 +95,8 @@ architecture Behavioral of CRU_ORBC_Gen is
 	signal trigger_single_val 	: std_logic_vector(Trigger_bitdepth-1 downto 0);	-- send this trigger (once then moved from 0->1)
 
 	
-	attribute keep : string;	
-	attribute keep of bfreq_counter : signal is "true";
-	attribute keep of bpattern_counter : signal is "true";
-	attribute keep of is_sentd_cont_trg : signal is "true";
-	attribute keep of is_boffset_sync : signal is "true";
+	attribute mark_debug : string;	
+	attribute mark_debug of rd_trg_send_mode : signal is "true";
 
 
 	
@@ -289,14 +286,14 @@ TRG_readout_command <=  TRG_const_SOT WHEN (rd_trg_send_mode = s1_trg_SOT) and (
 rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset = '1') ELSE
     s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff = idle)) ELSE
     s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = continious)) ELSE
-    s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = trigger)) ELSE
-    s1_trg_EOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) and (readout_command_ff = idle)) ELSE
+    s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) 	and (readout_command_ff = idle)) ELSE
+    s1_trg_EOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) and (readout_command_ff = trigger)) ELSE
 	s0_idle	   WHEN (is_rd_trg_send = '1') ELSE
     rd_trg_send_mode;
 
 runType_mode <= TRG_const_RT WHEN (Control_register_I.Trigger_Gen.Readout_command = continious) and (rd_trg_send_mode = s0_idle) ELSE (others => '0');
 running_mode <= TRG_const_RS WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) or (Control_register_I.Trigger_Gen.Readout_command = trigger)) and (rd_trg_send_mode = s0_idle)  ELSE (others => '0');
-TRG_readout_state <= TRG_const_RS or TRG_const_RT WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
+TRG_readout_state <= runType_mode or running_mode WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
 -- ***************************************************
 
 end Behavioral;

@@ -155,7 +155,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 	end record;
 	
 	
-	type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator, use_EXT_generator);
+	type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator, use_TX_generator);
 	type Readout_command_type is (idle, continious, trigger);
 
 	type Trigger_Gen_CONTROL_type is record
@@ -522,7 +522,7 @@ begin
 		trg_gen_cntr := x"0";
 	elsif cntrl_reg.Trigger_Gen.usage_generator = use_CONT_generator then
 		trg_gen_cntr := x"1";
-	elsif cntrl_reg.Trigger_Gen.usage_generator = use_EXT_generator then
+	elsif cntrl_reg.Trigger_Gen.usage_generator = use_TX_generator then
 		trg_gen_cntr := x"2";
 	else
 		trg_gen_cntr := x"f";
@@ -593,7 +593,7 @@ begin
 	elsif( cntrl_reg_addrreg(0)(7 downto 4) = x"1" ) then
 		cntr_reg.Trigger_Gen.usage_generator := use_CONT_generator;
 	elsif( cntrl_reg_addrreg(0)(7 downto 4) = x"2" ) then
-		cntr_reg.Trigger_Gen.usage_generator := use_EXT_generator;
+		cntr_reg.Trigger_Gen.usage_generator := use_TX_generator;
 	else
 		cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
 	end if;

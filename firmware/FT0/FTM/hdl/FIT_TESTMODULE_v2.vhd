@@ -895,7 +895,7 @@ FitGbtPrg: entity work.FIT_GBT_project
 	Port map(
 		RESET_I				=>	reset_to_syscount,
 		SysClk_I			=>	FSM_Clocks.System_Clk,
-		DataClk_I			=>	FSM_Clocks.Reset40,
+		DataClk_I			=>	FSM_Clocks.Data_Clk,
 		MgtRefClk_I			=>	MgtRefClk_to_FIT_GBT,
 		RxDataClk_I			=>  GBT_RxFrameClk, -- 40MHz data clock in RX domain (loop back)
 		GBT_RxFrameClk_O	=>  GBT_RxFrameClk,
