@@ -97,6 +97,16 @@ architecture Behavioral of CRU_ORBC_Gen is
 	
 	attribute mark_debug : string;	
 	attribute mark_debug of rd_trg_send_mode : signal is "true";
+	attribute mark_debug of bpattern_counter : signal is "true";
+	attribute mark_debug of cont_trg_send : signal is "true";
+	attribute mark_debug of is_sentd_cont_trg : signal is "true";
+	attribute mark_debug of cont_trg_bunch_mask_comp : signal is "true";
+	attribute mark_debug of TRG_result : signal is "true";
+	attribute mark_debug of is_trigger_sending : signal is "true";
+	attribute mark_debug of is_send_single_trg : signal is "true";
+	attribute mark_debug of single_trg_send_val : signal is "true";
+	attribute mark_debug of EV_ID_counter : signal is "true";
+	attribute mark_debug of is_boffset_sync : signal is "true";
 
 
 	
@@ -236,7 +246,7 @@ EV_ID_counter_set <=	'1' WHEN (bpattern_counter < 2) and (EV_ID_counter = x"0000
 ---------- CRU TX data gen  -------------------------
 TRG_result <= TRG_readout_command or TRG_readout_state or TRG_evid or cont_trg_send or single_trg_send_val;
 is_trigger_sending <= IS_Orbit_trg_counter or is_rd_trg_send or is_sentd_cont_trg or is_send_single_trg;
-isTRG_valid <= IS_Orbit_trg_counter or is_rd_trg_send or is_sentd_cont_trg or is_send_single_trg;
+isTRG_valid <= is_trigger_sending;
 
 
 
