@@ -47,8 +47,8 @@ entity Channel is
            gate_time_low :  in STD_LOGIC_VECTOR (7 downto 0);
            gate_time_high :  in STD_LOGIC_VECTOR (7 downto 0);
            Ampl_sat :   in STD_LOGIC_VECTOR (11 downto 0);
-           CH0_zero : in STD_LOGIC_VECTOR (11 downto 0);
-           CH1_zero : in STD_LOGIC_VECTOR (11 downto 0);
+           CH0_zero : out STD_LOGIC_VECTOR (11 downto 0);
+           CH1_zero : out STD_LOGIC_VECTOR (11 downto 0);
            CH_trig_outt : out STD_LOGIC;
            CH_trig_outa : out STD_LOGIC;
            CH_trig_bgnd : out STD_LOGIC;
@@ -59,13 +59,12 @@ entity Channel is
            DATA_rd : in STD_LOGIC;
            FIFO_dis  : in STD_LOGIC;
            Event_in  : out STD_LOGIC;
-           Cal : in STD_LOGIC;
-           Z0_cal : out STD_LOGIC_VECTOR (11 downto 0);
-           Z1_cal : out STD_LOGIC_VECTOR (11 downto 0);
-           Cal_done : out STD_LOGIC;
+           Z0_cal : out STD_LOGIC_VECTOR (15 downto 0);
+           Z1_cal : out STD_LOGIC_VECTOR (15 downto 0);
+           Z_alarm : out STD_LOGIC;
            spi_lock : in STD_LOGIC;
-           R0_cal : out STD_LOGIC_VECTOR (11 downto 0);
-           R1_cal : out STD_LOGIC_VECTOR (11 downto 0);
+           R0_cal : out STD_LOGIC_VECTOR (12 downto 0);
+           R1_cal : out STD_LOGIC_VECTOR (12 downto 0);
            R0_corr : in STD_LOGIC_VECTOR (11 downto 0);
            R1_corr : in STD_LOGIC_VECTOR (11 downto 0);
            pulse_in  : out STD_LOGIC;
@@ -78,25 +77,30 @@ architecture RTL of Channel is
 
 type vector4x9 is array (0 to 3) of STD_LOGIC_VECTOR (8 downto 0);
 
-signal TDC_rdy320_0, TDC_rdy320, TDC_rdy320_1, TDC_rdy_en, TDC_out, CH_t_trig0, CH_t_trig1, CH_t_trig2, TDC_rdy, TDC_dt,CH_dt, CH_trig_f, EV, EV_0, EV_E, EV_de, EV_fl, EV_b1, EV_b0, CH_wait, CH_tr_en, CH_de, CH_ds, FIFO_rst, EV_rdy : STD_LOGIC; 
+signal TDC_rdy320_0, TDC_rdy320, TDC_rdy320_1, TDC_rdy_en, TDC_out, CH_t_trig0, CH_t_trig1, CH_t_trig2, TDC_rdy, TDC_dt,CH_dt, CH_trig_f, EV, EV_0, EV_E, EV_de, EV_fl, EV_b1, EV_b0, CH_wait, CH_tr_en, CH_de, CH_ds, FIFO_rst, EV_rdy, spi_lock0 : STD_LOGIC; 
 signal EVENTFIFO_wr, EVENTFIFO_rd, EVENTFIFO_empty, CH_trig_on, FEV_0, FEV_1,  EV_a0, CSTR_0, CSTR_1, CSTR_2, CSTR_3, CSTR_4, EV_am_fl, EV_am_fl0, EV_am_en, CH_rd, Evnt, Ampl_OK, Ampl_high, Time_OK, Time_OK_rd, Time_lost, Event_inp, CH_trig_a : STD_LOGIC;
 signal CH_TIME0, CH_TIME1, CH_TIME2, CH_RTIME, R_corr : STD_LOGIC_VECTOR (11 downto 0);
 signal EV_id :  STD_LOGIC_VECTOR(5 downto 0);
 signal EV_dly : vector4x9;
 signal EV_v : STD_LOGIC_VECTOR (8 downto 0);
 signal C_FOUT,EVENTFIFO_in : STD_LOGIC_VECTOR (22 downto 0);
-signal CH_0, CH_ampl0, CH_BS, ampl_fin :  STD_LOGIC_VECTOR(12 downto 0);
+signal CH_0, CH_ampl0, CH_BS, ampl_fin, CH_BS0, CH_BS1 :  STD_LOGIC_VECTOR(12 downto 0);
 signal WD_count : STD_LOGIC_VECTOR(2 downto 0);
 signal WD_rdy : STD_LOGIC_VECTOR(1 downto 0);
-signal cal_0, RDF_wr, rd_empty : STD_LOGIC;
-signal Z0, Z1 : STD_LOGIC_VECTOR(17 downto 0);
+signal RDF_wr, rd_empty : STD_LOGIC;
+signal CH0_Z, CH1_Z : STD_LOGIC_VECTOR(21 downto 0);
+signal Z0, Z1 : STD_LOGIC_VECTOR(12 downto 0);
 signal CH_R0, CH_R1 : STD_LOGIC_VECTOR(22 downto 0);
 signal Ampl_corr : STD_LOGIC_VECTOR(25 downto 0);
 signal RDF_in  : STD_LOGIC_VECTOR(32 downto 0);
-signal Z_count : STD_LOGIC_VECTOR(7 downto 0);
 signal TDC_pause : STD_LOGIC_VECTOR(5 downto 0);
 signal TDC_load : STD_LOGIC_VECTOR(3 downto 0);
 
+signal Cal_d, Cal_d0, Cal_d1 : STD_LOGIC;
+signal Z : STD_LOGIC_VECTOR(9 downto 0);
+signal ZS : STD_LOGIC_VECTOR(17 downto 0);
+signal ZS0 : STD_LOGIC_VECTOR(15 downto 0);
+signal ZR0, ZR1 : STD_LOGIC_VECTOR(25 downto 0);
 
 component EVENT_FIFO
 	Port (  clk : IN STD_LOGIC;
@@ -134,10 +138,8 @@ CH_ampl<=CH_ampl0;
 CH_trig_outt<=CH_trig_f;
 CH_trig_outa<=CH_trig_a; 
 
-Z0_cal<=Z0(17 downto 6); Z1_cal<=Z1(17 downto 6); pulse_in<=EV_E; Cal_done<=Z_count(7);
+pulse_in<=EV_E;  
 
-R0_cal<= CH_R0(21 downto 10) when (CH_R0(22)='0') else x"000";
-R1_cal<= CH_R1(21 downto 10) when (CH_R1(22)='0') else x"000";
 
 EVENTFIFO: EVENT_FIFO port map (clk => clk320, srst =>RESET, din =>EVENTFIFO_in, wr_en => EVENTFIFO_wr, rd_en =>EVENTFIFO_rd, dout => C_FOUT, full =>open, empty =>EVENTFIFO_empty);
 
@@ -150,11 +152,20 @@ DATA_ready<=not rd_empty;
 RDF_in<=Time_lost & CH_trig_f & Ampl_high & Time_OK_rd & C_FOUT(8 downto 6) & C_FOUT(22 downto 9) & CH_RTIME;
 
 FIFO_rst<=FIFO_dis or RESET;
+
+Cal_d<='1' when (CSTR_2='1') and (CSTR_3='0') and (EV_am_fl0='0') and (mt_cou/="101") else '0';
+
+Z0<='0' & CH_0(11 downto 0) - ('0' & CH0_Z(21 downto 10));
+Z1<='0' & CH_0(11 downto 0) - ('0' & CH1_Z(21 downto 10));
+
+ZS<=std_logic_vector(signed(Z(8 downto 0))*signed(Z(8 downto 0)));
+
 process (clk320)
 begin
 if (clk320'event and clk320='1') then
 
 TDC_rdy320_0<=TDC_rdy_in; TDC_rdy320<=TDC_rdy320_0; TDC_rdy320_1<=TDC_rdy320;
+spi_lock0<=spi_lock;
 
 if (chan_ena='1') then EV_0<=CGE; else EV_0<='0'; end if;
  
@@ -163,20 +174,51 @@ EV_rdy<= EV; EV<=EV_0;
 CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2; CSTR_4<=CSTR_3;
 if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
 
-cal_0<=Cal;
+  if (Cal_d='1') then
+       Z(9)<=CH_0(12);
+       if (CH_0(12)='0') then 
+        CH0_Z<=CH0_Z - std_logic_vector(resize(unsigned(CH0_Z(21 downto 10)), 22)) + std_logic_vector(resize(unsigned(CH_0(11 downto 0)),22));
+          if (Z0(12 downto 9) = 0) or (Z0(12 downto 9) = "1111") then  Z(8 downto 0)<=Z0(8 downto 0);
+           else  if  (Z0(12)='0') then Z(8 downto 0)<='0' & x"FF"; else Z(8 downto 0)<='1' & x"00"; end if;
+          end if; 
+        else 
+         CH1_Z<=CH1_Z - std_logic_vector(resize(unsigned(CH1_Z(21 downto 10)),22)) + std_logic_vector(resize(unsigned(CH_0(11 downto 0)),22));
+          if (Z1(12 downto 9) = 0) or (Z1(12 downto 9) = "1111") then  Z(8 downto 0)<=Z1(8 downto 0);
+           else  if  (Z1(12)='0') then Z(8 downto 0)<='0' & x"FF"; else Z(8 downto 0)<='1' & x"00"; end if;
+          end if; 
+      end if;
+   end if;
+   
+ Cal_d0<=Cal_d; Cal_d1<=Cal_d0;
+ 
+ if (Cal_d0='1') then 
+    ZS0<=ZS(15 downto 0); 
+    if (unsigned(CH0_Z(21 downto 10))<30) or (unsigned(CH0_Z(21 downto 10))>150) or (unsigned(CH1_Z(21 downto 10))<30) or (unsigned(CH1_Z(21 downto 10))>150) then Z_alarm<='1'; else Z_alarm<='0'; end if;
+ end if;
+ 
+ if (Cal_d1='1') then
+       if (Z(9)='0') then 
+        ZR0<=ZR0 - std_logic_vector(resize(unsigned(ZR0(25 downto 10)), 26)) + std_logic_vector(resize(unsigned(ZS0),26));
+        else 
+        ZR1<=ZR1 - std_logic_vector(resize(unsigned(ZR1(25 downto 10)), 26)) + std_logic_vector(resize(unsigned(ZS0),26));
+      end if;
+   end if;
 
-if (cal_0='0') and (Cal='1') then Z0<="00" & x"0000"; Z1<="00" & x"0000"; Z_count<=(others=>'0');
- else 
-  if (Cal='1') and (CSTR_2='1') and (CSTR_3='0') and (Z_count(7)='0') then 
-    if (CH_0(12)='0') then Z0<=Z0+ ("000000"& CH_0(11 downto 0)); else Z1<=Z1+ ("000000" & CH_0(11 downto 0)); end if;
-    Z_count<=Z_count+1;
-  end if;
+
+if (CSTR_2='1') and (CSTR_3='0') and (EV_am_fl0='1') then
+        if (CH_0(12)='0') then CH_BS0<=CH_BS; else  CH_BS1<=CH_BS; end if;
 end if;
 
-if (spi_lock='0') and (CSTR_3='1') and (CSTR_4='0') then
- if (CH_0(12)='0') then CH_R0<=CH_R0-std_logic_vector(resize(signed(CH_R0(22 downto 10)), 23)-resize(signed(CH_BS),23));
-               else     CH_R1<=CH_R1-std_logic_vector(resize(signed(CH_R1(22 downto 10)), 23)-resize(signed(CH_BS),23));
+if (CSTR_3='1') and (CSTR_4='0') and (EV_am_fl0='1') then
+ if (CH_0(12)='0') then CH_R0<=CH_R0-std_logic_vector(resize(signed(CH_R0(22 downto 10)), 23)-resize(signed(CH_BS0),23));
+               else     CH_R1<=CH_R1-std_logic_vector(resize(signed(CH_R1(22 downto 10)), 23)-resize(signed(CH_BS1),23));
  end if;
+end if;
+
+if (spi_lock='1') and (spi_lock0='0') then 
+  R0_cal<= CH_R0(22 downto 10); R1_cal<= CH_R1(22 downto 10);
+  CH0_zero<=CH0_Z(21 downto 10);  CH1_zero<=CH1_Z(21 downto 10);
+  Z0_cal<=ZR0(25 downto 10); Z1_cal<=ZR1(25 downto 10); 
 end if;
 
 if (TDC_rdy_en='1') then CH_TIME2<=CH_TIME1; CH_TIME1<=CH_TIME0; CH_t_trig2 <= CH_t_trig1; CH_t_trig1 <= CH_t_trig0; 
@@ -245,7 +287,8 @@ if (mt_cou="011") then
 end if;
 
 if (mt_cou="100") then EV_am_fl0<='0'; EV_am_fl<=EV_am_fl0; CH_trig_a<=EV_dly(3)(8) and  EV_am_fl0; CH_trig_bgnd<= EV_dly(3)(8) and  not EV_am_fl0;
-   else if (CSTR_1='1') and (CSTR_2='0') then  EV_am_fl0<=EV_am_en; end if;
+   else 
+     if (CSTR_1='1') and (CSTR_2='0') then EV_am_fl0<=EV_am_en; end if;
 end if;
 
 
@@ -298,8 +341,8 @@ CH_tr_en<=C_FOUT(8) and Ampl_OK and Time_OK and not C_FOUT(7);
 --CH_trig_f<= ((CH_t_trig1 and (not TDC_dt or CH_ds)) or (CH_t_trig2 and (TDC_dt or CH_ds)));
 
 
-CH_BS<=('0'& CH_0(11 downto 0)) - ('0'&CH0_zero) when (CH_0(12)='0') else
-       ('0'& CH_0(11 downto 0)) - ('0'&CH1_zero);
+CH_BS<=('0'& CH_0(11 downto 0)) - ('0'&CH0_Z(21 downto 10)) when (CH_0(12)='0') else
+       ('0'& CH_0(11 downto 0)) - ('0'&CH1_Z(21 downto 10));
 
 CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='0') and (CH_ds='0')) or ((CH_t_trig1='1') and (CH_ds='1'))) else
            CH_TIME2 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else
