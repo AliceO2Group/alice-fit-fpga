@@ -46,8 +46,8 @@ entity DataConverter is
 		FIFO_is_space_for_packet_I : in STD_LOGIC;
 		
 		FIFO_WE_O : out STD_LOGIC;
---		FIFO_data_word_O : out std_logic_vector(fifo_data_bitdepth-1 downto 0);
-		FIFO_data_word_O : out std_logic_vector(160-1 downto 0);
+		FIFO_data_word_O : out std_logic_vector(fifo_data_bitdepth-1 downto 0);
+--		FIFO_data_word_O : out std_logic_vector(160-1 downto 0);
 		
 		hits_rd_counter_converter_O : out hit_rd_counter_type
 	 );
@@ -64,6 +64,12 @@ architecture Behavioral of DataConverter is
 
 	-- type FSM_STATE_T is (s0_wait_header, s1_sending_data);
 	-- signal FSM_STATE, FSM_STATE_NEXT  : FSM_STATE_T;
+	
+	signal data_fromfifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
+	signal is_header_from_fifo : std_logic;
+	signal is_data_from_fifo : std_logic;
+	signal raw_data_fifo_isempty : std_logic;
+	
 	
 
 	signal Board_data_sysclkff, Board_data_sysclkff_next 				:  Board_data_type;
@@ -108,11 +114,11 @@ begin
 
 
 -- Wiring ********************************************
---	FIFO_WE_O <= FIFO_WE_ff;
---    FIFO_data_word_O <= FIFO_data_word_ff;
+	FIFO_WE_O <= FIFO_WE_ff;
+    FIFO_data_word_O <= FIFO_data_word_ff;
 
-	FIFO_WE_O <= Board_data_sysclkff.is_data;
-	FIFO_data_word_O <= Board_data_sysclkff.data_word;
+--	FIFO_WE_O <= Board_data_sysclkff.is_data;
+--	FIFO_data_word_O <= Board_data_sysclkff.data_word;
 	
 	
 	hits_rd_counter_converter_O.hits_send_porbit 	<= (others => '0');
@@ -124,15 +130,35 @@ begin
 
 -- ***************************************************
 
+
+
+
+-- tcm_data_160to80bit_fifo =============================================
+tcm_data_160to80bit_fifo_comp : entity work.tcm_data_160to80bit_fifo
+port map(
+           clk           => FSM_Clocks_I.System_Clk,
+           srst          => FSM_Clocks_I.Reset,
+           WR_EN 		 => Board_data_I.is_data,
+           RD_EN         => not raw_data_fifo_isempty,
+           DIN           => Board_data_I.data_word,
+           DOUT          => data_fromfifo,
+           FULL          => open,
+           EMPTY         => raw_data_fifo_isempty,
+     	   rd_data_count => open
+        );
+		
+is_header_from_fifo <= '1' when (data_fromfifo(79 downto 76) = "1111") else '0';
+-- ===========================================================
+
 -- Header format *************************************
-	-- packet_lenght_fromheader <= func_PMHEADER_n_dwords( Board_data_sysclkff.data_word );
-	-- header_orbit <=func_PMHEADER_getORBIT(Board_data_sysclkff.data_word);
-	-- header_bc <= func_PMHEADER_getBC(Board_data_sysclkff.data_word);
-	-- header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc);
-	-- data_word <= Board_data_sysclkff.data_word;
-	header_word <= (others => '0');
-	data_word <= (others => '0');
+	packet_lenght_fromheader <= func_PMHEADER_n_dwords( data_fromfifo );
+	header_orbit <=func_PMHEADER_getORBIT(data_fromfifo);
+	header_bc <= func_PMHEADER_getBC(data_fromfifo);
+	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error);
+	data_word <= data_fromfifo;
 -- ***************************************************
+
+
 
 
 -- Data ff data clk ***********************************
@@ -151,6 +177,8 @@ begin
 				last_dropped_bc <= (others => '0');
 				FIFO_WE_ff <= '0';
                 FIFO_data_word_ff <= (others => '0');
+				
+				is_data_from_fifo <= '0';
 
 			ELSE
 				Board_data_sysclkff <= Board_data_sysclkff_next;
@@ -164,6 +192,8 @@ begin
 				first_dropped_bc <= first_dropped_bc_next;
 				last_dropped_orbit <= last_dropped_orbit_next;
 				last_dropped_bc <= last_dropped_bc_next;
+				
+				is_data_from_fifo <= raw_data_fifo_isempty;
 			END IF;
 			
 			
@@ -175,35 +205,35 @@ begin
 
 
 -- FSM ************************************************
-Board_data_sysclkff_next <= Board_data_I;
+--Board_data_sysclkff_next <= Board_data_I;
 FIFO_is_space_for_packet_ff_next <= FIFO_is_space_for_packet_I;
 
 reset_drop_counters <= Control_register_I.reset_drophit_counter;
 -- reset_drop_counters <= 	  '1'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						  -- '1'	WHEN (FIT_GBT_status_I.Start_run = '1') ELSE
 						  -- '0';
-
+	
 	
 sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0'	WHEN (Board_data_I.is_header = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='0') ELSE
-						'0'	WHEN (Board_data_I.is_header = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
-						'1'	WHEN (Board_data_I.is_header = '1') ELSE
+						'0'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='0') ELSE
+						'0'	WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
+						'1'	WHEN (is_header_from_fifo = '1') ELSE
 						sending_event;
 		
 FIFO_data_word_ff_next <= 	(others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							header_word 	WHEN (sending_event = '1') and (Board_data_sysclkff.is_header = '1') ELSE
-							data_word		WHEN (sending_event = '1') and (Board_data_sysclkff.is_data = '1') ELSE
+							header_word 	WHEN (sending_event = '1') and (is_header_from_fifo = '1') ELSE
+							data_word		WHEN (sending_event = '1') and (is_data_from_fifo = '1') ELSE
 							(others => '0');
 							
 FIFO_WE_ff_next <= 			'0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							'1'		WHEN (Board_data_sysclkff.is_data = '1') and (sending_event = '1') ELSE
+							'1'		WHEN (is_data_from_fifo = '1') and (sending_event = '1') ELSE
 							'0';
 							
 -- Event counter ------------------------------------
 
 is_dropping_event	<=  '0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0'	WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
-						'1'		WHEN (Board_data_sysclkff.is_header = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
+						'0'		WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
+						'1'		WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 						'0';
 
 dropped_events_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE

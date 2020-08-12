@@ -129,7 +129,7 @@ end process;
 
 -- Data Converter ===============================================
 -- PM data already formed
-DataConverter_gen: if (Board_DataConversion_type = one_word) or (Board_DataConversion_type = one_word) generate
+-- DataConverter_gen: if (Board_DataConversion_type = one_word) or (Board_DataConversion_type = one_word) generate
 
 DataConverter_comp: entity work.DataConverter
     port map(
@@ -149,7 +149,7 @@ DataConverter_comp: entity work.DataConverter
 
 		);
 		
-end generate;
+-- end generate;
 -- ===========================================================
 
 
