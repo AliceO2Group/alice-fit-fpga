@@ -227,6 +227,7 @@ is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							0		WHEN (bfreq_counter >= bunch_freq-1) ELSE
 							64 		WHEN (is_boffset_sync = '0') ELSE
+							64 		WHEN (bpattern_counter = 64) ELSE
 							bpattern_counter + 1;
 						
 is_sentd_cont_trg <= 		'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE

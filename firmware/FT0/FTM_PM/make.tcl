@@ -253,13 +253,13 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
- [file normalize "${origin_dir}/hdl/PLL_Reset_Generator.vhd" ]\
- [file normalize "${origin_dir}/hdl/TCM_SPI.vhd" ]\
- [file normalize "${origin_dir}/hdl/tcm_sc.vhd" ]\
- [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
- [file normalize "${origin_dir}/hdl/tcm_sync.vhd" ]\
- [file normalize "${origin_dir}/hdl/FIT_TESTMODULE_v2.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/PLL_Reset_Generator.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/TCM_SPI.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/tcm_sc.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/pm-spi.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/tcm_sync.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/FIT_TESTMODULE_v2.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_clock_div.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/led_stretcher.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/emac_hostbus_decl.vhd" ]\
@@ -452,14 +452,14 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 set obj [get_filesets sim_1]
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/sim/testbench_FITTESTMODULE.vhd" ]\
- [file normalize "${origin_dir}/sim/testbench_FITTESTMODULE_behav.wcfg" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/readout_simulation.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/main_signals.wcfg" ]\
 ]
 set imported_files [import_files -fileset sim_1 $files]
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "testbench_FITTESTMODULE" -objects $obj
+set_property -name "top" -value "testbench_readout" -objects $obj
 
 
 

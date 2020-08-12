@@ -86,7 +86,8 @@ begin
 -- ***************************************************
 	Board_data_O <= Board_data_gen_ff 	WHEN (Control_register_I.Data_Gen.usage_generator = use_MAIN_generator)	 ELSE Board_data_in_ff;
 	
-    Board_data_header.data_word <= func_PMHEADER_get_header(n_words_in_packet_send(3 downto 0), FIT_GBT_status_I.ORBIT_from_CRU_corrected, FIT_GBT_status_I.BCID_from_CRU_corrected);
+    Board_data_header.data_word <= func_FITDATAHD_get_header(x"0" & n_words_in_packet_send, FIT_GBT_status_I.ORBIT_from_CRU_corrected,
+	FIT_GBT_status_I.BCID_from_CRU_corrected, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error);
 	Board_data_header.is_header <= '1';
 	Board_data_header.is_data <= '1';
 	Board_data_header.is_packet <= '1';

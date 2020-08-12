@@ -32,11 +32,12 @@ use ieee.std_logic_unsigned.all ;
 
 use work.all;
 use work.fit_gbt_common_package.all;
+use work.fit_gbt_board_package.all;
  
-ENTITY testbench_FITTESTMODULE IS
-END testbench_FITTESTMODULE;
+ENTITY testbench_readout IS
+END testbench_readout;
  
-ARCHITECTURE behavior OF testbench_FITTESTMODULE IS 
+ARCHITECTURE behavior OF testbench_readout IS 
 
    --clocks
 	constant Sys_period : time := 3.125 ns;
@@ -45,6 +46,7 @@ ARCHITECTURE behavior OF testbench_FITTESTMODULE IS
 	signal SYS_CLK : std_logic := '0';
 	signal DATA_CLK : std_logic := '0';
 	signal IPBUS_CLK : std_logic := '0';
+	signal GBT_RxFrameClk : std_logic := '0';
 	
 	signal FSM_Clocks_signal : FSM_Clocks_type;
 
@@ -57,54 +59,59 @@ ARCHITECTURE behavior OF testbench_FITTESTMODULE IS
     signal IPBUS_ackn : std_logic;
 
  	--Outputs
-	signal GBTRX_Data_rxclk_signal 			: std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-	signal GBTRX_IsData_rxclk_signal		: STD_LOGIC;
-	signal GBTTX_Data_dataclk_signal 	    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-	signal GBTTX_IsData_dataclk_signal	: STD_LOGIC;
-
 	signal from_gbt_bank_prj_GBT_status : Type_GBT_status;
-
+	
+   signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+   signal IsData_from_FITrd        : STD_LOGIC;
+   
+   signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+   signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
+	
    	
 	constant testbench_CONTROL_REG_default : CONTROL_REGISTER_type :=
-    (
-        Data_Gen => (
-            usage_generator        => use_TX_generator,
-           -- usage_generator    => use_MAIN_generator,
-            
-            trigger_resp_mask     => TRG_const_void,
-            bunch_pattern         => x"10e0766f",
-            bunch_freq             => x"0deb",
-            bunch_freq_hboffset => x"ddc"
-            ),
-            
-        Trigger_Gen => (
-            --usage_generator        => use_CONT_generator,
-            usage_generator    => use_NO_generator,
-            Readout_command         => command_off,
-            trigger_single_val         => x"00000000",
-            trigger_pattern         => x"0000000080000000",
-            trigger_cont_value             => TRG_const_Ph,
-            bunch_freq                 => x"0deb",
-            bunch_freq_hboffset     => x"ddc"
-            ),
-        
-        RDH_data => (
-            FEE_ID                     => x"0001",    
-            PAR                     => x"ffff",
-            DET_Field                 => x"1234"
-            ),
-    
-        n_BCID_delay                 => x"01f",
-        crutrg_delay_comp             => x"00f",
-        max_data_payload            => x"00f0",
-        reset_orbc_synd             => '0',
-        reset_drophit_counter         => '0',
-        reset_gen_offset            => '0',
-        reset_gbt_rxerror            => '0',
-        reset_gbt                    => '0',
-        reset_rxph_error            => '0'
-    );    
+	(
+		Data_Gen => (
+			usage_generator		=> use_TX_generator,
+			--usage_generator	=> use_MAIN_generator,
+			
+			trigger_resp_mask 	=> TRG_const_void,
+			bunch_pattern 		=> x"10e0766f",
+			bunch_freq 			=> x"0deb",
+			bunch_freq_hboffset => x"ddc"
+			),
+			
+		Trigger_Gen => (
+			usage_generator		=> use_CONT_generator,
+			--usage_generator	=> use_NO_generator
+			Readout_command		 => idle,
+			trigger_single_val 		=> x"00000000",
+			trigger_pattern 		=> x"0000000080000000",
+			trigger_cont_value 			=> TRG_const_Ph,
+			bunch_freq 				=> x"0deb",
+			bunch_freq_hboffset 	=> x"ddc"
+			),
+		
+		RDH_data => (
+			FEE_ID 					=> x"0001",	
+			PAR 					=> x"ffff",
+			DET_Field 				=> x"1234"
+			),
+			
+		readout_bypass              => '0',
+	    is_hb_response              => '1',
+        trg_data_select             => x"00000010",
 
+		n_BCID_delay 				=> x"01f",
+		crutrg_delay_comp 			=> x"00f",
+		max_data_payload			=> x"00f0",
+		reset_orbc_synd 			=> '0',
+		reset_drophit_counter 		=> '0',
+		reset_gen_offset			=> '0',
+		reset_gbt_rxerror			=> '0',
+		reset_gbt					=> '0',
+		reset_rxph_error			=> '0',
+		strt_rdmode_lock			=> '0'
+	);	
 	signal  testbench_CONTROL_REG_dynamic : CONTROL_REGISTER_type := testbench_CONTROL_REG_default;
 
 
@@ -118,40 +125,44 @@ FSM_Clocks_signal.System_Counter <= x"0";
 FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
 
  
+  
  
- GBTRX_IsData_rxclk_signal <= GBTTX_IsData_dataclk_signal;
- GBTRX_Data_rxclk_signal <= GBTTX_Data_dataclk_signal;
- FSM_Clocks_signal.GBT_RX_Clk <= DATA_CLK;
--- FIT TESTMODULE =====================================
-FIT_TESTMODULE : entity work.FIT_TESTMODULE_core
+-- FIT GBT project =====================================
+FitGbtPrg: entity work.FIT_GBT_project
+	generic map(
+		GENERATE_GBT_BANK	=> 0
+	)
 	
 	Port map(
-		FSM_Clocks_I 	=> FSM_Clocks_signal,
+		RESET_I				=>	FSM_Clocks_signal.Reset,
+		SysClk_I			=>	FSM_Clocks_signal.System_Clk,
+		DataClk_I			=>	FSM_Clocks_signal.Data_Clk,
+		MgtRefClk_I			=>	FSM_Clocks_signal.Data_Clk,
+		RxDataClk_I			=>  GBT_RxFrameClk, -- 40MHz data clock in RX domain (loop back)
+		GBT_RxFrameClk_O	=>  GBT_RxFrameClk,
 		
-        GBT_Status_I => from_gbt_bank_prj_GBT_status,
-        TESTM_status_O=>open,
-        Control_register_O=>open,
-        
-		GBTRX_IsData_rxclk_I 	=> GBTRX_IsData_rxclk_signal,
-		GBTRX_Data_rxclk_I 		=> GBTRX_Data_rxclk_signal,
+		Board_data_I		=> board_data_test_const,
+		Control_register_I	=> testbench_CONTROL_REG_dynamic,
 		
-		GBTTX_IsData_dataclk_O 	=> GBTTX_IsData_dataclk_signal,
-		GBTTX_Data_dataclk_O 	=> GBTTX_Data_dataclk_signal,
+		MGT_RX_P_I => '0',
+		MGT_RX_N_I => '0',
+		MGT_TX_P_O => open,
+		MGT_TX_N_O => open,
+		MGT_TX_dsbl_O		=>	open,
 		
-		hdmi_fifo_datain_I => x"000000000000" & x"00000000",
-        hdmi_fifo_wren_I => '0',
-        hdmi_fifo_wrclk_I => DATA_CLK,
+		RxData_rxclk_to_FITrd_I 	=> RxData_rxclk_from_GBT, --loop back data
+		IsRxData_rxclk_to_FITrd_I	=> IsRxData_rxclk_from_GBT, --loop back data
+		Data_from_FITrd_O 			=> Data_from_FITrd,
+		IsData_from_FITrd_O			=> IsData_from_FITrd,
+		Data_to_GBT_I 				=> Data_from_FITrd, --loop back data
+		IsData_to_GBT_I				=> IsData_from_FITrd, --loop back data
 		
-		IPBUS_rst_I => IPBUS_gen_rst,
-        IPBUS_data_out_O => IPBUS_data_out,
-        IPBUS_data_in_I => (others => '0'),
-        IPBUS_addr_I => IPBUS_gen_addr,
-        IPBUS_addr_sel_I => '1',
-        IPBUS_iswr_I => '0',
-        IPBUS_isrd_I => IPBUS_gen_isrd,
-        IPBUS_ack_O => IPBUS_ackn,
-        IPBUS_err_O => open,
-        IPBUS_base_addr_I => (others => '0')
+		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
+		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
+		rx_ph320 => open,
+		ph_error320 => open, 
+
+		FIT_GBT_status_O 	=> open
 		);		
 -- =====================================================
 
