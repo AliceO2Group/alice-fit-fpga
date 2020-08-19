@@ -57,6 +57,7 @@ architecture Behavioral of Module_Data_Gen is
 	type n_words_in_packet_arr_type is array (0 to 8) of std_logic_vector(3 downto 0);
     signal n_words_in_packet_mask : n_words_in_packet_arr_type;
 	signal n_words_in_packet_send, n_words_in_packet_send_next : std_logic_vector(3 downto 0);
+	signal n_words_in_packet_send_tcm : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 	
 	type FSM_STATE_T is (s0_wait, s1_header, s2_data);
 	signal FSM_STATE, FSM_STATE_NEXT  : FSM_STATE_T;
@@ -80,12 +81,14 @@ begin
 	bunch_pattern <=Control_register_I.Data_Gen.bunch_pattern;
 	bunch_freq <= Control_register_I.Data_Gen.bunch_freq;
 	bunch_freq_hboffset <= Control_register_I.Data_Gen.bunch_freq_hboffset;
+	
+	n_words_in_packet_send_tcm <= x"0" & n_words_in_packet_send(2 downto 0) & "1";
 
 
 -- ***************************************************
 	Board_data_O <= Board_data_gen_ff 	WHEN (Control_register_I.Data_Gen.usage_generator = use_MAIN_generator)	 ELSE Board_data_in_ff;
 	
-    Board_data_header.data_word <= func_FITDATAHD_get_header(x"0" & n_words_in_packet_send, FIT_GBT_status_I.ORBIT_from_CRU_corrected,
+    Board_data_header.data_word <= func_FITDATAHD_get_header(n_words_in_packet_send_tcm, FIT_GBT_status_I.ORBIT_from_CRU_corrected,
 	FIT_GBT_status_I.BCID_from_CRU_corrected, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error) & cnt_packet_counter;
 --    Board_data_header.data_word <= (others => '0');
 	Board_data_header.is_header <= '1';

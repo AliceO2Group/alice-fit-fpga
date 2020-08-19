@@ -224,12 +224,12 @@ sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						sending_event;
 		
 FIFO_data_word_ff_next <= 	(others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							header_word 	WHEN (sending_event = '1') and (is_header_from_fifo = '1') ELSE
-							data_word		WHEN (sending_event = '1') and (is_data_from_fifo = '1') ELSE
+							header_word 	WHEN ((sending_event = '1')or(sending_event_next = '1')) and (is_header_from_fifo = '1') ELSE
+							data_word		WHEN ((sending_event = '1')or(sending_event_next = '1')) and (is_data_from_fifo = '1') ELSE
 							(others => '0');
 							
 FIFO_WE_ff_next <= 			'0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							'1'		WHEN (is_data_from_fifo = '1') and (sending_event = '1') ELSE
+							'1'		WHEN (is_data_from_fifo = '1') and ((sending_event = '1')or(sending_event_next = '1')) ELSE
 							'0';
 							
 -- Event counter ------------------------------------
