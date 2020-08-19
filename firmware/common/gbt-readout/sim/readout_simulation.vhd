@@ -43,9 +43,10 @@ END testbench_readout;
 ARCHITECTURE behavior OF testbench_readout IS 
 
    -- inputs file --------------------------------------
-   --file input_reg_file : text open read_mode is "..\..\common\gbt-readout\sim\inputs_test.txt";
+   file input_reg_file : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
    --file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\firmware\common\gbt-readout\sim\inputs_test.txt";
-   file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
+   --file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
+   file output_rd_file : text open write_mode is "gbt_out.txt";
    --file input_reg_file : text open read_mode is "inputs_test.txt";
    signal Control_register_from_file : cntr_reg_addrreg_type;
    -- ---------------------------------------------------
@@ -187,6 +188,7 @@ Sys1_process :process
    -- file data ------------------
    constant infile_num_col : integer := cntr_reg_n_32word*2;
    variable infile_line : line;
+   variable outfile_line   : line;
    type infile_data_type is array (integer range <>) of integer;
    
    variable data_from_file : infile_data_type(0 to infile_num_col-1);
@@ -226,6 +228,11 @@ Sys1_process :process
 		      Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
 		  end loop;
 		  --Control_register_from_file <= datavec_from_file;
+		  
+		  if IsData_from_FITrd = '1' then
+		      hwrite(outfile_line, Data_from_FITrd);
+		      writeline(output_rd_file, outfile_line);
+		  end if;
 		  
 		  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
 		 -- testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(datavec_from_file);
