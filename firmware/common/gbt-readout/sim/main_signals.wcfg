@@ -16,13 +16,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="727649546fs"></ZoomStartTime>
-      <ZoomEndTime time="2849649547fs"></ZoomEndTime>
-      <Cursor1Time time="1273606378fs"></Cursor1Time>
+      <ZoomStartTime time="886403941fs"></ZoomStartTime>
+      <ZoomEndTime time="887372942fs"></ZoomEndTime>
+      <Cursor1Time time="886555274fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="338"></NameColumnWidth>
-      <ValueColumnWidth column_width="420"></ValueColumnWidth>
+      <ValueColumnWidth column_width="415"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject fp_name="group177" type="group">
@@ -32,82 +32,14 @@
       <wvobject fp_name="/testbench_readout/FSM_Clocks_signal" type="array">
          <obj_property name="ElementShortName">FSM_Clocks_signal</obj_property>
          <obj_property name="ObjectShortName">FSM_Clocks_signal</obj_property>
-         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/Control_register_from_file" type="array">
          <obj_property name="ElementShortName">Control_register_from_file[0:12][31:0]</obj_property>
          <obj_property name="ObjectShortName">Control_register_from_file[0:12][31:0]</obj_property>
-         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
          <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
-         <obj_property name="isExpanded"></obj_property>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Data_Gen" type="array">
-            <obj_property name="ElementShortName">.Data_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Data_Gen</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen" type="array">
-            <obj_property name="ElementShortName">.Trigger_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Trigger_Gen</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.RDH_data" type="array">
-            <obj_property name="ElementShortName">.RDH_data</obj_property>
-            <obj_property name="ObjectShortName">.RDH_data</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.readout_bypass" type="logic">
-            <obj_property name="ElementShortName">.readout_bypass</obj_property>
-            <obj_property name="ObjectShortName">.readout_bypass</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_response" type="logic">
-            <obj_property name="ElementShortName">.is_hb_response</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_response</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.trg_data_select" type="array">
-            <obj_property name="ElementShortName">.trg_data_select[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.trg_data_select[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.n_BCID_delay" type="array">
-            <obj_property name="ElementShortName">.n_BCID_delay[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.n_BCID_delay[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.crutrg_delay_comp" type="array">
-            <obj_property name="ElementShortName">.crutrg_delay_comp[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.crutrg_delay_comp[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.max_data_payload" type="array">
-            <obj_property name="ElementShortName">.max_data_payload[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.max_data_payload[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_orbc_synd" type="logic">
-            <obj_property name="ElementShortName">.reset_orbc_synd</obj_property>
-            <obj_property name="ObjectShortName">.reset_orbc_synd</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_drophit_counter" type="logic">
-            <obj_property name="ElementShortName">.reset_drophit_counter</obj_property>
-            <obj_property name="ObjectShortName">.reset_drophit_counter</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gen_offset" type="logic">
-            <obj_property name="ElementShortName">.reset_gen_offset</obj_property>
-            <obj_property name="ObjectShortName">.reset_gen_offset</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt_rxerror" type="logic">
-            <obj_property name="ElementShortName">.reset_gbt_rxerror</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt_rxerror</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt" type="logic">
-            <obj_property name="ElementShortName">.reset_gbt</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_rxph_error" type="logic">
-            <obj_property name="ElementShortName">.reset_rxph_error</obj_property>
-            <obj_property name="ObjectShortName">.reset_rxph_error</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.strt_rdmode_lock" type="logic">
-            <obj_property name="ElementShortName">.strt_rdmode_lock</obj_property>
-            <obj_property name="ObjectShortName">.strt_rdmode_lock</obj_property>
-         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group285" type="group">
@@ -174,6 +106,39 @@
             <obj_property name="ObjectShortName">Counter_ready_O</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject fp_name="group395" type="group">
+         <obj_property name="label">RX_sync</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_RXCLK_I" type="logic">
+            <obj_property name="ElementShortName">RX_IS_DATA_RXCLK_I</obj_property>
+            <obj_property name="ObjectShortName">RX_IS_DATA_RXCLK_I</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_DATA_RXCLK_I" type="array">
+            <obj_property name="ElementShortName">RX_DATA_RXCLK_I[83:0]</obj_property>
+            <obj_property name="ObjectShortName">RX_DATA_RXCLK_I[83:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_O" type="logic">
+            <obj_property name="ElementShortName">RX_IS_DATA_DATACLK_O</obj_property>
+            <obj_property name="ObjectShortName">RX_IS_DATA_DATACLK_O</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_O" type="array">
+            <obj_property name="ElementShortName">RX_DATA_DATACLK_O[83:0]</obj_property>
+            <obj_property name="ObjectShortName">RX_DATA_DATACLK_O[83:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/is_phase_changed" type="logic">
+            <obj_property name="ElementShortName">is_phase_changed</obj_property>
+            <obj_property name="ObjectShortName">is_phase_changed</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/rx_ph320" type="array">
+            <obj_property name="ElementShortName">rx_ph320[2:0]</obj_property>
+            <obj_property name="ObjectShortName">rx_ph320[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/ph_error320" type="logic">
+            <obj_property name="ElementShortName">ph_error320</obj_property>
+            <obj_property name="ObjectShortName">ph_error320</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject fp_name="group167" type="group">
          <obj_property name="label">TRG_gen</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -227,8 +192,8 @@
             <obj_property name="ObjectShortName">bpattern_counter</obj_property>
          </wvobject>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/cnt_packet_counter" type="array">
-            <obj_property name="ElementShortName">cnt_packet_counter[79:0]</obj_property>
-            <obj_property name="ObjectShortName">cnt_packet_counter[79:0]</obj_property>
+            <obj_property name="ElementShortName">cnt_packet_counter[35:0]</obj_property>
+            <obj_property name="ObjectShortName">cnt_packet_counter[35:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/pword_counter" type="array">
             <obj_property name="ElementShortName">pword_counter[3:0]</obj_property>
@@ -262,22 +227,6 @@
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/Board_data_I" type="array">
             <obj_property name="ElementShortName">Board_data_I</obj_property>
             <obj_property name="ObjectShortName">Board_data_I</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/raw_data_fifo_isempty" type="logic">
-            <obj_property name="ElementShortName">raw_data_fifo_isempty</obj_property>
-            <obj_property name="ObjectShortName">raw_data_fifo_isempty</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fromfifo" type="array">
-            <obj_property name="ElementShortName">data_fromfifo[79:0]</obj_property>
-            <obj_property name="ObjectShortName">data_fromfifo[79:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_header_from_fifo" type="logic">
-            <obj_property name="ElementShortName">is_header_from_fifo</obj_property>
-            <obj_property name="ObjectShortName">is_header_from_fifo</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_data_from_fifo" type="logic">
-            <obj_property name="ElementShortName">is_data_from_fifo</obj_property>
-            <obj_property name="ObjectShortName">is_data_from_fifo</obj_property>
          </wvobject>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_is_space_for_packet_ff" type="logic">
             <obj_property name="ElementShortName">FIFO_is_space_for_packet_ff</obj_property>
@@ -320,7 +269,6 @@
       <wvobject fp_name="/testbench_readout/FitGbtPrg/FIT_GBT_status_O" type="array">
          <obj_property name="ElementShortName">FIT_GBT_status_O</obj_property>
          <obj_property name="ObjectShortName">FIT_GBT_status_O</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/FIT_GBT_status_O.GBT_status" type="array">
             <obj_property name="ElementShortName">.GBT_status</obj_property>
             <obj_property name="ObjectShortName">.GBT_status</obj_property>
