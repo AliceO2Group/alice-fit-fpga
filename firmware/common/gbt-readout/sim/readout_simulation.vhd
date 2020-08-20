@@ -71,13 +71,13 @@ ARCHITECTURE behavior OF testbench_readout IS
 	constant testbench_CONTROL_REG_default : CONTROL_REGISTER_type :=
 	(
 		Data_Gen => (
-			usage_generator		=> use_TX_generator,
-			--usage_generator	=> use_MAIN_generator,
+			--usage_generator		=> use_TX_generator,
+			usage_generator	=> use_MAIN_generator,
 			
 			trigger_resp_mask 	=> TRG_const_void,
 			bunch_pattern 		=> x"10e0766f",
-			bunch_freq 			=> x"0deb",
-			bunch_freq_hboffset => x"ddc"
+			bunch_freq 			=> x"00ff",
+			bunch_freq_hboffset => x"001"
 			),
 			
 		Trigger_Gen => (

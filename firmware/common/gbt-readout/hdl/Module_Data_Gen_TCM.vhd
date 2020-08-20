@@ -45,7 +45,7 @@ architecture Behavioral of Module_Data_Gen is
 	signal Board_data_header, Board_data_data, Board_data_void	: board_data_type;
 
 	
-	signal 		Trigger_from_CRU_40ff, Trigger_from_CRU_320ff			: std_logic_vector(Trigger_bitdepth-1 downto 0); -- Trigger ID from CRUS
+	signal Trigger_from_CRU_40ff, Trigger_from_CRU_320ff			: std_logic_vector(Trigger_bitdepth-1 downto 0); -- Trigger ID from CRUS
 
 	
 	signal trigger_resp_mask : std_logic_vector(Trigger_bitdepth-1 downto 0);
@@ -65,9 +65,8 @@ architecture Behavioral of Module_Data_Gen is
 	signal bfreq_counter, bfreq_counter_next : std_logic_vector(15 downto 0);
 	signal is_boffset_sync, is_boffset_sync_next : std_logic;
 	signal bpattern_counter, bpattern_counter_next : integer := 0;
-	signal cnt_packet_counter, cnt_packet_counter_next : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0); -- continious packet counter
+	signal cnt_packet_counter, cnt_packet_counter_next : std_logic_vector(data_word_bitdepth/2-1 downto 0); -- continious packet counter
 	signal pword_counter, pword_counter_next : std_logic_vector(3 downto 0);
-	signal wchannel_counter, wchannel_counter_w2, wchannel_counter_next : std_logic_vector(tdwords_bitdepth-1 downto 0);
 	
 	
 	
@@ -86,13 +85,14 @@ begin
 -- ***************************************************
 	Board_data_O <= Board_data_gen_ff 	WHEN (Control_register_I.Data_Gen.usage_generator = use_MAIN_generator)	 ELSE Board_data_in_ff;
 	
---    Board_data_header.data_word <= func_PMHEADER_get_header(n_words_in_packet_send(3 downto 0), FIT_GBT_status_I.ORBIT_from_CRU_corrected, FIT_GBT_status_I.BCID_from_CRU_corrected);
-    Board_data_header.data_word <= (others => '0');
+    Board_data_header.data_word <= func_FITDATAHD_get_header(x"0" & n_words_in_packet_send, FIT_GBT_status_I.ORBIT_from_CRU_corrected,
+	FIT_GBT_status_I.BCID_from_CRU_corrected, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error) & cnt_packet_counter;
+--    Board_data_header.data_word <= (others => '0');
 	Board_data_header.is_header <= '1';
 	Board_data_header.is_data <= '1';
 --	Board_data_header.is_packet <= '1';
 	
-	Board_data_data.data_word <= (others => '0');
+	Board_data_data.data_word <= cnt_packet_counter & cnt_packet_counter;
 	Board_data_data.is_header <= '0';
 	Board_data_data.is_data <= '1';
 --	Board_data_data.is_packet <= '1';
@@ -102,9 +102,7 @@ begin
 	Board_data_void.is_data <= '0';
 --	Board_data_void.is_packet <= '0';
 	
-	
-	wchannel_counter_w2 <= wchannel_counter + 1;
-	
+		
 	n_words_in_packet_mask(0) <= bunch_pattern(3 downto 0);
 	n_words_in_packet_mask(1) <= bunch_pattern(7 downto 4);
 	n_words_in_packet_mask(2) <= bunch_pattern(11 downto 8);
@@ -157,13 +155,11 @@ begin
 				
 				FSM_STATE		<= s0_wait;
 				pword_counter <= (others => '0');
-				wchannel_counter <= (others => '0');
 				n_words_in_packet_send <= (others => '0');
 				
 				is_packet_send_for_cntr <= '0';
 				is_packet_send_for_cntr_ff <= '0';
 				cnt_packet_counter		<= (others => '0');
-				
 				Trigger_from_CRU_320ff	<= (others => '0');
 			ELSE
 				Board_data_in_ff <= Board_data_I;
@@ -171,7 +167,6 @@ begin
 			
 				FSM_STATE <= FSM_STATE_NEXT;
 				pword_counter <= pword_counter_next;
-				wchannel_counter <= wchannel_counter_next;
 				n_words_in_packet_send <= n_words_in_packet_send_next;
 				
 				is_packet_send_for_cntr <= is_packet_send_for_cntr_next;
@@ -229,12 +224,7 @@ pword_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						(others => '0')	WHEN (FSM_STATE = s1_header) ELSE
 						pword_counter + 1;
 
-						
-wchannel_counter_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						 (others => '0')	WHEN (FSM_STATE = s0_wait) ELSE
-						 (others => '0')	WHEN (FSM_STATE = s1_header) ELSE
-						 wchannel_counter + x"2";
-						
+											
 
 FSM_STATE_NEXT <= 	s0_wait		WHEN (FSM_Clocks_I.Reset = '1') ELSE	
 					s1_header	WHEN (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"0") and (n_words_in_packet_mask(bpattern_counter)  > 0) ELSE

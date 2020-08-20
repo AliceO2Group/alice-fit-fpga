@@ -377,8 +377,9 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
 
-set imported_files [import_files -fileset sources_1 $files]
-
+#set imported_files [import_files -fileset sources_1 $files]
+add_files -norecurse -fileset sources_1 $files
+#set imported_files [add_files -norecurse  -fileset sources_1 $files]
 #-------------------------------------------------------------------------------
 if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset object
@@ -451,7 +452,8 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/sim/readout_simulation.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/sim/main_signals.wcfg" ]\
 ]
-set imported_files [import_files -fileset sim_1 $files]
+#set imported_files [import_files -fileset sim_1 $files]
+add_files -norecurse -fileset sim_1 $files
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
