@@ -27,7 +27,7 @@ use work.fit_gbt_board_package.all;
 
 entity FIT_GBT_project is
 	generic (
-		GENERATE_GBT_BANK	: integer := 0
+		GENERATE_GBT_BANK	: integer := 1
 	);
 
     Port (		
@@ -326,6 +326,8 @@ port map (
 gbt_reset <=    RESET_I or reset_l;
 
 
+
+gbt_bank_gen: if GENERATE_GBT_BANK = 1 generate 
  gbtBankDsgn : entity work.GBT_TX_RX
      port map (
      RESET => gbt_reset,
@@ -344,8 +346,34 @@ gbt_reset <=    RESET_I or reset_l;
             IsRXData => RX_IsData_rxclk_from_GBT,
             GBT_Status_O => from_gbt_bank_prj_GBT_status
             );
-			
-			
+end generate gbt_bank_gen;
+
+gbt_bank_gen_sim: if GENERATE_GBT_BANK = 0 generate 
+            MGT_TX_P_O <= '0';
+            MGT_TX_N_O <= '0';
+            GBT_RxFrameClk_O <= DataClk_I;
+            RX_Data_rxclk_from_GBT <= (others => '0');
+            RX_IsData_rxclk_from_GBT <= '0';
+            
+            from_gbt_bank_prj_GBT_status.txWordClk <= '0';
+            from_gbt_bank_prj_GBT_status.rxFrameClk <= '0';
+            from_gbt_bank_prj_GBT_status.rxWordClk <= '0';
+            from_gbt_bank_prj_GBT_status.txOutClkFabric <= '0';
+            
+            from_gbt_bank_prj_GBT_status.mgt_phalin_cplllock <= '0';
+            
+            from_gbt_bank_prj_GBT_status.rxWordClkReady <= '0';
+            from_gbt_bank_prj_GBT_status.rxFrameClkReady <= '0';
+            
+            from_gbt_bank_prj_GBT_status.mgtLinkReady <= '0';
+            from_gbt_bank_prj_GBT_status.tx_resetDone <= '0';
+            from_gbt_bank_prj_GBT_status.tx_fsmResetDone    <= '0';
+            
+            from_gbt_bank_prj_GBT_status.gbtRx_Ready    <= '0';
+            from_gbt_bank_prj_GBT_status.gbtRx_ErrorDet    <= '0';
+            from_gbt_bank_prj_GBT_status.gbtRx_ErrorLatch    <= '0';
+            from_gbt_bank_prj_GBT_status.Rx_Phase_error    <= '0';
+end generate gbt_bank_gen_sim;
 
 
  -- =============================================================
