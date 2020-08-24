@@ -6,3 +6,8 @@ build
 *.pb
 .Xil
 *.zip
+
+
+# pycharm/python
+.idea
+venv

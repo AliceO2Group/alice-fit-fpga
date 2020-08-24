@@ -42,7 +42,8 @@ ARCHITECTURE behavior OF testbench_readout IS
 
    -- inputs file --------------------------------------
    --file input_reg_file : text open read_mode is "..\..\common\gbt-readout\sim\inputs_test.txt";
-   file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\firmware\common\gbt-readout\sim\inputs_test.txt";
+   --file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\firmware\common\gbt-readout\sim\inputs_test.txt";
+   file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
    --file input_reg_file : text open read_mode is "inputs_test.txt";
    constant infile_num_col : integer := cntr_reg_n_32word;
    signal Control_register_from_file : cntr_reg_addrreg_type;
@@ -212,6 +213,7 @@ Sys1_process :process
 		  end if;
 		  for irow in 1 to infile_num_col loop
 		      read(infile_line, data_from_file(irow));
+		      report (string( infile_line));
 		      Control_register_from_file(irow-1) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
 		  end loop;
 		  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
