@@ -203,7 +203,7 @@ bfreq_counter_next <= 	(others => '0') 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						(others => '0') 		WHEN (bfreq_counter = bunch_freq-1) ELSE
 						(others => '0') 		WHEN (bunch_freq = 0) ELSE
 						(others => '0') 		WHEN (is_boffset_sync = '0') ELSE
-						x"0001"			 		WHEN (FIT_GBT_status_I.BCID_from_CRU_corrected = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) ELSE
+						x"0001"			 		WHEN (FIT_GBT_status_I.BCID_from_CRU_corrected = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) and (is_boffset_sync = '0') ELSE
 						bfreq_counter + 1;
 
 is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE

@@ -29,6 +29,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all ;
+use std.textio.all;
 
 use work.all;
 use work.fit_gbt_common_package.all;
@@ -38,6 +39,15 @@ ENTITY testbench_readout IS
 END testbench_readout;
  
 ARCHITECTURE behavior OF testbench_readout IS 
+
+   -- inputs file --------------------------------------
+   --file input_reg_file : text open read_mode is "..\..\common\gbt-readout\sim\inputs_test.txt";
+   file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\firmware\common\gbt-readout\sim\inputs_test.txt";
+   --file input_reg_file : text open read_mode is "inputs_test.txt";
+   constant infile_num_col : integer := cntr_reg_n_32word;
+   signal Control_register_from_file : cntr_reg_addrreg_type;
+   -- ---------------------------------------------------
+
 
    --clocks
 	constant Sys_period : time := 3.125 ns;
@@ -76,7 +86,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 			
 			trigger_resp_mask 	=> TRG_const_void,
 			bunch_pattern 		=> x"10e0766f",
-			bunch_freq 			=> x"00ff",
+			bunch_freq 			=> x"0dff",
 			bunch_freq_hboffset => x"001"
 			),
 			
@@ -171,11 +181,20 @@ FitGbtPrg: entity work.FIT_GBT_project
 Sys1_process :process
    variable was_reset : integer := 0;
    variable counter : integer := 0;
+   
+   -- file data ------------------
+   variable infile_line : line;
+   type infile_data_type is array (integer range <>) of integer;
+   variable data_from_file : infile_data_type(1 to infile_num_col);
+   -- -----------------------------
+   
    begin
    
 		if(was_reset < 8) then
 			was_reset := was_reset + 1;
 			RESET <= '1';
+			
+			data_from_file := (others=>0);
 		else
 			RESET <= '0';
 		end if;
@@ -184,7 +203,21 @@ Sys1_process :process
 		wait for Sys_period/2;
 		
 		counter := counter + 1;
-		if(counter <= 4) then DATA_CLK <= '0'; else  DATA_CLK <= '1'; end if;
+		
+		if(counter <= 4) then DATA_CLK <= '0'; else 
+		  DATA_CLK <= '1';
+		  
+		  if(not endfile(input_reg_file)) then
+	   	       readline(input_reg_file, infile_line);
+		  end if;
+		  for irow in 1 to infile_num_col loop
+		      read(infile_line, data_from_file(irow));
+		      Control_register_from_file(irow-1) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
+		  end loop;
+		  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
+		  
+	    end if;
+		  
 		if(counter = 8) then counter := 0; end if;
 		
 		
@@ -193,7 +226,7 @@ Sys1_process :process
   end process;
 -- =====================================================
    
--- ipbus clock =========================================	
+-- ipbus clock =========================================
 Sys2_process :process
    variable was_reset : integer := 0;
    variable addr_count : integer := 0;
