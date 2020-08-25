@@ -11,3 +11,4 @@ build
 # pycharm/python
 .idea
 venv
+*.pyc

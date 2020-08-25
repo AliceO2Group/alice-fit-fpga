@@ -303,7 +303,8 @@ rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset = '1') ELSE
 
 runType_mode <= TRG_const_RT WHEN (Control_register_I.Trigger_Gen.Readout_command = continious) and (rd_trg_send_mode = s0_idle) ELSE (others => '0');
 running_mode <= TRG_const_RS WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) or (Control_register_I.Trigger_Gen.Readout_command = trigger)) and (rd_trg_send_mode = s0_idle)  ELSE (others => '0');
-TRG_readout_state <= runType_mode or running_mode WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
+--TRG_readout_state <= runType_mode or running_mode WHEN (IS_Orbit_trg_counter = '1') ELSE (others => '0');
+TRG_readout_state <= runType_mode or running_mode;
 -- ***************************************************
 
 end Behavioral;

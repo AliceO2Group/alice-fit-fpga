@@ -16,27 +16,27 @@ class control_reg_class:
     def __init__(self):
         self.data_gen = gen_mode.no_gen
         self.data_trg_respond_mask = 0
-        self.data_bunch_pattern = 0xFFABCDEF
-        self.data_bunch_freq = 0
-        self.data_freq_offset = 0
+        self.data_bunch_pattern = 0x1
+        self.data_bunch_freq = 0xF0
+        self.data_freq_offset = 1
 
         self.trg_gen = gen_mode.no_gen
         self.trg_rd_command = readout_cmd.idle
         self.trg_single_val = 0
-        self.trg_pattern_0 = 0
+        self.trg_pattern_0 = 0x1
         self.trg_pattern_1 = 0
-        self.trg_cont_val = 0
-        self.trg_bunch_freq = 0
-        self.trg_freq_offset = 0
+        self.trg_cont_val = 0x10
+        self.trg_bunch_freq = 0xf0
+        self.trg_freq_offset = 1
 
         self.rd_bypass = 0
         self.is_hb_response = 1
-        self.trg_data_select = 0x1
+        self.trg_data_select = 0x10
         self.strt_rdmode_lock = 0
 
         self.bcid_delay = 0xF
-        self.crutrg_delay_comp = 0x2
-        self.max_data_payload = 0x3
+        self.crutrg_delay_comp = 0xf
+        self.max_data_payload = 0xff
 
         self.reset_orbc_sync = 0
         self.reset_drophit_counter = 0
@@ -45,9 +45,9 @@ class control_reg_class:
         self.reset_gbt = 0
         self.reset_rxph_error = 0
 
-        self.RDH_feeid = 0x1
-        self.RDH_par = 0x1
-        self.RDH_detf = 0x1
+        self.RDH_feeid = 0xAAAA
+        self.RDH_par = 0xCCCC
+        self.RDH_detf = 0xDDDD
 
 
     def print_struct(self):
@@ -95,6 +95,7 @@ class control_reg_class:
     def get_reg(self):
         reg_00 = 0xF&self.data_gen.value
         reg_00 = reg_00 + ((0xF&self.trg_gen.value) << 4)
+
         reset_ctrl = (0x1&self.reset_orbc_sync)+ \
                      ((0x1&self.reset_drophit_counter) << 1) + \
                      ((0x1 & self.reset_gen_offset) << 2) + \
@@ -102,11 +103,14 @@ class control_reg_class:
                      ((0x1 & self.reset_gbt) << 4) + \
                      ((0x1 & self.reset_gbt_rxerror) << 5)
         reg_00 = reg_00 + ((0xFF&reset_ctrl) << 8)
+
+        reg_00 = reg_00 + ((0xF & self.trg_rd_command.value) << 16)
+
         rd_mode = (0x1&self.is_hb_response)+ \
                      ((0x1&self.rd_bypass) << 1) + \
                      ((0x1 & self.strt_rdmode_lock) << 2)
-        reg_00 = reg_00 + ((0xF&reset_ctrl) << 16)
-        reg_00 = reg_00 + ((0xF&self.trg_rd_command.value) << 20)
+        reg_00 = reg_00 + ((0xF&reset_ctrl) << 20)
+
 
         register = []
         register.append( reg_00 )

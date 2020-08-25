@@ -148,6 +148,8 @@ port map(
         );
 		
 is_header_from_fifo <= '1' when (data_fromfifo(79 downto 76) = "1111") else '0';
+is_data_from_fifo <= not raw_data_fifo_isempty;
+
 -- ===========================================================
 
 -- Header format *************************************
@@ -178,13 +180,14 @@ is_header_from_fifo <= '1' when (data_fromfifo(79 downto 76) = "1111") else '0';
 				FIFO_WE_ff <= '0';
                 FIFO_data_word_ff <= (others => '0');
 				
-				is_data_from_fifo <= '0';
+				--is_data_from_fifo <= '0';
 
 			ELSE
 				Board_data_sysclkff <= Board_data_sysclkff_next;
 				sending_event <= sending_event_next;
 				FIFO_is_space_for_packet_ff <= FIFO_is_space_for_packet_ff_next;
 				FIFO_WE_ff <= FIFO_WE_ff_next;
+				--if (is_data_from_fifo = '1') and (sending_event = '1') then FIFO_WE_ff <= '1'; else FIFO_WE_ff <= '0'; end if;
 				FIFO_data_word_ff <= FIFO_data_word_ff_next;
 				
 				dropped_events <= dropped_events_next;
@@ -193,7 +196,7 @@ is_header_from_fifo <= '1' when (data_fromfifo(79 downto 76) = "1111") else '0';
 				last_dropped_orbit <= last_dropped_orbit_next;
 				last_dropped_bc <= last_dropped_bc_next;
 				
-				is_data_from_fifo <= raw_data_fifo_isempty;
+				--is_data_from_fifo <= not raw_data_fifo_isempty;
 			END IF;
 			
 			
@@ -215,7 +218,7 @@ reset_drop_counters <= Control_register_I.reset_drophit_counter;
 	
 	
 sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='0') ELSE
+						'0'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='1') ELSE
 						'0'	WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 						'1'	WHEN (is_header_from_fifo = '1') ELSE
 						sending_event;

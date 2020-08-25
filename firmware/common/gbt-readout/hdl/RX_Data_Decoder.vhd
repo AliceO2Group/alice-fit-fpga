@@ -265,9 +265,10 @@ EV_ID_counter_corrected <= EV_ID_counter_ORBIT_corrected & EV_ID_counter_BC_corr
 Trigger_ff_next <= TRGTYPE_received_ff;
 
 
-CRU_readout_mode_next <= CRU_readout_mode WHEN (STATE_SYNC /= mode_SYNC) or (Trigger_valid_bit = '0') ELSE
+CRU_readout_mode_next <= mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
+                         CRU_readout_mode WHEN (Trigger_valid_bit = '0') ELSE
 						 mode_IDLE WHEN (TRGTYPE_received and TRG_const_RS) = TRG_const_void ELSE
-						 mode_TRG WHEN (TRGTYPE_received and TRG_const_RT) = TRG_const_void ELSE
+						 mode_TRG WHEN (TRGTYPE_received and TRG_const_RT) = TRG_const_void ELSE 
 						 mode_CNT WHEN (TRGTYPE_received and TRG_const_RT) /= TRG_const_void ELSE
 						 CRU_readout_mode;
 	
