@@ -16,7 +16,7 @@ class control_reg_class:
     def __init__(self):
         self.data_gen = gen_mode.no_gen
         self.data_trg_respond_mask = 0
-        self.data_bunch_pattern = 0xABCDEF
+        self.data_bunch_pattern = 0xFFABCDEF
         self.data_bunch_freq = 0
         self.data_freq_offset = 0
 
@@ -127,6 +127,13 @@ class control_reg_class:
 
     def get_reg_line(self):
         return ' '.join( [str(x) for x in self.get_reg()])
+    
+    def get_reg_line_16(self):
+        res_str = ""
+        for ireg in self.get_reg():
+            res_str = res_str + str( (0xFFFF0000&ireg)>>16  ) + " "
+            res_str = res_str + str(0xFFFF & ireg) + " "
+        return res_str
 
     def get_reg_line_hex(self):
         return ' '.join( [hex(x) for x in self.get_reg()])

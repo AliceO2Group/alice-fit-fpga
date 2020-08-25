@@ -18,7 +18,8 @@ sigin_file = open('simulation_inputs/simple_sig_inputs.txt', 'w')
 
 # start empty cycle ===========================
 for i in range(50):
-    sigin_file.write(control_reg.get_reg_line() + '\n')
+    #sigin_file.write(control_reg.get_reg_line() + '\n')
+    sigin_file.write(control_reg.get_reg_line_16() + '\n')
 
 
 sigin_file.close()

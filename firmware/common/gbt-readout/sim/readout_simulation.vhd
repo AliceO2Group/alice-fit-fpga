@@ -30,6 +30,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all ;
 use std.textio.all;
+USE ieee.std_logic_textio.all;
+
 
 use work.all;
 use work.fit_gbt_common_package.all;
@@ -45,7 +47,6 @@ ARCHITECTURE behavior OF testbench_readout IS
    --file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\firmware\common\gbt-readout\sim\inputs_test.txt";
    file input_reg_file : text open read_mode is "C:\Vivado_projects\alice-fit-fpga\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
    --file input_reg_file : text open read_mode is "inputs_test.txt";
-   constant infile_num_col : integer := cntr_reg_n_32word;
    signal Control_register_from_file : cntr_reg_addrreg_type;
    -- ---------------------------------------------------
 
@@ -184,9 +185,13 @@ Sys1_process :process
    variable counter : integer := 0;
    
    -- file data ------------------
+   constant infile_num_col : integer := cntr_reg_n_32word*2;
    variable infile_line : line;
    type infile_data_type is array (integer range <>) of integer;
-   variable data_from_file : infile_data_type(1 to infile_num_col);
+   
+   variable data_from_file : infile_data_type(0 to infile_num_col-1);
+   variable datavec_from_file : cntr_reg_addrreg_type;
+
    -- -----------------------------
    
    begin
@@ -211,12 +216,19 @@ Sys1_process :process
 		  if(not endfile(input_reg_file)) then
 	   	       readline(input_reg_file, infile_line);
 		  end if;
-		  for irow in 1 to infile_num_col loop
+		  for irow in 0 to infile_num_col-1 loop
 		      read(infile_line, data_from_file(irow));
-		      report (string( infile_line));
-		      Control_register_from_file(irow-1) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
+		      --hread(infile_line, datavec_from_file(irow));
+		      --Control_register_from_file(irow) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
 		  end loop;
+		  for irow in 0 to cntr_reg_n_32word-1 loop
+		      Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
+		      Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
+		  end loop;
+		  --Control_register_from_file <= datavec_from_file;
+		  
 		  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
+		 -- testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(datavec_from_file);
 		  
 	    end if;
 		  
