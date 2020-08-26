@@ -8,6 +8,7 @@ class detector_event_class:
 
         self.magic = 0
         self.n_words = 0
+        self.is_tcm = 0
         self.phase_err = 0
         self.phase = 0
         self.bc = 0
@@ -19,6 +20,7 @@ class detector_event_class:
     def print_struct(self):
         print("=== detector data ===")
         print("    magic:", hex(self.magic))
+        print("    is_tcm:", hex(self.is_tcm))
         print("    n_words:", hex(self.n_words))
         print("    phase_err:", hex(self.phase_err))
         print("    phase:", hex(self.phase))
@@ -34,24 +36,30 @@ class detector_event_class:
 
 # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -
 #   79-76 75-72 71-68 67-64 63-60 59-56 55-52 51-48 47-44 43-40 39-36 35-32 31-28 27-24 23-20 19-16 15-12 11- 8 7 - 4 3 - 0
-        self.magic     = int(self.dw_list[0][-20 : -19], base=16)  # [79 -  76]
+        self.magic     = int(self.dw_list[0][-20 : -19], base=16)  # [79 - 76]
         self.n_words   = int(self.dw_list[0][-19 : -18], base=16)  # [75 - 72]
+        self.is_tcm    = int(self.dw_list[0][-13 : -12], base=16)  # [75 - 72]
         pherr_         = int(self.dw_list[0][-12: -11], base=16)   # [47 - 44]
         self.phase = pherr_&0x7
         self.phase_err = (pherr_&0x8 > 0)
         self.orbit     = int(self.dw_list[0][-10: -3], base=16)    # [39 - 12]
-        self.bc        = int(self.dw_list[0][-3 :  ], base=16)    # [11 - 0]
+        self.bc        = int(self.dw_list[0][-3 :  ], base=16)     # [11 - 0]
 
         self.ch_pmdata = []
         for iword in range(1, self.n_words+1):
             self.dw_list.append(line_list[pos + iword][-21:-1])
-            ch1_no =    int(self.dw_list[iword][-20: -19], base=16)
-            ch1_data =  int(self.dw_list[iword][-19: -10], base=16)
-            ch2_no =    int(self.dw_list[iword][-10:  -9], base=16)
-            ch2_data =  int(self.dw_list[iword][-9 :    ], base=16)
+            if self.is_tcm == 0:
+                ch1_no =    int(self.dw_list[iword][-20: -19], base=16)
+                ch1_data =  int(self.dw_list[iword][-19: -10], base=16)
+                ch2_no =    int(self.dw_list[iword][-10:  -9], base=16)
+                ch2_data =  int(self.dw_list[iword][-9 :    ], base=16)
 
-            if ch1_no > 0: self.ch_pmdata.append([ch1_no, ch1_data])
-            if ch2_no > 0: self.ch_pmdata.append([ch2_no, ch2_data])
+                if ch1_no > 0: self.ch_pmdata.append([ch1_no, ch1_data])
+                if ch2_no > 0: self.ch_pmdata.append([ch2_no, ch2_data])
+            else:
+                ch_data = int(self.dw_list[iword][-19:  ], base=16)
+                self.ch_pmdata.append([iword, ch_data])
+
 
         return pos+1+self.n_words
 ################################################################
