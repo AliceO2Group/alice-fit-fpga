@@ -60,7 +60,7 @@ architecture Behavioral of CRU_ORBC_Gen is
     type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
     signal rd_trg_send_mode, rd_trg_send_mode_next : readout_trg_type;
     signal is_rd_trg_send : std_logic;
-	signal readout_command_ff : Readout_command_type;
+	signal readout_command_ff, readout_command_ff1 : Readout_command_type := idle;
 	signal runType_mode, running_mode : std_logic_vector(Trigger_bitdepth-1 downto 0);
     
 	
@@ -119,7 +119,8 @@ begin
 	bunch_freq_hboffset <= Control_register_I.Trigger_Gen.bunch_freq_hboffset;
 
 	single_trg_val <=  Control_register_I.Trigger_Gen.trigger_single_val;
-
+	readout_command_ff <= Control_register_I.Trigger_Gen.Readout_command;
+					
 -- ***************************************************
 	RX_Data_O <= RX_Data_I 				WHEN (Control_register_I.Trigger_Gen.usage_generator = use_NO_generator) ELSE RX_Data_gen_ff;
 	RX_IsData_O <= RX_IsData_I 			WHEN (Control_register_I.Trigger_Gen.usage_generator = use_NO_generator) ELSE RX_IsData_gen_ff;
@@ -159,7 +160,7 @@ Current_Trigger_from_O <= TRG_result;
 --    cont_trg_bunch_mask(64) <= '0';
 	cont_trg_bunch_mask_comp <= cont_trg_bunch_mask(bpattern_counter);
 -- =============================================================
-	
+
 
 -- Data ff data clk **********************************
 	process (FSM_Clocks_I.Data_Clk)
@@ -178,7 +179,7 @@ Current_Trigger_from_O <= TRG_result;
 				
 				single_trg_val_ff <= (others => '0');
 				
-				readout_command_ff <= Control_register_I.Trigger_Gen.Readout_command;
+				readout_command_ff1 <= idle;
 				
 			ELSE
 				RX_Data_gen_ff		<= RX_Data_gen_ff_next;
@@ -190,9 +191,9 @@ Current_Trigger_from_O <= TRG_result;
 				bpattern_counter	<= bpattern_counter_next;
 				is_boffset_sync <= is_boffset_sync_next;
 				
-				readout_command_ff <= Control_register_I.Trigger_Gen.Readout_command;
 				
 				single_trg_val_ff <= single_trg_val;
+				readout_command_ff1 <= readout_command_ff;
 			END IF;
 		END IF;
 		
@@ -294,10 +295,10 @@ TRG_readout_command <=  TRG_const_SOT WHEN (rd_trg_send_mode = s1_trg_SOT) and (
 -- type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
 -- type Readout_command_type is (idle, continious, trigger);
 rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset = '1') ELSE
-    s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff = idle)) ELSE
-    s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff = continious)) ELSE
-    s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) 	and (readout_command_ff = idle)) ELSE
-    s1_trg_EOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) and (readout_command_ff = trigger)) ELSE
+    s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff1 = idle)) ELSE
+    s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff1 = continious)) ELSE
+    s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) 	and (readout_command_ff1 = idle)) ELSE
+    s1_trg_EOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) and (readout_command_ff1 = trigger)) ELSE
 	s0_idle	   WHEN (is_rd_trg_send = '1') ELSE
     rd_trg_send_mode;
 
