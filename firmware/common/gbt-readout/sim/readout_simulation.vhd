@@ -45,6 +45,8 @@ ARCHITECTURE behavior OF testbench_readout IS
    -- inputs file --------------------------------------
    file input_reg_file : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
    file output_rd_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_output.txt";
+   file output_rd_info_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_info_output.txt";
+   file output_st_reg_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_status_reg_output.txt";
    signal Control_register_from_file : cntr_reg_addrreg_type;
    -- ---------------------------------------------------
 
@@ -69,13 +71,14 @@ ARCHITECTURE behavior OF testbench_readout IS
     signal IPBUS_ackn : std_logic;
 
  	--Outputs
-	signal from_gbt_bank_prj_GBT_status : Type_GBT_status;
+	signal GBT_status : FIT_GBT_status_type;
+	signal GBT_status_reg : status_reg_addrreg_type;
 	
-   signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-   signal IsData_from_FITrd        : STD_LOGIC;
+    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    signal IsData_from_FITrd        : STD_LOGIC;
    
-   signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-   signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
+    signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
 	
    	
 	constant testbench_CONTROL_REG_default : CONTROL_REGISTER_type :=
@@ -135,7 +138,8 @@ FSM_Clocks_signal.System_Counter <= x"0";
 FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
 
  
-  
+ GBT_status_reg <= func_STATREG_getaddrreg(GBT_status);
+
  
 -- FIT GBT project =====================================
 FitGbtPrg: entity work.FIT_GBT_project
@@ -172,7 +176,7 @@ FitGbtPrg: entity work.FIT_GBT_project
 		rx_ph320 => open,
 		ph_error320 => open, 
 
-		FIT_GBT_status_O 	=> open
+		FIT_GBT_status_O 	=> GBT_status
 		);		
 -- =====================================================
 
@@ -212,31 +216,6 @@ Sys1_process :process
 		  DATA_CLK <= '1';
 		end if;
 		
---		DATA_CLK_ff <= DATA_CLK;
---		if (DATA_CLK = '1') and (DATA_CLK_ff = '0') then
---		  if(not endfile(input_reg_file)) then
---	   	       readline(input_reg_file, infile_line);
---		  end if;
---		  for irow in 0 to infile_num_col-1 loop
---		      read(infile_line, data_from_file(irow));
---		      --hread(infile_line, datavec_from_file(irow));
---		      --Control_register_from_file(irow) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
---		  end loop;
---		  for irow in 0 to cntr_reg_n_32word-1 loop
---		      Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
---		      Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
---		  end loop;
---		  --Control_register_from_file <= datavec_from_file;
-		  
---		  if IsData_from_FITrd = '1' then
---		      hwrite(outfile_line, Data_from_FITrd);
---		      writeline(output_rd_file, outfile_line);
---		  end if;
-		  
---		  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
---		 -- testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(datavec_from_file);
-		  
---	    end if;
 		  
 		if(counter = 8) then counter := 0; end if;
 		
@@ -307,9 +286,11 @@ Sys2_process :process
 -- Data ff data clk ***********************************
 	PROCESS (FSM_Clocks_signal.Data_Clk)
        -- file data ------------------
+       variable iter_num : std_logic_vector(63 downto 0) := (others=>'0');
        constant infile_num_col : integer := cntr_reg_n_32word*2;
        variable infile_line : line;
        variable outfile_line : line;
+       variable temp_line : line;
        type infile_data_type is array (integer range <>) of integer;
        
        variable data_from_file : infile_data_type(0 to infile_num_col-1);
@@ -321,26 +302,39 @@ Sys2_process :process
                     data_from_file := (others=>0);
 			ELSE
                 if (DATA_CLK = '1') and (DATA_CLK_ff = '0') then
+                    iter_num := iter_num + 1;
+                
                   if(not endfile(input_reg_file)) then
                        readline(input_reg_file, infile_line);
                   end if;
                   for irow in 0 to infile_num_col-1 loop
                       read(infile_line, data_from_file(irow));
-                      --hread(infile_line, datavec_from_file(irow));
-                      --Control_register_from_file(irow) <= std_logic_vector(to_unsigned(data_from_file(irow),32));
                   end loop;
                   for irow in 0 to cntr_reg_n_32word-1 loop
                       Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
                       Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
                   end loop;
-                  --Control_register_from_file <= datavec_from_file;
+                  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
+                  
+                  
                   
                   if (IsData_from_FITrd = '1') then
+                      outfile_line := "";
                       hwrite(outfile_line, Data_from_FITrd);
                       writeline(output_rd_file, outfile_line);
+                      
+                      outfile_line := "";
+                      hwrite(outfile_line, iter_num);
+                      writeline(output_rd_info_file, outfile_line);
                   end if;
                   
-                  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
+                  outfile_line := "";
+                  for ireg in 0 to status_reg_n_32word-1 loop
+                    hwrite(outfile_line, GBT_status_reg(ireg), left, 11);
+                  end loop;
+                  writeline(output_st_reg_file, outfile_line);
+                  
+                  
 	    end if;
 			END IF;
 			

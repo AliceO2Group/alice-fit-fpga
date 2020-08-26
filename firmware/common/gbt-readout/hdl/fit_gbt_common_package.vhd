@@ -705,7 +705,7 @@ begin
     
     status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
-    status_reg_addrreg(2) :=  "00000" & status_reg.BCID_from_CRU;
+    status_reg_addrreg(2) := x"00000" & status_reg.BCID_from_CRU;
     status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;
     status_reg_addrreg(4) := status_reg.hits_rd_counter_selector.first_orbit_hdrop;
     status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
