@@ -335,7 +335,8 @@ function func_FITDATAHD_get_header
         ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
         BCID : std_logic_vector(BC_id_bitdepth-1 downto 0);
 		rx_phase : std_logic_vector(rx_phase_bitdepth-1 downto 0);
-		rx_phase_error : std_logic
+		rx_phase_error : std_logic;
+		is_tcm : std_logic
 )
 return std_logic_vector;
 
@@ -402,13 +403,14 @@ function func_FITDATAHD_get_header
 		ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
 		BCID : std_logic_vector(BC_id_bitdepth-1 downto 0);
 		rx_phase : std_logic_vector(rx_phase_bitdepth-1 downto 0);
-		rx_phase_error : std_logic
+		rx_phase_error : std_logic;
+		is_tcm : std_logic
 )
 return std_logic_vector is
 
 begin
     --return  channel_n_words & x"000_0000" & ORBIT & BCID;
-      return  x"F"&channel_n_words(3 downto 0) & x"000_00" & "000" & rx_phase_error & "0"&rx_phase & ORBIT & BCID;
+      return  x"F"&channel_n_words(3 downto 0) & x"000_00" & "000" & is_tcm & rx_phase_error & rx_phase & ORBIT & BCID;
 
 end function;
 

@@ -156,7 +156,7 @@ is_data_from_fifo <= not raw_data_fifo_isempty;
 	packet_lenght_fromheader <= func_PMHEADER_n_dwords( data_fromfifo );
 	header_orbit <=func_PMHEADER_getORBIT(data_fromfifo);
 	header_bc <= func_PMHEADER_getBC(data_fromfifo);
-	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error);
+	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error, '1');
 	data_word <= data_fromfifo;
 -- ***************************************************
 
