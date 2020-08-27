@@ -144,12 +144,10 @@ class control_reg_class:
 
     def read_reg_line_16(self, line = "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"):
         line_regs = line.split(" ")
-        print(line_regs)
         regs = []
         for ireg in range(0, len(line_regs)-1, 2):
             reg = ( (0xFFFF&int(line_regs[ireg])) << 16) + (0xFFFF & int(line_regs[ireg+1]) )
             regs.append(reg)
-            print(hex(reg))
 
         self.data_gen = gen_mode( 0xF&regs[0] )
         self.trg_gen = gen_mode( (0xF0&regs[0])>>4 )
