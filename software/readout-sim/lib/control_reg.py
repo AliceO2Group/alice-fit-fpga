@@ -108,7 +108,7 @@ class control_reg_class:
 
         rd_mode = (0x1&self.is_hb_response)+ \
                      ((0x1&self.rd_bypass) << 1) + \
-                     ((0x1 & self.strt_rdmode_lock) << 2)
+                     ((0x1&self.strt_rdmode_lock) << 2)
         reg_00 = reg_00 + ((0xF&reset_ctrl) << 20)
 
 
@@ -121,11 +121,11 @@ class control_reg_class:
         register.append( 0xFFFFFFFF&self.trg_pattern_0)
         register.append( 0xFFFFFFFF&self.trg_cont_val)
 
-        register.append( ((0xFFFFFFFF&self.trg_bunch_freq)<<16) +  (0xFFFFFFFF&self.data_bunch_freq) )
-        register.append( ((0xFFFFFFF&self.trg_bunch_freq)<<16) +  (0xFFFFFFF&self.data_bunch_freq) )
-        register.append( ((0xFFFFFFFF&self.RDH_feeid)<<16) +  (0xFFFFFFFF&self.RDH_par) )
-        register.append( ((0xFFFFFFFF&self.max_data_payload)<<16) +  (0xFFFFFFFF&self.RDH_detf) )
-        register.append( ((0xFFFFFFFF&self.crutrg_delay_comp)<<16) +  (0xFFFFFFFF&self.bcid_delay) )
+        register.append( ((0xFFFF&self.trg_bunch_freq)<<16) +  (0xFFFF&self.data_bunch_freq) )
+        register.append( ((0xFFF&self.trg_freq_offset)<<16) +  (0xFFF&self.data_freq_offset) )
+        register.append( ((0xFFFF&self.RDH_feeid)<<16) +  (0xFFFF&self.RDH_par) )
+        register.append( ((0xFFFF&self.max_data_payload)<<16) +  (0xFFFF&self.RDH_detf) )
+        register.append( ((0xFFFF&self.crutrg_delay_comp)<<16) +  (0xFFFF&self.bcid_delay) )
         register.append( 0xFFFFFFFF&self.trg_data_select)
         return register
 
@@ -141,6 +141,50 @@ class control_reg_class:
 
     def get_reg_line_hex(self):
         return ' '.join( [hex(x) for x in self.get_reg()])
+
+    def read_reg_line_16(self, line = "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"):
+        line_regs = line.split(" ")
+        print(line_regs)
+        regs = []
+        for ireg in range(0, len(line_regs)-1, 2):
+            reg = ( (0xFFFF&int(line_regs[ireg])) << 16) + (0xFFFF & int(line_regs[ireg+1]) )
+            regs.append(reg)
+            print(hex(reg))
+
+        self.data_gen = gen_mode( 0xF&regs[0] )
+        self.trg_gen = gen_mode( (0xF0&regs[0])>>4 )
+        self.reset_orbc_sync = 0x1&(regs[0]>>8)
+        self.reset_drophit_counter = 0x1&(regs[0]>>9)
+        self.reset_gen_offset = 0x1&(regs[0]>>10)
+        self.reset_gbt_rxerror = 0x1&(regs[0]>>11)
+        self.reset_gbt = 0x1&(regs[0]>>12)
+        self.reset_rxph_error = 0x1&(regs[0]>>13)
+        self.trg_rd_command = readout_cmd( (0xF0000&regs[0])>>16)
+        self.is_hb_response = 0x1&(regs[0]>>20)
+        self.rd_bypass = 0x1&(regs[0]>>21)
+        self.strt_rdmode_lock = 0x1&(regs[0]>>22)
+
+        self.data_trg_respond_mask = regs[1]
+        self.data_bunch_pattern = regs[2]
+        self.trg_single_val = regs[3]
+        self.trg_pattern_1 = regs[4]
+        self.trg_pattern_0 = regs[5]
+        self.trg_cont_val = regs[6]
+        self.data_bunch_freq = (0xFFFF&regs[7])
+        self.trg_bunch_freq = (0xFFFF0000&regs[7])>>16
+        self.data_freq_offset = (0xFFF&regs[8])
+        self.trg_freq_offset = (0xFFF0000&regs[8])>>16
+        self.RDH_par = (0xFFFF&regs[9])
+        self.RDH_feeid = (0xFFFF0000&regs[9])>>16
+        self.RDH_detf = (0xFFFF&regs[10])
+        self.max_data_payload = (0xFFFF0000&regs[10])>>16
+        self.bcid_delay = (0xFFFF&regs[11])
+        self.crutrg_delay_comp = (0xFFFF0000&regs[11])>>16
+        self.trg_data_select = regs[12]
+
+    def print_raw(self):
+        print(self.get_reg_line_hex())
+
 
 
 
