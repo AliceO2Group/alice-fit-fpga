@@ -9,6 +9,8 @@ build
 
 
 # pycharm/python
+software/readout-sim/simulation_inputs
+software/readout-sim/simulation_outputs
 .idea
 venv
 *.pyc
