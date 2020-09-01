@@ -7,10 +7,9 @@ build
 .Xil
 *.zip
 
-
-# pycharm/python
-software/readout-sim/simulation_inputs
-software/readout-sim/simulation_outputs
+simulation_inputs
+simulation_outputs
 .idea
 venv
 *.pyc
+

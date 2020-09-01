@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="102319608fs"></ZoomStartTime>
-      <ZoomEndTime time="102989609fs"></ZoomEndTime>
-      <Cursor1Time time="102431274fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2209000001fs"></ZoomEndTime>
+      <Cursor1Time time="623564458fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="338"></NameColumnWidth>
-      <ValueColumnWidth column_width="408"></ValueColumnWidth>
+      <ValueColumnWidth column_width="404"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject fp_name="group177" type="group">
@@ -148,6 +148,18 @@
          <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/RX_Data_gen_ff" type="array">
             <obj_property name="ElementShortName">RX_Data_gen_ff[79:0]</obj_property>
             <obj_property name="ObjectShortName">RX_Data_gen_ff[79:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_BCID_from_O" type="array">
+            <obj_property name="ElementShortName">Current_BCID_from_O[11:0]</obj_property>
+            <obj_property name="ObjectShortName">Current_BCID_from_O[11:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_ORBIT_from_O" type="array">
+            <obj_property name="ElementShortName">Current_ORBIT_from_O[31:0]</obj_property>
+            <obj_property name="ObjectShortName">Current_ORBIT_from_O[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_Trigger_from_O" type="array">
+            <obj_property name="ElementShortName">Current_Trigger_from_O[31:0]</obj_property>
+            <obj_property name="ObjectShortName">Current_Trigger_from_O[31:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group163" type="group">

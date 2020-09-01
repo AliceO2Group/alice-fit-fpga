@@ -109,7 +109,8 @@ class control_reg_class:
         rd_mode = (0x1&self.is_hb_response)+ \
                      ((0x1&self.rd_bypass) << 1) + \
                      ((0x1&self.strt_rdmode_lock) << 2)
-        reg_00 = reg_00 + ((0xF&reset_ctrl) << 20)
+
+        reg_00 = reg_00 + ((0xF&rd_mode) << 20)
 
 
         register = []

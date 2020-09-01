@@ -138,8 +138,8 @@ FSM_Clocks_signal.System_Clk <= SYS_CLK;
 FSM_Clocks_signal.System_Counter <= x"0";
 FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
 
- 
- GBT_status_reg <= func_STATREG_getaddrreg(GBT_status);
+GBT_status_reg <= func_STATREG_getaddrreg(GBT_status);
+
 
  
 -- FIT GBT project =====================================
@@ -315,6 +315,8 @@ Sys2_process :process
 						  Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
 					  end loop;
 					  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
+			      else
+			         stop;
                   end if;
                   
                   if (IsData_from_FITrd = '1') then
