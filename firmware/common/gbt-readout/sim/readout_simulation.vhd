@@ -32,6 +32,7 @@ use ieee.std_logic_unsigned.all ;
 use std.textio.all;
 USE ieee.std_logic_textio.all;
 
+use std.env.stop;
 
 use work.all;
 use work.fit_gbt_common_package.all;
@@ -305,18 +306,16 @@ Sys2_process :process
                     iter_num := iter_num + 1;
                 
                   if(not endfile(input_reg_file)) then
-                       readline(input_reg_file, infile_line);
+                      readline(input_reg_file, infile_line);
+					  for irow in 0 to infile_num_col-1 loop
+						  read(infile_line, data_from_file(irow));
+					  end loop;
+					  for irow in 0 to cntr_reg_n_32word-1 loop
+						  Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
+						  Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
+					  end loop;
+					  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
                   end if;
-                  for irow in 0 to infile_num_col-1 loop
-                      read(infile_line, data_from_file(irow));
-                  end loop;
-                  for irow in 0 to cntr_reg_n_32word-1 loop
-                      Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
-                      Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
-                  end loop;
-                  testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
-                  
-                  
                   
                   if (IsData_from_FITrd = '1') then
                       outfile_line := "";
