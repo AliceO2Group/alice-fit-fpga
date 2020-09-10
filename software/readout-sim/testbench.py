@@ -1,11 +1,12 @@
 import lib.simulation_data as sim_data
+import lib.run_testbench as run_test
 import lib.RDH_data as rdh_data
 import lib.control_reg as cntrl_reg
 import lib.status_reg as status_reg
 
 
 simulation_data = sim_data.simulation_data_class()
-
+run_testbench = run_test.run_testbench_class(simulation_data)
 
 # gbt_out_file = open('simulation_outputs/readout_gbt_output.txt', 'r')
 # status_reg_out_file = open('simulation_outputs/readout_status_reg_output.txt', 'r')

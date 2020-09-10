@@ -1,6 +1,5 @@
 # class to work with FIT readout unit control registers
 
-import lib.RDH_data as rdh_data
 import lib.control_reg as cntrl_reg
 import lib.pylog as pylog
 
@@ -8,10 +7,11 @@ log = pylog.log
 
 
 class run_sim_data_class:
-    def __init__(self, ctrl_data_list):
+    def __init__(self, ctrl_data_list, gbt_info_list):
 
         # data set
         self.ctrl_data_list = ctrl_data_list
+        self.gbt_info_list = gbt_info_list
 
         # test bench parameters
         self.idle_min_len = 2*0xdec
@@ -22,16 +22,20 @@ class run_sim_data_class:
         self.pos_run_stop = 0
         self.pos_run_postidl = 0
         self.run_type = cntrl_reg.readout_cmd.idle
-
-        # run data
-        rdh_data_list = []
+        self.pos_gbt_start = 0
+        self.pos_gbt_stop = 0
+        self.pos_gbt_postidl = 0
 
     def print_info(self):
-        log.info("############################# SIMULATION RUN  INFO ####################################")
+        log.info("############################# SIMULATION RUN INFO ####################################")
         log.info("\ninputs files:")
         log.info("data position run start: %d"%(self.pos_run_start))
         log.info("data position run stop: %d"%(self.pos_run_stop))
         log.info("data position post run idle: %d"%(self.pos_run_postidl))
+        log.info("\noutputs files:")
+        log.info("gbt position run start: %d"%(self.pos_gbt_start))
+        log.info("gbt position run stop: %d"%(self.pos_gbt_stop))
+        log.info("gbt position post run idle: %d"%(self.pos_gbt_postidl))
 
 
     def get_run(self, ctrl_reg_pos):
@@ -107,18 +111,50 @@ class run_sim_data_class:
         self.run_type = run_type
         return 1
 
+    def find_gbt_pos(self):
+        # GBT data run start position
+        ipos = 0
+        while 1:
+            curr_gbt_num = int(self.gbt_info_list[ipos], base=16)
+            if curr_gbt_num >= self.pos_run_start:
+                self.pos_gbt_start = ipos
+                break
 
-    def read_rdh_data(self):
-        dyn_event = rdh_data.rdh_data_class()
-        pos = self.pos_run_start
-        while pos < self.p
-        pos = dyn_event.read_data(file_lines, 0)
-        dyn_event.print_raw()
-        dyn_event.print_struct()
+            ipos += 1
+            if ipos >= len(self.gbt_info_list):
+                self.pos_gbt_start = ipos
+                break
+
+        # GBT data run stop position
+        ipos = 0
+        while 1:
+            curr_gbt_num = int(self.gbt_info_list[ipos], base=16)
+            if curr_gbt_num >= self.pos_run_stop:
+                self.pos_gbt_stop = ipos
+                break
+
+            ipos += 1
+            if ipos >= len(self.gbt_info_list):
+                self.pos_gbt_stop = ipos
+                break
+
+
+        # GBT data run post idle position
+        ipos = 0
+        while 1:
+            curr_gbt_num = int(self.gbt_info_list[ipos], base=16)
+            if curr_gbt_num >= self.pos_run_postidl:
+                self.pos_gbt_postidl = ipos
+                break
+
+            ipos += 1
+            if ipos >= len(self.gbt_info_list):
+                self.pos_gbt_postidl = ipos
+                break
 
 
 
-
+        return
 
 
 
