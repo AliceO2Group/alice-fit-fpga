@@ -92,15 +92,16 @@ begin
 if (clk600'event and clk600='0') then ena1<=clk300; end if;
 
 if (clk600'event and clk600='1') then  
-ISER_BITS1<=ISER_COUL; ena<=ena1;
+ISER_BITS1<=ISER_COUL; ena<=ena1; str<=PC_STR;
 if ena='1'  then 
-		PC_STR<=ISER_BITS(0); ptime(2)<=ISER_BITS1(2); ptime(1 downto 0)<= ISER_COU; 
+		PC_STR<=ISER_BITS(0); 
+		if (PC_STR='0') and (ISER_BITS(0)='1') then ptime(2)<=ISER_BITS1(2); ptime(1 downto 0)<= ISER_COU; end if; 
 end if;
 
 end if;
 end process;
 
-str<=PC_STR;
+
 ISER_COUL(2)<=NOT (ISER_BITS(3) OR ISER_BITS(2) OR ISER_BITS(1) OR ISER_BITS(0));
 ISER_COUL(1)<=NOT (ISER_BITS(3) OR ISER_BITS(2));
 ISER_COUL(0)<=NOT ISER_BITS(3) AND (ISER_BITS(2) OR NOT ISER_BITS(1));

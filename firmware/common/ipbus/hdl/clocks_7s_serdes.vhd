@@ -13,7 +13,6 @@ use unisim.VComponents.all;
 
 entity clocks_7s_serdes is
 	port(
-	    gt_clk: in std_logic;
 		clki_gt125: in std_logic; -- Input free-running clock (125MHz)
 		clki_125: in std_logic; -- Ethernet domain clk125
 		clko_ipb: out std_logic; -- ipbus domain clock (31MHz)
@@ -55,12 +54,8 @@ begin
 
 sysclk <= clki_gt125; clko_ipb <= clk_ipb_b;
 
-	bufh_pll125: BUFH port map(
-            i => gt_clk,
-            o => gt_clkbh
-        );
 
-pll: PLL125 port map(clkout1 => clk_ipb_b, clkout2 => clko_drp,  clkout3 => clk200, clkin1 => gt_clkbh, locked => dcm_locked, reset => '0');
+pll: PLL125 port map(clkout1 => clk_ipb_b, clkout2 => clko_drp,  clkout3 => clk200, clkin1 => clki_gt125, locked => dcm_locked, reset => '0');
 	
 	clkdiv: entity work.ipbus_clock_div port map(
 		clk => sysclk,
