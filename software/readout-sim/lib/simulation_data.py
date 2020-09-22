@@ -44,6 +44,7 @@ class simulation_data_class:
         if get_run_ret == -3: log.debug("[-3] run is not stopped, file end reached ...")
         if get_run_ret == -4: log.debug("[-4] run is too short ...")
         if get_run_ret == -5: log.debug("[-5] post run idle is too short ...")
+        if get_run_ret == -6: log.debug("[-6] control reg was changed while run ...")
         if get_run_ret ==  1:
             log.info("run found: [str: %d, stp: %d, post idle len: %d]"%(dyn_run.pos_run_start, dyn_run.pos_run_stop, dyn_run.pos_run_postidl - dyn_run.pos_run_stop))
             dyn_run.find_gbt_pos()

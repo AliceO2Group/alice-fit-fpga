@@ -8,6 +8,9 @@ import lib.status_reg as status_reg
 simulation_data = sim_data.simulation_data_class()
 run_testbench = run_test.run_testbench_class(simulation_data)
 
+# run_testbench.rdh_data_list[1].print_struct()
+# run_testbench.rdh_data_list[1].print_struct()
+
 # gbt_out_file = open('simulation_outputs/readout_gbt_output.txt', 'r')
 # status_reg_out_file = open('simulation_outputs/readout_status_reg_output.txt', 'r')
 # ctrl_reg_in_file = open('simulation_inputs/simple_sig_inputs.txt', 'r')

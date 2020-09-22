@@ -1,5 +1,9 @@
 # class to work with FIT readout unit control registers
 from aenum import Enum
+import lib.pylog as pylog
+
+log = pylog.log
+
 
 class gen_mode(Enum):
     no_gen = 0
@@ -50,47 +54,80 @@ class control_reg_class:
         self.RDH_detf = 0xDDDD
 
 
+    def is_equal(self, other):
+        if self.data_gen != other.data_gen: return 0
+        if self.data_trg_respond_mask != other.data_trg_respond_mask: return 0
+        if self.data_bunch_pattern != other.data_bunch_pattern: return 0
+        if self.data_bunch_freq != other.data_bunch_freq: return 0
+        if self.data_freq_offset != other.data_freq_offset: return 0
+        if self.trg_gen != other.trg_gen: return 0
+        if self.trg_rd_command != other.trg_rd_command: return 0
+        if self.trg_single_val != other.trg_single_val: return 0
+        if self.trg_pattern_0 != other.trg_pattern_0: return 0
+        if self.trg_pattern_1 != other.trg_pattern_1: return 0
+        if self.trg_cont_val != other.trg_cont_val: return 0
+        if self.trg_bunch_freq != other.trg_bunch_freq: return 0
+        if self.trg_freq_offset != other.trg_freq_offset: return 0
+        if self.rd_bypass != other.rd_bypass: return 0
+        if self.is_hb_response != other.is_hb_response: return 0
+        if self.trg_data_select != other.trg_data_select: return 0
+        if self.strt_rdmode_lock != other.strt_rdmode_lock: return 0
+        if self.bcid_delay != other.bcid_delay: return 0
+        if self.crutrg_delay_comp != other.crutrg_delay_comp: return 0
+        if self.max_data_payload != other.max_data_payload: return 0
+        if self.reset_orbc_sync != other.reset_orbc_sync: return 0
+        if self.reset_drophit_counter != other.reset_drophit_counter: return 0
+        if self.reset_gen_offset != other.reset_gen_offset: return 0
+        if self.reset_gbt_rxerror != other.reset_gbt_rxerror: return 0
+        if self.reset_gbt != other.reset_gbt: return 0
+        if self.reset_rxph_error != other.reset_rxph_error: return 0
+        if self.RDH_feeid != other.RDH_feeid: return 0
+        if self.RDH_par != other.RDH_par: return 0
+        if self.RDH_detf != other.RDH_detf: return 0
+        return 1
+
+
     def print_struct(self):
-        print("======== control reg ========")
-        print("data generator param:")
-        print("    data_gen: ", self.data_gen)
-        print("    data_trg_respond_mask:", hex(self.data_trg_respond_mask))
-        print("    data_bunch_pattern: ", hex(self.data_bunch_pattern))
-        print("    data_bunch_freq: ", hex(self.data_bunch_freq))
-        print("    data_freq_offset: ", hex(self.data_freq_offset))
+        log.info("======== control reg ========")
+        log.info("data generator param:")
+        log.info("    data_gen: %s"%(self.data_gen))
+        log.info("    data_trg_respond_mask:%s"%( hex(self.data_trg_respond_mask)))
+        log.info("    data_bunch_pattern: %s"%( hex(self.data_bunch_pattern)))
+        log.info("    data_bunch_freq: %s"%( hex(self.data_bunch_freq)))
+        log.info("    data_freq_offset: %s"%( hex(self.data_freq_offset)))
 
-        print("trigger generator param:")
-        print("    trg_gen: ", self.trg_gen)
-        print("    trg_rd_command: ", self.trg_rd_command)
-        print("    trg_pattern_0: ", hex(self.trg_pattern_0))
-        print("    trg_pattern_1: ", hex(self.trg_pattern_1))
-        print("    trg_cont_val: ", hex(self.trg_cont_val))
-        print("    trg_bunch_freq: ", hex(self.trg_bunch_freq))
-        print("    trg_freq_offset: ", hex(self.trg_freq_offset))
+        log.info("trigger generator param:")
+        log.info("    trg_gen: %s"%( self.trg_gen))
+        log.info("    trg_rd_command: %s"%( self.trg_rd_command))
+        log.info("    trg_pattern_0: %s"%( hex(self.trg_pattern_0)))
+        log.info("    trg_pattern_1: %s"%( hex(self.trg_pattern_1)))
+        log.info("    trg_cont_val: %s"%( hex(self.trg_cont_val)))
+        log.info("    trg_bunch_freq: %s"%( hex(self.trg_bunch_freq)))
+        log.info("    trg_freq_offset: %s"%( hex(self.trg_freq_offset)))
 
-        print("readout param:")
-        print("    rd_bypass: ", hex(self.rd_bypass))
-        print("    is_hb_response: ", hex(self.is_hb_response))
-        print("    trg_data_select: ", hex(self.trg_data_select))
-        print("    strt_rdmode_lock: ", hex(self.strt_rdmode_lock))
+        log.info("readout param:")
+        log.info("    rd_bypass: %s"%( hex(self.rd_bypass)))
+        log.info("    is_hb_response: %s"%( hex(self.is_hb_response)))
+        log.info("    trg_data_select: %s"%( hex(self.trg_data_select)))
+        log.info("    strt_rdmode_lock: %s"%( hex(self.strt_rdmode_lock)))
 
-        print("delay param:")
-        print("    bcid_delay: ", hex(self.bcid_delay))
-        print("    crutrg_delay_comp: ", hex(self.crutrg_delay_comp))
-        print("    max_data_payload: ", hex(self.max_data_payload))
+        log.info("delay param:")
+        log.info("    bcid_delay: %s"%( hex(self.bcid_delay)))
+        log.info("    crutrg_delay_comp: %s"%( hex(self.crutrg_delay_comp)))
+        log.info("    max_data_payload: %s"%( hex(self.max_data_payload)))
 
-        print("reset param:")
-        print("    reset_orbc_sync: ", hex(self.reset_orbc_sync))
-        print("    reset_drophit_counter: ", hex(self.reset_drophit_counter))
-        print("    reset_gen_offset: ", hex(self.reset_gen_offset))
-        print("    reset_gbt_rxerror: ", hex(self.reset_gbt_rxerror))
-        print("    reset_gbt: ", hex(self.reset_gbt))
-        print("    reset_rxph_error: ", hex(self.reset_rxph_error))
+        log.info("reset param:")
+        log.info("    reset_orbc_sync: %s"%( hex(self.reset_orbc_sync)))
+        log.info("    reset_drophit_counter: %s"%( hex(self.reset_drophit_counter)))
+        log.info("    reset_gen_offset: %s"%( hex(self.reset_gen_offset)))
+        log.info("    reset_gbt_rxerror: %s"%( hex(self.reset_gbt_rxerror)))
+        log.info("    reset_gbt: %s"%( hex(self.reset_gbt)))
+        log.info("    reset_rxph_error: %s"%( hex(self.reset_rxph_error)))
 
-        print("RDH param:")
-        print("    RDH_feeid: ", hex(self.RDH_feeid))
-        print("    RDH_par: ", hex(self.RDH_par))
-        print("    RDH_detf: ", hex(self.RDH_detf))
+        log.info("RDH param:")
+        log.info("    RDH_feeid: %s"%( hex(self.RDH_feeid)))
+        log.info("    RDH_par: %s"%( hex(self.RDH_par)))
+        log.info("    RDH_detf: %s"%( hex(self.RDH_detf)))
 
     def get_reg(self):
         reg_00 = 0xF&self.data_gen.value

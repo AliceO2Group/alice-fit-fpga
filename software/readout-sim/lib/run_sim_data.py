@@ -25,6 +25,7 @@ class run_sim_data_class:
         self.pos_gbt_start = 0
         self.pos_gbt_stop = 0
         self.pos_gbt_postidl = 0
+        self.run_control = cntrl_reg.control_reg_class()
 
     def print_info(self):
         log.info("############################# SIMULATION RUN INFO ####################################")
@@ -36,6 +37,8 @@ class run_sim_data_class:
         log.info("gbt position run start: %d"%(self.pos_gbt_start))
         log.info("gbt position run stop: %d"%(self.pos_gbt_stop))
         log.info("gbt position post run idle: %d"%(self.pos_gbt_postidl))
+
+        self.run_control.print_struct()
 
 
     def get_run(self, ctrl_reg_pos):
@@ -69,12 +72,18 @@ class run_sim_data_class:
         # find uniform run parameters -------------------------------------------
         run_len = 0
         run_type = dyn_ctrl_reg.trg_rd_command
+        self.run_control = dyn_ctrl_reg
+
         while curr_pos < len(self.ctrl_data_list):
             dyn_ctrl_reg.read_reg_line_16(self.ctrl_data_list[curr_pos])
 
             if (dyn_ctrl_reg.trg_rd_command != run_type) and \
                (dyn_ctrl_reg.trg_rd_command != cntrl_reg.readout_cmd.idle):
                 return -2 # run type switched
+
+            if (not self.run_control.is_equal(dyn_ctrl_reg)):
+                return -6 #control reg is different
+
 
             if dyn_ctrl_reg.trg_rd_command == cntrl_reg.readout_cmd.idle:
                 break

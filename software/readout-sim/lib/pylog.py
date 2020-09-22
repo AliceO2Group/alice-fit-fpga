@@ -1,6 +1,15 @@
 import logging
 import sys
 
+c_HEADER = '\033[95m'
+c_OKBLUE = '\033[94m'
+c_OKGREEN = '\033[92m'
+c_WARNING = '\033[93m'
+c_FAIL = '\033[91m'
+c_ENDC = '\033[0m'
+c_BOLD = '\033[1m'
+c_UNDERLINE = '\033[4m'
+
 class MyFilter(object):
     def __init__(self, level):
         self.__level = level
