@@ -64,7 +64,7 @@ pipeline {
       steps {
         sh("mkdir -p ${TARGET_DIR}")
 	sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
-	sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
+        sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
 	sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
       }
     }
