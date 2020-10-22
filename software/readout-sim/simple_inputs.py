@@ -36,4 +36,38 @@ for i in range(2*0xdec):
     sigin_file.write(control_reg.get_reg_line_16() + '\n')
 
 
+
+
+
+
+
+
+
+
+
+# start empty cycle ===========================
+control_reg.trg_gen = cntrl_reg.gen_mode.main_gen
+
+
+for i in range(2*0xdec):
+    sigin_file.write(control_reg.get_reg_line_16() + '\n')
+
+# trigger run ===========================
+control_reg.trg_rd_command = cntrl_reg.readout_cmd.trigger
+control_reg.data_gen = cntrl_reg.gen_mode.main_gen
+control_reg.trg_gen = cntrl_reg.gen_mode.main_gen
+
+print("trigger run =================== ")
+
+for i in range(5*0xdec):
+    sigin_file.write(control_reg.get_reg_line_16() + '\n')
+
+# end empty cycle ===========================
+control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
+for i in range(2*0xdec):
+    sigin_file.write(control_reg.get_reg_line_16() + '\n')
+
+
+
+
 sigin_file.close()

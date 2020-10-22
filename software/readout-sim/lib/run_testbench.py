@@ -226,18 +226,18 @@ class run_testbench_class:
 
 
 
-        # data counter -------------------------------------------------------------------------------------------------
-        event_iter = 0
-        for ievent in range(0, len(self.rdh_data_list)-1):
-
-            for idata in self.rdh_data_list[ievent].event_list:
-
-                for ichdata in idata.
-                if idata.orbit != orbit_curr:
-                    self.errors_messages.append("Wrong orbit in detector event %i; curr orbit %x, умуте orbit %x" % (ievent, orbit_curr, idata.orbit))
-                    return -1
-
-        log.info(pylog.c_OKGREEN+"Detectors orbits are correct ... "+pylog.c_ENDC)
+        # # data counter -------------------------------------------------------------------------------------------------
+        # event_iter = 0
+        # for ievent in range(0, len(self.rdh_data_list)-1):
+        #
+        #     for idata in self.rdh_data_list[ievent].event_list:
+        #
+        #         for ichdata in idata.
+        #         if idata.orbit != orbit_curr:
+        #             self.errors_messages.append("Wrong orbit in detector event %i; curr orbit %x, умуте orbit %x" % (ievent, orbit_curr, idata.orbit))
+        #             return -1
+        #
+        # log.info(pylog.c_OKGREEN+"Detectors orbits are correct ... "+pylog.c_ENDC)
 
 
 

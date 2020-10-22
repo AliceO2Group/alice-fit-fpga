@@ -25,6 +25,7 @@ class run_sim_data_class:
         self.pos_gbt_start = 0
         self.pos_gbt_stop = 0
         self.pos_gbt_postidl = 0
+        self.pos_last_read = 0
         self.run_control = cntrl_reg.control_reg_class()
 
     def print_info(self):
@@ -34,10 +35,11 @@ class run_sim_data_class:
         log.info("data position run stop: %d"%(self.pos_run_stop))
         log.info("data position post run idle: %d"%(self.pos_run_postidl))
         log.info("\noutputs files:")
-        log.info("gbt position run start: %d"%(self.pos_gbt_start))
-        log.info("gbt position run stop: %d"%(self.pos_gbt_stop))
-        log.info("gbt position post run idle: %d"%(self.pos_gbt_postidl))
-
+        log.info("gbt position run start: %d (%d)"%(self.pos_gbt_start, int(self.gbt_info_list[self.pos_gbt_start], base=16)))
+        log.info("gbt position run stop: %d (%d)"%(self.pos_gbt_stop, int(self.gbt_info_list[self.pos_gbt_stop], base=16)))
+        log.info("gbt position post run idle: %d (%d)"%(self.pos_gbt_postidl, int(self.gbt_info_list[self.pos_gbt_postidl], base=16)))
+        log.info("\nrun params:")
+        log.info("run type: %s"%(self.run_type))
         self.run_control.print_struct()
 
 
@@ -62,6 +64,7 @@ class run_sim_data_class:
             else:
                 idle_len = 0
 
+            self.pos_last_read = curr_pos
             curr_pos += 1
 
         if len(self.ctrl_data_list) - curr_pos < self.run_min_len:
@@ -88,6 +91,7 @@ class run_sim_data_class:
             if dyn_ctrl_reg.trg_rd_command == cntrl_reg.readout_cmd.idle:
                 break
 
+            self.pos_last_read = curr_pos
             run_len += 1
             curr_pos += 1
 
@@ -106,6 +110,7 @@ class run_sim_data_class:
             dyn_ctrl_reg.read_reg_line_16(self.ctrl_data_list[curr_pos])
             if (dyn_ctrl_reg.trg_rd_command != cntrl_reg.readout_cmd.idle): break
 
+            self.pos_last_read = curr_pos
             curr_pos += 1
             idle_len += 1
 
@@ -131,7 +136,7 @@ class run_sim_data_class:
 
             ipos += 1
             if ipos >= len(self.gbt_info_list):
-                self.pos_gbt_start = ipos
+                self.pos_gbt_start = len(self.gbt_info_list)-1
                 break
 
         # GBT data run stop position
@@ -144,7 +149,7 @@ class run_sim_data_class:
 
             ipos += 1
             if ipos >= len(self.gbt_info_list):
-                self.pos_gbt_stop = ipos
+                self.pos_gbt_stop = len(self.gbt_info_list)-1
                 break
 
 
@@ -158,7 +163,7 @@ class run_sim_data_class:
 
             ipos += 1
             if ipos >= len(self.gbt_info_list):
-                self.pos_gbt_postidl = ipos
+                self.pos_gbt_postidl = len(self.gbt_info_list)-1
                 break
 
 

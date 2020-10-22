@@ -36,20 +36,27 @@ class simulation_data_class:
 
         # getting run from control reg
         search_run_str = 0
-        log.info("\n\nSearching run starting from %d"%(search_run_str) )
-        dyn_run = run_data.run_sim_data_class(self.ctrl_data_list, self.gbt_info_list)
-        get_run_ret = dyn_run.get_run(search_run_str)
-        if get_run_ret == -1: log.debug("[-1] no run found ...")
-        if get_run_ret == -2: log.debug("[-2] run type switched (no idle command) ...")
-        if get_run_ret == -3: log.debug("[-3] run is not stopped, file end reached ...")
-        if get_run_ret == -4: log.debug("[-4] run is too short ...")
-        if get_run_ret == -5: log.debug("[-5] post run idle is too short ...")
-        if get_run_ret == -6: log.debug("[-6] control reg was changed while run ...")
-        if get_run_ret ==  1:
-            log.info("run found: [str: %d, stp: %d, post idle len: %d]"%(dyn_run.pos_run_start, dyn_run.pos_run_stop, dyn_run.pos_run_postidl - dyn_run.pos_run_stop))
-            dyn_run.find_gbt_pos()
-            dyn_run.print_info()
-            self.runs_list.append(dyn_run)
+        get_run_ret = 0
+
+        while (get_run_ret != -3) and (get_run_ret != -1):
+            log.info("\n\nSearching run starting from %d/%d"%(search_run_str, len(self.ctrl_data_list)) )
+            dyn_run = run_data.run_sim_data_class(self.ctrl_data_list, self.gbt_info_list)
+
+            get_run_ret = dyn_run.get_run(search_run_str)
+            search_run_str = dyn_run.pos_last_read-1
+            search_run_str = dyn_run.pos_run_stop
+            if get_run_ret == -1: log.debug("[-1] no run found ...")
+            if get_run_ret == -2: log.debug("[-2] run type switched (no idle command) ...")
+            if get_run_ret == -3: log.debug("[-3] run is not stopped, file end reached ...")
+            if get_run_ret == -4: log.debug("[-4] run is too short ...")
+            if get_run_ret == -5: log.debug("[-5] post run idle is too short ...")
+            if get_run_ret == -6: log.debug("[-6] control reg was changed while run ...")
+            if get_run_ret ==  1:
+                log.info("run found: [str: %d, stp: %d, post idle len: %d]"%(dyn_run.pos_run_start, dyn_run.pos_run_stop, dyn_run.pos_run_postidl - dyn_run.pos_run_stop))
+                dyn_run.find_gbt_pos()
+                dyn_run.print_info()
+                self.runs_list.append(dyn_run)
+
 
 
 

@@ -6,7 +6,8 @@ import lib.status_reg as status_reg
 
 
 simulation_data = sim_data.simulation_data_class()
-run_testbench = run_test.run_testbench_class(simulation_data)
+run_testbench = run_test.run_testbench_class(simulation_data, 0)
+run_testbench = run_test.run_testbench_class(simulation_data, 1)
 
 # run_testbench.rdh_data_list[1].print_struct()
 # run_testbench.rdh_data_list[1].print_struct()

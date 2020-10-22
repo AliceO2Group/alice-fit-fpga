@@ -80,6 +80,9 @@ ARCHITECTURE behavior OF testbench_readout IS
    
     signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
+    
+    -- debub
+    signal sim_iter_num : std_logic_vector(63 downto 0);
 	
    	
 	constant testbench_CONTROL_REG_default : CONTROL_REGISTER_type :=
@@ -304,6 +307,7 @@ Sys2_process :process
 			ELSE
                 if (DATA_CLK = '1') and (DATA_CLK_ff = '0') then
                     iter_num := iter_num + 1;
+                    sim_iter_num <= iter_num;
                 
                   if(not endfile(input_reg_file)) then
                       readline(input_reg_file, infile_line);
