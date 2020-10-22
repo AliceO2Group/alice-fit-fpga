@@ -549,6 +549,7 @@ set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExpl
 set_property -name "steps.route_design.args.directive" -value "NoTimingRelaxation" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
 
 # set the current impl run
 current_run -implementation [get_runs impl_1]

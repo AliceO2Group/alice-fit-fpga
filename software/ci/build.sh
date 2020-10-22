@@ -11,6 +11,7 @@ for p in $PROJECTS; do
        && rm -fr build \
        && rm -f *.log *.jou \
        && vivado -mode batch -source make.tcl \
-       && mv $(find build -name "*.bit") build/${p}.bit
+       && mv $(find build -name "*.bit") build/${p}.bit \
+       && mv $(find build -name "*.bin") build/${p}.bin
     tar cvf - $(find . -name "*.log") | gzip - > build/${p}_logs.tar.gz
 done
