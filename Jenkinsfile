@@ -44,27 +44,28 @@ pipeline {
     stage('Build FIT bitstreams') {
       parallel {
         stage('PM') {
-	  steps {
-	    sh('./software/ci/build.sh PM')
-	  }
-	}
+          steps {
+            sh('./software/ci/build.sh PM')
+          }
+        }
         stage('TCM') {
-	  steps {
-	    sh('./software/ci/build.sh TCM')
-	  }
-	}
+          steps {
+            sh('./software/ci/build.sh TCM')
+          }
+        }
         stage('FTM') {
-	  steps {
-	    sh('./software/ci/build.sh FTM')
-	  }
-	}
+          steps {
+            sh('./software/ci/build.sh FTM')
+          }
+        }
       }
     }
     stage('Copy bitstreams') {
       steps {
         sh("mkdir -p ${TARGET_DIR}")
-	sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
-	sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
+        sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
+        sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
+        sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
       }
     }
     stage('Update latest') {
