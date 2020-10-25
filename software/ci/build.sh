@@ -1,17 +1,29 @@
 #!/bin/bash
 
-PROJECTS=$@
+set -x
 
-echo building $PROJECTS
+if [[ $# -eq 0 ]]; then
+    echo "USEAGE: build.sh project_name"
+    exit 1
+fi
+
+PROJECT=$1
+
+echo "building ${PROJECT}"
 
 source /opt/Xilinx/Vivado/2019.2/settings64.sh
 
-for p in $PROJECTS; do
-    cd firmware/FT0/$p \
-       && rm -fr build \
-       && rm -f *.log *.jou \
-       && vivado -mode batch -source make.tcl \
-       && mv $(find build -name "*.bit") build/${p}.bit \
-       && mv $(find build -name "*.bin") build/${p}.bin
-    tar cvf - $(find . -name "*.log") | gzip - > build/${p}_logs.tar.gz
-done
+cd firmware/FT0/${PROJECT} \
+    && rm -fr build \
+    && rm -f *.log *.jou \
+    && vivado -mode batch -source make.tcl \
+    && mv $(find build -name "*.bit") build/${PROJECT}.bit \
+    && mv $(find build -name "*.bin") build/${PROJECT}.bin
+
+## save the exit code
+EC=$?
+
+## always save all log files
+tar cvf - $(find . -name "*.log") | gzip - > build/${PROJECT}_logs.tar.gz
+
+exit ${EC}
