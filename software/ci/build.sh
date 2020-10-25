@@ -24,6 +24,7 @@ cd firmware/FT0/${PROJECT} \
 EC=$?
 
 ## always save all log files
-tar cvf - $(find . -name "*.log") | gzip - > build/${PROJECT}_logs.tar.gz
+tar cvf - $(find . -name "*.log") \
+    | gzip - > build/${PROJECT}_logs.tar.gz
 
 exit ${EC}
