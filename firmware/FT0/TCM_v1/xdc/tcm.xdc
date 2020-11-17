@@ -69,8 +69,8 @@ set_property ASYNC_REG true [get_cells readout_laser_out_ff?_reg]
 
 set_property IOB TRUE [get_cells -hierarchical T_o_reg]
 set_property IOB TRUE [get_cells lasi_reg]
-set_property ASYNC_REG true [get_cells l_on_reg]
-set_property ASYNC_REG true [get_cells l_on0_reg]
+set_property ASYNC_REG true [get_cells {l_on0_reg l_on_reg}]
+set_property ASYNC_REG true [get_cells {laser_t0_reg laser_t_reg}]
 
 set_property ASYNC_REG true [get_cells B_rdy0_reg]
 set_property ASYNC_REG true [get_cells B_rdy1_reg]

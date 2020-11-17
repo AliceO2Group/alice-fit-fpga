@@ -52,10 +52,10 @@ set_false_path -to [get_pins all_locked_reg/D]
 set_multicycle_path -setup -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 2
 set_multicycle_path -hold -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 1
 
-set_multicycle_path -setup -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 2
-set_multicycle_path -hold -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 1
+#set_multicycle_path -setup -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 2
+#set_multicycle_path -hold -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 1
 
-set_false_path -from [get_cells {{CH*_shift_reg[*]} {CH*_zero_reg[*]} {CH*_rc_reg[*]} {ampl_sat_reg[*]} {gate_time_high_reg[*]} {chans_ena_r_reg[*]}}] -to [get_clocks CLK320]
+set_false_path -from [get_cells {{CH*_shift_reg[*]} {CH*_rc_reg[*]} {ampl_sat_reg[*]} {gate_time_high_reg[*]} {chans_ena_r_reg[*]}}] -to [get_clocks CLK320]
 set_false_path -from [get_cells ipbus_control_reg_reg[*][*]]  
 
 #set_max_delay  -datapath_only -from [get_clocks RXDataCLK] -to [get_pins IsRXData0_reg/D] 5.000

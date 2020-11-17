@@ -105,7 +105,7 @@ architecture Behavioral of Event_selector is
 	
 	
 	-- FSM ---------------------
-	signal 	Readout_Mode_ff00, Readout_Mode_ff00_syscl, Readout_Mode_ff01 : Type_Readout_Mode; -- delay for put EOC/EOT to trgfifo
+	signal 	Readout_Mode_ff00, Readout_Mode_ff01 : Type_Readout_Mode; -- delay for put EOC/EOT to trgfifo
 	signal 	Readout_Mode_manage, Readout_Mode_manage_DtClk, Readout_Mode_manage_next : Type_Readout_Mode; -- delay for put EOC/EOT to trgfifo
 	type FSM_STATE_T is (s0_DT_comp, s1_dread, s2_send_wpacket);
 	signal FSM_STATE, FSM_STATE_NEXT  : FSM_STATE_T;
@@ -376,7 +376,6 @@ port map(
 		IF(FSM_Clocks_I.System_Clk'EVENT and FSM_Clocks_I.System_Clk = '1') THEN
 			IF(FSM_Clocks_I.Reset = '1') THEN
 			
-			    Readout_Mode_ff00_syscl <= mode_IDLE;
 				cntpckws_state <= s0_simpl_pcw;
 				rdata_state <= s0_start;
 				FSM_STATE <= s0_DT_comp;
@@ -404,14 +403,12 @@ port map(
 				last_dropped_bc <= (others => '0');
 				
 			ELSE
-			
-			    Readout_Mode_ff00_syscl <= Readout_Mode_ff00;
 				cntpckws_state <= cntpckws_state_next;
 				rdata_state <= rdata_state_next;
 				FSM_STATE <= FSM_STATE_NEXT;
 
-					if(Readout_Mode_ff00_syscl /= mode_IDLE) then
-						Readout_Mode_manage <= Readout_Mode_ff00_syscl;
+					if(Readout_Mode_ff00 /= mode_IDLE) then
+						Readout_Mode_manage <= Readout_Mode_ff00;
 					else
 						Readout_Mode_manage <= Readout_Mode_manage_next;
 					end if;
@@ -447,7 +444,7 @@ port map(
   
   -- FSM ***********************************************
   Readout_Mode_manage_next <=	mode_IDLE 			WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								Readout_Mode_ff00_syscl 	WHEN (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
+								Readout_Mode_ff00 	WHEN (Readout_Mode_ff00 /= mode_IDLE) ELSE
 								Readout_Mode_ff01 	WHEN (Readout_Mode_ff01 /= mode_IDLE) ELSE
 								Readout_Mode_manage	WHEN (trgfifo_empty_real = '0') ELSE
 								Readout_Mode_ff01;
@@ -590,14 +587,14 @@ port map(
 				
 				
 				
-	trgfifo_reset <= FSM_Clocks_I.Reset;
+	trgfifo_reset <= FSM_Clocks_I.Reset40;
 	RAWFIFO_RESET_O <= FSM_Clocks_I.Reset;
 	SLCTFIFO_RESET_O <= FSM_Clocks_I.Reset;
 	cntpckfifo_reset <= FSM_Clocks_I.Reset;
 
 				
 	trgfifo_we <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN ((x"ffffffff" and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
+					'1' WHEN ((TRG_const_response and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00 /= mode_IDLE) ELSE
 					'0';
 					
 	trgfifo_re  <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE

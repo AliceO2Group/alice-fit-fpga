@@ -22,7 +22,7 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
 #set_false_path -hold -from [get_clocks RXDataCLK] -to [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}]
 #et_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}] 1.000
 
-set_max_delay -datapath_only -from [get_clocks CLKsys40] -to [get_pins readout_laser_out_ff0_reg/D] 2.000
+set_max_delay -datapath_only -from [get_clocks CLKsys40] -to [get_pins readout_laser_out_ff0_reg/D] 3.000
 
 set_multicycle_path -setup -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]}}] 2
 set_multicycle_path -hold -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]}}] 1
