@@ -27,6 +27,11 @@ class status_reg_class:
         self.cru_readout_mode = readout_cmd.idle
         self.cru_orbit = 0x0
         self.cru_bc = 0x0
+        self.cru_orbit_corr = 0x0
+        self.cru_bc_corr = 0x0
+        self.cru_trigger = 0x0
+
+        self.data_gen_report = 0x0
 
         self.raw_fifo_count = 0x0
 
@@ -46,6 +51,11 @@ class status_reg_class:
         print("    cru_readout_mode: ", self.cru_readout_mode)
         print("    cru_orbit: ", hex(self.cru_orbit))
         print("    cru_bc: ", hex(self.cru_bc))
+        print("    cru_orbit_corr: ", hex(self.cru_orbit_corr))
+        print("    cru_bc_corr: ", hex(self.cru_bc_corr))
+        print("    cru_trigger: ", hex(self.cru_trigger))
+
+        print("    data_gen_report: ", hex(self.data_gen_report))
 
         print("    raw_fifo_count: ", hex(self.raw_fifo_count))
 
@@ -56,10 +66,10 @@ class status_reg_class:
         print("    readout_rate: ", hex(self.readout_rate))
 
 
-    def read_reg_line_hex(self, line = "0 0 0 0 0 0 0 0"):
+    def read_reg_line_hex(self, line = "0 0 0 0 0 0 0 0 0 0 0 0"):
         line = line.replace('X', '0')
-        line_regs = line.split(" ")[:-1]
-        print(line_regs)
+        line_regs = line.split("   ")[:-1]
+        #print(line_regs)
 
         # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -
         #   79-76 75-72 71-68 67-64 63-60 59-56 55-52 51-48 47-44 43-40 39-36 35-32 31-28 27-24 23-20 19-16 15-12 11- 8 7 - 4 3 - 0
@@ -68,6 +78,7 @@ class status_reg_class:
         self.bcid_sync = bcid_smode( int(line_regs[0][ -6: -5], base=16) )
         self.rx_phase = int(line_regs[0][ -7: -6], base=16)
         self.cru_readout_mode = readout_cmd( int(line_regs[0][ -8: -7], base=16) )
+
         self.cru_orbit = int(line_regs[1][ -8: ], base=16)
         self.cru_bc = int(line_regs[2][ -3: ], base=16)
         self.raw_fifo_count = int(line_regs[3][ -4: ], base=16)
@@ -76,7 +87,10 @@ class status_reg_class:
         self.slct_last_hd_orbit = int(line_regs[5][ -8: ], base=16)
         self.slct_tot_hd = int(line_regs[6][ -8: ], base=16)
         self.readout_rate = int(line_regs[7][ -4: ], base=16)
-
+        self.cru_orbit_corr = int(line_regs[8][ -8: ], base=16)
+        self.cru_bc_corr = int(line_regs[9][ -3: ], base=16)
+        self.cru_trigger = int(line_regs[10][ -3: ], base=16)
+        self.data_gen_report = int(line_regs[11][ -3: ], base=16)
 
 
 

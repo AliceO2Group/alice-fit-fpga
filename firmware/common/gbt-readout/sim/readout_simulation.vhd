@@ -73,7 +73,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 
  	--Outputs
 	signal GBT_status : FIT_GBT_status_type;
-	signal GBT_status_reg : status_reg_addrreg_type;
+	signal GBT_status_reg : status_reg_addrreg_sim_type;
 	
     signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     signal IsData_from_FITrd        : STD_LOGIC;
@@ -141,7 +141,7 @@ FSM_Clocks_signal.System_Clk <= SYS_CLK;
 FSM_Clocks_signal.System_Counter <= x"0";
 FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
 
-GBT_status_reg <= func_STATREG_getaddrreg(GBT_status);
+GBT_status_reg <= func_STATREG_getaddrreg_sim(GBT_status);
 
 
  
@@ -334,7 +334,7 @@ Sys2_process :process
                   end if;
                   
                   outfile_line := "";
-                  for ireg in 0 to status_reg_n_32word-1 loop
+                  for ireg in 0 to status_reg_sim_n_32word-1 loop
                     hwrite(outfile_line, GBT_status_reg(ireg), left, 11);
                   end loop;
                   writeline(output_st_reg_file, outfile_line);

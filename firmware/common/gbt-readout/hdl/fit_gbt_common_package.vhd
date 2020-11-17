@@ -250,7 +250,9 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 
 -- ===== FIT GBT STATUS ========================================
 	constant status_reg_n_32word		: integer := 8;
+	constant status_reg_sim_n_32word		: integer := status_reg_n_32word+4;
 	type status_reg_addrreg_type is array (0 to status_reg_n_32word-1) of std_logic_vector(31 downto 0);
+	type status_reg_addrreg_sim_type is array (0 to status_reg_sim_n_32word-1) of std_logic_vector(31 downto 0); -- extended status registers set for simulation (trigger added)
 	
 	type Type_Readout_Mode is (mode_IDLE, mode_CNT, mode_TRG);
 	type Type_BCIDsync_Mode is (mode_STR, mode_SYNC, mode_LOST);
@@ -310,6 +312,8 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		ORBIT_from_CRU 				: std_logic_vector(Orbit_id_bitdepth-1 downto 0); -- ORBIT from CRUS
 		BCID_from_CRU_corrected 	: std_logic_vector(BC_id_bitdepth-1 downto 0); -- BC ID from CRUS
 		ORBIT_from_CRU_corrected 	: std_logic_vector(Orbit_id_bitdepth-1 downto 0); -- ORBIT from CRUS
+		
+		Data_gen_report             : std_logic_vector(31 downto 0); -- info of generated data; used only in simulation
 		
 		fifo_status 				: FIFO_STATUS_type;
 		hits_rd_counter_converter	: hit_rd_counter_type;
@@ -378,6 +382,7 @@ function func_CNTPCKword_hbbc (cntpck_w: std_logic_vector(cntpckfifo_data_bitdep
 function func_CNTRREG_getaddrreg (cntrl_reg: CONTROL_REGISTER_type ) return cntr_reg_addrreg_type;
 function func_CNTRREG_getcntrreg (cntrl_reg_addrreg: cntr_reg_addrreg_type) return CONTROL_REGISTER_type;
 function func_STATREG_getaddrreg (status_reg: FIT_GBT_status_type ) return status_reg_addrreg_type;
+function func_STATREG_getaddrreg_sim (status_reg: FIT_GBT_status_type ) return status_reg_addrreg_sim_type;
 -- ----------------------------------------------------------------
 
 
@@ -711,6 +716,91 @@ begin
     status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
     status_reg_addrreg(6) := status_reg.hits_rd_counter_selector.hits_skipped;
     status_reg_addrreg(7) :=  "000" & status_reg.fifo_status.ftmipbus_fifo_count & status_reg.hits_rd_counter_selector.hits_send_porbit;
+
+
+return status_reg_addrreg;
+end function;
+
+
+
+
+
+
+
+
+
+function func_STATREG_getaddrreg_sim (status_reg: FIT_GBT_status_type ) return status_reg_addrreg_sim_type is
+	variable status_reg_addrreg : status_reg_addrreg_sim_type;
+	variable gbt_status		: std_logic_vector(15 downto 0);
+	variable bcid_sync_mode	: std_logic_vector( 3 downto 0 );
+	variable rd_mode 		: std_logic_vector( 3 downto 0 );
+	variable cru_rd_mode 		: std_logic_vector( 3 downto 0 );
+	variable slct_fifo_count_reg	: std_logic_vector(15 downto 0);
+	variable raw_fifo_count_reg		: std_logic_vector(15 downto 0);
+
+begin
+
+
+	gbt_status :=	"000000" 
+				&	status_reg.GBT_status.Rx_Phase_error
+				&	status_reg.GBT_status.gbtRx_ErrorLatch
+				&	status_reg.GBT_status.gbtRx_ErrorDet
+				&	status_reg.GBT_status.gbtRx_Ready
+				&	status_reg.GBT_status.tx_fsmResetDone
+				&	status_reg.GBT_status.tx_resetDone
+				&	status_reg.GBT_status.mgtLinkReady
+				&	status_reg.GBT_status.rxFrameClkReady
+				&	status_reg.GBT_status.rxWordClkReady
+				&	status_reg.GBT_status.mgt_phalin_cplllock;
+				
+				
+	if status_reg.Readout_Mode = mode_IDLE then
+		rd_mode := x"0";
+	elsif status_reg.Readout_Mode = mode_CNT then
+		rd_mode := x"1";
+	elsif status_reg.Readout_Mode = mode_TRG then
+		rd_mode := x"2";
+	else
+		rd_mode := x"f";
+	end if;
+
+	if status_reg.CRU_Readout_Mode = mode_IDLE then
+		cru_rd_mode := x"0";
+	elsif status_reg.CRU_Readout_Mode = mode_CNT then
+		cru_rd_mode := x"1";
+	elsif status_reg.CRU_Readout_Mode = mode_TRG then
+		cru_rd_mode := x"2";
+	else
+		cru_rd_mode := x"f";
+	end if;
+
+	if status_reg.BCIDsync_Mode = mode_STR then
+		bcid_sync_mode := x"0";
+	elsif status_reg.BCIDsync_Mode = mode_SYNC then
+		bcid_sync_mode := x"1";
+	elsif status_reg.BCIDsync_Mode = mode_LOST then
+		bcid_sync_mode := x"2";
+	else
+		bcid_sync_mode := x"f";
+	end if;
+	
+    slct_fifo_count_reg := "000" & status_reg.fifo_status.slct_fifo_count;
+    raw_fifo_count_reg  := "000" & status_reg.fifo_status.raw_fifo_count;
+    
+    
+    status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
+    status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
+    status_reg_addrreg(2) := x"00000" & status_reg.BCID_from_CRU;
+    status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;
+    status_reg_addrreg(4) := status_reg.hits_rd_counter_selector.first_orbit_hdrop;
+    status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
+    status_reg_addrreg(6) := status_reg.hits_rd_counter_selector.hits_skipped;
+    status_reg_addrreg(7) :=  "000" & status_reg.fifo_status.ftmipbus_fifo_count & status_reg.hits_rd_counter_selector.hits_send_porbit;
+    
+    status_reg_addrreg(8) :=  status_reg.ORBIT_from_CRU_corrected;
+    status_reg_addrreg(9) :=  x"00000" & status_reg.BCID_from_CRU_corrected;
+    status_reg_addrreg(10) :=  status_reg.Trigger_from_CRU;
+    status_reg_addrreg(11) :=  status_reg.Data_gen_report;
 
 
 return status_reg_addrreg;

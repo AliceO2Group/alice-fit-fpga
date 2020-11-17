@@ -1,6 +1,7 @@
 # class to work with FIT readout unit control registers
 
 import lib.control_reg as cntrl_reg
+import lib.status_reg as stat_reg
 import lib.run_sim_data as run_data
 import lib.pylog as pylog
 
@@ -28,15 +29,19 @@ class simulation_data_class:
         self.ctrl_data_list = list( self.ctrl_file )
         self.status_data_list = list( self.status_file )
 
+        self.trig_gen_list = []
+        self.data_gen_list = []
+
         self.runs_list = []
 
-
-
+        self.get_gen_lists()
         self.print_info()
 
         # getting run from control reg
         search_run_str = 0
         get_run_ret = 0
+
+
 
         while (get_run_ret != -3) and (get_run_ret != -1):
             log.info("\n\nSearching run starting from %d/%d"%(search_run_str, len(self.ctrl_data_list)) )
@@ -61,6 +66,8 @@ class simulation_data_class:
 
 
 
+
+
     def print_info(self):
         log.info("#######################################################################################")
         log.info("############################# SIMULATION DATA INFO ####################################")
@@ -70,6 +77,28 @@ class simulation_data_class:
         log.info("gbt info: %s"%(self.gbt_info_file_name))
         log.info("control data: %s"%(self.ctrl_file_name))
         log.info("status data: %s"%(self.status_file_name))
+        log.info("total triggers: %d"%( len(self.trig_gen_list) ))
+        log.info("total data: %d"%( len(self.data_gen_list) ))
+
+
+    def get_gen_lists(self):
+        dyn_stat_reg = stat_reg.status_reg_class()
+
+        curr_pos = 5
+        while curr_pos < len(self.status_data_list):
+            dyn_stat_reg.read_reg_line_hex(self.status_data_list[curr_pos])
+
+            if dyn_stat_reg.cru_trigger > 0:
+                self.trig_gen_list.append([dyn_stat_reg.cru_orbit_corr, dyn_stat_reg.cru_bc_corr, dyn_stat_reg.cru_trigger])
+
+            if dyn_stat_reg.data_gen_report > 0:
+                self.data_gen_list.append([dyn_stat_reg.cru_orbit_corr, dyn_stat_reg.cru_bc_corr, dyn_stat_reg.data_gen_report])
+
+            curr_pos += 1
+
+        return
+
+
 
 
 

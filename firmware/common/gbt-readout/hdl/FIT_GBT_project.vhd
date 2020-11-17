@@ -245,7 +245,9 @@ Module_Data_Gen_comp : entity work.Module_Data_Gen
 		Control_register_I	=> Control_register_I,
 		
 		Board_data_I		=> Board_data_I,
-		Board_data_O		=> Board_data_from_main_gen
+		Board_data_O		=> Board_data_from_main_gen,
+		
+		data_gen_report_O => FIT_GBT_STATUS.Data_gen_report
 		);		
 -- =====================================================
 

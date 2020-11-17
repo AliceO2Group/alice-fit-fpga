@@ -1,3 +1,16 @@
+# testbench - run file
+
+
+# simulation_data_class: file info
+#  * list of run_sim_data_class (run parameters from inputs file)
+#
+# run_testbench_class: data reading + tesbench procedure + report per run
+
+
+
+
+
+
 import lib.simulation_data as sim_data
 import lib.run_testbench as run_test
 import lib.RDH_data as rdh_data

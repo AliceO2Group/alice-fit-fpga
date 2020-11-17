@@ -35,7 +35,8 @@ entity Module_Data_Gen is
 		Control_register_I	: in CONTROL_REGISTER_type;
 		
 		Board_data_I		: in board_data_type;
-		Board_data_O		: out board_data_type
+		Board_data_O		: out board_data_type;
+		data_gen_report_O   : out std_logic_vector(31 downto 0)
 	 );
 end Module_Data_Gen;
 
@@ -69,6 +70,8 @@ architecture Behavioral of Module_Data_Gen is
 	signal cnt_packet_counter, cnt_packet_counter_next : std_logic_vector(data_word_bitdepth/2-1 downto 0); -- continious packet counter
 	signal pword_counter, pword_counter_next : std_logic_vector(3 downto 0);
 	
+	signal data_gen_report : std_logic_vector(31 downto 0); -- used only in simulation
+	
 	
 	
 	
@@ -84,6 +87,10 @@ begin
 	
 	n_words_in_packet_send_tcm <= x"0" & n_words_in_packet_send(2 downto 0) & "1";
 
+
+
+    data_gen_report_O <= data_gen_report;
+    data_gen_report <= x"0000_000" & n_words_in_packet_mask(bpattern_counter);
 
 -- ***************************************************
 	Board_data_O <= Board_data_gen_ff 	WHEN (Control_register_I.Data_Gen.usage_generator = use_MAIN_generator)	 ELSE Board_data_in_ff;
@@ -247,7 +254,8 @@ n_words_in_packet_send_next <= 	(others => '0')         					WHEN (FSM_Clocks_I.
 								n_words_in_packet_mask(bpattern_counter) 	WHEN (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) ELSE
 								n_words_in_packet_send;
 
-	
+
+
 ---------- Board data gen ---------------------------
 Board_data_gen_ff_next <=	Board_data_void 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							Board_data_void 	WHEN (FSM_STATE = s0_wait) ELSE

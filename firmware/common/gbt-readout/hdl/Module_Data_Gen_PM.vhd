@@ -35,7 +35,8 @@ entity Module_Data_Gen is
 		Control_register_I	: in CONTROL_REGISTER_type;
 		
 		Board_data_I		: in board_data_type;
-		Board_data_O		: out board_data_type
+		Board_data_O		: out board_data_type;
+		data_gen_report_O   : out std_logic_vector(31 downto 0)
 	 );
 end Module_Data_Gen;
 
@@ -81,6 +82,11 @@ begin
 	bunch_pattern <=Control_register_I.Data_Gen.bunch_pattern;
 	bunch_freq <= Control_register_I.Data_Gen.bunch_freq;
 	bunch_freq_hboffset <= Control_register_I.Data_Gen.bunch_freq_hboffset;
+
+
+
+    data_gen_report_O <= (other => '0'); -- todo for PM
+
 
 
 -- ***************************************************
