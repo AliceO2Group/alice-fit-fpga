@@ -103,6 +103,8 @@ set_property PACKAGE_PIN AF28 [get_ports {LA[0]}]
 
 # ============================================================
 
+set_property IOSTANDARD LVCMOS25 [get_ports SCOPE]
+set_property PACKAGE_PIN E28 [get_ports SCOPE]
 
 set_property IOSTANDARD LVDS_25 [get_ports LAS_D_N]
 set_property IOSTANDARD LVDS_25 [get_ports LAS_D_P]

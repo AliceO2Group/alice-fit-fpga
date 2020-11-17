@@ -75,7 +75,7 @@ set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from
 
 #================================================================================
 
-
+set_false_path -to [get_ports SCOPE] 
 
 set_property IOB TRUE [get_cells Laser_Signal_out_reg]
 

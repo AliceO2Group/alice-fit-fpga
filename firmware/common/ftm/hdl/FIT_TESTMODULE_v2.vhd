@@ -73,6 +73,7 @@ entity FIT_TESTMODULE_v2 is
 		LAS_EN : out STD_LOGIC;
         LAS_D_P : out STD_LOGIC;
         LAS_D_N : out STD_LOGIC;
+        SCOPE : out STD_LOGIC;
 
 		FMC_HPC_clk_A_p :	in  STD_LOGIC;
 		FMC_HPC_clk_A_n :	in  STD_LOGIC;
@@ -183,6 +184,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal bus_select : STD_LOGIC_VECTOR(4 downto 0);
     signal LAI : STD_LOGIC_VECTOR(15 downto 0);
     signal clk200, dly_rdy : STD_LOGIC;
+    signal SCOPE_I : std_logic;
 
     signal mac_addr: std_logic_vector(47 downto 0);
     signal ip_addr: std_logic_vector(31 downto 0);
@@ -370,6 +372,8 @@ FSM_Clocks.IPBUS_Data_Clk <= ipb_clk;
 -- GPIO_LED_5 <= TESTM_status.GBT_status.tx_resetDone; -- TXRESETDONE from gtxe2_i
 -- GPIO_LED_6 <= TESTM_status.GBT_status.tx_fsmResetDone; -- gt0_txresetfsm_i
 
+SCOPE_I <= DataClk_to_FIT_GBT;
+
 GPIO_SMA_J13 <= DataClk_to_FIT_GBT;
 GPIO_SMA_J14 <= GBT_RxFrameClk;
 -- ================================================
@@ -477,6 +481,9 @@ TCM_PLL : TCM_PLL320 port map (clk_out1 => clk320_TCM, reset => RESET, locked =>
 
 MCLKB1: BUFG 
       port map (O => CLK_PM, I => CLK_PMi);
+
+SCOPE_buf: OBUF
+      port map (O => SCOPE, I => SCOPE_I);
 
 
  process (CLK_PM)
