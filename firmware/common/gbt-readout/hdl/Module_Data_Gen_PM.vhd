@@ -85,7 +85,7 @@ begin
 
 
 
-    data_gen_report_O <= (other => '0'); -- todo for PM
+    data_gen_report_O <= (others => '0'); -- todo for PM
 
 
 
