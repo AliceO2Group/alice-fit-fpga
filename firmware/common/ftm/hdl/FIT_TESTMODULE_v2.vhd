@@ -173,6 +173,9 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
 	
 	signal from_gbt_bank_prj_GBT_status : Type_GBT_status;
 	
+	attribute mark_debug : string;
+	attribute mark_debug of RxData_rxclk_from_GBT : signal is "true";
+	
 	
 -- IP-BUS signals
 	signal ipb_clk, ipb_rst : std_logic;
