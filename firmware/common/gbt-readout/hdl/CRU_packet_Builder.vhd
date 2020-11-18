@@ -109,7 +109,8 @@ begin
 	is_close_frame <= func_CNTPCKword_isclf(CNTPTFIFO_data_word_I);
 	pages_counter <= func_CNTPCKword_pgcounter(CNTPTFIFO_data_word_I);
 --	header_size <= std_logic_vector(to_unsigned((nwords_in_SOP-1), 8));
-	header_size <= x"28";
+--	header_size <= x"28";
+	header_size <= x"40";
 	block_lenght <= std_logic_vector(to_unsigned((  data_payload_bytes ), 16));
 	HB_Orbit    <= func_CNTPCKword_hborbit(CNTPTFIFO_data_word_I);
 	HB_BC       <= func_CNTPCKword_hbbc(CNTPTFIFO_data_word_I);
@@ -139,12 +140,13 @@ begin
     
 	
     -- v6 ===================================================================================
+	
      --            is data                    reserved            priority bit     | FEE ID                                           header versions
     SOP_format(1) <= '1' &      block_lenght& x"0000"& System_ID&    x"01"&        Control_register_I.RDH_data.FEE_ID& header_size& x"06";
     --                                               reserved
     SOP_format(2) <= '1' &      x"0000"&  HB_Orbit & x"0000_0"&  HB_BC;
     --                                    reserved
-    SOP_format(3) <= '1' &      x"0000"&  x"00"&      x"000"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
+    SOP_format(3) <= '1' &      x"0000"&  x"0000"&      x"0"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
 	--                                    reserved
     SOP_format(4) <= '1' &      x"0000"&  x"0000"&   Control_register_I.RDH_data.PAR&   x"0000"&Control_register_I.RDH_data.DET_Field;
     -- ======================================================================================    
