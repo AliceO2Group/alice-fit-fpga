@@ -78,6 +78,9 @@ architecture Behavioral of CRU_packet_Builder is
     signal TRG_Orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
     signal TRG_BC      : std_logic_vector(BC_id_bitdepth-1 downto 0);
 	signal TRG_Type    : std_logic_vector(Trigger_bitdepth-1 downto 0);
+	signal Link_ID 	   : std_logic_vector(7 downto 0);
+	signal System_ID   : std_logic_vector(7 downto 0);
+	signal Memory_size : std_logic_vector(15 downto 0);
 
 	
 	signal Data_ff, Data_ff_next : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -113,6 +116,9 @@ begin
 	TRG_Orbit   <= func_CNTPCKword_trgorbit(CNTPTFIFO_data_word_I);
 	TRG_BC      <= func_CNTPCKword_trgbc(CNTPTFIFO_data_word_I);
 	TRG_Type    <= func_CNTPCKword_trigger(CNTPTFIFO_data_word_I);
+	Link_ID		<= x"00";
+	System_ID	<= x"00";
+	Memory_size	<= x"0000";
 
 	--             is data
 	SOP_format(0) <= '0' & x"10000000000000000000"; -- SOP CRU
@@ -122,15 +128,30 @@ begin
 
     -- v4 ===================================================================================	
      --            is data      reserved      priority bit      FEE ID                 Block lenght    header size        header versions
-    SOP_format(1) <= '1' &      x"000000"&       x"01"&    Control_register_I.RDH_data.FEE_ID&  block_lenght&   header_size&       x"04";
+    --SOP_format(1) <= '1' &      x"000000"&       x"01"&    Control_register_I.RDH_data.FEE_ID&  block_lenght&   header_size&       x"04";
     
-    SOP_format(2) <= '1' &      x"0000"&  HB_Orbit &  TRG_Orbit;
+    --SOP_format(2) <= '1' &      x"0000"&  HB_Orbit &  TRG_Orbit;
     
-    SOP_format(3) <= '1' &      x"0000"& TRG_Type   &   x"0"&HB_BC   &   x"0"&TRG_BC;
+    --SOP_format(3) <= '1' &      x"0000"& TRG_Type   &   x"0"&HB_BC   &   x"0"&TRG_BC;
     --             is data      reserved     pages counter   stop bit                           PAR               detector field
-    SOP_format(4) <= '1' &      x"000000"&    pages_counter&       "0000000"&is_close_frame&   Control_register_I.RDH_data.PAR&   Control_register_I.RDH_data.DET_Field;
+    --SOP_format(4) <= '1' &      x"000000"&    pages_counter&       "0000000"&is_close_frame&   Control_register_I.RDH_data.PAR&   Control_register_I.RDH_data.DET_Field;
     -- ======================================================================================    
     
+	
+    -- v6 ===================================================================================
+     --            is data                    reserved            priority bit     | FEE ID                                           header versions
+    SOP_format(1) <= '1' &      block_lenght& x"0000"& System_ID&    x"01"&        Control_register_I.RDH_data.FEE_ID& header_size& x"06";
+    --                                               reserved
+    SOP_format(2) <= '1' &      x"0000"&  HB_Orbit & x"0000_0"&  HB_BC;
+    --                                    reserved
+    SOP_format(3) <= '1' &      x"0000"&  x"00"&      x"000"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
+	--                                    reserved
+    SOP_format(4) <= '1' &      x"0000"&  x"0000"&   Control_register_I.RDH_data.PAR&   x"0000"&Control_register_I.RDH_data.DET_Field;
+    -- ======================================================================================    
+	
+	
+	
+	
 	EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
 	
 	EOP_format(1) <= '0' & x"20000000000000000000"; -- eop CRU
