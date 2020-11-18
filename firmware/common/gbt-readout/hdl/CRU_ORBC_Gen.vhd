@@ -259,7 +259,9 @@ TRG_evid <=  (TRG_const_HB) WHEN (IS_Orbit_trg_counter = '1') ELSE
 
 RX_Data_gen_ff_next <=	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						(others => '0') WHEN (is_trigger_sending = '0') ELSE
-						"000" & isTRG_valid & EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
+--						"000" & isTRG_valid & EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
+-- new versions of LTU GBT word, corrected on 18/11/2020
+						EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & x"0" & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
 
 RX_IsData_gen_ff_next <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 							'1' WHEN (is_trigger_sending = '1') ELSE

@@ -100,12 +100,18 @@ begin
 	-- equetion define by CRU, must be also defined in RX data generator
 	-- Orbit_ID(32) & x"0" & BC_IC(12) & TRGTYPE(32)
 	
-	
-	ORBC_ID_received <= RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth-1 downto Trigger_bitdepth) WHEN (RX_IsData_I = '1') ELSE
-						(others => '0');
 	TRGTYPE_received <= RX_Data_I(Trigger_bitdepth-1 downto 0) WHEN (Trigger_valid_bit = '1') ELSE
 						(others => '0');
-	Trigger_valid_bit <= '1' when RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth+1 downto Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth) = "1" and (RX_IsData_I = '1') else '0';
+-- 	ORBC_ID_received <= RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth-1 downto Trigger_bitdepth) WHEN (RX_IsData_I = '1') ELSE
+-- 						(others => '0');
+-- 	Trigger_valid_bit <= '1' when RX_Data_I(Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth+1 downto Trigger_bitdepth + Orbit_id_bitdepth + BC_id_bitdepth) = "1" and (RX_IsData_I = '1') else '0';
+	
+-- new versions of LTU GBT word, corrected on 18/11/2020
+ 	ORBC_ID_received <= RX_Data_I(79 downto 48) & RX_Data_I(43 downto 32)
+					    WHEN (RX_IsData_I = '1') ELSE (others => '0');
+						
+	Trigger_valid_bit <= '1' WHEN (x"FFFF9FFF" and RX_Data_I(31 downto 0)) > 0 ELSE '0';
+	
 	
 						
 	-- if recieved rx data contain Event counter
