@@ -140,13 +140,12 @@ begin
     
 	
     -- v6 ===================================================================================
-	
      --            is data                    reserved            priority bit     | FEE ID                                           header versions
     SOP_format(1) <= '1' &      block_lenght& x"0000"& System_ID&    x"01"&        Control_register_I.RDH_data.FEE_ID& header_size& x"06";
     --                                               reserved
     SOP_format(2) <= '1' &      x"0000"&  HB_Orbit & x"0000_0"&  HB_BC;
     --                                    reserved
-    SOP_format(3) <= '1' &      x"0000"&  x"0000"&      x"0"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
+    SOP_format(3) <= '1' &      x"0000"&  x"00"&      x"0"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
 	--                                    reserved
     SOP_format(4) <= '1' &      x"0000"&  x"0000"&   Control_register_I.RDH_data.PAR&   x"0000"&Control_register_I.RDH_data.DET_Field;
     -- ======================================================================================    
