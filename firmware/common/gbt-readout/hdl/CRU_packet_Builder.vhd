@@ -103,7 +103,7 @@ begin
 	dwords_payload <= func_CNTPCKword_npwords(CNTPTFIFO_data_word_I);
 	trailer_payload <= std_logic_vector(to_unsigned((nwords_in_EOP-1), GEN_count_bitdepth));
 
-    data_payload_bytes <= to_integer(unsigned(dwords_payload)) * 10;
+    data_payload_bytes <= (to_integer(unsigned(dwords_payload)) + 5) * 16;
 
 -- Data format ***************************************
 	is_close_frame <= func_CNTPCKword_isclf(CNTPTFIFO_data_word_I);
