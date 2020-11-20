@@ -25,6 +25,7 @@ control_reg.trg_cont_val = 0x0
 control_reg.trg_bunch_freq = 0x0
 control_reg.trg_freq_offset = 0x0
 control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
+control_reg.trg_data_select = 0xFFFFFFFF
 control_reg.bcid_delay = 0x2
 
 control_reg.print_struct()

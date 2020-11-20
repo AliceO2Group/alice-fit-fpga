@@ -522,10 +522,16 @@ port map(
 							cntpckws_state;
 	
 
-	is_frame_open_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE 
+	is_frame_open_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						  '0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
-						  '1' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (is_hb_response = '1') ELSE
-						  '0' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
+						  --'0' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
+						  --'0' WHEN (cntpckws_state_next = s0_simpl_pcw) and (cntpckws_state = s1_closefr_pcw) ELSE
+						  '0' WHEN (cntpckfifo_we = '1') and (cntpckws_state = s1_closefr_pcw) ELSE
+						  
+						  --'1' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (is_hb_response = '1') ELSE
+						  '1' WHEN (cntpckfifo_we = '1') and (is_hb_response = '1') ELSE
+						  
+						  --'0' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 						  is_frame_open;
 
 	-- pages_counter_next <= (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE 
