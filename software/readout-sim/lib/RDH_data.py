@@ -144,6 +144,30 @@ class rdh_header_class:
             self.stop_bit       = int(self.dw3[-10: -8], base=16)   # [39 - 32]
             self.page_counter   = int(self.dw3[-14:-10], base=16)   # [55 - 40]
 
+
+        if self.header_version == 0x6:
+            # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -
+            #   79-76 75-72 71-68 67-64 63-60 59-56 55-52 51-48 47-44 43-40 39-36 35-32 31-28 27-24 23-20 19-16 15-12 11- 8 7 - 4 3 - 0
+            self.header_size = int(self.dw0[-4: -2], base=16)
+            self.fee_id = int(self.dw0[-8: -4], base=16)
+            self.priority_bit = int(self.dw0[-10:-8], base=16)
+            self.block_lenght = int(self.dw0[-20: -16], base=16)
+
+            self.bc = int(self.dw1[-3:], base=16)
+            self.orbit = int(self.dw1[-16: -8], base=16)
+
+            self.trg_type = int(self.dw2[-8:], base=16)
+            self.page_counter = int(self.dw2[-12:-8], base=16)
+            self.stop_bit = int(self.dw2[-14: -12], base=16)
+
+            self.det_field = int(self.dw3[-8:], base=16)
+            self.par_bit = int(self.dw3[-12: -8], base=16)
+
+            # not used in RDH v6
+            self.trg_orbit = 0
+            self.trg_bc = 0
+
+
         return pos+4
 ################################################################
 ################################################################
@@ -185,7 +209,7 @@ class rdh_data_class:
 
     def read_data(self, line_list, pos):
         dyn_pos = self.rdh_header.read_data(line_list, pos)
-        n_dw_in_packet = self.rdh_header.block_lenght / 10
+        n_dw_in_packet = self.rdh_header.block_lenght / 16
 
         packet_start = dyn_pos
         while dyn_pos < packet_start + n_dw_in_packet:

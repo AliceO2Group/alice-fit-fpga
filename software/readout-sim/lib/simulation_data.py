@@ -79,6 +79,8 @@ class simulation_data_class:
         log.info("status data: %s"%(self.status_file_name))
         log.info("total triggers: %d"%( len(self.trig_gen_list) ))
         log.info("total data: %d"%( len(self.data_gen_list) ))
+        print("trg gen list [or bc trg]: ", self.trig_gen_list)
+        print("data gen list [or bc nw]: ", self.data_gen_list)
 
 
     def get_gen_lists(self):
@@ -89,13 +91,15 @@ class simulation_data_class:
             dyn_stat_reg.read_reg_line_hex(self.status_data_list[curr_pos])
 
             if dyn_stat_reg.cru_trigger > 0:
-                self.trig_gen_list.append([dyn_stat_reg.cru_orbit_corr, dyn_stat_reg.cru_bc_corr, dyn_stat_reg.cru_trigger])
+                self.trig_gen_list.append([dyn_stat_reg.cru_orbit, dyn_stat_reg.cru_bc, dyn_stat_reg.cru_trigger])
 
             if dyn_stat_reg.data_gen_report > 0:
                 self.data_gen_list.append([dyn_stat_reg.cru_orbit_corr, dyn_stat_reg.cru_bc_corr, dyn_stat_reg.data_gen_report])
 
             curr_pos += 1
 
+        print(self.data_gen_list)
+        print(self.trig_gen_list)
         return
 
 

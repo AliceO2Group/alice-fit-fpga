@@ -27,27 +27,35 @@ class run_testbench_class:
 
         # test procedure
         log.info("")
-        log.info("Reading run data ... ")
+        log.info("#######################################")
+        log.info("####### TESTING SIMULATION DATA #######")
+        log.info("#######################################")
+        log.info("Run N%i" % (run_num))
+        log.info("")
 
         res = self.read_run_data_check()
 
         if res == 1:
             log.info("Run rdh data successfully read ... ")
         else:
-            log.info(" run rdh data read with %i errors:" % (len(self.errors_messages)))
+            log.info(pylog.c_FAIL +  (" run rdh data read with %i errors:" % (len(self.errors_messages))) + pylog.c_ENDC)
             for message in self.errors_messages: log.info("%s"%(message))
 
-        log.info("Read %i events"%(len(self.rdh_data_list)))
-        self.errors_messages = []
+        if len(self.rdh_data_list) == 0:
+            log.info(  ("Read %i events"%(len(self.rdh_data_list)))  )
+        else:
+            log.info(pylog.c_OKGREEN + ("Read %i events"%(len(self.rdh_data_list))) + pylog.c_ENDC)
 
+            self.errors_messages = []
 
-        log.info("")
-        log.info("Checking run ... ")
-        self.check_run_data()
+            log.info("")
+            log.info("Checking run ... ")
+            self.check_run_data()
 
-        log.info("")
-        log.info("Run tested with %i errors" % (len(self.errors_messages)))
-        for message in self.errors_messages: log.info("%s"%(message))
+            log.info("")
+            if len(self.errors_messages) > 0: log.info( pylog.c_FAIL +  ("!!! Run tested with %i errors !!!" % (len(self.errors_messages)))+pylog.c_ENDC )
+            if len(self.errors_messages) == 0: log.info( pylog.c_OKGREEN +  ("!!! Run tested with %i errors !!!" % (len(self.errors_messages)))+pylog.c_ENDC )
+            for message in self.errors_messages: log.info("%s"%(message))
 
 
 
@@ -98,9 +106,9 @@ class run_testbench_class:
                 self.errors_messages.append("Wrong DEF_F ID: %x, expected: %x"%(dyn_rdh_header.det_field, self.run_data.run_control.RDH_detf))
                 return -1
 
-            n_dw_in_packet = dyn_rdh_header.block_lenght / 10
-            if n_dw_in_packet > 512-4:
-                self.errors_messages.append("Block length is too high: %x, expected: %x"%(n_dw_in_packet, 512-4))
+            n_dw_in_packet = (dyn_rdh_header.block_lenght / 16) - 5
+            if n_dw_in_packet > 8192:
+                self.errors_messages.append("Block length is too high: %x, expected: %x"%(n_dw_in_packet, 8192))
                 return -1
 
             dyn_rdh_data.rdh_header = dyn_rdh_header
@@ -227,8 +235,94 @@ class run_testbench_class:
 
 
         # data integrity -----------------------------------------------------------------------------------------------
+        selected_data = []
+        log.info("Data integrity test [%s] ... " % (self.run_data.run_type))
+
+        sim_dat = self.simulation.data_gen_list
+        sim_trg = self.simulation.trig_gen_list
+        first_ORBIT = self.rdh_data_list[0].rdh_header.orbit
+        last_ORBIT = self.rdh_data_list[-1].rdh_header.orbit
+
+        first_data_line = 0
+        for i in range(0, len(sim_dat)):
+            if sim_dat[i][0] >= first_ORBIT:
+                first_data_line = i
+                break
+
+        last_data_line = 0
+        for i in range(first_data_line, len(sim_dat)):
+            if sim_dat[i][0] > last_ORBIT: break
+            last_data_line = i
+
+        prev_trg_ilist = 0
+        for dat_iter in range(first_data_line, last_data_line):
+
+            #EOr can contain only data for BC 0
+            if sim_dat[dat_iter][0] == last_ORBIT and sim_dat[dat_iter][1] > 0:
+                continue
+
+            for trg_iter in range(prev_trg_ilist, len(sim_trg)):
+
+                # trg for data found
+                if sim_dat[dat_iter][0] == sim_trg[trg_iter][0] and sim_dat[dat_iter][1] == sim_trg[trg_iter][1]:
+                    selected_data.append([sim_dat[dat_iter][0], sim_dat[dat_iter][1], sim_trg[trg_iter][2], sim_dat[dat_iter][2]])
+                    prev_trg_ilist = trg_iter
+                    break
+
+                # no trigger for data
+                if sim_trg[trg_iter][0] > sim_dat[dat_iter][0] or ( sim_dat[dat_iter][0] == sim_trg[trg_iter][0] and sim_dat[dat_iter][1] < sim_trg[trg_iter][1] ):
+                    if self.run_data.run_type == cntrl_reg.readout_cmd.continious: #select data in continious
+                        selected_data.append([sim_dat[dat_iter][0], sim_dat[dat_iter][1], 0, sim_dat[dat_iter][2]])
+                        prev_trg_ilist = trg_iter-1
+                        break
+                    else: # reject data in trigger mode
+                        prev_trg_ilist = trg_iter-1
+                        break
+
+        log.info("Run orbits: [%x, %x]; total data packets: %i; selected data: %i" % (first_ORBIT, last_ORBIT, last_data_line-first_data_line, len(selected_data)))
+        #print(selected_data)
+
+        if len(selected_data) == 0:
+            log.warning(pylog.c_WARNING+"No data selected !!!"+pylog.c_ENDC)
+        else:
+            wrong_ch_num = 0
+            events_num_nogen = 0
+            for irdh in self.rdh_data_list:
+                for ievent in irdh.event_list:
+                    #ievent.print_struct()
+                    #print(selected_data)
+                    for isim_data in selected_data:
+                        if isim_data[0] == ievent.orbit and isim_data[1] == ievent.bc:
+                            if ievent.is_tcm == 1:
+                                n_ch_gen = ((isim_data[3] << 1) | (0x1)) # module_data_gen.vhd line 88
+                            else:
+                                n_ch_gen = isim_data[3]
+
+                            if n_ch_gen != ievent.n_words: wrong_ch_num += 1
+                            selected_data.remove(isim_data)
+                            #print("found !")
+                            break
+                        elif isim_data == selected_data[-1]:
+                            events_num_nogen += 1
 
 
+
+            if len(selected_data) > 0:
+                log.info(pylog.c_FAIL + ("Generated data missed in RDHs %i" % ( len(selected_data))) + pylog.c_ENDC )
+                for isdata in selected_data:
+                    print("orbit: %08x    bc: %03x    trg: %08x    nw: %i"%( isdata[0], isdata[1], isdata[2], isdata[3]))
+                self.errors_messages.append("Generated data missed in RDHs %i" % ( len(selected_data) ))
+
+            if wrong_ch_num > 0:
+                log.info(pylog.c_FAIL + ("%i events with wrong channels number"  % (wrong_ch_num)) + pylog.c_ENDC)
+                self.errors_messages.append("%i events with wrong channels number" % (wrong_ch_num))
+
+            if events_num_nogen > 0:
+                log.info(pylog.c_FAIL + ("%i events not found in gen list"  % (events_num_nogen)) + pylog.c_ENDC)
+                self.errors_messages.append("%i events not found in gen list" % (events_num_nogen))
+
+            if len(selected_data)+wrong_ch_num+events_num_nogen == 0:
+                log.info(pylog.c_OKGREEN + "All data in RDHs OK! ... " + pylog.c_ENDC)
 
         # # data counter -----------------------------------------------------------------------------------------------
         # event_iter = 0

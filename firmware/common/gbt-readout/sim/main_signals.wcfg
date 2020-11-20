@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="1042391fs"></ZoomEndTime>
-      <Cursor1Time time="1000000fs"></Cursor1Time>
+      <ZoomStartTime time="183984210fs"></ZoomStartTime>
+      <ZoomEndTime time="184088861fs"></ZoomEndTime>
+      <Cursor1Time time="184011410fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="463"></NameColumnWidth>
-      <ValueColumnWidth column_width="390"></ValueColumnWidth>
+      <ValueColumnWidth column_width="385"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject fp_name="group177" type="group">
@@ -179,6 +179,7 @@
       <wvobject fp_name="group284" type="group">
          <obj_property name="label">data_gen</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_pattern" type="array">
             <obj_property name="ElementShortName">bunch_pattern[31:0]</obj_property>
             <obj_property name="ObjectShortName">bunch_pattern[31:0]</obj_property>
@@ -226,6 +227,10 @@
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/n_words_in_packet_send" type="array">
             <obj_property name="ElementShortName">n_words_in_packet_send[3:0]</obj_property>
             <obj_property name="ObjectShortName">n_words_in_packet_send[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/data_gen_report" type="array">
+            <obj_property name="ElementShortName">data_gen_report[31:0]</obj_property>
+            <obj_property name="ObjectShortName">data_gen_report[31:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_gen_ff" type="array">
             <obj_property name="ElementShortName">Board_data_gen_ff</obj_property>

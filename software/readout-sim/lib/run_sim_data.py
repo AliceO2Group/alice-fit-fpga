@@ -35,9 +35,10 @@ class run_sim_data_class:
         log.info("data position run stop: %d"%(self.pos_run_stop))
         log.info("data position post run idle: %d"%(self.pos_run_postidl))
         log.info("\noutputs files:")
-        log.info("gbt position run start: %d (%d)"%(self.pos_gbt_start, int(self.gbt_info_list[self.pos_gbt_start], base=16)))
-        log.info("gbt position run stop: %d (%d)"%(self.pos_gbt_stop, int(self.gbt_info_list[self.pos_gbt_stop], base=16)))
-        log.info("gbt position post run idle: %d (%d)"%(self.pos_gbt_postidl, int(self.gbt_info_list[self.pos_gbt_postidl], base=16)))
+        if len(self.gbt_info_list) > 0:
+            log.info("gbt position run start: %d (%d)"%(self.pos_gbt_start, int(self.gbt_info_list[self.pos_gbt_start], base=16)))
+            log.info("gbt position run stop: %d (%d)"%(self.pos_gbt_stop, int(self.gbt_info_list[self.pos_gbt_stop], base=16)))
+            log.info("gbt position post run idle: %d (%d)"%(self.pos_gbt_postidl, int(self.gbt_info_list[self.pos_gbt_postidl], base=16)))
         log.info("\nrun params:")
         log.info("run type: %s"%(self.run_type))
         self.run_control.print_struct()
@@ -126,6 +127,13 @@ class run_sim_data_class:
         return 1
 
     def find_gbt_pos(self):
+
+        if len(self.gbt_info_list) == 0:
+            log.warning(pylog.c_WARNING+"No GBT data !!!"+pylog.c_ENDC)
+            return
+
+
+
         # GBT data run start position
         ipos = 0
         while 1:
