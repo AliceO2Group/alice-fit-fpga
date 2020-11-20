@@ -98,8 +98,8 @@ class simulation_data_class:
 
             curr_pos += 1
 
-        print(self.data_gen_list)
-        print(self.trig_gen_list)
+        # print(self.data_gen_list)
+        # print(self.trig_gen_list)
         return
 
 

@@ -192,7 +192,7 @@ architecture Behavioral of Event_selector is
 begin
 	crutrg_delay_comp <= Control_register_I.crutrg_delay_comp;
 	--crutrg_delay_comp <= x"00f";
-	max_data_packet_payload <= Control_register_I.max_data_payload;
+	max_data_packet_payload <= Control_register_I.max_data_payload-1;
 --	max_data_packet_payload <= x"01c2";
 	Readout_Mode_ff00 <= FIT_GBT_status_I.Readout_Mode;
 	

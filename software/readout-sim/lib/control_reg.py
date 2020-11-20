@@ -18,29 +18,29 @@ class readout_cmd(Enum):
 
 class control_reg_class:
     def __init__(self):
-        self.data_gen = gen_mode.no_gen
+        self.data_gen = gen_mode.main_gen
         self.data_trg_respond_mask = 0
-        self.data_bunch_pattern = 0x1
-        self.data_bunch_freq = 0xF0
-        self.data_freq_offset = 1
+        self.data_bunch_pattern = 0x0
+        self.data_bunch_freq = 0x0
+        self.data_freq_offset = 0
 
-        self.trg_gen = gen_mode.no_gen
+        self.trg_gen = gen_mode.main_gen
         self.trg_rd_command = readout_cmd.idle
         self.trg_single_val = 0
-        self.trg_pattern_0 = 0x1
+        self.trg_pattern_0 = 0
         self.trg_pattern_1 = 0
-        self.trg_cont_val = 0x10
-        self.trg_bunch_freq = 0xf0
-        self.trg_freq_offset = 1
+        self.trg_cont_val = 0
+        self.trg_bunch_freq = 0
+        self.trg_freq_offset = 0
 
         self.rd_bypass = 0
         self.is_hb_response = 1
-        self.trg_data_select = 0x10
+        self.trg_data_select = 0
         self.strt_rdmode_lock = 0
 
         self.bcid_delay = 0xF
-        self.crutrg_delay_comp = 0xf
-        self.max_data_payload = 0xff
+        self.crutrg_delay_comp = 0xF
+        self.max_data_payload = 0xFF
 
         self.reset_orbc_sync = 0
         self.reset_drophit_counter = 0

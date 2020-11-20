@@ -13,20 +13,21 @@ sigin_file = open('simulation_inputs/simple_sig_inputs.txt', 'w')
 
 
 # generators setup ============================
+control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
+control_reg.trg_data_select = 0xFFFFFFFF
+control_reg.bcid_delay = 0x2
+
 control_reg.data_gen = cntrl_reg.gen_mode.main_gen
 control_reg.data_trg_respond_mask = 0
 control_reg.data_bunch_pattern = 0x0
 control_reg.data_bunch_freq = 0xdec
 control_reg.data_freq_offset = 0xdeb-5
 control_reg.trg_gen = cntrl_reg.gen_mode.main_gen
-control_reg.trg_pattern_0 = 0x0
+control_reg.trg_pattern_0 = 0x1
 control_reg.trg_pattern_1 = 0x0
-control_reg.trg_cont_val = 0x0
-control_reg.trg_bunch_freq = 0x0
-control_reg.trg_freq_offset = 0x0
-control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
-control_reg.trg_data_select = 0xFFFFFFFF
-control_reg.bcid_delay = 0x2
+control_reg.trg_cont_val = 0x10
+control_reg.trg_bunch_freq = 0xdec
+control_reg.trg_freq_offset = 0xdeb-5
 
 control_reg.print_struct()
 control_reg.print_raw()

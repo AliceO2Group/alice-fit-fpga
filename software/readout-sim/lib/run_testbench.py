@@ -35,7 +35,7 @@ class run_testbench_class:
 
         res = self.read_run_data_check()
 
-        if res == 1:
+        if len(self.errors_messages) == 0:
             log.info("Run rdh data successfully read ... ")
         else:
             log.info(pylog.c_FAIL +  (" run rdh data read with %i errors:" % (len(self.errors_messages))) + pylog.c_ENDC)
@@ -107,9 +107,12 @@ class run_testbench_class:
                 return -1
 
             n_dw_in_packet = (dyn_rdh_header.block_lenght / 16) - 5
-            if n_dw_in_packet > 8192:
-                self.errors_messages.append("Block length is too high: %x, expected: %x"%(n_dw_in_packet, 8192))
-                return -1
+            max_payload = (self.run_data.run_control.max_data_payload+5)*16
+            # if dyn_rdh_header.block_lenght > max_payload:
+            #     self.errors_messages.append("Block length is too high: %x, expected: %x"%(dyn_rdh_header.block_lenght, max_payload))
+            if n_dw_in_packet > self.run_data.run_control.max_data_payload:
+                self.errors_messages.append("Block length is too high (n data words): %i, expected: %i" % (n_dw_in_packet, self.run_data.run_control.max_data_payload))
+                #return -1
 
             dyn_rdh_data.rdh_header = dyn_rdh_header
             dyn_pos = new_dyn_pos
@@ -243,7 +246,7 @@ class run_testbench_class:
         first_ORBIT = self.rdh_data_list[0].rdh_header.orbit
         last_ORBIT = self.rdh_data_list[-1].rdh_header.orbit
 
-        first_data_line = 0
+        first_data_line = len(sim_dat)
         for i in range(0, len(sim_dat)):
             if sim_dat[i][0] >= first_ORBIT:
                 first_data_line = i
@@ -266,11 +269,11 @@ class run_testbench_class:
                 # trg for data found
                 if sim_dat[dat_iter][0] == sim_trg[trg_iter][0] and sim_dat[dat_iter][1] == sim_trg[trg_iter][1]:
                     selected_data.append([sim_dat[dat_iter][0], sim_dat[dat_iter][1], sim_trg[trg_iter][2], sim_dat[dat_iter][2]])
-                    prev_trg_ilist = trg_iter
+                    prev_trg_ilist = trg_iter-1
                     break
 
                 # no trigger for data
-                if sim_trg[trg_iter][0] > sim_dat[dat_iter][0] or ( sim_dat[dat_iter][0] == sim_trg[trg_iter][0] and sim_dat[dat_iter][1] < sim_trg[trg_iter][1] ):
+                if sim_dat[dat_iter][0] < sim_trg[trg_iter][0]  or ( sim_dat[dat_iter][0] == sim_trg[trg_iter][0] and sim_dat[dat_iter][1] < sim_trg[trg_iter][1] ):
                     if self.run_data.run_type == cntrl_reg.readout_cmd.continious: #select data in continious
                         selected_data.append([sim_dat[dat_iter][0], sim_dat[dat_iter][1], 0, sim_dat[dat_iter][2]])
                         prev_trg_ilist = trg_iter-1
@@ -279,8 +282,8 @@ class run_testbench_class:
                         prev_trg_ilist = trg_iter-1
                         break
 
-        log.info("Run orbits: [%x, %x]; total data packets: %i; selected data: %i" % (first_ORBIT, last_ORBIT, last_data_line-first_data_line, len(selected_data)))
-        #print(selected_data)
+        log.info("Run orbits: [%x (%i), %x (%i)]; total data packets: %i; selected data: %i" % (first_ORBIT, first_data_line, last_ORBIT, last_data_line, last_data_line-first_data_line, len(selected_data)))
+        # print(selected_data)
 
         if len(selected_data) == 0:
             log.warning(pylog.c_WARNING+"No data selected !!!"+pylog.c_ENDC)
