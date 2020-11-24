@@ -47,6 +47,7 @@ infile_gen.gen_run(cntrl_reg.readout_cmd.trigger)
 
 # reset generators
 infile_gen.control_reg.data_bunch_freq = 0x100
+infile_gen.control_reg.max_data_payload = 0xFF
 infile_gen.gen_gsync_signal()
 
 # load continious

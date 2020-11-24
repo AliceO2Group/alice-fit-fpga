@@ -181,6 +181,7 @@ reset_drop_counters <= Control_register_I.reset_drophit_counter;
 
 	
 sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+						'1'	WHEN (is_header_from_fifo = '1') and (Control_register_I.readout_bypass='1') ELSE
 						'0'	WHEN (Board_data_I.is_header = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
 						'0'	WHEN (Board_data_I.is_header = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 						'1'	WHEN (Board_data_I.is_header = '1') ELSE

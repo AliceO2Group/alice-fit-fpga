@@ -13,9 +13,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="356474016fs"></ZoomStartTime>
-      <ZoomEndTime time="356892617fs"></ZoomEndTime>
-      <Cursor1Time time="356727998fs"></Cursor1Time>
+      <ZoomStartTime time="4338377974fs"></ZoomStartTime>
+      <ZoomEndTime time="4339424475fs"></ZoomEndTime>
+      <Cursor1Time time="4339250058fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="463"></NameColumnWidth>
@@ -226,6 +226,7 @@
          <wvobject fp_name="group163" type="group">
             <obj_property name="label">RX_decoder</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/RX_Data_Decoder_comp/Trigger_valid_bit" type="logic">
                <obj_property name="ElementShortName">Trigger_valid_bit</obj_property>
                <obj_property name="ObjectShortName">Trigger_valid_bit</obj_property>
@@ -354,7 +355,6 @@
          <wvobject fp_name="group123" type="group">
             <obj_property name="label">selector_fifos</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/RAWFIFO_RE_O" type="logic">
                <obj_property name="ElementShortName">RAWFIFO_RE_O</obj_property>
                <obj_property name="ObjectShortName">RAWFIFO_RE_O</obj_property>
@@ -463,6 +463,14 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_sending_packet_ff" type="logic">
                <obj_property name="ElementShortName">is_sending_packet_ff</obj_property>
                <obj_property name="ObjectShortName">is_sending_packet_ff</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/max_data_packet_payload" type="array">
+               <obj_property name="ElementShortName">max_data_packet_payload[15:0]</obj_property>
+               <obj_property name="ObjectShortName">max_data_packet_payload[15:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/wcnt_fullpck_ff" type="array">
+               <obj_property name="ElementShortName">wcnt_fullpck_ff[15:0]</obj_property>
+               <obj_property name="ObjectShortName">wcnt_fullpck_ff[15:0]</obj_property>
             </wvobject>
          </wvobject>
       </wvobject>
