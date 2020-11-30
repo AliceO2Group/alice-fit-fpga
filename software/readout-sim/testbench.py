@@ -53,6 +53,9 @@ infile_gen.gen_gsync_signal()
 # load continious
 infile_gen.gen_run(cntrl_reg.readout_cmd.continious)
 
+# spam continious
+infile_gen.gen_run_spam(cntrl_reg.readout_cmd.continious)
+
 # stop idle
 infile_gen.gen_empty_cicle()
 

@@ -60,7 +60,17 @@ class input_generator_class:
 
         return
 
+    def gen_run_spam(self, mode = cntrl_reg.readout_cmd.continious, len = 0):
+        if len < self.run_len: len = self.run_len
 
+        self.control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
+        for i in range(self.empty_len): self.sigin_file.write(self.control_reg.get_reg_line_16() + '\n')
+
+        self.control_reg.trg_rd_command = mode
+        for i in range(len): self.sigin_file.write(self.control_reg.get_reg_line_16() + '\n')
+        self.control_reg.trg_rd_command = cntrl_reg.readout_cmd.idle
+        for i in range(self.empty_len): self.sigin_file.write(self.control_reg.get_reg_line_16() + '\n')
+        return
 
 
 
