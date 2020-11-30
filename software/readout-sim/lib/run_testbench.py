@@ -110,7 +110,7 @@ class run_testbench_class:
             max_payload = (self.run_data.run_control.max_data_payload+5)*16
             # if dyn_rdh_header.block_lenght > max_payload:
             #     self.errors_messages.append("Block length is too high: %x, expected: %x"%(dyn_rdh_header.block_lenght, max_payload))
-            if n_dw_in_packet > self.run_data.run_control.max_data_payload:
+            if n_dw_in_packet > self.run_data.run_control.max_data_payload+10: #10=max detector packet lenght
                 self.errors_messages.append("Block length is too high (n data words): %i, expected: %i" % (n_dw_in_packet, self.run_data.run_control.max_data_payload))
                 #return -1
 
