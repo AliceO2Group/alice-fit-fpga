@@ -4,7 +4,7 @@ set_max_delay -datapath_only -from [get_clocks *] -to [get_ports {LA?[*] LAC* LE
 
 set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_ErrorDet] FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_Ready] IsRXData0_reg}]
 
-set_max_delay -datapath_only -from [get_cells las_o_reg] -to [get_clocks LCLK] 2.000
+set_max_delay -from [get_cells las_o_reg] -to [get_clocks LCLK] 2.900
 
 ## GBT RX:
 ##--------
