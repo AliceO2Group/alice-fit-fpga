@@ -60,7 +60,7 @@ architecture Behavioral of RXDATA_CLKSync is
  signal RX_DATA_DATACLK	: STD_LOGIC_VECTOR (GBT_data_word_bitdepth+GBT_slowcntr_bitdepth-1 downto 0);
 
 --  -- data ff by data clk
- signal CLK_PH_counter_stop	: STD_LOGIC_VECTOR (2 downto 0);			
+ signal CLK_PH_counter_stop	: STD_LOGIC_VECTOR (2 downto 0)  := "000";			
  signal CLK_PH_counter_dc, CLK_PH_counter_dcp, CLK_PH_counter_dcm	: STD_LOGIC_VECTOR(2 downto 0);	
 
   

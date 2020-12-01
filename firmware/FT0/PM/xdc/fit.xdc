@@ -16,10 +16,10 @@ create_clock -period 25.000 -name MCLK3 [get_ports MCLK3_P]
 create_clock -period 100.000 -name SPI [get_ports SCK]
 create_clock -period 50.000 -name HSPI [get_ports HSCK]
 
-create_clock -period 8.333 -name RxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/RXOUTCLK}]
-create_clock -period 8.333 -name TxWordCLK [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
+create_clock -period 8.333 -name RxWordCLK [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/RXOUTCLK}]
+create_clock -period 8.333 -name TxWordCLK [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
 
-create_generated_clock -name RXDataCLK [get_pins FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
+create_generated_clock -name RXDataCLK [get_pins FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
 
 #set_clock_groups -name ASYNC_CLOCKS -asynchronous -group [get_clocks -include_generated_clocks {RxWordCLK RXDataCLK}] -group [get_clocks -include_generated_clocks TxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
 set_clock_groups -name ASYNC_CLOCKS1 -asynchronous -group [get_clocks RxWordCLK] -group [get_clocks -include_generated_clocks MCLK1]
