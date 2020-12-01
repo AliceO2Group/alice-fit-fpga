@@ -13,8 +13,8 @@ CONFIG.Clock_Enable_Type                            string  false      Slave_Int
 CONFIG.Clock_Type_AXI                               string  false      Common_Clock
 CONFIG.Component_Name                               string  false      raw_data_fifo
 CONFIG.DATA_WIDTH                                   string  false      64
-CONFIG.Data_Count                                   string  false      false
-CONFIG.Data_Count_Width                             string  false      12
+CONFIG.Data_Count                                   string  false      true
+CONFIG.Data_Count_Width                             string  false      13
 CONFIG.Disable_Timing_Violations                    string  false      false
 CONFIG.Disable_Timing_Violations_AXI                string  false      false
 CONFIG.Dout_Reset_Value                             string  false      0
@@ -60,14 +60,14 @@ CONFIG.FIFO_Implementation_wdch                     string  false      Common_Cl
 CONFIG.FIFO_Implementation_wrch                     string  false      Common_Clock_Block_RAM
 CONFIG.Fifo_Implementation                          string  false      Common_Clock_Block_RAM
 CONFIG.Full_Flags_Reset_Value                       string  false      0
-CONFIG.Full_Threshold_Assert_Value                  string  false      2045
+CONFIG.Full_Threshold_Assert_Value                  string  false      4095
 CONFIG.Full_Threshold_Assert_Value_axis             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wrch             string  false      1023
-CONFIG.Full_Threshold_Negate_Value                  string  false      2044
+CONFIG.Full_Threshold_Negate_Value                  string  false      4094
 CONFIG.HAS_ACLKEN                                   string  false      false
 CONFIG.HAS_TKEEP                                    string  false      false
 CONFIG.HAS_TSTRB                                    string  false      false
@@ -87,8 +87,8 @@ CONFIG.Inject_Sbit_Error_rdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wach                       string  false      false
 CONFIG.Inject_Sbit_Error_wdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wrch                       string  false      false
-CONFIG.Input_Data_Width                             string  false      160
-CONFIG.Input_Depth                                  string  false      2048
+CONFIG.Input_Data_Width                             string  false      80
+CONFIG.Input_Depth                                  string  false      4096
 CONFIG.Input_Depth_axis                             string  false      1024
 CONFIG.Input_Depth_rach                             string  false      16
 CONFIG.Input_Depth_rdch                             string  false      1024
@@ -128,7 +128,7 @@ CONFIG.READ_CLK.INSERT_VIP                          string  false      0
 CONFIG.READ_WRITE_MODE                              string  false      READ_WRITE
 CONFIG.RUSER_Width                                  string  false      0
 CONFIG.Read_Clock_Frequency                         string  false      1
-CONFIG.Read_Data_Count                              string  false      true
+CONFIG.Read_Data_Count                              string  false      false
 CONFIG.Read_Data_Count_Width                        string  false      13
 CONFIG.Register_Slice_Mode_axis                     string  false      Fully_Registered
 CONFIG.Register_Slice_Mode_rach                     string  false      Fully_Registered
@@ -167,7 +167,7 @@ CONFIG.Write_Acknowledge_Flag                       string  false      false
 CONFIG.Write_Acknowledge_Sense                      string  false      Active_High
 CONFIG.Write_Clock_Frequency                        string  false      1
 CONFIG.Write_Data_Count                             string  false      false
-CONFIG.Write_Data_Count_Width                       string  false      12
+CONFIG.Write_Data_Count_Width                       string  false      13
 CONFIG.asymmetric_port_width                        string  false      false
 CONFIG.axis_type                                    string  false      FIFO
 CONFIG.dynamic_power_saving                         string  false      false

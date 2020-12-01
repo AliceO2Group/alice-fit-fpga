@@ -27,7 +27,7 @@ use work.fit_gbt_board_package.all;
 
 entity FIT_GBT_project is
 	generic (
-		GENERATE_GBT_BANK	: integer := 0
+		GENERATE_GBT_BANK	: integer := 1
 	);
 
     Port (		
@@ -92,14 +92,15 @@ signal FIT_GBT_STATUS 				: FIT_GBT_status_type;
 -- from data generator
 signal Board_data_from_main_gen		: board_data_type;
 
-signal RX_IsData_from_datagen 		:  std_logic; 
-signal RX_Data_from_datagen 		:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0); 
+signal RX_IsData_from_orbcgen 		:  std_logic; 
+signal RX_Data_from_orbcgen 		:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0); 
 
 -- from rx data decoder
 signal ORBC_ID_from_RXdecoder 			: std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID from CRUS
 signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0); -- EVENT ID to PM/TCM
 signal Trigger_from_RXdecoder 			: std_logic_vector(Trigger_bitdepth-1 downto 0);
 signal Readout_Mode_from_RXdecoder 		: Type_Readout_Mode;
+signal CRU_Readout_Mode_from_RXdecoder 	: Type_Readout_Mode;
 signal Start_run_from_RXdecoder			: std_logic;
 signal Stop_run_from_RXdecoder			: std_logic;
 signal BCIDsync_Mode_from_RXdecoder 	: Type_BCIDsync_Mode;
@@ -119,11 +120,11 @@ attribute mark_debug of Board_data_from_main_gen : signal is "true";
 attribute mark_debug of RX_IsData_DataClk : signal is "true";
 attribute mark_debug of RX_Data_DataClk : signal is "true";
 
-attribute mark_debug of RX_IsData_from_datagen : signal is "true";
-attribute mark_debug of RX_Data_from_datagen : signal is "true";
-
 attribute mark_debug of TX_IsData_from_packager : signal is "true";
 attribute mark_debug of TX_Data_from_packager : signal is "true";
+
+attribute mark_debug of RX_IsData_from_orbcgen : signal is "true";
+attribute mark_debug of RX_Data_from_orbcgen : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -138,6 +139,7 @@ begin
 	
 	FIT_GBT_STATUS.GBT_status 					<= from_gbt_bank_prj_GBT_status;
 	FIT_GBT_STATUS.Readout_Mode 				<= Readout_Mode_from_RXdecoder;
+	FIT_GBT_STATUS.CRU_Readout_Mode				<= CRU_Readout_Mode_from_RXdecoder;
 	FIT_GBT_STATUS.BCIDsync_Mode 				<= BCIDsync_Mode_from_RXdecoder;
 	FIT_GBT_STATUS.Start_run 					<= Start_run_from_RXdecoder;
 	FIT_GBT_STATUS.Stop_run 					<= Stop_run_from_RXdecoder;
@@ -156,8 +158,9 @@ begin
 	
 	RX_Data_DataClk <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
 	
-	Data_from_FITrd_O 	<= TX_Data_from_packager;
-	IsData_from_FITrd_O	<= TX_IsData_from_packager;
+	Data_from_FITrd_O <= TX_Data_from_packager 				WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) ELSE RX_Data_from_orbcgen;
+	IsData_from_FITrd_O <= TX_IsData_from_packager 			WHEN (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) ELSE RX_IsData_from_orbcgen;
+	
 	
 	RxData_rxclk_from_GBT_O <= RX_Data_rxclk_from_GBT;
 	IsRxData_rxclk_from_GBT_O <= RX_IsData_rxclk_from_GBT;
@@ -217,14 +220,15 @@ Port map (
 		FIT_GBT_status_I => FIT_GBT_STATUS,
 		Control_register_I => Control_register_I,
 			
-		RX_IsData_I => RX_IsData_from_datagen,
-		RX_Data_I => RX_Data_from_datagen,
+		RX_IsData_I => RX_IsData_from_orbcgen,
+		RX_Data_I => RX_Data_from_orbcgen,
 		
 		ORBC_ID_from_CRU_O => ORBC_ID_from_RXdecoder,
 		ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
 		Trigger_O => Trigger_from_RXdecoder,
 		
 		Readout_Mode_O => Readout_Mode_from_RXdecoder,
+		CRU_Readout_Mode_O => CRU_Readout_Mode_from_RXdecoder,
 		Start_run_O	=> Start_run_from_RXdecoder,
 		Stop_run_O => Stop_run_from_RXdecoder,
 		BCIDsync_Mode_O => BCIDsync_Mode_from_RXdecoder
@@ -241,7 +245,9 @@ Module_Data_Gen_comp : entity work.Module_Data_Gen
 		Control_register_I	=> Control_register_I,
 		
 		Board_data_I		=> Board_data_I,
-		Board_data_O		=> Board_data_from_main_gen
+		Board_data_O		=> Board_data_from_main_gen,
+		
+		data_gen_report_O => FIT_GBT_STATUS.Data_gen_report
 		);		
 -- =====================================================
 
@@ -258,8 +264,8 @@ CRU_ORBC_Gen_comp : entity work.CRU_ORBC_Gen
 		RX_IsData_I 		=> RX_IsData_DataClk,
 		RX_Data_I 			=> RX_Data_DataClk,
 		
-		RX_IsData_O 		=> RX_IsData_from_datagen,
-		RX_Data_O 			=> RX_Data_from_datagen,
+		RX_IsData_O 		=> RX_IsData_from_orbcgen,
+		RX_Data_O 			=> RX_Data_from_orbcgen,
 		
 		Current_BCID_from_O => open,
 		Current_ORBIT_from_O=> open,
@@ -322,6 +328,8 @@ port map (
 gbt_reset <=    RESET_I or reset_l;
 
 
+
+gbt_bank_gen: if GENERATE_GBT_BANK = 1 generate 
  gbtBankDsgn : entity work.GBT_TX_RX
      port map (
      RESET => gbt_reset,
@@ -340,8 +348,34 @@ gbt_reset <=    RESET_I or reset_l;
             IsRXData => RX_IsData_rxclk_from_GBT,
             GBT_Status_O => from_gbt_bank_prj_GBT_status
             );
-			
-			
+end generate gbt_bank_gen;
+
+gbt_bank_gen_sim: if GENERATE_GBT_BANK = 0 generate 
+            MGT_TX_P_O <= '0';
+            MGT_TX_N_O <= '0';
+            GBT_RxFrameClk_O <= DataClk_I;
+            RX_Data_rxclk_from_GBT <= (others => '0');
+            RX_IsData_rxclk_from_GBT <= '0';
+            
+            from_gbt_bank_prj_GBT_status.txWordClk <= '0';
+            from_gbt_bank_prj_GBT_status.rxFrameClk <= '0';
+            from_gbt_bank_prj_GBT_status.rxWordClk <= '0';
+            from_gbt_bank_prj_GBT_status.txOutClkFabric <= '0';
+            
+            from_gbt_bank_prj_GBT_status.mgt_phalin_cplllock <= '0';
+            
+            from_gbt_bank_prj_GBT_status.rxWordClkReady <= '0';
+            from_gbt_bank_prj_GBT_status.rxFrameClkReady <= '0';
+            
+            from_gbt_bank_prj_GBT_status.mgtLinkReady <= '0';
+            from_gbt_bank_prj_GBT_status.tx_resetDone <= '0';
+            from_gbt_bank_prj_GBT_status.tx_fsmResetDone    <= '0';
+            
+            from_gbt_bank_prj_GBT_status.gbtRx_Ready    <= '0';
+            from_gbt_bank_prj_GBT_status.gbtRx_ErrorDet    <= '0';
+            from_gbt_bank_prj_GBT_status.gbtRx_ErrorLatch    <= '0';
+            from_gbt_bank_prj_GBT_status.Rx_Phase_error    <= '0';
+end generate gbt_bank_gen_sim;
 
 
  -- =============================================================

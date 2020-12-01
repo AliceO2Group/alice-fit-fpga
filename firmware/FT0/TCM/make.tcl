@@ -217,24 +217,25 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std_rdwrctrl.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager_tcm_temp.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
-set imported_files [import_files -fileset sources_1 $files]
+#set imported_files [import_files -fileset sources_1 $files]
+add_files -norecurse -fileset sources_1 $files
 
 #-------------------------------------------------------------------------------
 if {[string equal $proj_create "yes"]} {
@@ -297,26 +298,17 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
-
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/../../common/gbt-readout/sim/testbench_DataPackager.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/sim/TestBench_Data_Packager_PM.wcfg" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/readout_simulation.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/main_signals.wcfg" ]\
 ]
-set imported_files [import_files -fileset sim_1 $files]
-
-# Set 'sim_1' fileset file properties for remote files
-# None
-
-# Set 'sim_1' fileset file properties for local files
-#set file "new/tcm_sim.vhd"
-#set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-#set_property -name "file_type" -value "VHDL" -objects $file_obj
-
+#set imported_files [import_files -fileset sim_1 $files]
+add_files -norecurse -fileset sim_1 $files
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "testbench_DataPackager.vhd" -objects $obj
+set_property -name "top" -value "testbench_readout" -objects $obj
 
 
 

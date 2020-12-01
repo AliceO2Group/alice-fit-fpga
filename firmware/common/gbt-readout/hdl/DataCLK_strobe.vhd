@@ -36,7 +36,7 @@ end DataCLK_strobe;
 
 architecture Behavioral of DataCLK_strobe is
 
-	signal DataClk_q_dataclk : std_logic;
+	signal DataClk_q_dataclk : std_logic := '0';
 	signal DataClk_qff00_sysclk : std_logic;
 	signal DataClk_front_sysclk : std_logic;
 

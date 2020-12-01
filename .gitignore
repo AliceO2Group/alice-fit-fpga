@@ -6,3 +6,12 @@ build
 *.pb
 .Xil
 *.zip
+
+simulation_inputs
+simulation_outputs
+test_data
+
+.idea
+venv
+*.pyc
+

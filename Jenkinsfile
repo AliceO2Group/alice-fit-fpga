@@ -53,11 +53,6 @@ pipeline {
             sh('./software/ci/build.sh TCM')
           }
         }
-        stage('FTM') {
-          steps {
-            sh('./software/ci/build.sh FTM')
-          }
-        }
       }
     }
     stage('Copy bitstreams') {

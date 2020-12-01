@@ -78,13 +78,14 @@ architecture RTL of Channel is
 type vector4x9 is array (0 to 3) of STD_LOGIC_VECTOR (8 downto 0);
 
 signal TDC_rdy320_0, TDC_rdy320, TDC_rdy320_1, TDC_rdy_en, TDC_out, CH_t_trig0, CH_t_trig1, CH_t_trig2, TDC_rdy, TDC_dt,CH_dt, CH_trig_f, EV, EV_0, EV_E, EV_de, EV_fl, EV_b1, EV_b0, CH_wait, CH_tr_en, CH_de, CH_ds, FIFO_rst, EV_rdy, spi_lock0 : STD_LOGIC; 
-signal EVENTFIFO_wr, EVENTFIFO_rd, EVENTFIFO_empty, CH_trig_on, FEV_0, FEV_1,  EV_a0, CSTR_0, CSTR_1, CSTR_2, CSTR_3, CSTR_4, EV_am_fl, EV_am_fl0, EV_am_en, CH_rd, Evnt, Ampl_OK, Ampl_high, Time_OK, Time_OK_rd, Time_lost, Event_inp, CH_trig_a : STD_LOGIC;
+signal EVENTFIFO_wr, EVENTFIFO_rd, EVENTFIFO_empty, CH_trig_on, FEV_0, FEV_1,  EV_a0, CSTR_0, CSTR_1, CSTR_2, CSTR_3, EV_am_fl, EV_am_fl0, EV_am_en, CH_rd, Evnt, Ampl_OK, Ampl_high, Time_OK, Time_OK_rd, Time_lost, Event_inp, CH_trig_a : STD_LOGIC;
 signal CH_TIME0, CH_TIME1, CH_TIME2, CH_RTIME, R_corr : STD_LOGIC_VECTOR (11 downto 0);
 signal EV_id :  STD_LOGIC_VECTOR(5 downto 0);
 signal EV_dly : vector4x9;
 signal EV_v : STD_LOGIC_VECTOR (8 downto 0);
 signal C_FOUT,EVENTFIFO_in : STD_LOGIC_VECTOR (22 downto 0);
 signal CH_0, CH_ampl0, CH_BS, ampl_fin, CH_BS0, CH_BS1 :  STD_LOGIC_VECTOR(12 downto 0);
+signal ampl_dat : STD_LOGIC_VECTOR(13 downto 0);
 signal WD_count : STD_LOGIC_VECTOR(2 downto 0);
 signal WD_rdy : STD_LOGIC_VECTOR(1 downto 0);
 signal RDF_wr, rd_empty : STD_LOGIC;
@@ -96,7 +97,7 @@ signal RDF_in  : STD_LOGIC_VECTOR(32 downto 0);
 signal TDC_pause : STD_LOGIC_VECTOR(5 downto 0);
 signal TDC_load : STD_LOGIC_VECTOR(3 downto 0);
 
-signal Cal_d, Cal_d0, Cal_d1 : STD_LOGIC;
+signal Cal_d, Cal_d0, Cal_d1, CH_new : STD_LOGIC;
 signal Z : STD_LOGIC_VECTOR(9 downto 0);
 signal ZS : STD_LOGIC_VECTOR(17 downto 0);
 signal ZS0 : STD_LOGIC_VECTOR(15 downto 0);
@@ -143,7 +144,9 @@ pulse_in<=EV_E;
 
 EVENTFIFO: EVENT_FIFO port map (clk => clk320, srst =>RESET, din =>EVENTFIFO_in, wr_en => EVENTFIFO_wr, rd_en =>EVENTFIFO_rd, dout => C_FOUT, full =>open, empty =>EVENTFIFO_empty);
 
-EVENTFIFO_in <=CH_0(12)& Ampl_fin & EV_am_fl & EV_dly(3)(7 downto 0);
+EVENTFIFO_in <=ampl_dat & EV_am_fl & EV_dly(3)(7 downto 0);
+
+ampl_dat <=CH_0(12)& Ampl_fin when (CH_trig_a='1') else (others=>'0'); 
 
 RD_FIFO:  CHAN_RD_FIFO port map (clk => clk320, srst =>FIFO_rst, din =>RDF_in, wr_en => RDF_wr, rd_en =>DATA_rd, dout => DATA_out, full =>open, empty =>rd_empty);
 
@@ -171,7 +174,7 @@ if (chan_ena='1') then EV_0<=CGE; else EV_0<='0'; end if;
  
 EV_rdy<= EV; EV<=EV_0; 
 
-CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2; CSTR_4<=CSTR_3;
+CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
 if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
 
   if (Cal_d='1') then
@@ -206,17 +209,20 @@ if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
 
 
 if (CSTR_2='1') and (CSTR_3='0') and (EV_am_fl0='1') then
-        if (CH_0(12)='0') then CH_BS0<=CH_BS; else  CH_BS1<=CH_BS; end if;
+        if (CH_0(12)='0') then CH_BS0<=CH_BS; else  CH_BS1<=CH_BS; end if; 
+        CH_new<='1';
+    else CH_new<='0';
 end if;
 
-if (CSTR_3='1') and (CSTR_4='0') and (EV_am_fl0='1') then
+if (CH_new='1') then
  if (CH_0(12)='0') then CH_R0<=CH_R0-std_logic_vector(resize(signed(CH_R0(22 downto 10)), 23)-resize(signed(CH_BS0),23));
                else     CH_R1<=CH_R1-std_logic_vector(resize(signed(CH_R1(22 downto 10)), 23)-resize(signed(CH_BS1),23));
  end if;
 end if;
 
 if (spi_lock='1') and (spi_lock0='0') then 
-  R0_cal<= CH_R0(22 downto 10); R1_cal<= CH_R1(22 downto 10);
+  R0_cal<= CH_R0(22 downto 10); 
+  R1_cal<= CH_R1(22 downto 10);
   CH0_zero<=CH0_Z(21 downto 10);  CH1_zero<=CH1_Z(21 downto 10);
   Z0_cal<=ZR0(25 downto 10); Z1_cal<=ZR1(25 downto 10); 
 end if;

@@ -124,10 +124,9 @@ begin
 
 -- Header format *************************************
 	packet_lenght_fromheader <= func_PMHEADER_n_dwords( Board_data_sysclkff.data_word );
-	--is_data_word_header <= func_PMHEADER_is_header( Board_data_sysclkff.data_word );	
 	header_orbit <=func_PMHEADER_getORBIT(Board_data_sysclkff.data_word);
 	header_bc <= func_PMHEADER_getBC(Board_data_sysclkff.data_word);
-	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error);
+	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error, '0');
 	data_word <= Board_data_sysclkff.data_word;
 -- ***************************************************
 
@@ -182,8 +181,9 @@ reset_drop_counters <= Control_register_I.reset_drophit_counter;
 
 	
 sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0'	WHEN (Board_data_I.is_header = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
 						'0'	WHEN (Board_data_I.is_header = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
+						'1'	WHEN (Board_data_I.is_header = '1') and (Control_register_I.readout_bypass='1') ELSE
+						'0'	WHEN (Board_data_I.is_header = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
 						'1'	WHEN (Board_data_I.is_header = '1') ELSE
 						sending_event;
 		

@@ -1243,8 +1243,9 @@ if (HSCKI'event and HSCKI='0') then
         if (hspi_bit_count(3 downto 0)="1110") and (hspi_rd='1') and (hspi_addr(7 downto 6)="10") then hspibuf_rd<='1';  end if; 
         
         if  (rd_lock_hspi='1') then 
-             hspibuf_rd<='0';  hspi_h<= not hspi_h; 
-         
+             hspibuf_rd<='0';   
+                
+             if (hspi_addr(7 downto 4)>=x"C") then hspi_h<= not hspi_h; end if;
              if (hspi_addr(7 downto 4)<x"C") or (hspi_h='1') then hspi_addr <= hspi_addr+1; end if;
              if (hspi_addr(7 downto 3)>="11101")  and (hspi_h='1') then HSPI_DATA<=hspi_32l;
             
