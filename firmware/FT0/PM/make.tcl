@@ -20,7 +20,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "fit"
+set project_name "PM"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -78,7 +78,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/fit.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/PM.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -201,12 +201,14 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
 
+add_files -norecurse -fileset sources_1 $files
+
 if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset object
     set obj [get_filesets sources_1]
     add_files -norecurse -fileset $obj $files
     set_property -name "file_type" -value "VHDL" -objects [get_files [list "*.vhd"]]
-
+	
     fit::make_ipcores "${proj_dir}/generated"
 
     # the following is needed in order to have parallel IP synthesis and implementation runs
@@ -215,8 +217,8 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top"                     "fit"\
-		   "edif_extra_search_paths" "D:/proj/fit/ipcore_dir"] \
+		   "top"                     "PM"\
+		   "edif_extra_search_paths" "D:/proj/PM/ipcore_dir"] \
 	[get_filesets sources_1]
 
     # Create 'constrs_1' fileset (if not found)
@@ -273,9 +275,28 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 set obj [get_filesets sim_1]
 # Empty (no sources present)
 
+
+
+
+
+
+# Set 'sim_1' fileset object
+set obj [get_filesets sim_1]
+# Import local files from the original project
+set files [list \
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/readout_simulation.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/sim/main_signals.wcfg" ]\
+]
+#set imported_files [import_files -fileset sim_1 $files]
+add_files -norecurse -fileset sim_1 $files
+
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "fit" -objects $obj
+set_property -name "top" -value "testbench_readout" -objects $obj
+
+
+
+
 
 # Create 'synth_1' run (if not found)
 config_webtalk -user off
@@ -370,5 +391,5 @@ puts "INFO: Project created:${project_name}"
 
 update_compile_order -fileset sources_1
 reset_run -quiet synth_1
-launch_runs impl_1 -to_step write_bitstream -jobs 7
+launch_runs impl_1 -to_step write_bitstream  -jobs 7
 wait_on_run impl_1

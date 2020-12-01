@@ -164,7 +164,7 @@ begin
 				if(
 					(not Is_input_data_void) or
 					((MODULE_data_I_ff.EVENT_ID(event_id_bitdepth-1 downto event_id_bitdepth - Trigger_bitdepth)
-						and TRG_const_response) /= TRG_const_void)
+						and x"ffffffff") /= TRG_const_void)
 				) then
 					FIFO_WE_ff_next <= '1';
 				else 

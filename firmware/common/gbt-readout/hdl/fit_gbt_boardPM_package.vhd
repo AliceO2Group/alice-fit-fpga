@@ -61,15 +61,6 @@ package fit_gbt_board_package is
 
 
 -- ###################### CONVERSION FUNCTION ##############################
-function func_PMHEADER_get_header
-(
-        channel_n_words: std_logic_vector(tdwords_bitdepth-1 downto 0);
-        ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
-        BCID : std_logic_vector(BC_id_bitdepth-1 downto 0)
-)
-return std_logic_vector;
-
---function func_PMHEADER_is_header (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic;
 function func_PMHEADER_n_dwords (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
 function func_PMHEADER_getORBIT (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
 function func_PMHEADER_getBC (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
@@ -85,24 +76,6 @@ end fit_gbt_board_package;
 package body fit_gbt_board_package is
 
 -- ###################### CONVERSION FUNCTION ##############################
-function func_PMHEADER_get_header
-(
-        channel_n_words: std_logic_vector(tdwords_bitdepth-1 downto 0);
-		ORBIT : std_logic_vector(Orbit_id_bitdepth-1 downto 0);        
-		BCID : std_logic_vector(BC_id_bitdepth-1 downto 0)
-)
-return std_logic_vector is
-
-begin
-    return x"F" & channel_n_words(tdwords_bitdepth-1 downto 0) & x"000_0000" & ORBIT & BCID;
-end function;
-
-
--- function func_PMHEADER_is_header (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic is
--- begin
--- if(pm_word(GBT_data_word_bitdepth-1 downto GBT_data_word_bitdepth-4) = x"f") then return '1'; else return '0'; end if;
--- end function;
-
 function func_PMHEADER_getORBIT (pm_word : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector is
 begin
 return pm_word(Orbit_id_bitdepth+BC_id_bitdepth-1 downto BC_id_bitdepth);
