@@ -942,6 +942,8 @@ FitGbtPrg: FIT_GBT_project
 		
 		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
 		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
+		rx_ph320 => rx_phase_status(2 downto 0),
+		ph_error320 => rx_phase_status(3),  
 
 		FIT_GBT_status_O 	=> FIT_GBT_status
 		);		

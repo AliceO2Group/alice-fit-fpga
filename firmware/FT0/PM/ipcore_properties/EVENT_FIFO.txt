@@ -87,7 +87,7 @@ CONFIG.Inject_Sbit_Error_rdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wach                       string  false      false
 CONFIG.Inject_Sbit_Error_wdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wrch                       string  false      false
-CONFIG.Input_Data_Width                             string  false      23
+CONFIG.Input_Data_Width                             string  false      25
 CONFIG.Input_Depth                                  string  false      32
 CONFIG.Input_Depth_axis                             string  false      1024
 CONFIG.Input_Depth_rach                             string  false      16
@@ -100,7 +100,7 @@ CONFIG.MASTER_ACLK.INSERT_VIP                       string  false      0
 CONFIG.M_AXI.INSERT_VIP                             string  false      0
 CONFIG.M_AXIS.INSERT_VIP                            string  false      0
 CONFIG.Master_interface_Clock_enable_memory_mapped  string  false      false
-CONFIG.Output_Data_Width                            string  false      23
+CONFIG.Output_Data_Width                            string  false      25
 CONFIG.Output_Depth                                 string  false      32
 CONFIG.Output_Register_Type                         string  false      Embedded_Reg
 CONFIG.Overflow_Flag                                string  false      false
