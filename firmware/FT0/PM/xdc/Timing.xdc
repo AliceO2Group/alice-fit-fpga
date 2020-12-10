@@ -11,9 +11,9 @@ set_max_delay -datapath_only -from [get_clocks {TDCCLK1 CLK300_1}] -to [get_cell
 set_max_delay -datapath_only -from [get_clocks {TDCCLK2 CLK300_2}] -to [get_cells {TDC2_CH?/tdc_raw_i_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks {TDCCLK3 CLK300_3}] -to [get_cells {TDC3_CH?/tdc_raw_i_reg[*]}] 3.000
 
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK1 CLK300_1}] -to [get_cells {{CHANNEL1?/CH_TIME1_reg[*]} CHANNEL1?/CH_t_trig1_reg CHANNEL1?/CH_trig_f_reg}] 3.800
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK2 CLK300_2}] -to [get_cells {{CHANNEL2?/CH_TIME1_reg[*]} CHANNEL2?/CH_t_trig1_reg CHANNEL2?/CH_trig_f_reg}] 3.800
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK3 CLK300_3}] -to [get_cells {{CHANNEL3?/CH_TIME1_reg[*]} CHANNEL3?/CH_t_trig1_reg CHANNEL3?/CH_trig_f_reg}] 3.800
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK1 CLK300_1}] -to [get_cells {{CHANNEL1?/CH_TIME1_reg[*]} CHANNEL1?/CH_t_trig1_reg CHANNEL1?/CH_trig_f_reg CHANNEL1?/ch_tc1_reg}] 3.800
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK2 CLK300_2}] -to [get_cells {{CHANNEL2?/CH_TIME1_reg[*]} CHANNEL2?/CH_t_trig1_reg CHANNEL2?/CH_trig_f_reg CHANNEL2?/ch_tc1_reg}] 3.800
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK3 CLK300_3}] -to [get_cells {{CHANNEL3?/CH_TIME1_reg[*]} CHANNEL3?/CH_t_trig1_reg CHANNEL3?/CH_trig_f_reg CHANNEL3?/ch_tc1_reg}] 3.800
 
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK1] -to [get_cells CHANNEL1?/TDC_rdy320_0_reg] 1.000
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK2] -to [get_cells CHANNEL2?/TDC_rdy320_0_reg] 1.000
