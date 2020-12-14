@@ -77,7 +77,7 @@ architecture RTL of Channel is
 
 type vector4x11 is array (0 to 3) of STD_LOGIC_VECTOR (10 downto 0);
 
-signal TDC_rdy320_0, TDC_rdy320, TDC_rdy320_1, TDC_rdy_en, TDC_out, CH_t_trig0, CH_t_trig1, CH_t_trig2, TDC_rdy, TDC_dt,CH_dt, CH_trig_f, EV, EV_0, EV_E, EV_de, EV_fl, EV_b1, EV_b0, CH_wait, CH_tr_en, CH_de, CH_ds, FIFO_rst, EV_rdy, spi_lock0 : STD_LOGIC; 
+signal TDC_rdy320_0, TDC_rdy320, TDC_rdy320_1, TDC_rdy_en, TDC_out, CH_t_trig0, CH_t_trig1, CH_t_trig2, TDC_rdy, TDC_dt,CH_dt, CH_trig_f, EV, EV_0, EV_1, EV_2, EV_E, EV_de, EV_fl, EV_b1, EV_b0, CH_wait, CH_tr_en, CH_de, CH_ds, FIFO_rst, EV_rdy, spi_lock0 : STD_LOGIC; 
 signal EVENTFIFO_wr, EVENTFIFO_rd, EVENTFIFO_empty, CH_trig_on, FEV_0, FEV_1,  EV_a0, CSTR_0, CSTR_1, CSTR_2, CSTR_3, EV_am_fl, EV_am_fl0, EV_am_en, CH_rd, Evnt, Ampl_OK, Ampl_high, Time_OK, Time_OK_rd, Time_lost, Event_inp, CH_trig_a, ch_skp : STD_LOGIC;
 signal CH_TIME0, CH_TIME1, CH_TIME2, CH_RTIME, CH_RTIME0, R_corr : STD_LOGIC_VECTOR (11 downto 0);
 signal EV_id :  STD_LOGIC_VECTOR(5 downto 0);
@@ -97,7 +97,8 @@ signal RDF_in  : STD_LOGIC_VECTOR(32 downto 0);
 signal TDC_pause : STD_LOGIC_VECTOR(5 downto 0);
 signal TDC_load : STD_LOGIC_VECTOR(3 downto 0);
 
-signal Cal_d, Cal_d0, Cal_d1, CH_new, ev_p, ev_p0, ev_p1, ev_p00, ev_p01, ch_tc0, ch_tc1, ch_tc2, ch_tc, ch_bp : STD_LOGIC;
+signal Cal_d, Cal_d0, Cal_d1, CH_new, ev_p0, ev_p1, ev_p00, ev_p01, ch_bp, rt_sel : STD_LOGIC;
+signal ch_tc0, ch_tc1, ch_tc2, ch_tc : STD_LOGIC_VECTOR(1 downto 0);
 signal Z : STD_LOGIC_VECTOR(9 downto 0);
 signal ZS : STD_LOGIC_VECTOR(17 downto 0);
 signal ZS0 : STD_LOGIC_VECTOR(15 downto 0);
@@ -173,7 +174,7 @@ spi_lock0<=spi_lock;
 
 if (chan_ena='1') then EV_0<=CGE; else EV_0<='0'; end if;
  
-EV_rdy<= EV; EV<=EV_0; 
+EV_rdy<= EV; EV<=EV_2; EV_2<=EV_1; EV_1<=EV_0; 
 
 CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
 if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
@@ -252,7 +253,7 @@ end if;
   end if;
  end if;
  
-if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=ev_p;  end if;  
+if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=mt_cou(2);  end if;  
 
 if (mt_cou="001") then 
     
@@ -340,7 +341,9 @@ RDF_wr<= '1' when (mt_cou="010") and (Evnt='1') and (FIFO_dis='0') else '0';
 
 CH_TIME0<=TDC - CH_shift;
 
-ch_tc0<='0' when TDC(11 downto 10) = "01" else '1';
+ch_tc0<="11" when TDC(11 downto 9) = "011" else 
+        "10" when (TDC(11) = '1') or (TDC(10 downto 9) = "00") else
+        "00";
 
 CH_t_trig0<= '1' when ((CH_TIME0 > "1111" & gate_time_low) OR (CH_TIME0 < "0000" & gate_time_high)) else '0';  
 
@@ -362,15 +365,19 @@ CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='0') and (CH_ds
            CH_TIME2 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else
           "0000000000";
           
-CH_RTIME0<=  CH_TIME2 when  (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else CH_TIME1;
+rt_sel<='1' when (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else '0';
+
+CH_RTIME0<=  CH_TIME2 when  (rt_sel='1') else CH_TIME1;
+ch_tc<= ch_tc2 when (rt_sel='1') else ch_tc1;
 
 CH_RTIME<= (CH_RTIME0(11 downto 7) + RDCORR) & CH_RTIME0(6 downto 0);  
 
-ch_tc<= ch_tc2 when  (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else ch_tc1;
 
 ch_bp<= C_FOUT(24) when ((CH_t_trig2='1') and (CH_ds='1')) else C_FOUT(23);
 
-RDCORR<="01111" when ((ch_tc and ch_bp)='1') else "00000";     
+RDCORR<="00000" when (ch_tc(1)='0') or (ch_tc(0)=ch_bp)  else 
+        "01111" when (ch_tc(0)='0') else
+        "10001";     
           
 R_corr<=R0_corr when (CH_0(12)='0') else R1_corr; 
 Ampl_corr<= std_logic_vector(signed(CH_BS) * signed('0'& R_corr));
@@ -379,6 +386,5 @@ Ampl_fin<= Ampl_corr(23 downto 11) when (signed(Ampl_corr(25 downto 23))<1) else
 
 Ampl_OK<='1' when (signed(C_FOUT(21 downto 9)) < signed('0' & Ampl_sat)) else '0';
  
-ev_p<='0' when (mt_cou>=2) and (mt_cou<=5) else '1';
 
 end RTL;
