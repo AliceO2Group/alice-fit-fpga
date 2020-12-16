@@ -64,7 +64,7 @@ set_property ASYNC_REG true [get_cells CHANNEL??/TDC_rdy320_0_reg]
 set_property ASYNC_REG true [get_cells CHANNEL??/TDC_rdy320_reg]
 
 set_property ASYNC_REG true [get_cells CHANNEL??/EV_0_reg]
-set_property ASYNC_REG true [get_cells CHANNEL??/EV_reg]
+set_property ASYNC_REG true [get_cells CHANNEL??/EV_1_reg]
 
 set_property ASYNC_REG true [get_cells CHANNEL??/CSTR_0_reg]
 set_property ASYNC_REG true [get_cells CHANNEL??/CSTR_1_reg]
