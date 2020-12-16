@@ -98,6 +98,7 @@ signal TDC_pause : STD_LOGIC_VECTOR(5 downto 0);
 signal TDC_load : STD_LOGIC_VECTOR(3 downto 0);
 
 signal Cal_d, Cal_d0, Cal_d1, CH_new, ev_p0, ev_p1, ev_p00, ev_p01, ch_bp, rt_sel : STD_LOGIC;
+signal mt_cou_c : STD_LOGIC_VECTOR(2 downto 0);
 signal ch_tc0, ch_tc1, ch_tc2, ch_tc : STD_LOGIC_VECTOR(1 downto 0);
 signal Z : STD_LOGIC_VECTOR(9 downto 0);
 signal ZS : STD_LOGIC_VECTOR(17 downto 0);
@@ -253,7 +254,7 @@ end if;
   end if;
  end if;
  
-if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=not mt_cou(2);  end if;  
+if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=mt_cou_c(2);  end if;  
 
 if (mt_cou="001") then 
     
@@ -377,7 +378,9 @@ ch_bp<= C_FOUT(24) when ((CH_t_trig2='1') and (CH_ds='1')) else C_FOUT(23);
 
 RDCORR<="00000" when (ch_tc(1)='0') or (ch_tc(0)=ch_bp)  else 
         "01111" when (ch_tc(0)='0') else
-        "10001";     
+        "10001";
+        
+mt_cou_c <=mt_cou-2;     
           
 R_corr<=R0_corr when (CH_0(12)='0') else R1_corr; 
 Ampl_corr<= std_logic_vector(signed(CH_BS) * signed('0'& R_corr));
