@@ -253,7 +253,7 @@ end if;
   end if;
  end if;
  
-if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=mt_cou(2);  end if;  
+if (EV_E='1') then ev_p01<=ev_p00; ev_p00<=not mt_cou(2);  end if;  
 
 if (mt_cou="001") then 
     
