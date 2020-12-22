@@ -244,7 +244,7 @@ if {[string equal $proj_create "yes"]} {
     set_property -name "processing_order" -value "EARLY" -objects $file_obj
 
     set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*/xdc/ios.xdc"]]
-    set_property -name "processing_order" -value "EARLY" -objects $file_obj
+    set_property -name "processing_order" -value "NORMAL" -objects $file_obj
     
     # Set 'constrs_1' fileset properties
     set obj [get_filesets constrs_1]
