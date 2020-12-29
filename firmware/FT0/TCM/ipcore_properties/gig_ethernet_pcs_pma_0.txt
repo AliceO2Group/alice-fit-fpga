@@ -65,7 +65,7 @@ CONFIG.SGMII_PHY_Mode                     string  false      false
 CONFIG.S_AXI.INSERT_VIP                   string  false      0
 CONFIG.S_AXI_ACLK.INSERT_VIP              string  false      0
 CONFIG.S_AXI_RESETN.INSERT_VIP            string  false      0
-CONFIG.Standard                           string  false      1000BASEX
+CONFIG.Standard                           string  false      BOTH
 CONFIG.SupportLevel                       string  false      Include_Shared_Logic_in_Example_Design
 CONFIG.TXOUTCLK_PORT.INSERT_VIP           string  false      0
 CONFIG.Timer_Format                       string  false      Time_of_day

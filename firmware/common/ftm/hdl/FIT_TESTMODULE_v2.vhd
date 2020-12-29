@@ -220,6 +220,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
     signal T0, T1, A0, A1 : std_logic_vector(7 downto 0);
 	
 	
+    signal ipb_leds  : std_logic_vector(1 downto 0);
 
 	
 	
@@ -372,11 +373,14 @@ FSM_Clocks.IPBUS_Data_Clk <= ipb_clk;
 -- USER OUTPUTS
 -- GPIO_LED_0 <= TESTM_status.GBT_status.rxWordClkReady; -- from rxPgaseAlign_gen.rxBitSlipControl
 -- GPIO_LED_1 <= TESTM_status.GBT_status.rxFrameClkReady; -- from latOpt_phalgnr_gen.phase_conm_inst
--- GPIO_LED_2 <= TESTM_status.GBT_status.mgtLinkReady; -- from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_txresetfsm_i
--- GPIO_LED_3 <= TESTM_status.GBT_status.gbtRx_Ready; -- FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/status/statusLatOpt_gen.RX_READY_O_reg
+GPIO_LED_2 <= TESTM_status.GBT_status.mgtLinkReady; -- from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_txresetfsm_i
+GPIO_LED_3 <= TESTM_status.GBT_status.gbtRx_Ready; -- FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/status/statusLatOpt_gen.RX_READY_O_reg
 -- GPIO_LED_4 <= TESTM_status.GBT_status.mgt_phalin_cplllock; -- CPLLLOCK from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i 
 -- GPIO_LED_5 <= TESTM_status.GBT_status.tx_resetDone; -- TXRESETDONE from gtxe2_i
 -- GPIO_LED_6 <= TESTM_status.GBT_status.tx_fsmResetDone; -- gt0_txresetfsm_i
+
+GPIO_LED_4 <= ipb_leds(0);
+GPIO_LED_7 <= ipb_leds(1);
 
 SCOPE_I <= DataClk_to_FIT_GBT;
 
@@ -680,7 +684,7 @@ port map(
           
     RESET => FSM_Clocks.Reset,
     
-    leds => open, -- status LEDs
+    leds => ipb_leds, -- status LEDs
     mac_addr => mac_addr,
     
     ip_addr => ip_addr,
