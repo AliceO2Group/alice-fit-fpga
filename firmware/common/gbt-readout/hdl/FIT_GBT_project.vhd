@@ -63,10 +63,10 @@ entity FIT_GBT_project is
 		-- FIT readour status, including BCOR_ID to PM/TCM
 		FIT_GBT_status_O : out FIT_GBT_status_type;
 		rx_ph320 : out std_logic_vector(2 downto 0);
-		ph_error320 : out std_logic;
+		ph_error320 : out std_logic
 		
 		
-		GPIO_O : out std_logic_vector(15 downto 0)
+		--GPIO_O : out std_logic_vector(15 downto 0)
 	);
 end FIT_GBT_project;
 
@@ -290,8 +290,8 @@ port map (
 		hits_rd_counter_selector_O 	=> FIT_GBT_STATUS.hits_rd_counter_selector,
 
 		TX_Data_O 			=> TX_Data_from_packager,
-		TX_IsData_O 		=> TX_IsData_from_packager,
-		GPIO_O => GPIO_O
+		TX_IsData_O 		=> TX_IsData_from_packager
+--		GPIO_O => GPIO_O
 );
 -- =============================================================
 

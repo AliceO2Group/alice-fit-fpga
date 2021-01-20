@@ -16,7 +16,7 @@ CONFIG.GTX_CLK_OUT.INSERT_VIP        string  false      0
 CONFIG.Half_Duplex                   string  false      false
 CONFIG.Int_Clk_Src                   string  false      user_clk2
 CONFIG.Int_Mode_Type                 string  false      BASEX
-CONFIG.MAC_Speed                     string  false      1000_Mbps
+CONFIG.MAC_Speed                     string  false      Tri_speed
 CONFIG.MDIO_BOARD_INTERFACE          string  false      Custom
 CONFIG.MII_IO                        string  false      true
 CONFIG.M_AXIS_RX.INSERT_VIP          string  false      0

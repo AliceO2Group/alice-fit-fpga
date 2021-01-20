@@ -168,7 +168,7 @@ signal clksys40 : std_logic;
 signal CSi, MOSIi, MISOi, SCKi :  STD_LOGIC; 
 signal bitcnt_A, bitcnt_C : STD_LOGIC_VECTOR (2 downto 0);
 signal Tcnt_cnt : STD_LOGIC_VECTOR (3 downto 0);
-signal Thigh, Tlow : STD_LOGIC_VECTOR (8 downto 0);
+signal Thigh, Tlow : STD_LOGIC_VECTOR (9 downto 0);
 signal Tdiff : STD_LOGIC_VECTOR (9 downto 0);
 signal selai, selci, sckai, sckci, mosiai, mosici, misoai, misoci, reqA, reqC, reqA2, reqA1, reqA0, reqC2, reqC1, reqC0 : STD_LOGIC_VECTOR (9 downto 0);
 signal PM_rq : STD_LOGIC_VECTOR (19 downto 0);
@@ -411,9 +411,9 @@ end component;
            -- FIT readour status, including BCOR_ID to PM/TCM
            FIT_GBT_status_O : out FIT_GBT_status_type;
            rx_ph320 : out std_logic_vector(2 downto 0);
-		   ph_error320 : out std_logic;
+		   ph_error320 : out std_logic
 
-           GPIO_O : out std_logic_vector(15 downto 0)
+           --GPIO_O : out std_logic_vector(15 downto 0)
        );
    end component;
    -- ###############################################
@@ -1269,8 +1269,8 @@ spi_wr2<=spi_wr1; spi_wr1<=spi_wr0; spi_wr0<=spi_wr_rdy;
 
       if (spi_wr_req='1') or (tcmr_wr='1') then
        case Treg_addr is 
-            when "000" => Tlow<=Treg_data(8 downto 0); 
-            when "001" => Thigh<=Treg_data(8 downto 0); 
+            when "000" => Tlow<=Treg_data(9 downto 0); 
+            when "001" => Thigh<=Treg_data(9 downto 0); 
             when "010" => SC_A<=Treg_data; 
             when "011" => SC_C<=Treg_data; 
             when "100" => C_A<=Treg_data; 
@@ -1338,7 +1338,7 @@ cou_CC: counter32  port map (clk320=> clk320A, cout=> count_r(12), rd=> cnt_lock
 cou_orc: counter32  port map (clk320=> clk320A, cout=> count_r(13), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Orclr);
 cou_andc: counter32  port map (clk320=> clk320A, cout=> count_r(14), rd=> cnt_lock, clr=> cnt_clr, inc=> bg_Andclr); 
    
-Vertex_0<= '1' when ((signed(Tdiff(8 downto 0))>=signed(Tlow)) and (signed(Tdiff(8 downto 0))<=signed(Thigh)) and (Tdiff(9)=Tdiff(8)) and (OrA_i='1') and (OrC_i='1')) else '0';
+Vertex_0<= '1' when (signed(Tdiff)>=signed(Tlow)) and (signed(Tdiff)<=signed(Thigh)) and  (OrA_i='1') and (OrC_i='1') else '0';
 
 AmplS<= (AmplA(16) & AmplA) + (AmplC(16) & AmplC);
 
