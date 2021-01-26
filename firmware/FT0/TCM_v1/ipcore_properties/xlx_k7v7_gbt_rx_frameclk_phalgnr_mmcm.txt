@@ -98,8 +98,6 @@ CONFIG.CLK_OUT6_USE_FINE_PS_GUI      string  false      false
 CONFIG.CLK_OUT7_PORT                 string  false      clk_out7
 CONFIG.CLK_OUT7_USE_FINE_PS_GUI      string  false      false
 CONFIG.CLK_VALID_PORT                string  false      CLK_VALID
-CONFIG.CLOCK_CLK_IN1.INSERT_VIP      string  false      0
-CONFIG.CLOCK_CLK_OUT1.INSERT_VIP     string  false      0
 CONFIG.CLOCK_MGR_TYPE                string  false      auto
 CONFIG.Component_Name                string  false      xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm
 CONFIG.DADDR_PORT                    string  false      daddr
