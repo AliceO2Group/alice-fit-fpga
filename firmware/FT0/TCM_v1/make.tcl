@@ -128,6 +128,7 @@ set files [list \
  [file normalize "${origin_dir}/../TCM/hdl/trigger_out.vhd" ]\
  [file normalize "${origin_dir}/../TCM/hdl/tcm_side.vhd" ]\
  [file normalize "${origin_dir}/../TCM/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
