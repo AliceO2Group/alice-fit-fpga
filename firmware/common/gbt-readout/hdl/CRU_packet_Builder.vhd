@@ -117,7 +117,7 @@ begin
 	TRG_Orbit   <= func_CNTPCKword_trgorbit(CNTPTFIFO_data_word_I);
 	TRG_BC      <= func_CNTPCKword_trgbc(CNTPTFIFO_data_word_I);
 	TRG_Type    <= func_CNTPCKword_trigger(CNTPTFIFO_data_word_I);
-	Link_ID		<= x"00";
+	Link_ID		<= x"20";
 	System_ID	<= x"00";
 	Memory_size	<= x"0000";
 
