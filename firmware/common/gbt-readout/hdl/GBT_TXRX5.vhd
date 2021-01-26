@@ -219,7 +219,7 @@ begin                 --========####   Architecture Body   ####========--
             generic map (
                 RX_INIT_FIRST                                     => false,
                 INITIAL_DELAY                                     => 1 * 40e6,   -- Comment: * 1s  
-                TIME_N                                            => 1 * 40e6,   --          * 1s
+                TIME_N                                            => 1 * 40e5,   --          * 1s
                 GAP_DELAY                                         => 1 * 40e6)   --          * 1s
             port map (     
                 CLK_I                                             => TXDataClk,                                               
@@ -370,8 +370,7 @@ end process;
 
    
   
-  
-  
+     
   
   
   

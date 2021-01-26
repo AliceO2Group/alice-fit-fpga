@@ -51,7 +51,7 @@ architecture Behavioral of Module_Data_Gen is
 	
 	signal trigger_resp_mask : std_logic_vector(Trigger_bitdepth-1 downto 0);
 	signal bunch_pattern : std_logic_vector(31 downto 0);
-	signal bunch_freq, bunch_freq_ff01 : std_logic_vector(15 downto 0);
+	signal bunch_freq : std_logic_vector(15 downto 0);
 	signal bunch_freq_hboffset : std_logic_vector(BC_id_bitdepth-1 downto 0);
 	signal reset_offset : std_logic;
 	
@@ -142,7 +142,7 @@ begin
 				bpattern_counter	<= bpattern_counter_next;
 				is_boffset_sync 	<= is_boffset_sync_next;
 				
-				bunch_freq_ff01 <= bunch_freq;
+--				bunch_freq_ff01 <= bunch_freq;
 				
 				Trigger_from_CRU_40ff <= FIT_GBT_status_I.Trigger_from_CRU;
 			END IF;

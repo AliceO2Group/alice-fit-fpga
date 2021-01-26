@@ -294,7 +294,7 @@ signal ev_tout_cnt : STD_LOGIC_VECTOR (7 downto 0);
 signal CH_N0, CH_N1, CH_N0_0, CH_N1_0, CH_NUM : STD_LOGIC_VECTOR (3 downto 0);
 signal CH_NUM1, CH_NUM2 : STD_LOGIC_VECTOR (2 downto 0);
 signal WRDS_NUM : STD_LOGIC_VECTOR (2 downto 0);
-signal Orbit_ID, hspid_w32, hspid_r32, tstamp, hspib_32 : STD_LOGIC_VECTOR (31 downto 0);
+signal Orbit_ID, hspid_w32, hspid_r32, tstamp, hspib_32, mcu_tstamp : STD_LOGIC_VECTOR (31 downto 0);
 signal xadc_r, xadc_out : STD_LOGIC_VECTOR (15 downto 0);
 signal xadc_a: STD_LOGIC_VECTOR (6 downto 0);
 signal EV_ID_in, EV_ID_out : STD_LOGIC_VECTOR (55 downto 0);
@@ -408,26 +408,6 @@ component TDCCHAN is
               
    end component;
    
---   component GBT_TX_RX is
---       Port ( RESET : in  STD_LOGIC;
---              MgtRefClk : in  STD_LOGIC;
---              MGT_RX_P : in  STD_LOGIC;
---              MGT_RX_N : in  STD_LOGIC;
---              MGT_TX_P : out  STD_LOGIC;
---              MGT_TX_N : out  STD_LOGIC;
---              TXDataClk : in  STD_LOGIC;
---              TXData : in  STD_LOGIC_VECTOR (79 downto 0);
---              TXData_SC : in  STD_LOGIC_VECTOR (3 downto 0);
---              IsTXData : in  STD_LOGIC;
---              RXDataClk : out  STD_LOGIC;
---              RXData : out  STD_LOGIC_VECTOR (79 downto 0);
---              RXData_SC : out  STD_LOGIC_VECTOR (3 downto 0);
---              IsRXData : out  STD_LOGIC;
---              RX_ready : out  STD_LOGIC;
---              RX_errors : out  STD_LOGIC
---              );
---   end component;
-
       component EVENTID_FIFO
        Port ( clk : IN STD_LOGIC; 
        srst : IN STD_LOGIC;
@@ -1398,8 +1378,12 @@ if (HSCKI'event and HSCKI='0') then
             when 16#D8# to 16#e7#  => if (hspi_h='0') then HSPI_DATA<=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(31 downto 16);
                                           else HSPI_DATA<=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(15 downto 0); end if;
 
-            when 16#E8# to 16#FB# => HSPI_DATA<=hspib_32(31 downto 16); hspi_32l <=hspib_32(15 downto 0); 
+            when 16#E8# to 16#F6# => HSPI_DATA<=hspib_32(31 downto 16); hspi_32l <=hspib_32(15 downto 0);
+            
+            when 16#F7#  => HSPI_DATA<=mcu_tstamp(31 downto 16); hspi_32l <=mcu_tstamp(15 downto 0); 
                                           
+            when 16#F8# to 16#FB# => HSPI_DATA<=hspib_32(31 downto 16); hspi_32l <=hspib_32(15 downto 0); 
+
             when 16#FC# to 16#FE# => HSPI_DATA<=(others=>'0'); hspi_32l <=xadc_r;
                                           
             when 16#FF#  => HSPI_DATA<=tstamp(31 downto 16); hspi_32l <=tstamp(15 downto 0);
@@ -1439,7 +1423,10 @@ if (SCKi'event and SCKi='0') then MISOI<=SPI_DATA(15); end if;
 if (SCKI'event and SCKI='1') then
 
         if (spi_bit_count="11111") then spi_bit_count<="10000"; spi_na<='1';
-          if  (spi_rd='0') then   spi_wr_data<=SPI_DATA(14 downto 0) & MOSII;  
+          if  (spi_rd='0') then  
+            if (spi_addr(7 downto 0) = x"F5") then mcu_tstamp(15 downto 0) <= SPI_DATA(14 downto 0) & MOSII; end if;
+            if (spi_addr(7 downto 0) = x"F6") then mcu_tstamp(31 downto 16) <= SPI_DATA(14 downto 0) & MOSII;  end if;
+            spi_wr_data<=SPI_DATA(14 downto 0) & MOSII;  
             if (spi_addr(7)='0') then  spi_wr_rdy<='1'; else if (spi_addr(6)='0') then spibuf_wr<='1'; end if; end if;
           end if;
          else 

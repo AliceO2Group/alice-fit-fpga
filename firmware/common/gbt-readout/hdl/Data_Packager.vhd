@@ -39,8 +39,8 @@ entity Data_Packager is
 		hits_rd_counter_selector_O 	: out hit_rd_counter_type;
 
 		TX_Data_O : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-		TX_IsData_O : out STD_LOGIC;
-		GPIO_O : out std_logic_vector(15 downto 0)
+		TX_IsData_O : out STD_LOGIC
+--		GPIO_O : out std_logic_vector(15 downto 0)
 
 	 );
 end Data_Packager;

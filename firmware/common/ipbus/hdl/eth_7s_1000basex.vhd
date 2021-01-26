@@ -8,6 +8,8 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all ;
 
 library unisim;
 use unisim.VComponents.all;
@@ -69,6 +71,7 @@ architecture rtl of eth_7s_1000basex is
 			tx_axis_mac_tready : OUT STD_LOGIC;
 			pause_req : IN STD_LOGIC;
 			pause_val : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+			clk_enable : IN STD_LOGIC;
 			speedis100 : OUT STD_LOGIC;
 			speedis10100 : OUT STD_LOGIC;
 			gmii_txd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -102,6 +105,7 @@ architecture rtl of eth_7s_1000basex is
         mmcm_locked : IN STD_LOGIC;
         rxuserclk : IN STD_LOGIC;
         rxuserclk2 : IN STD_LOGIC;
+        sgmii_clk_en : OUT STD_LOGIC;
         gmii_txd : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
         gmii_tx_en : IN STD_LOGIC;
         gmii_tx_er : IN STD_LOGIC;
@@ -113,6 +117,9 @@ architecture rtl of eth_7s_1000basex is
         an_interrupt : OUT STD_LOGIC;
         an_adv_config_vector : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         an_restart_config : IN STD_LOGIC;
+        basex_or_sgmii : IN STD_LOGIC; 
+        speed_is_10_100 : IN STD_LOGIC;
+        speed_is_100 : IN STD_LOGIC;
         status_vector : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         reset : IN STD_LOGIC;
         signal_detect : IN STD_LOGIC;
@@ -121,6 +128,7 @@ architecture rtl of eth_7s_1000basex is
 
       );
     END COMPONENT;
+    
     
     component MMCM125ETH
     port
@@ -136,37 +144,56 @@ architecture rtl of eth_7s_1000basex is
 	signal gmii_txd, gmii_rxd: std_logic_vector(7 downto 0);
 	signal gmii_tx_en, gmii_tx_er, gmii_rx_dv, gmii_rx_er: std_logic;
 	signal gmii_rx_clk: std_logic;
-	signal clk125, txoutclk_ub, txoutclk, clk125_ub : std_logic;
+	signal clk125, txoutclk_ub, txoutclk, clk125_ub, rxoutclk, rxoutclk_ub : std_logic;
 	signal clk62_5_ub, clk62_5, clkfb: std_logic;
-	signal rstn, phy_done, mmcm_locked, locked_int: std_logic;
+	signal rstn, pll_rst, phy_done, mmcm_locked, locked_int: std_logic;
 	signal decoupled_clk: std_logic := '0';
 	signal status_vector: std_logic_vector(15 downto 0);
-
+	signal speed10100, speed100, clk_en, sgmii, rst_pcs, rdy : std_logic;
+	signal to_cnt : std_logic_vector(22 downto 0);
+	signal rst_cnt : std_logic_vector(2 downto 0);
+	signal rx_config_vector, tx_config_vector : STD_LOGIC_VECTOR(79 DOWNTO 0);
+	
 begin
 	
 	clk125_out <= clk125; 
-	link_ok<=status_vector(0);
+	link_ok<= status_vector(0) when (sgmii='0') else status_vector(7);
 	
 	bufh_tx: BUFH port map(
 		i => txoutclk_ub,
 		o => txoutclk
 	);
---bufg_tx: BUFG port map(
---		i => txoutclk_ub,
---		o => txoutclk
---);
+    bufh_rx: BUFH port map(
+		i => rxoutclk_ub,
+		o => rxoutclk
+       );
 	
-mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txoutclk, reset => rsti, locked => mmcm_locked);
+mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txoutclk, reset => pll_rst, locked => mmcm_locked);
 	
 	process(clk_gt125)
 	begin
 		if rising_edge(clk_gt125) then
 			locked_int <= mmcm_locked and phy_done;
+			
+			if (rsti='1') then 
+			 sgmii<='1'; to_cnt<= (others=>'0'); rst_cnt<= (others=>'1'); rdy<= '0';
+			else
+			if (rst_cnt/="111") then rst_cnt<= rst_cnt+1; end if;
+			if (locked_int='1') then
+			 if (to_cnt/= "111" & x"FFFFF") then to_cnt<= to_cnt+1;
+			  else 
+			   if (rdy='0') then rdy<= '1';
+			     if (status_vector(0)='0')  then sgmii<='0'; rst_cnt<= (others =>'0');   end if;
+			   end if;
+			  end if; 
+			 end if;
+			end if;
 		end if;
 	end process;
 
 	locked <= locked_int;
 	rstn <= not (not locked_int or rsti);
+	rst_pcs<= '1' when (rsti='1') or (rst_cnt/="111") else '0'; 
 
 	mac: tri_mode_ethernet_mac_0
 		port map(
@@ -194,16 +221,21 @@ mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txout
 			tx_axis_mac_tready => tx_ready,
 			pause_req => '0',
 			pause_val => X"0000",
+			clk_enable => clk_en,
+			speedis100 => speed100,
+			speedis10100 => speed10100,
 			gmii_txd => gmii_txd,
 			gmii_tx_en => gmii_tx_en,
 			gmii_tx_er => gmii_tx_er,
 			gmii_rxd => gmii_rxd,
 			gmii_rx_dv => gmii_rx_dv,
 			gmii_rx_er => gmii_rx_er,
-			rx_configuration_vector => X"0000_0000_0000_0000_0812",
-			tx_configuration_vector => X"0000_0000_0000_0000_0012"
+			rx_configuration_vector => rx_config_vector,
+			tx_configuration_vector => tx_config_vector
 		);
 
+     rx_config_vector<= X"0000_0000_0000_0000" & "00" & status_vector(11 downto 10) & x"812";
+     tx_config_vector<= X"0000_0000_0000_0000" & "00" & status_vector(11 downto 10) & x"012";
 
 	-- Vivado generates a CRC error if you drive the CPLLLOCKDET circuitry with
 	-- the same clock used to drive the transceiver PLL.  While this makes sense
@@ -229,16 +261,17 @@ mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txout
 			rxp => gt_rxp,
 			rxn => gt_rxn,
 			txoutclk => txoutclk_ub,
-			rxoutclk => open,
+			rxoutclk => rxoutclk_ub,
 			resetdone => phy_done,
-			mmcm_reset => open,
+			mmcm_reset => pll_rst,
 			mmcm_locked => mmcm_locked,
 			userclk => clk62_5,
 			userclk2 => clk125,
-			rxuserclk => clk62_5,
-			rxuserclk2 => clk125,
+			rxuserclk => rxoutclk,
+			rxuserclk2 => rxoutclk,
 			independent_clock_bufg => clk_drp,
 			pma_reset => rsti,
+			sgmii_clk_en => clk_en,
 			gmii_txd => gmii_txd,
 			gmii_tx_en => gmii_tx_en,
 			gmii_tx_er => gmii_tx_er,
@@ -247,13 +280,16 @@ mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txout
 			gmii_rx_er => gmii_rx_er,
 			gmii_isolate => open,
 			configuration_vector => "10000",
-			an_adv_config_vector => "0000000000100000",
+			an_adv_config_vector => x"0020",
 			an_restart_config =>'0',
+			basex_or_sgmii=>sgmii,
+			speed_is_10_100 => speed10100,
+			speed_is_100 => speed100,
 			status_vector => status_vector,
-			reset => rsti,
+			reset => rst_pcs,
 			signal_detect => '1',
 			gt0_qplloutclk_in => '0',
 			gt0_qplloutrefclk_in => '0'
 		);
-
+		
 end rtl;

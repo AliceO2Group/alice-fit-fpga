@@ -128,6 +128,7 @@ set files [list \
  [file normalize "${origin_dir}/../TCM/hdl/trigger_out.vhd" ]\
  [file normalize "${origin_dir}/../TCM/hdl/tcm_side.vhd" ]\
  [file normalize "${origin_dir}/../TCM/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
@@ -263,14 +264,25 @@ if {[string equal $proj_create "yes"]} {
     }
 
     # Add/Import constrs file and set constrs file properties
-    set file "[file normalize "$origin_dir/xdc/tcm.xdc"]"
-    add_files -fileset constrs_1 [list $file]
-
     set file "[file normalize "$origin_dir/xdc/tcm_pins.xdc"]"
     add_files -fileset constrs_1 [list $file]
+    set file_obj [get_files -of_objects [get_filesets constrs_1] [list "$origin_dir/xdc/tcm_pins.xdc"]]
+    set_property -name "processing_order" -value "EARLY" -objects $file_obj
+
+
+    set file "[file normalize "$origin_dir/xdc/tcm.xdc"]"
+    add_files -fileset constrs_1 [list $file]
+    set file_obj [get_files -of_objects [get_filesets constrs_1] [list "$origin_dir/xdc/tcm.xdc"]]
+    set_property -name "processing_order" -value "NORMAL" -objects $file_obj
+
 
     set file "[file normalize "$origin_dir/xdc/timing.xdc"]"
     add_files -fileset constrs_1 [list $file]
+    set file_obj [get_files -of_objects [get_filesets constrs_1] [list "$origin_dir/xdc/Timing.xdc"]]
+    set_property -name "used_in" -value "implementation" -objects $file_obj
+    set_property -name "used_in_synthesis" -value "0" -objects $file_obj
+
+
 
     set_property -name "file_type" -value "XDC" -objects [get_files -of_objects [get_filesets constrs_1] [list "*/xdc/*.xdc"]]
 

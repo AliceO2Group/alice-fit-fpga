@@ -114,11 +114,11 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
 	
 	attribute mark_debug : string;
 
-    attribute MARK_DEBUG of Control_register_reg_dc : signal is "true";
-    attribute MARK_DEBUG of FIT_GBT_status : signal is "true";
+--    attribute MARK_DEBUG of Control_register_reg_dc : signal is "true";
+--    attribute MARK_DEBUG of FIT_GBT_status : signal is "true";
 
-    attribute MARK_DEBUG of data_fifo_datain : signal is "true";
-    attribute MARK_DEBUG of data_fifo_wren : signal is "true";
+--    attribute MARK_DEBUG of data_fifo_datain : signal is "true";
+--    attribute MARK_DEBUG of data_fifo_wren : signal is "true";
 
 
 begin
