@@ -23,8 +23,8 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
 set_max_delay -datapath_only -from [get_clocks CLKsys40] -to [get_pins readout_laser_out_ff0_reg/D] 3.000
 set_max_delay -datapath_only -from [get_clocks MCLKA] -to [get_cells laser_t0_reg] 3.000
 
-set_multicycle_path -setup -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]}}] 2
-set_multicycle_path -hold -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]}}] 1
+set_multicycle_path -setup -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]} V_str_reg}] 2
+set_multicycle_path -hold -from [get_clocks CLKA320] -to [get_cells {{C_vertex/T_?_reg} {Rd_word_reg[*]} V_str_reg}] 1
 
 
 set_multicycle_path -setup -from [get_cells {tcma/NC_reg[?][?]}] -to [get_clocks CLKA320] 2
@@ -32,8 +32,11 @@ set_multicycle_path -hold -from [get_cells {tcma/NC_reg[?][?]}] -to [get_clocks 
 set_multicycle_path -setup -from [get_cells {tcmc/NC_reg[?][?]}] -to [get_clocks CLKC320] 2
 set_multicycle_path -hold -from [get_cells {tcmc/NC_reg[?][?]}] -to [get_clocks CLKC320] 1
 
-set_multicycle_path -setup -from [get_cells {{tcma/Ampl_o_reg[*]}  {AmplC_reg[*]}}] -to [get_cells  {C_FC/T_?_reg C_SC/T_?_reg {Rd_word_reg[*]} gbt_wr_reg}] 2
-set_multicycle_path -hold -from [get_cells {{tcma/Ampl_o_reg[*]}  {AmplC_reg[*]}}] -to [get_cells {C_FC/T_?_reg C_SC/T_?_reg {Rd_word_reg[*]} gbt_wr_reg}] 1
+set_multicycle_path -setup -from [get_cells {{tcma/Ampl_o_reg[*]}  {AmplC_reg[*]}}] -to [get_cells  {C_FC/T_?_reg C_SC/T_?_reg {Rd_word_reg[*]} gbt_wr_reg SC_str_reg CC_str_reg}] 2
+set_multicycle_path -hold -from [get_cells {{tcma/Ampl_o_reg[*]}  {AmplC_reg[*]}}] -to [get_cells {C_FC/T_?_reg C_SC/T_?_reg {Rd_word_reg[*]} gbt_wr_reg SC_str_reg CC_str_reg}] 1
+
+set_multicycle_path -setup -from [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ BMEM.bram.* && NAME =~  "m_cr*/m0/*"}] -to [get_clocks CLKA320] 2
+set_multicycle_path -hold -from [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ BMEM.bram.* && NAME =~  "m_cr*/m0/*"}] -to [get_clocks CLKA320] 1
 
 
 set_max_delay -datapath_only -from [get_clocks CLKC320] -to [get_clocks CLKA320] 3.000
@@ -55,4 +58,6 @@ set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtP
 set_false_path -from [get_clocks -include_generated_clocks MCLKA] -to [get_clocks RXDataCLK]
 
 set_false_path -from [get_clocks RXDataCLK] -to [get_cells {rout_buf_reg[*]}]
+
+
 

@@ -78,7 +78,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/TCM.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/TCM_proto.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -122,12 +122,13 @@ set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/hdl/counter32.vhd" ]\
  [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
- [file normalize "${origin_dir}/hdl/tcm.vhd" ]\
+ [file normalize "${origin_dir}/hdl/tcm_proto.vhd" ]\
  [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
  [file normalize "${origin_dir}/hdl/cnt_ctrl.vhd" ]\
  [file normalize "${origin_dir}/hdl/trigger_out.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_side.vhd" ]\
  [file normalize "${origin_dir}/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
@@ -254,7 +255,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top" "tcm"] \
+		   "top" "tcm_proto"] \
 	[get_filesets sources_1]
 
     # Create 'constrs_1' fileset (if not found)

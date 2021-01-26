@@ -47,7 +47,8 @@ entity pm_spi is
         spi_mosi : out STD_LOGIC;
         spi_miso : in STD_LOGIC;
         cnt_rd : in STD_LOGIC;
-        PM_rst : in STD_LOGIC
+        PM_rst : in STD_LOGIC;
+        ena  : in STD_LOGIC
         );
         
 end pm_spi;
@@ -60,7 +61,7 @@ signal A_old, A_spi : STD_LOGIC_VECTOR (7 downto 0);
 signal fifo_out : STD_LOGIC_VECTOR (31 downto 0);
 signal A_cou : STD_LOGIC_VECTOR (4 downto 0);
 signal cont, mode16, eoc, n_addr, rd_cou, smode, rd_spi, cs_spi, fifo_wr, fifo_rd, fifo_full, fifo_empty, reg_rd, spi_inp, rd_old : STD_LOGIC;
-signal xmg_sel, xmg_md, xmg_smpl, x_wait, cmd_rst, cmd_rst1, rst_rq : STD_LOGIC;
+signal xmg_sel, xmg_md, xmg_smpl, x_wait, cmd_rst, cmd_rst1, rst_rq, spi_sel_i : STD_LOGIC;
 signal fifo_cou : STD_LOGIC_VECTOR (9 downto 0);
 
 
@@ -99,14 +100,15 @@ xmg_sel<='1' when  (cs='1') and (A='1' & x"02") else '0';
 
 xmg_md<= (xmg_sel and not smode) or cmd_rst;
 
-spi_mosi<=Dreg(47);
+spi_mosi<=Dreg(47) and ena;
+spi_sel<= spi_sel_i and ena;
 
 spi_inp<=xmg_smpl when (xmg_md='1') else not spi_miso;
 
 A_spi<=A(7 downto 0) when (smode='0') else "110" & A_cou;
 rd_spi<= rd when (smode='0') else '1';
 
-spi_clk <= count(1) when ((count(7 downto 2)/="000000") and (xmg_md='0')) or  (x_wait='0') else '0';
+spi_clk <= count(1) when (((count(7 downto 2)/="000000") and (xmg_md='0')) or  (x_wait='0')) and (ena='1') else '0';
 
 
 mode16<= '1'  when A_spi(7 downto 4)<x"C" else '0';
@@ -147,7 +149,7 @@ if (rst='1') then rd_cou<='0'; smode<='0'; cmd_rst<='0'; rst_rq<='0';
  end if;  
 end if;
 
- if (rst='1') or ((cs_spi='0') and (smode='0') and (cmd_rst='0')) then count<=x"00"; spi_sel<='1';  Dreg(47)<='0'; cont<='0';
+ if (rst='1') or ((cs_spi='0') and (smode='0') and (cmd_rst='0')) then count<=x"00"; spi_sel_i<='1';  Dreg(47)<='0'; cont<='0';
   else
   
   if (count(1 downto 0)="11")  then xmg_smpl<= not spi_miso; end if;
@@ -158,9 +160,9 @@ end if;
     else  count<=count+1; end if;
  end if;
  
- if ((count=x"00") and (xmg_md='1')) or ((count=x"01") and (xmg_md='0') and (n_addr='0')) then spi_sel<='0';
+ if ((count=x"00") and (xmg_md='1')) or ((count=x"01") and (xmg_md='0') and (n_addr='0')) then spi_sel_i<='0';
    else 
-     if (count=x"05") and (xmg_md='0')  then  spi_sel<='1'; end if;
+     if (count=x"05") and (xmg_md='0')  then  spi_sel_i<='1'; end if;
  end if; 
      
 if ((count=x"01") and (n_addr='1')) or ((count=x"05") and (xmg_md='0')) then A_old<=A_spi; rd_old<=rd_spi; end if;     
