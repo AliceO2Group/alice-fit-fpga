@@ -19,15 +19,6 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
-package PM12_pkg is
-type trig_time is array (0 to 11)  of STD_LOGIC_VECTOR (9 downto 0);
-type trig_ampl0 is array (0 to 11) of STD_LOGIC_VECTOR(12 downto 0);
-end package; 
-
-
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 

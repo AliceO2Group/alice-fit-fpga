@@ -54,8 +54,8 @@ set_property ASYNC_REG true [get_cells spi_lock0_?_reg]
 set_property ASYNC_REG true [get_cells almclr??_reg]
 set_property ASYNC_REG true [get_cells stat_clr?_reg]
 
-set_property ASYNC_REG true [get_cells spi_lock320_reg]
-set_property ASYNC_REG true [get_cells spi_lock320_0_reg]
+set_property ASYNC_REG true [get_cells {spi_lock320_reg spi_lock320_0_reg}]
+set_property ASYNC_REG true [get_cells {hspi_lock320_reg hspi_lock320_0_reg}]
 
 set_property ASYNC_REG true [get_cells hclr??_reg]
 set_property ASYNC_REG true [get_cells hstat_clr?_reg]
@@ -94,7 +94,9 @@ set_property ASYNC_REG true [get_cells count1/rd_en1_reg]
 set_property ASYNC_REG true [get_cells count1/hrd_en0_reg]
 set_property ASYNC_REG true [get_cells count1/hrd_en1_reg]
 
-set_property ASYNC_REG true [get_cells {xadc_rq0_reg xadc_rq1_reg}]
+set_property ASYNC_REG true [get_cells {reg32_320_wr0_reg reg32_320_wr1_reg reg32_320_str0_reg reg32_320_str1_reg}]
+
+set_property ASYNC_REG true [get_cells {reg32_str0_reg reg32_str1_reg}]
 
 set_property IOB TRUE [get_cells {{tto_reg[?]} {tao_reg[?]}}]
 
