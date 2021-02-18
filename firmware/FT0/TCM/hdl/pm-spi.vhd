@@ -108,8 +108,6 @@ spi_inp<=xmg_smpl when (xmg_md='1') else not spi_miso;
 A_spi<=A(7 downto 0) when (smode='0') else "110" & A_cou;
 rd_spi<= rd when (smode='0') else '1';
 
-spi_clk <= count(1) when (((count(7 downto 2)/="000000") and (xmg_md='0')) or  (x_wait='0')) and (ena='1') else '0';
-
 
 mode16<= '1'  when A_spi(7 downto 4)<x"C" else '0';
 eoc <= '1' when ((count=x"83") and (mode16='1') and (xmg_md='0')) or ((count=x"C3") and (mode16='0') and (xmg_md='0')) or ((count=255) and (xmg_md='1'))else '0';
@@ -125,6 +123,8 @@ fifo_rd<='1' when (A='1' & x"00") and (cs='1') and (fifo_empty='0') and (rd='1')
 process (CLK)
 begin
 if (CLK'event) and (CLK='1') then
+
+if ((((count(7 downto 2)/="000000") or (n_addr='1')) and (xmg_md='0')) or  ((x_wait='0') and (xmg_md='1'))) and (count(0)='1') then spi_clk <= not count(1); else spi_clk <= '0'; end if; 
 
 if (rst='1') then rd_cou<='0'; smode<='0'; cmd_rst<='0'; rst_rq<='0';
   else
