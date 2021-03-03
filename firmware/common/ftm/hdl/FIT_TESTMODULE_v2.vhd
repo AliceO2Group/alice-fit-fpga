@@ -662,7 +662,7 @@ HDMI0: tcm_sync
 -- IP-BUS module ===============================================
 
 sfp_rate_sel(1 downto 0) <= B"00";
-mac_addr <= X"020ddba11504"; -- Careful here, arbitrary addresses do not always work
+mac_addr <= X"020ddba11503"; -- Careful here, arbitrary addresses do not always work
 --ip_addr <= X"ac144baf"; -- 172.20.75.175
 --ip_addr <= X"ac144b5f"; -- 172.20.75.95
 ip_addr <= X"c0a80029" when (addr_sw='1')  else -- 192.168.0.41  
