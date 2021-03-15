@@ -20,11 +20,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-package PM12_pkg is
-type trig_time is array (0 to 11)  of STD_LOGIC_VECTOR (9 downto 0);
-type trig_ampl0 is array (0 to 11) of STD_LOGIC_VECTOR(12 downto 0);
-end package; 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
@@ -207,12 +202,11 @@ end fit;
 
 
 architecture RTL of fit is
-attribute mark_debug : string;	
 
 type data_vector is array (0 to 11) of STD_LOGIC_VECTOR (32 downto 0);
 type trig_ampl is array (0 to 11) of STD_LOGIC_VECTOR(10 downto 0);
 
-signal RESET, lock320, lock300_1, lock300_2, lock300_3, sreset, rsti, SPI_CS, spi_rd, spi_rden,  spi_lock320, spi_lock320_0, cnt_rst, cnt_rd, spi_wr_rdy, spi_wr0, spi_wr1, spi_wr2, spi_wr_req : STD_LOGIC;
+signal RESET, lock320, lock300_1, lock300_2, lock300_3, sreset, rsti, SPI_CS, spi_rd, spi_rden,  spi_lock320, spi_lock320_0, hspi_lock320, hspi_lock320_0, cnt_rst, cnt_rd, spi_wr_rdy, spi_wr0, spi_wr1, spi_wr2, spi_wr_req : STD_LOGIC;
 signal spi_lock_1, spi_lock0_1, spi_lock_2, spi_lock0_2, spi_lock_3, spi_lock0_3, rd_lock_spi, rd_lock_hspi, rd_lock, dcs_irq : STD_LOGIC;
 signal rstcount : STD_LOGIC_VECTOR (3 downto 0);
 signal irq_cnt : STD_LOGIC_VECTOR (1 downto 0);
@@ -226,7 +220,7 @@ signal SPI_DATA, spi_wr_data, HSPI_DATA, hspi_wr_data, hspi_wr_data_l, reg_wr_da
 signal spi_addr, hspi_addr, reg_wr_addr : STD_LOGIC_VECTOR (8 downto 0);
 signal spi_bit_count, hspi_bit_count : STD_LOGIC_VECTOR (4 downto 0);
 signal gate_time_low, gate_time_high : STD_LOGIC_VECTOR (7 downto 0);
-signal reg32_wr, reg32_wr0, reg32_wr1, reg32_wr2, reg32_rd, reg32_rd0, reg32_rd1, reg32_rd2, reg32_str : STD_LOGIC;
+signal reg32_wr, reg32_wr0, reg32_wr1, reg32_wr2, reg32_rd, reg32_rd0, reg32_rd1, reg32_rd2, reg32_str, reg32_str0, reg32_str1, reg32_str2, str_reg32, reg32_320_wr, reg32_320_wr0, reg32_320_wr1, reg32_320_wr2, reg32_320_str, reg32_320_str0, reg32_320_str1, reg32_320_str2 : STD_LOGIC;
 signal CH1A_shift, CH1B_shift, CH1C_shift, CH1D_shift, CH2A_shift, CH2B_shift, CH2C_shift, CH2D_shift, CH3A_shift, CH3B_shift, CH3C_shift, CH3D_shift : STD_LOGIC_VECTOR (11 downto 0);
 signal CH1_0_zero, CH1_1_zero, CH2_0_zero, CH2_1_zero, CH3_0_zero, CH3_1_zero, CH4_0_zero, CH4_1_zero, CH5_0_zero, CH5_1_zero, CH6_0_zero, CH6_1_zero, CH7_0_zero, CH7_1_zero, CH8_0_zero, CH8_1_zero, CH9_0_zero, CH9_1_zero, CH10_0_zero, CH10_1_zero, CH11_0_zero, CH11_1_zero, CH12_0_zero, CH12_1_zero  : STD_LOGIC_VECTOR (11 downto 0);
 signal CH1_0_rg, CH1_1_rg, CH2_0_rg, CH2_1_rg, CH3_0_rg, CH3_1_rg, CH4_0_rg, CH4_1_rg, CH5_0_rg, CH5_1_rg, CH6_0_rg, CH6_1_rg, CH7_0_rg, CH7_1_rg, CH8_0_rg, CH8_1_rg, CH9_0_rg, CH9_1_rg, CH10_0_rg, CH10_1_rg, CH11_0_rg, CH11_1_rg, CH12_0_rg, CH12_1_rg : STD_LOGIC_VECTOR (12 downto 0);
@@ -248,7 +242,7 @@ signal BCOLD1, BCOLD2, BCOLD3 : STD_LOGIC_VECTOR (1 downto 0);
 
 signal BC_PER1, BC_PER2, BC_PER3 : STD_LOGIC_VECTOR (6 downto 0);
 signal BC_JUMP1, BC_JUMP2, BC_JUMP3, ALM_CLR, almclr10, almclr11, alm_clr1, almclr20, almclr21, alm_clr2, almclr30, almclr31, alm_clr3, IRQI : STD_LOGIC;
-signal HBC_JUMP1, HBC_JUMP2, HBC_JUMP3, hclr10, hclr11, h_clr1, hclr20, hclr21, h_clr2, hclr30, hclr31, h_clr3, Hs_rd, HGBTRXerr, hstat_clr, hstat_clr0, hstat_clr1 : STD_LOGIC;
+signal HBC_JUMP1, HBC_JUMP2, HBC_JUMP3, hclr10, hclr11, h_clr1, hclr20, hclr21, h_clr2, hclr30, hclr31, h_clr3, Hs_rd, HGBTRXerr, hstat_clr, hstat_clr0, hstat_clr1, Hs_clr : STD_LOGIC;
 
 signal TDC_COU1, TDC_COU2, TDC_COU3 : STD_LOGIC_VECTOR (3 downto 0);
 
@@ -277,7 +271,7 @@ signal tt,ta,tto,tao : STD_LOGIC_VECTOR (1 downto 0);
 
 signal GBT_is_RXD, GBT_is_TXD, RX_CLK, TX_CLK, GBTRX_ready, GBTRX_ready0, GBT_chg, HGBT_chg, GBT_rdy, GBT_rdy0, t100ms, RX_err, RX_err1, RX_err_LED, rxerr0, TXact, RXact, RXLED, TXLED, txled0, rxled0, LNKLED, IsRXData0, GBTRXerr, stat_clr, stat_clr0, stat_clr1 : STD_LOGIC;
 signal cou_100ms :  STD_LOGIC_VECTOR (21 downto 0);
-signal alm_rst0, alm_rst, chans_block : STD_LOGIC;
+signal alm_rst0, alm_rst, chans_block, is_rst : STD_LOGIC;
 
 signal chans_ena, chans_ena_r : STD_LOGIC_VECTOR (11 downto 0);
 
@@ -287,7 +281,7 @@ signal N1_chans, N2_chans : STD_LOGIC_VECTOR (2 downto 0);
 signal TT_mode : STD_LOGIC;
 
 signal ampl_sat : STD_LOGIC_VECTOR (11 downto 0);
-signal Event_in, DATA_rd, DATA_rdy, inp_cou, CH_trig, CH_triga, CH_do, Z_alarm, trig_bgnd : STD_LOGIC_VECTOR (11 downto 0);
+signal Event_in, DATA_rd, DATA_rdy, inp_cou, CH_trig, CH_triga, CH_do, Z_alarm, trig_bgnd, cnt_trig : STD_LOGIC_VECTOR (11 downto 0);
 signal inp_event, EV_ID_wr, EV_ID_rd, EV_ID_empty, Event_ready, Event_ready_0, Event_free, wr_out_id, New_BCID, DATA80_rd, DATA_empty, FIFO_dis, wr_nch, ev_tout, ev_tout0 : STD_LOGIC;
 signal ev_tout_cnt : STD_LOGIC_VECTOR (7 downto 0);
 
@@ -300,7 +294,7 @@ signal xadc_a: STD_LOGIC_VECTOR (6 downto 0);
 signal EV_ID_in, EV_ID_out : STD_LOGIC_VECTOR (55 downto 0);
 signal EV_DATA80, DATA80_in : STD_LOGIC_VECTOR (79 downto 0);
 --signal  mux_out, str_la : STD_LOGIC;
-signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_rq0, xadc_rq1, xadc_rq2, xadc_en, xadc_rdy, gs0, gs1 : STD_LOGIC;
+signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0, gs1, rdo_sel : STD_LOGIC;
 
 signal DATA_out : data_vector;
 
@@ -311,7 +305,16 @@ signal cnt_out, hcnt_out :  STD_LOGIC_VECTOR (15 downto 0);
 signal psen1, psincdec1, jumpa1, flock1, fdone1, psen2, psincdec2, jumpa2, flock2, fdone2, psen3, psincdec3, jumpa3, flock3, fdone3, all_locked  :  STD_LOGIC;
 signal pshift1, pshift2, pshift3 :  STD_LOGIC_VECTOR (5 downto 0);
  
-signal rx_phase_status : std_logic_vector(3 downto 0); 
+signal rx_phase_status : std_logic_vector(3 downto 0);
+
+signal hyst_md : std_logic_vector(15 downto 0);
+signal start_hyst, h_busy, wr_hyst_a, rd_hyst_d, hysta_sel, hystd_sel, hyst_stp : std_logic;
+signal cnt_md : std_logic := '0'; 
+signal hyst_data : hyst_vector;
+signal hyst_a, hyst_t : std_logic_vector(11 downto 0);
+signal hyst_addr : std_logic_vector(16 downto 0);
+signal hyst_r_data : std_logic_vector(31 downto 0);
+
  
 component  PLL320
     port (  mclk_in         : in     std_logic;
@@ -425,9 +428,7 @@ component TDCCHAN is
    -- ###############################################
    signal FIT_GBT_status : FIT_GBT_status_type;
    signal FIT_GBT_control : CONTROL_REGISTER_type;
-           
-attribute mark_debug of FIT_GBT_control : signal is "true";
-attribute mark_debug of FIT_GBT_status : signal is "true";
+         
            
    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
    signal IsData_from_FITrd        : STD_LOGIC;
@@ -587,7 +588,26 @@ Port ( clk : in STD_LOGIC;
        done  :  out STD_LOGIC;
        shift : out STD_LOGIC_VECTOR (5 downto 0)
        );
-END COMPONENT;       
+END COMPONENT;
+
+component hyst 
+  Port ( 
+        clk320 : in std_logic;
+        hyst_inp_data : in hyst_vector;
+        hyst_a : in std_logic_vector(11 downto 0);
+        hyst_t : in std_logic_vector(11 downto 0);
+        hyst_st : in std_logic;
+        cnt_clr : in std_logic;
+        busy : out std_logic;
+        hyst_addr_i : in std_logic_vector(16 downto 0);
+        hyst_addr_o : out std_logic_vector(16 downto 0);
+        wr_addr : in std_logic;
+        hyst_data_o : out std_logic_vector(31 downto 0);
+        n_addr : in std_logic;
+        lock320 : in std_logic;
+        stp : out  std_logic
+  );
+end component;       
 
 begin
 
@@ -861,7 +881,7 @@ IMGTCLK1: IBUFDS_GTE2
 	port map (O => MGTCLK, I => MGTCLK_P, IB => MGTCLK_N, CEB=>'0');
 
 fl_upg: FLASH generic map (clk_freq => 40000 ) 
-              port map (rst=>fl_rst, clk  => TX_CLK, data_in =>hspid_w32, data_out =>hspid_r32, A =>hspi_addr(1 downto 0), wr_flshreg =>wr_hspi32, rd_flshreg  =>rd_hspi32, flshreg_sel=>flsh_sel, FSEL =>FSEL, FMOSI =>FMOSI, FMISO =>FMISO);
+              port map (rst=>fl_rst, clk  => TX_CLK, data_in =>hspid_w32, data_out =>hspid_r32, A =>hspi_addr(1 downto 0), wr_flshreg =>wr_hspi32, rd_flshreg  =>str_reg32, flshreg_sel=>flsh_sel, FSEL =>FSEL, FMOSI =>FMOSI, FMISO =>FMISO);
 	
 
 IRQI<= BC_JUMP1 or BC_JUMP2 or BC_JUMP3 or GBTRXerr or GBT_chg or dcs_irq when (irq_cnt="11") else '0';
@@ -957,7 +977,10 @@ begin
         else 
          gbt_global_status(2) <=  '1';
         end if;
+       if (cnt_md='0') then cnt_trig<= CH_trig; else cnt_trig<= CH_triga; end if; 
+
     end if;
+   
 end process;
 --gbt_global_status <=  x"0";
 
@@ -975,8 +998,6 @@ RXLED<=rxled0 or (not GBTRX_ready);
 process (TX_CLK)
 begin
 if (TX_CLK'event and TX_CLK='1') then
-
-xadc_rq2 <=xadc_rq1; xadc_rq1<= xadc_rq0; xadc_rq0 <=rd_xadc; 
 
 if (xadc_rdy='1') then xadc_r<=xadc_out; end if; 
 
@@ -999,7 +1020,6 @@ hstat_clr0<=Hs_rd; hstat_clr1<=hstat_clr0; hstat_clr<=hstat_clr1;
    if (stat_clr1='1') and (stat_clr='0') then GBT_chg<='0'; end if;
    if (hstat_clr1='1') and (hstat_clr='0') then HGBT_chg<='0'; end if;
 end if;
-
 
 if (GBTRX_ready='1') and (GBT_rdy='1') and (RX_err='1') then GBTRXerr<='1'; HGBTRXerr<='1';
   else 
@@ -1124,8 +1144,8 @@ CHANNEL2C : channel port map (CGE =>CGE7, clk320 =>clk320, reset =>sreset, tdc_r
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, CH0_zero =>CH7_0_zero, CH1_zero =>CH7_1_zero, CH_trig_outt =>CH_trig(6), CH_trig_outa =>CH_triga(6), CH_trig_bgnd=> trig_bgnd(6), CH_TIME =>CH_TIME_T(6),
                              CH_ampl =>CH_ampl0(6), DATA_out=>DATA_out(6), DATA_ready=>DATA_rdy(6), DATA_rd=>DATA_rd(6), FIFO_dis=>FIFO_dis, Event_in=>Event_in(6), Z0_cal=>CH7_Z0, Z1_cal=>CH7_Z1, Z_alarm=>Z_alarm(6),  spi_lock=>spi_lock320, R0_cal=>CH7_0_rg,
                              R1_cal=>CH7_1_rg, R0_corr=>CH7_0_rc, R1_corr=>CH7_1_rc, pulse_in=>inp_cou(6), chan_ena=>chans_ena(6));
-                             
-CHANNEL2D : channel port map (CGE =>CGE8, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2D_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2D, CSTR =>CSTR8, CH =>CH8, CH_shift => CH2D_shift,
+                            CHANNEL2D : channel port map (CGE =>CGE8, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2D_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2D, CSTR =>CSTR8, CH =>CH8, CH_shift => CH2D_shift,
+ 
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, CH0_zero =>CH8_0_zero, CH1_zero =>CH8_1_zero, CH_trig_outt =>CH_trig(7), CH_trig_outa =>CH_triga(7), CH_trig_bgnd=> trig_bgnd(7), CH_TIME =>CH_TIME_T(7),
                              CH_ampl =>CH_ampl0(7), DATA_out=>DATA_out(7), DATA_ready=>DATA_rdy(7), DATA_rd=>DATA_rd(7), FIFO_dis=>FIFO_dis, Event_in=>Event_in(7), Z0_cal=>CH8_Z0, Z1_cal=>CH8_Z1, Z_alarm=>Z_alarm(7),  spi_lock=>spi_lock320, R0_cal=>CH8_0_rg,
                              R1_cal=>CH8_1_rg, R0_corr=>CH8_0_rc, R1_corr=>CH8_1_rc, pulse_in=>inp_cou(7), chan_ena=>chans_ena(7));
@@ -1162,8 +1182,7 @@ EV_ID_rd<= '1' when (EV_ID_empty='0') and ((Event_free='1') or ((Event_ready='1'
 
 --DATA80_rd<= not DATA_empty;
 
-
-count1: counters port map (clk=>clk320, evnt=>inp_cou, trig=>CH_trig, reset=>cnt_rst, dout=>cnt_out, hdout=>hcnt_out, raddr=>spi_addr(5 downto 0), hraddr=>hspi_addr(4 downto 0), hl=>hspi_h, rd_en=>cnt_rd, hrd_en=>hcnt_rd);
+count1: counters port map (clk=>clk320, evnt=>inp_cou, trig=>cnt_trig, reset=>cnt_rst, dout=>cnt_out, hdout=>hcnt_out, raddr=>spi_addr(5 downto 0), hraddr=>hspi_addr(4 downto 0), hl=>hspi_h, rd_en=>cnt_rd, hrd_en=>hcnt_rd);
 
 
 
@@ -1185,16 +1204,19 @@ end process;
 alm_rst<=not sreset and alm_rst0;
 
 rd_lock_hspi <= '1' when  (hspi_bit_count(3 downto 0)=x"F") and (hspi_rd='1') and (hspi_addr(8)='0') else '0';
-Hs_rd <= '1' when (hspi_bit_count="10000") and (hspi_rd='1') and (hspi_addr='0' & x"80") else alm_rst;
-reg32_str <= '1' when ((hspi_bit_count="01010") or (hspi_bit_count="10000")) and (hspi_rd='1') and (hspi_addr(8)='0') else '0'; 
-rd_xadc <= reg32_str when (hspi_addr(7 downto 2) = "111111") and (hspi_addr(1 downto 0) /= "11") else '0'; 
-reg32_rd <=reg32_str when (hspi_addr(7 downto 3)>="11101") and (hspi_addr(7 downto 2)<"111111") else '0';  
+Hs_rd <= alm_rst or Hs_clr;
+
 flsh_sel<='1' when (hspi_addr(7 downto 2)="111110") else '0';
+rdo_sel<= '1' when (hspi_addr>=16#E8#) and (hspi_addr<=16#F4#) else '0';
+rd_xadc <='1' when (hspi_addr>=16#FC#) and (hspi_addr<=16#FE#) else '0';
+hysta_sel <='1' when (hspi_addr=16#F5#) else '0';
+hystd_sel <='1' when (hspi_addr=16#F6#) else '0';
 
 process (HSCKI, HSELI, RESET)
 begin
-if (HSELI='0') then hspi_bit_count<="00000"; hcnt_rd<='0'; hspibuf_wr<='0'; hspibuf_rd<='0'; hspi_na<='0'; reg32_wr<='0';
+if (HSELI='0') then hspi_bit_count<="00000"; hcnt_rd<='0'; hspibuf_wr<='0'; hspibuf_rd<='0'; hspi_na<='0'; reg32_wr<='0'; Hs_clr <='0'; reg32_rd <= '0'; reg32_str<= '0';
 else
+
 if (HSCKI'event and HSCKI='0') then 
 
         if (hspi_bit_count="11111") then  hspi_bit_count<="10000"; hspi_na<='1';
@@ -1203,8 +1225,8 @@ if (HSCKI'event and HSCKI='0') then
                   else hspi_wr_data_l<=HSPI_DATA(14 downto 0) & HMOSII;
                  end if;
                 if (hspi_addr(7)='0') then  hspi_wr_rdy<='1'; end if;
-                if (hspi_addr(7 downto 6)="10") then hspibuf_wr<='1'; end if; 
-                if (hspi_addr(7 downto 3)>="11011") and (hspi_h='1') then reg32_wr<='1'; end if; 
+                if (hspi_addr(7 downto 6)="10") and (hspi_addr(5 downto 2)/="1111") then hspibuf_wr<='1'; end if; 
+                if (hspi_addr(7 downto 3)>="11011") and (hspi_h='1') then reg32_wr<='1'; end if;
                   
               end if;
         else 
@@ -1216,8 +1238,13 @@ if (HSCKI'event and HSCKI='0') then
              if (hspi_addr(7 downto 4)<x"C") or (hspi_h='1') then hspi_addr <= hspi_addr+1; end if;
              if  (hspi_addr(7 downto 3)>="11011") then hspi_h<= not hspi_h;  end if;
            end if; 
-           
         end if;
+        
+        if ((hspi_bit_count="01010") or ((hspi_bit_count="10001") and (hspi_h='0'))) and (hspi_rd='1') then reg32_rd <= '1'; else reg32_rd <= '0'; end if;
+        
+        if (hspi_bit_count="10001") and (hspi_h='1') and (hspi_rd='1') then reg32_str<= '1'; else reg32_str<= '0'; end if;
+        if (hspi_bit_count="10001") and (hspi_rd='1') and (hspi_addr=16#80#) then Hs_clr <='1'; else Hs_clr <='0'; end if; 
+
         if (hspi_bit_count="00000") then hspi_rd <= HMOSII; end if;
         if (hspi_bit_count="01001") then hspi_addr <= HSPI_DATA(7 downto 0) & HMOSII; hspi_h<='0'; end if;
         if (hspi_bit_count="01110") and (hspi_rd='1') and (hspi_addr(7 downto 0)=x"C0") then hcnt_rd<='1'; end if;
@@ -1228,8 +1255,8 @@ if (HSCKI'event and HSCKI='0') then
              hspibuf_rd<='0';   
                 
              if (hspi_addr(7 downto 4)>=x"C") then hspi_h<= not hspi_h; end if;
-             if (hspi_addr(7 downto 4)<x"C") or (hspi_h='1') then hspi_addr <= hspi_addr+1; end if;
-             if (hspi_addr(7 downto 3)>="11101")  and (hspi_h='1') then HSPI_DATA<=hspi_32l;
+             if ((hspi_addr(7 downto 4)<x"C") or (hspi_h='1')) then hspi_addr <= hspi_addr+1; end if;
+             if (hspi_addr(7 downto 3)>="11011")  and (hspi_h='1') then HSPI_DATA<=hspi_32l;
             
              else
 
@@ -1368,17 +1395,21 @@ if (HSCKI'event and HSCKI='0') then
             
             when 16#7C# =>  HSPI_DATA<=x"0" & chans_ena_r;
             when 16#7D# =>  HSPI_DATA<=x"0" & Z_alarm;
-
-            when 16#7F# =>  HSPI_DATA<= gbt_global_status & "000" &  HBC_JUMP3 & HBC_JUMP2 & HBC_JUMP1 & HGBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
+            when 16#7E# =>  HSPI_DATA<= hyst_md;
+            when 16#7F# =>  HSPI_DATA<= gbt_global_status & is_rst & cnt_md & h_busy &  HBC_JUMP3 & HBC_JUMP2 & HBC_JUMP1 & HGBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
             when 16#80# to 16#BF# => HSPI_DATA<=hspi_buf_out;
             
             when 16#C0# to 16#D7# => HSPI_DATA<=hcnt_out;
             
             -- gbt status            ipbus_control_reg
-            when 16#D8# to 16#e7#  => if (hspi_h='0') then HSPI_DATA<=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(31 downto 16);
-                                          else HSPI_DATA<=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(15 downto 0); end if;
+            when 16#D8# to 16#e7#  =>  HSPI_DATA <=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(31 downto 16);
+                                       hspi_32l <=ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)(15 downto 0); 
 
-            when 16#E8# to 16#F6# => HSPI_DATA<=hspib_32(31 downto 16); hspi_32l <=hspib_32(15 downto 0);
+            when 16#E8# to 16#F4# => HSPI_DATA<=hspib_32(31 downto 16); hspi_32l <=hspib_32(15 downto 0);
+            
+            when 16#F5# => HSPI_DATA<= x"000" & "000" & hyst_addr(16); hspi_32l <=hyst_addr(15 downto 0);
+
+            when 16#F6# => HSPI_DATA<= hyst_r_data(31 downto 16); hspi_32l <=hyst_r_data(15 downto 0);
             
             when 16#F7#  => HSPI_DATA<=mcu_tstamp(31 downto 16); hspi_32l <=mcu_tstamp(15 downto 0); 
                                           
@@ -1401,12 +1432,24 @@ end if;
 end if;
 end process;
 
+h0: hyst Port map(clk320 =>clk320,  hyst_inp_data  =>hyst_data, hyst_a =>hyst_a, hyst_t =>hyst_t, hyst_st =>start_hyst, cnt_clr =>cnt_rst, busy =>h_busy, hyst_addr_i =>hspid_w32(16 downto 0), hyst_addr_o =>hyst_addr,
+                  wr_addr =>wr_hyst_a, hyst_data_o =>hyst_r_data, n_addr =>rd_hyst_d, lock320 =>hspi_lock320, stp=> hyst_stp);
+                  
+wr_hyst_a <= reg32_320_wr and hysta_sel; rd_hyst_d<= reg32_320_str and hystd_sel;
+                  
+h1:  for i in 0 to 11 generate
+    hyst_data(i) <= DATA_out(i)(25 downto 0);
+    hyst_a(i) <= EV_ID_out(i) and DATA_out(i)(28);
+    hyst_t(i) <= EV_ID_out(i) and not (DATA_out(i)(27) or DATA_out(i)(32)); 
+   end generate;
+                
+
 UA2 : USR_ACCESSE2   port map (CFGCLK => open, DATA => tstamp, DATAVALID => open );
 
 SNS : SENSOR  PORT MAP ( di_in => (others=>'0'), daddr_in => xadc_a, den_in => xadc_en, dwe_in => '0', drdy_out => xadc_rdy, do_out => xadc_out, dclk_in => TX_CLK,
              reset_in => sreset, vp_in => '0', vn_in => '0', channel_out => open,  eoc_out => open, alarm_out => open, eos_out => open, busy_out => open);
 
-xadc_a<="00000" & hspi_addr(1 downto 0); xadc_en <= xadc_rq1 and not xadc_rq2;
+xadc_a<="00000" & hspi_addr(1 downto 0); xadc_en <= rd_hspi32 and rd_xadc;
 
 TCM_reqh <= HBC_JUMP3 or HBC_JUMP2 or HBC_JUMP1 or HGBTRXerr or HGBT_chg;
 
@@ -1598,6 +1641,7 @@ hspid_w32 <= hspi_wr_data & hspi_wr_data_l;
 
 wr_hspi32 <= '1' when (reg32_wr2='0') and (reg32_wr1='1') else '0';
 rd_hspi32 <= '1' when (reg32_rd2='0') and (reg32_rd1='1') else '0';
+str_reg32 <= '1' when (reg32_str2='0') and (reg32_str1='1') else '0';
 
 reg_wr_data<= spi_wr_data when  (spi_wr_req='1') else  hspi_wr_data; 
 reg_wr_addr<= spi_addr when  (spi_wr_req='1') else  hspi_addr; 
@@ -1608,7 +1652,7 @@ if sreset='1' then buf_vector<=x"000000000000000"; buf_cou<=x"A0"; dcs_irq<='0';
 else 
 if (TX_CLK'event and TX_CLK='1') then
 
-reg32_wr2<=reg32_wr1; reg32_wr1<=reg32_wr0; reg32_wr0<=reg32_wr; reg32_rd2<=reg32_rd1; reg32_rd1<=reg32_rd0; reg32_rd0<=reg32_rd;
+reg32_wr2<=reg32_wr1; reg32_wr1<=reg32_wr0; reg32_wr0<=reg32_wr; reg32_rd2<=reg32_rd1; reg32_rd1<=reg32_rd0; reg32_rd0<=reg32_rd; reg32_str2<=reg32_str1; reg32_str1<=reg32_str0; reg32_str0<=reg32_str;
 spibuf_wr2<=spibuf_wr1; spibuf_wr1<=spibuf_wr0; spibuf_wr0<=spibuf_wr; hspibuf_wr2<=hspibuf_wr1; hspibuf_wr1<=hspibuf_wr0; hspibuf_wr0<=hspibuf_wr;
 spibuf_rd2<=spibuf_rd1; spibuf_rd1<=spibuf_rd0; spibuf_rd0<=spibuf_rd; hspibuf_rd2<=hspibuf_rd1; hspibuf_rd1<=hspibuf_rd0; hspibuf_rd0<=hspibuf_rd;
 
@@ -1617,8 +1661,8 @@ buf_lock2<=buf_lock1; buf_lock1<=buf_lock0; buf_lock0<=buf_lock;
 hbuf_req <= (not hspibuf_wr2) and hspibuf_wr1 and sbuf_wrena; 
 
 if (rd_hspi32='1') then 
-   if (flsh_sel='0') then hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
-       else hspib_32 <=hspid_r32;
+   if (rdo_sel='1') then hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
+       else if (flsh_sel='1') then hspib_32 <=hspid_r32; end if;
    end if;
 end if;   
    
@@ -1662,9 +1706,13 @@ Xmegamem : Xmega_buf PORT MAP (clka => TX_CLK, ena => hbuf_ena, wea(0) => hbuf_w
 
 tcm_req <= ((not tcm_req2) and tcm_req1) or ((not gs0) and gbt_global_status(0)) or ((not gs1) and gbt_global_status(1));
 
+reg32_320_wr<= reg32_320_wr1 and (not reg32_320_wr2); reg32_320_str<= reg32_320_str1 and (not reg32_320_str2);
+
 process(clk320)
 begin
 if (clk320'event and clk320='1') then
+
+reg32_320_wr2 <=reg32_320_wr1; reg32_320_wr1 <=reg32_320_wr0; reg32_320_wr0 <=reg32_wr; reg32_320_str2 <=reg32_320_str1; reg32_320_str1 <=reg32_320_str0; reg32_320_str0 <=reg32_str;  
 
 gs0<=gbt_global_status(0); gs1<=gbt_global_status(1);
 
@@ -1677,7 +1725,7 @@ if (hspi_wr2='0') and (hspi_wr1='1') then hspi_wr_req<='1'; end if;
 
 if (cnt_rst='1') then cnt_rst<='0'; end if;
 
-   if (sreset='1') then chans_block <= '0';
+   if (sreset='1') then chans_block <= '0'; hyst_md(15)<='0'; is_rst<='1';
      else
        if (spi_wr_req='1') or  (hspi_wr_req='1') then
        case reg_wr_addr(7 downto 0) is 
@@ -1723,8 +1771,12 @@ if (cnt_rst='1') then cnt_rst<='0'; end if;
             when x"3D" => Ampl_sat <=reg_wr_data(11 downto 0);
             
             when x"7C" => chans_ena_r <=reg_wr_data(11 downto 0);
+            
+            when x"7E" => hyst_md(14 downto 0) <=reg_wr_data(14 downto 0);
                         
             when x"7F" => if (cnt_rst='0') and (reg_wr_data(9)='1') then cnt_rst<='1'; end if;
+                          if (hspi_wr_req='1') and (spi_wr_req='0') then cnt_md <= reg_wr_data(10); end if;
+                          if (hspi_wr_req='1') and (spi_wr_req='0') and (reg_wr_data(11)='1') then is_rst <= '0'; end if;
                           if (spi_wr_req='1') and (reg_wr_data(11)='1') then chans_block <= '1'; end if;
             
             when others => null;
@@ -1732,6 +1784,10 @@ if (cnt_rst='1') then cnt_rst<='0'; end if;
           if (spi_wr_req='1') then spi_wr_req<='0'; end if;
           if (hspi_wr_req='1') and (spi_wr_req='0') then hspi_wr_req<='0'; end if;
          
+        end if;
+        if ((spi_wr_req='1') or  (hspi_wr_req='1')) and (reg_wr_addr(7 downto 0)=x"7E") then hyst_md(15) <=reg_wr_data(15);
+           else 
+            if (hyst_stp='1') then hyst_md(15)<='0'; end if;
         end if;
     end if;        
 end if;
@@ -1855,7 +1911,7 @@ begin
 if (clk320'event and clk320='1') then
 
 spi_lock320<=spi_lock320_0;  spi_lock320_0<= rd_lock;
-
+hspi_lock320<=hspi_lock320_0;  hspi_lock320_0<= rd_lock_hspi;
 tto<=tt;  tao<=ta;  
 MCLK40_0<=MCLK40T; MCLK40_1<=MCLK40_0; if (MCLK40_0/=MCLK40_1) then mt_cou<="000"; else mt_cou<=mt_cou+1; end if;
 
@@ -1939,6 +1995,10 @@ if (mt_cou="001") then
     if (BC_COU>x"003") then TR_to<=BC_COU(5 downto 0)-"000100"; else TR_to<="1010" & BC_COU(1 downto 0); end if;
     end if;
   end if;
+  
+  if  ((EV_ID_out(23 downto 12) = hyst_md(11 downto 0)) or (hyst_md(12)='0') ) and (hyst_md(15)='1') then start_hyst<= Event_ready_0 and (not Event_ready); else start_hyst<= '0'; end if;  
+
+  
 end if;
 end process;
 
@@ -2026,22 +2086,6 @@ end generate;
 FIFO_dis<=EV_ID_empty and EVENT_free;
 wr_out_id<= (Event_ready_0 and (not Event_ready)) or ev_tout;
 
---process (TX_CLK)
---begin
---if (TX_CLK'event and TX_CLK='1') then
-  
---    if (DATA_empty='0') then mux_out<= not mux_out; else mux_out<='1'; end if;
---    str_la<=(not DATA_empty) or (not mux_out);
-
---end if;
---end process; 
-
---la0i <= DATA80_out(15 downto 0) when (mux_out='0') else DATA80_out(55 downto 40);
---la1i <= DATA80_out(31 downto 16) when (mux_out='0') else DATA80_out(71 downto 56);
---la2i(8 downto 0) <= '0' & DATA80_out(39 downto 32) when (mux_out='0') else '1' & DATA80_out(79 downto 72);
-
-
-
 --la2i(0)<=EVNTI; la2i(1)<=Zcal_done; la2i(2)<=inp_cou(1); la2i(3)<=CSTR2; la2i(4)<=inp_cou(2); la2i(5)<=CSTR3; la2i(6)<=inp_cou(3); la2i(7)<=CSTR4; la2i(8)<=inp_cou(4); la2i(9)<=CSTR5; la2i(10)<=inp_cou(5); la2i(11)<=CSTR6; 
 --la2i(12)<=inp_cou(6); la2i(13)<=CSTR7; la2i(14)<=inp_cou(7); la2i(15)<=CSTR8; lack2i<=inp_cou(8); lack3i<=CSTR9; la3i(14)<=inp_cou(9); la3i(15)<=CSTR10; la3i(12)<=inp_cou(10); la3i(13)<=CSTR11; la3i(10)<=inp_cou(11); la3i(11)<=CSTR12;
 
@@ -2053,13 +2097,13 @@ wr_out_id<= (Event_ready_0 and (not Event_ready)) or ev_tout;
 --la0i(0)<=MCLK40_IN1; la0i(1)<=MCLK40_IN2; la0i(2)<=MCLK40_IN3; la0i(3)<=CSTR1; la0i(4)<=CGE1; la0i(5)<=lTDCCLK1; la0i(6)<=RSA1;
 --la3i(15)<=inp_event;
 
---la0i<=LA_vector(15 downto 0); la1i<=LA_vector(31 downto 16); la2i<=LA_vector(47 downto 32); la3i(7 downto 0)<=LA_vector(55 downto 48);
+
 
 
 --la1i(15 downto 14) <= ttla;
 --la2i(15 downto 14) <= tala;
 
---la2i(0)<=HSELI; la2i(1)<=HSCKI; la2i(2)<=HMOSII; la2i(3)<=HMISOI; la2i(4)<=hspi_h; la2i(5)<=dcs_irq; la2i(6)<=hbuf_ena; la2i(7)<=hbuf_wrena; la2i(8)<=reg32_wr;
+--la2i(0)<=HSELI; la2i(1)<=HSCKI; la2i(2)<=HMOSII; la2i(3)<=HMISOI; la2i(4)<=hspi_h; la2i(5)<=rd_hyst_d0; la2i(6)<=hbuf_ena; la2i(7)<=hbuf_wrena; la2i(8)<=reg32_wr;
 
 --la3i(0)<=gs0;  la3i(1)<=gs1;
 

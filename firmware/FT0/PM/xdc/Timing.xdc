@@ -84,8 +84,8 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
                                                                     FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 2
 
 
-#set_false_path -hold -from [get_clocks RXDataCLK] -to [get_pins FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D]
-#set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_pins FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D] 1.000
+#set_false_path -hold -from [get_clocks RXDataCLK] -to [get_pins FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D]
+#set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_pins FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D] 1.000
 
 
 # GBT readout
