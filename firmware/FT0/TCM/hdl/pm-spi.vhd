@@ -86,7 +86,7 @@ rdy<= '1' when ((cs='1') and (eoc='1') and (smode='0')and (cmd_rst='0')) or (fif
 
 
 
-cs_spi <='1' when (cs='1') and ((A(8)='0') or (A='1' & x"02")) else '0';
+cs_spi <= ena when (cs='1') and ((A(8)='0') or (A='1' & x"02")) else '0';
 
 DO <= fifo_out when (fifo_rd='1') else
       x"00000" & "00" & fifo_cou when (reg_rd='1') else
@@ -96,12 +96,12 @@ DO <= fifo_out when (fifo_rd='1') else
       
 reg_rd<='1' when  (cs='1') and (rd='1') and (A='1' & x"01") else '0';
 
-xmg_sel<='1' when  (cs='1') and (A='1' & x"02") else '0';
+xmg_sel<= ena when  (cs='1') and (A='1' & x"02") else '0';
 
 xmg_md<= (xmg_sel and not smode) or cmd_rst;
 
-spi_mosi<=Dreg(47) and ena;
-spi_sel<= spi_sel_i and ena;
+spi_mosi<=Dreg(47) and (ena or cmd_rst);
+spi_sel<= spi_sel_i and (ena or cmd_rst);
 
 spi_inp<=xmg_smpl when (xmg_md='1') else not spi_miso;
 
@@ -189,7 +189,7 @@ if ((count=x"01") and (n_addr='1')) or ((count=x"05") and (xmg_md='0')) then A_o
      end if;
  end if;
   
- end if;
+end if;
 
 end if;
 end process;

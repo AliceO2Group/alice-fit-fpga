@@ -271,7 +271,7 @@ signal tt,ta,tto,tao : STD_LOGIC_VECTOR (1 downto 0);
 
 signal GBT_is_RXD, GBT_is_TXD, RX_CLK, TX_CLK, GBTRX_ready, GBTRX_ready0, GBT_chg, HGBT_chg, GBT_rdy, GBT_rdy0, t100ms, RX_err, RX_err1, RX_err_LED, rxerr0, TXact, RXact, RXLED, TXLED, txled0, rxled0, LNKLED, IsRXData0, GBTRXerr, stat_clr, stat_clr0, stat_clr1 : STD_LOGIC;
 signal cou_100ms :  STD_LOGIC_VECTOR (21 downto 0);
-signal alm_rst0, alm_rst, chans_block : STD_LOGIC;
+signal alm_rst0, alm_rst, chans_block, is_rst : STD_LOGIC;
 
 signal chans_ena, chans_ena_r : STD_LOGIC_VECTOR (11 downto 0);
 
@@ -1021,7 +1021,6 @@ hstat_clr0<=Hs_rd; hstat_clr1<=hstat_clr0; hstat_clr<=hstat_clr1;
    if (hstat_clr1='1') and (hstat_clr='0') then HGBT_chg<='0'; end if;
 end if;
 
-
 if (GBTRX_ready='1') and (GBT_rdy='1') and (RX_err='1') then GBTRXerr<='1'; HGBTRXerr<='1';
   else 
     if (stat_clr1='1') and (stat_clr='0') then GBTRXerr<='0'; end if;
@@ -1226,7 +1225,7 @@ if (HSCKI'event and HSCKI='0') then
                   else hspi_wr_data_l<=HSPI_DATA(14 downto 0) & HMOSII;
                  end if;
                 if (hspi_addr(7)='0') then  hspi_wr_rdy<='1'; end if;
-                if (hspi_addr(7 downto 6)="10") then hspibuf_wr<='1'; end if; 
+                if (hspi_addr(7 downto 6)="10") and (hspi_addr(5 downto 2)/="1111") then hspibuf_wr<='1'; end if; 
                 if (hspi_addr(7 downto 3)>="11011") and (hspi_h='1') then reg32_wr<='1'; end if;
                   
               end if;
@@ -1397,7 +1396,7 @@ if (HSCKI'event and HSCKI='0') then
             when 16#7C# =>  HSPI_DATA<=x"0" & chans_ena_r;
             when 16#7D# =>  HSPI_DATA<=x"0" & Z_alarm;
             when 16#7E# =>  HSPI_DATA<= hyst_md;
-            when 16#7F# =>  HSPI_DATA<= gbt_global_status & '0' & cnt_md & h_busy &  HBC_JUMP3 & HBC_JUMP2 & HBC_JUMP1 & HGBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
+            when 16#7F# =>  HSPI_DATA<= gbt_global_status & is_rst & cnt_md & h_busy &  HBC_JUMP3 & HBC_JUMP2 & HBC_JUMP1 & HGBTRXerr & GBTRX_ready & lock300_3 & lock300_2 & lock300_1 & lock320;
             when 16#80# to 16#BF# => HSPI_DATA<=hspi_buf_out;
             
             when 16#C0# to 16#D7# => HSPI_DATA<=hcnt_out;
@@ -1726,7 +1725,7 @@ if (hspi_wr2='0') and (hspi_wr1='1') then hspi_wr_req<='1'; end if;
 
 if (cnt_rst='1') then cnt_rst<='0'; end if;
 
-   if (sreset='1') then chans_block <= '0'; hyst_md(15)<='0';
+   if (sreset='1') then chans_block <= '0'; hyst_md(15)<='0'; is_rst<='1';
      else
        if (spi_wr_req='1') or  (hspi_wr_req='1') then
        case reg_wr_addr(7 downto 0) is 
@@ -1777,6 +1776,7 @@ if (cnt_rst='1') then cnt_rst<='0'; end if;
                         
             when x"7F" => if (cnt_rst='0') and (reg_wr_data(9)='1') then cnt_rst<='1'; end if;
                           if (hspi_wr_req='1') and (spi_wr_req='0') then cnt_md <= reg_wr_data(10); end if;
+                          if (hspi_wr_req='1') and (spi_wr_req='0') and (reg_wr_data(11)='1') then is_rst <= '0'; end if;
                           if (spi_wr_req='1') and (reg_wr_data(11)='1') then chans_block <= '1'; end if;
             
             when others => null;

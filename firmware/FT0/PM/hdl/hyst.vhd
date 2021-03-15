@@ -180,7 +180,7 @@ for i in 0 to 11 loop
 
 if (hyst_st='1') and  (hyst_t1(i)='0') then hyst_data(i)(11 downto 0) <= hyst_inp_data(i)(11 downto 0); end if; 
 if (hyst_st='1') and  (hyst_a1(i)='0') then hyst_data(i)(25 downto 12) <= hyst_inp_data(i)(25 downto 12); end if;
-if ((t_out(i)>=65534) and (wr_mem_t(i)(0)='1')) or ((a_out(i)>=65534) and (wr_mem_a(i)(0)='1')) or ((an_out(i)>=65534) and (wr_mem_an(i)(0)='1')) then ovf(i)<= '1' ; else ovf(i)<= '0'; end if;
+if ((t_out(i)>=x"FFFE") and (wr_mem_t(i)(0)='1')) or ((a_out(i)>=x"FFFE") and (wr_mem_a(i)(0)='1')) or ((an_out(i)>=x"FFFE") and (wr_mem_an(i)(0)='1')) then ovf(i)<= '1' ; else ovf(i)<= '0'; end if;
 end loop;
 
 if (cnt_clr='1') then clr <='1'; 
