@@ -127,6 +127,8 @@ set files [list \
  [file normalize "${origin_dir}/hdl/autophase.vhd" ]\
  [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
  [file normalize "${origin_dir}/hdl/fit.vhd" ]\
+  [file normalize "${origin_dir}/hdl/hyst.vhd" ]\
+   [file normalize "${origin_dir}/hdl/PM12_pkg.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank_package.vhd" ]\

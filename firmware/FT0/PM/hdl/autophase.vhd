@@ -77,16 +77,20 @@ if (lock_i='0') then ms_cou <=(others=>'0'); state <=(others=>'0'); j_cou <=(oth
 if (t1ms='1') then ms_cou <=(others=>'0'); j_cou <=(others=>'0'); 
 
  case to_integer(unsigned(state)) is
-    when 0 => if (j_cou>=10) then state<="001"; dir<='1'; end if; 
-              if (m0="100100") then  state<="110"; dir<='1'; end if;
+    when 0 => if (j_cou>=10)  then state<="001"; dir<='1';  
+                 else
+                  if (m0="100000") then  state<="110"; dir<='1'; end if;
+              end if;
     when 1 => if (j_cou=0)  then state<="010"; ml<= m0; end if;
     when 2 => if (m0=(ml+"000111")) then  state<="011"; end if;
-    when 3 => if (j_cou>=10) then state<="100"; dir<='0'; end if;
-              if (m0="011100") then  state<="110"; dir<='0'; end if;
+    when 3 => if (j_cou>=10) then state<="100"; dir<='0';
+                else 
+                 if (m0="011111") then  state<="111"; dir<='0'; end if;
+              end if;
     when 4 => if (j_cou=0)  then state<="101"; ml<= mh0(5) & mh0(5 downto 1); end if;
     when 5 => if (m0=ml) then done_i<='1'; end if;
-    when 6 => if (m0=0) then  state<="000";  dir<='0'; end if;
-    when others=> null;
+    when 6 => if (signed(m0)=10) then  state<="000";  dir<='0'; end if;
+    when 7 => if (signed(m0)=-10) then  state<="000"; end if;
  end case;
 
 else 

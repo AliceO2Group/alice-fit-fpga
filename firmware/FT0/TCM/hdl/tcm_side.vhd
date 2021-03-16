@@ -176,8 +176,6 @@ PLL1 : MMCM320_PH
 
 HDMIA:  for i in 0 to 9 generate
 
-link_ena(i)<=config(i) and not stat_chg ;
-
 HDMI_RX: hdmirx  port map(TD_P=>TD_P(i), TD_N=>TD_N(i), RST=>SRST, ena=>link_ena(i), link_rdy=>link_OK_in(i), trig_ena=>done, clk320=>clk320, clk320_90=>clk320_90, TDO=>HDMI_in(i), rd_lock=>rd_lock1, DATA_OUT=> TDD(i), 
             status => HDMI_status(i),  master=> master_sel(i), mt_cou=>mt_cou, bitpos=>bitpos(i), bitpos_ok=>bitpos_ok_in(i), ena_dly=>ena_dly, inc_dly=>inc_dly, ena_ph=>psen_o(i), inc_ph=>ph_inc_o(i), is_idle=>is_idle(i), bp_stable=>bp_stable(i),
             dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i), PM_req=>req(i));
@@ -239,6 +237,9 @@ mdl_err<= mast_dlerr(to_integer(unsigned(master_n))) when (side_on='1') else '0'
        end if;   
        
  for i in 0 to 9 loop
+
+link_ena(i)<=config(i) and not stat_chg ;
+
        if sync_err(i)='1' then sync_err_s(i)<='1';
          else if (stat_clr2='1') and (stat_clr1='0') then sync_err_s(i)<='0'; end if;
        end if;   

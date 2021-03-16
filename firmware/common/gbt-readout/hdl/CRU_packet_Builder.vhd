@@ -51,7 +51,7 @@ end CRU_packet_Builder;
 architecture Behavioral of CRU_packet_Builder is
 	
 	constant nwords_in_SOP	: integer := 5;
-	constant nwords_in_EOP	: integer := 2;
+	constant nwords_in_EOP	: integer := 1;
 
 	type SOP_format_type is array (0 to nwords_in_SOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
 	type EOP_format_type is array (0 to nwords_in_EOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
@@ -103,7 +103,7 @@ begin
 	dwords_payload <= func_CNTPCKword_npwords(CNTPTFIFO_data_word_I);
 	trailer_payload <= std_logic_vector(to_unsigned((nwords_in_EOP-1), GEN_count_bitdepth));
 
-    data_payload_bytes <= (to_integer(unsigned(dwords_payload)) + 5) * 16;
+    data_payload_bytes <= (to_integer(unsigned(dwords_payload)) + 4) * 16;
 
 -- Data format ***************************************
 	is_close_frame <= func_CNTPCKword_isclf(CNTPTFIFO_data_word_I);
@@ -153,11 +153,8 @@ begin
 	
 	
 	
-	EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
-	
-	EOP_format(1) <= '0' & x"20000000000000000000"; -- eop CRU
-	--EOP_format(1) <= '0' & x"00000000000000000002"; -- eop G-RORC
-	--EOP_format(1) <= '0' & data_word_cnst_EOP
+	--EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
+	EOP_format(0) <= '0' & x"20000000000000000000"; -- eop CRU
 -- ***************************************************
 
 

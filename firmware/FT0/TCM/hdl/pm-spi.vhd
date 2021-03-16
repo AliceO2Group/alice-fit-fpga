@@ -86,7 +86,7 @@ rdy<= '1' when ((cs='1') and (eoc='1') and (smode='0')and (cmd_rst='0')) or (fif
 
 
 
-cs_spi <='1' when (cs='1') and ((A(8)='0') or (A='1' & x"02")) else '0';
+cs_spi <= ena when (cs='1') and ((A(8)='0') or (A='1' & x"02")) else '0';
 
 DO <= fifo_out when (fifo_rd='1') else
       x"00000" & "00" & fifo_cou when (reg_rd='1') else
@@ -96,19 +96,17 @@ DO <= fifo_out when (fifo_rd='1') else
       
 reg_rd<='1' when  (cs='1') and (rd='1') and (A='1' & x"01") else '0';
 
-xmg_sel<='1' when  (cs='1') and (A='1' & x"02") else '0';
+xmg_sel<= ena when  (cs='1') and (A='1' & x"02") else '0';
 
 xmg_md<= (xmg_sel and not smode) or cmd_rst;
 
-spi_mosi<=Dreg(47) and ena;
-spi_sel<= spi_sel_i and ena;
+spi_mosi<=Dreg(47) and (ena or cmd_rst);
+spi_sel<= spi_sel_i and (ena or cmd_rst);
 
 spi_inp<=xmg_smpl when (xmg_md='1') else not spi_miso;
 
 A_spi<=A(7 downto 0) when (smode='0') else "110" & A_cou;
 rd_spi<= rd when (smode='0') else '1';
-
-spi_clk <= count(1) when (((count(7 downto 2)/="000000") and (xmg_md='0')) or  (x_wait='0')) and (ena='1') else '0';
 
 
 mode16<= '1'  when A_spi(7 downto 4)<x"C" else '0';
@@ -125,6 +123,8 @@ fifo_rd<='1' when (A='1' & x"00") and (cs='1') and (fifo_empty='0') and (rd='1')
 process (CLK)
 begin
 if (CLK'event) and (CLK='1') then
+
+if ((((count(7 downto 2)/="000000") or (n_addr='1')) and (xmg_md='0')) or  ((x_wait='0') and (xmg_md='1'))) and (count(0)='1') then spi_clk <= not count(1); else spi_clk <= '0'; end if; 
 
 if (rst='1') then rd_cou<='0'; smode<='0'; cmd_rst<='0'; rst_rq<='0';
   else
@@ -189,7 +189,7 @@ if ((count=x"01") and (n_addr='1')) or ((count=x"05") and (xmg_md='0')) then A_o
      end if;
  end if;
   
- end if;
+end if;
 
 end if;
 end process;
