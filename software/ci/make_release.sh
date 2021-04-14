@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 # adapted from https://medium.com/@systemglitch/continuous-integration-with-jenkins-and-github-release-814904e20776
 
@@ -39,10 +40,10 @@ echo ${tag},${name},${message},${description},${release},${id}
 
 # create the build artifact to be uploaded to GitHub
 cd ${BITSTREAMS_DIR}
-rm -f ${BUILD_DIR}.7z
-7z ${BUILD_DIR}.7z ${BUILD_DIR}
+ARTIFACT=${BUILD_DIR}.zip
+rm -f ${ARTIFACT} && zip -r ${ARTIFACT} ${BUILD_DIR}/
 
 # Upload the artifact
 curl -XPOST -H "Authorization:token $token" \
      -H "Content-Type:application/octet-stream" \
-     --data-binary @${BUILD_DIR}.7z https://uploads.github.com/repos/AliceO2Group/alice-fit-fpga/releases/$id/assets?name=${BUILD_DIR}.7z
+     --data-binary @${ARTIFACT} https://uploads.github.com/repos/AliceO2Group/alice-fit-fpga/releases/$id/assets?name=${ARTIFACT}
