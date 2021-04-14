@@ -16,7 +16,6 @@ pipeline {
     stage('Get job directory for purging') {
       steps {
         sh('pwd')
-	sh('echo _${GITHUB_ACCESS_TOKEN}_')
       }
     }
     // stage('Purge previous builds') {
@@ -57,26 +56,27 @@ pipeline {
     //     }
     //   }
     // }
-    // stage('Copy bitstreams') {
-    //   steps {
-    //     sh("mkdir -p ${TARGET_DIR}")
-    //     sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
-    //     sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
-    //     sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
-    //   }
-    // }
-    // stage('Upload release to GitHub') {
-    //   steps {
-    //     sh('./software/ci/make_release.sh')
-    //   }
-    // }
-    // stage('Update latest') {
-    //   when {
-    //     branch 'master'
-    //   }
-    //   steps {
-    //     sh('cd ${BITSTREAMS_DIR} && ln -sfn ${BUILD_DIR} latest && cd -')
-    //   }
-    // }
+    stage('Copy bitstreams') {
+      steps {
+        sh("mkdir -p ${TARGET_DIR}")
+        sh("echo test > ${TARGET_DIR}/test.txt")
+        // sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
+        // sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
+        // sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
+      }
+    }
+    stage('Upload release to GitHub') {
+      steps {
+        sh('./software/ci/make_release.sh')
+      }
+    }
+    stage('Update latest') {
+      when {
+        branch 'master'
+      }
+      steps {
+        sh('cd ${BITSTREAMS_DIR} && ln -sfn ${BUILD_DIR} latest && cd -')
+      }
+    }
    }
 }
