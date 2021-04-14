@@ -10,75 +10,73 @@ pipeline {
     BITSTREAMS_DIR    = "${NFS_ROOT}/bitstreams"
     BUILD_DIR         = "${BRANCH_NAME}-${GIT_COMMIT}"
     TARGET_DIR        = "${BITSTREAMS_DIR}/${BUILD_DIR}"
+    GITHUB_ACCESS_TOKEN = credentials('My GitHub PAT')
   }
   stages {
     stage('Get job directory for purging') {
       steps {
         sh('pwd')
+	sh('echo _${GITHUB_ACCESS_TOKEN}_')
       }
     }
-    stage('Purge previous builds') {
-      steps {
-        script {
-          def hi = Hudson.instance
-          def pname = env.JOB_NAME.split('/')[0]
+    // stage('Purge previous builds') {
+    //   steps {
+    //     script {
+    //       def hi = Hudson.instance
+    //       def pname = env.JOB_NAME.split('/')[0]
 
-          hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
-            def exec = build.getExecutor()
+    //       hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
+    //         def exec = build.getExecutor()
 
-            if (build.number < currentBuild.number && exec != null) {
-              exec.interrupt(
-                Result.ABORTED,
-                new CauseOfInterruption.UserInterruption(
-                  "Aborted by #${currentBuild.number}"
-                )
-              )
-              println("Aborted previous running build #${build.number}")
-            } else {
-              println("Build is not running or is current build, not aborting - #${build.number}")
-            }
-          }
-        }
-      }
-    }
-    stage('Build FIT bitstreams') {
-      parallel {
-        stage('PM') {
-          steps {
-            sh('./software/ci/build.sh PM')
-          }
-        }
-        stage('TCM') {
-          steps {
-            sh('./software/ci/build.sh TCM')
-          }
-        }
-      }
-    }
-    stage('Copy bitstreams') {
-      steps {
-        sh("mkdir -p ${TARGET_DIR}")
-        sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
-        sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
-        sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
-      }
-    }
-    stage('Upload release to GitHub') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: '7029ab63-0b75-4e9b-bc3a-6d14c4dcc9fc',
-                                          passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
-
-          sh('./software/ci/make_release.sh')
-        }
-      }
-    }
-    stage('Update latest') {
-      when {
-        branch 'master'
-      }
-      steps {
-        sh('cd ${BITSTREAMS_DIR} && ln -sfn ${BUILD_DIR} latest && cd -')
-      }
-    }
-  }
+    //         if (build.number < currentBuild.number && exec != null) {
+    //           exec.interrupt(
+    //             Result.ABORTED,
+    //             new CauseOfInterruption.UserInterruption(
+    //               "Aborted by #${currentBuild.number}"
+    //             )
+    //           )
+    //           println("Aborted previous running build #${build.number}")
+    //         } else {
+    //           println("Build is not running or is current build, not aborting - #${build.number}")
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    // stage('Build FIT bitstreams') {
+    //   parallel {
+    //     stage('PM') {
+    //       steps {
+    //         sh('./software/ci/build.sh PM')
+    //       }
+    //     }
+    //     stage('TCM') {
+    //       steps {
+    //         sh('./software/ci/build.sh TCM')
+    //       }
+    //     }
+    //   }
+    // }
+    // stage('Copy bitstreams') {
+    //   steps {
+    //     sh("mkdir -p ${TARGET_DIR}")
+    //     sh("cp firmware/FT0/*/build/*.bit ${TARGET_DIR}")
+    //     sh("cp firmware/FT0/*/build/*.bin ${TARGET_DIR}")
+    //     sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
+    //   }
+    // }
+    // stage('Upload release to GitHub') {
+    //   steps {
+    //     sh('./software/ci/make_release.sh')
+    //   }
+    // }
+    // stage('Update latest') {
+    //   when {
+    //     branch 'master'
+    //   }
+    //   steps {
+    //     sh('cd ${BITSTREAMS_DIR} && ln -sfn ${BUILD_DIR} latest && cd -')
+    //   }
+    // }
+   }
 }
