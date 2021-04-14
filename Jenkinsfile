@@ -63,6 +63,15 @@ pipeline {
         sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
       }
     }
+    stage('Upload release to GitHub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: '0b0ce405-9ce8-4ffb-b200-0cfe67114fa6',
+                                          usernameVariable: 'GITHUB_APP',
+                                          passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+          sh('./software/ci/make_release.sh')
+	}
+      }
+    }
     stage('Update latest') {
       when {
         branch 'master'
@@ -71,5 +80,5 @@ pipeline {
         sh('cd ${BITSTREAMS_DIR} && ln -sfn ${BUILD_DIR} latest && cd -')
       }
     }
-  }
+   }
 }
