@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # adapted from https://medium.com/@systemglitch/continuous-integration-with-jenkins-and-github-release-814904e20776
 
 
@@ -39,4 +41,4 @@ rm -f ${BUILD_DIR}.7z
 # Upload the artifact
 curl -XPOST -H "Authorization:token $token" \
      -H "Content-Type:application/octet-stream" \
-     --data-binary @artifact.zip https://uploads.github.com/repos/AliceO2Group/alice-fit-fpga/releases/$id/assets?name=${BUILD_DIR}.7z
+     --data-binary @${BUILD_DIR}.7z https://uploads.github.com/repos/AliceO2Group/alice-fit-fpga/releases/$id/assets?name=${BUILD_DIR}.7z
