@@ -10,7 +10,7 @@ pipeline {
     BITSTREAMS_DIR    = "${NFS_ROOT}/bitstreams"
     BUILD_DIR         = "${BRANCH_NAME}-${GIT_COMMIT}"
     TARGET_DIR        = "${BITSTREAMS_DIR}/${BUILD_DIR}"
-    GITHUB_ACCESS_TOKEN = credentials('My GitHub PAT')
+    GITHUB_ACCESS_TOKEN = credentials('0b0ce405-9ce8-4ffb-b200-0cfe67114fa6')
   }
   stages {
     stage('Get job directory for purging') {
