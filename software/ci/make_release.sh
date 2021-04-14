@@ -9,6 +9,8 @@ set -x
 echo "Publishing on Github..."
 token=${GITHUB_ACCESS_TOKEN}
 
+git fetch --prune --unshallow --tags
+
 # Get the last tag name
 tag=$(git describe --tags)
 
