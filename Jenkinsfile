@@ -63,6 +63,16 @@ pipeline {
         sh("cp firmware/FT0/*/build/*_logs.tar.gz ${TARGET_DIR}")
       }
     }
+    stage('Upload release to GitHub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'githubapp-jenkins',
+                                          usernameVariable: 'GITHUB_APP',
+                                          passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+
+          sh('./software/ci/make_release.sh')
+        }
+      }
+    }
     stage('Update latest') {
       when {
         branch 'master'
