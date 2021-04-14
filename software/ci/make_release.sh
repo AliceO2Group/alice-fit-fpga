@@ -36,8 +36,6 @@ release=$(curl -XPOST -H "Authorization:token $token" \
 # Extract the id of the release from the creation response
 id=$(echo "$release" | sed -n -e 's/"id":\ \([0-9]\+\),/\1/p' | head -n 1 | sed 's/[[:blank:]]//g')
 
-echo ${tag},${name},${message},${description},${release},${id}
-
 # create the build artifact to be uploaded to GitHub
 cd ${BITSTREAMS_DIR}
 ARTIFACT=${BUILD_DIR}.tar.bz2
