@@ -65,7 +65,7 @@ pipeline {
     }
     stage('Upload release to GitHub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'githubapp-jenkins',
+        withCredentials([usernamePassword(credentialsId: '7029ab63-0b75-4e9b-bc3a-6d14c4dcc9fc',
                                           usernameVariable: 'GITHUB_APP',
                                           passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
 
