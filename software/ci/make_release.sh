@@ -40,8 +40,8 @@ echo ${tag},${name},${message},${description},${release},${id}
 
 # create the build artifact to be uploaded to GitHub
 cd ${BITSTREAMS_DIR}
-ARTIFACT=${BUILD_DIR}.zip
-rm -f ${ARTIFACT} && zip -r ${ARTIFACT} ${BUILD_DIR}/
+ARTIFACT=${BUILD_DIR}.tar.bz2
+rm -f ${ARTIFACT} && tar cvf - ${BUILD_DIR} | bzip2 -9 - > ${ARTIFACT}
 
 # Upload the artifact
 curl -XPOST -H "Authorization:token $token" \
