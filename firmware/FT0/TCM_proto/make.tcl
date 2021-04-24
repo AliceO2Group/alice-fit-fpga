@@ -20,7 +20,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "TCM"
+set project_name "TCM_proto"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -128,7 +128,7 @@ set files [list \
  [file normalize "${origin_dir}/hdl/trigger_out.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_side.vhd" ]\
  [file normalize "${origin_dir}/hdl/HDMIRX.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
+ [file normalize "${origin_dir}/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
