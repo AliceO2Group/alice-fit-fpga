@@ -48,6 +48,11 @@ pipeline {
             sh('./software/ci/build.sh PM')
           }
         }
+        stage('TCM_proto') {
+          steps {
+            sh('./software/ci/build.sh TCM_proto')
+          }
+        }
         stage('TCM') {
           steps {
             sh('./software/ci/build.sh TCM')
