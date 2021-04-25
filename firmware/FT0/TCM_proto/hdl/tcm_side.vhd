@@ -98,13 +98,14 @@ signal inp_act  : STD_LOGIC_VECTOR (9 downto 1);
 signal HDMI_status : Trgdat;
 
 signal clk320, clk320_90, trig_ena, done, done0, done_toggle, ena_dly, inc_dly, psen, ph_inc, link_OK, side_on, dly_inc, dly_dec, dly_err,dly_err_s,  bitpos_ok, mdl_err, mdl_err_s, dly_ctrl_ena, stat_clr0, stat_clr1, stat_clr2 : STD_LOGIC;
-signal rd_lock1, rd_lock0 : STD_LOGIC;
+signal rd_lock1, rd_lock0, dly_ctrl_rdy : STD_LOGIC;
 signal idle_cou : STD_LOGIC_VECTOR (5 downto 0);
 signal mt_cou  : STD_LOGIC_VECTOR (2 downto 0);
-signal link_ena, link_OK_in, link_OK_act, master_sel, psen_o, ph_inc_o, is_idle, bp_stable, dl_low, dl_high, bitpos_ok_in, bitpos_ok_act, sig_empty, mast_dlerr, mast_stable, sync_err, sync_err_s: STD_LOGIC_VECTOR (9 downto 0);
+signal link_ena, link_OK_in, link_OK_act, master_sel, psen_o, ph_inc_o, is_idle, bp_stable, dl_low, dl_high, bitpos_ok_in, bitpos_ok_act, sig_empty, mast_dl_low, mast_dl_high, mast_stable, sync_err, sync_err_s: STD_LOGIC_VECTOR (9 downto 0);
 signal bitpos : vect3_arr;
 signal master_n, N_empty0 : STD_LOGIC_VECTOR (3 downto 0);
 signal adj_count : STD_LOGIC_VECTOR (7 downto 0);
+signal mast_delay: STD_LOGIC_VECTOR (17 downto 0);
 
 component hdmirx is
     Port ( TD_P : in STD_LOGIC_VECTOR (3 downto 0);
@@ -132,7 +133,8 @@ component hdmirx is
            bp_stable : out  STD_LOGIC;
            dl_low : out  STD_LOGIC;
            dl_high : out  STD_LOGIC;
-           mast_dl_err : out  STD_LOGIC;
+           mast_dl_low : out  STD_LOGIC;
+           mast_dl_high : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
            dly_ctrl_ena : in  STD_LOGIC;
            syn_err : out  STD_LOGIC;
@@ -178,7 +180,7 @@ HDMIA:  for i in 0 to 9 generate
 
 HDMI_RX: hdmirx  port map(TD_P=>TD_P(i), TD_N=>TD_N(i), RST=>SRST, ena=>link_ena(i), link_rdy=>link_OK_in(i), trig_ena=>done, clk320=>clk320, clk320_90=>clk320_90, TDO=>HDMI_in(i), rd_lock=>rd_lock1, DATA_OUT=> TDD(i), 
             status => HDMI_status(i),  master=> master_sel(i), mt_cou=>mt_cou, bitpos=>bitpos(i), bitpos_ok=>bitpos_ok_in(i), ena_dly=>ena_dly, inc_dly=>inc_dly, ena_ph=>psen_o(i), inc_ph=>ph_inc_o(i), is_idle=>is_idle(i), bp_stable=>bp_stable(i),
-            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_err=>mast_dlerr(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i), PM_req=>req(i));
+            dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_low=>mast_dl_low(i), mast_dl_high=>mast_dl_high(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i), PM_req=>req(i));
 end generate;
 
 ROM1 : ROM7x15  PORT MAP (clka => CLK320, addra => Nchan_A, douta => Avg_0); 
@@ -208,21 +210,28 @@ msel: for i in 0 to 9 generate
 side_on<='1' when (config(9 downto 0)/=0) else '0';
 dly_dec<='1' when dl_high/=0 else '0';
 dly_inc<='1' when dl_low/=0 else '0';
-dly_err<= (dly_inc and dly_dec) or mdl_err; 
+dly_err<= (dly_inc and dly_dec) or (mast_dl_low(to_integer(unsigned(master_n))) and dly_dec) or (mast_dl_high(to_integer(unsigned(master_n))) and dly_inc); 
 
 
 link_OK<= '1' when (link_OK_act="1111111111") and (side_on='1') else '0';
 bitpos_OK<= '1' when (bitpos_ok_act="1111111111") and (side_on='1') else '0';
-dly_ctrl_ena<='1' when (mast_stable="1111111111") else '0';
+dly_ctrl_rdy<='1' when (mast_stable="1111111111") else '0';
 
 psen<= psen_o(to_integer(unsigned(master_n))) when (side_on='1') else '0'; 
 ph_inc<= ph_inc_o(to_integer(unsigned(master_n))) when (side_on='1') else '0'; 
-mdl_err<= mast_dlerr(to_integer(unsigned(master_n))) when (side_on='1') else '0';
+mdl_err<= (mast_dl_low(to_integer(unsigned(master_n))) or mast_dl_high(to_integer(unsigned(master_n)))) when (side_on='1') and (dly_err='1') else '0';
 
   process (clk320)
   begin
     if (clk320'event and clk320='1') then
-                    
+    
+    if (dly_ctrl_rdy='0') then dly_ctrl_ena<='0'; mast_delay<=(others=>'0');
+      else 
+       if (mast_delay/="11" & x"FFFF") then mast_delay<=mast_delay+1; 
+        else dly_ctrl_ena<='1';
+       end if;
+    end if;
+                  
        rd_lock1<=rd_lock0; rd_lock0<=rd_lock;
        stat_clr2<=stat_clr1; stat_clr1<=stat_clr0; stat_clr0<=stat_clr;
        done0<=done;
@@ -263,16 +272,15 @@ if (side_on='1') and (srst='0') then
         else if (done='0') and (bitpos_OK='1') and (idle_cou>"010000") then done<='1'; end if;
      end if; 
             
-if (link_OK_in(to_integer(unsigned(master_n)))='1') and (dly_err='0') then 
-   if (adj_count/=x"FF") then adj_count<=adj_count+1; 
-    else  
-         if (dly_inc or dly_dec)='1' then adj_count<=x"00"; ena_dly<=dly_ctrl_ena; inc_dly<=dly_inc; end if;
-   end if;
- else adj_count<=x"00";
- end if;
-  
-    if (ena_dly='1') then ena_dly<='0'; end if;
- else done<='0'; idle_cou<="000000"; adj_count<=x"00";
+    if (link_OK_in(to_integer(unsigned(master_n)))='1') and (dly_err='0') and ((dly_inc or dly_dec)='1') then
+       adj_count<=adj_count+1; 
+       if (adj_count=x"FF") then ena_dly<='1'; inc_dly<=dly_inc; 
+        else ena_dly<='0';
+      end if;
+     else adj_count<=x"00"; ena_dly<='0';
+    end if;
+     
+ else ena_dly<='0';
 end if;
   
  

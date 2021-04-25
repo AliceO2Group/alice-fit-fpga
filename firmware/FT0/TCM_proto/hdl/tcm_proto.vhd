@@ -203,7 +203,8 @@ signal TimeC, TimeC0, TimeC1, TimeC2, TimeA : STD_LOGIC_VECTOR (8 downto 0);
 signal TimeA_o, TimeC_o :  STD_LOGIC_VECTOR (15 downto 0);
 signal AvgA, AvgC : STD_LOGIC_VECTOR (13 downto 0);
 signal TresbM, TdiffM : STD_LOGIC_VECTOR (23 downto 0);
-signal hdmiac_select, hdmicc_select, hdmias_select, hdmics_select, pll_lock_a, pll_lock_c, hdmis_ack, mul_ena, mul_enc, sideA_OK, sideC_OK, stat_clrA, stat_clrC, as_chg, cs_chg, rst_fl : STD_LOGIC;
+signal hdmiac_select, hdmicc_select, hdmias_select, hdmics_select, pll_lock_a, pll_lock_c, hdmis_ack, mul_ena, mul_enc, sideA_OK, sideC_OK, stat_clrA, stat_clrC, as_chg, cs_chg, rst_fl, as_blk, cs_blk, hdmi_to0, hdmi_to  : STD_LOGIC;
+signal PM_tcou :  STD_LOGIC_VECTOR (25 downto 0);
 signal dly_rst, cnt_rd, pm_adr_sel, pm_rdy, cnt_ctrl_sel, cnt_ctrl_rdy, ipb_locked, cnt_clr, cnt_lock, Tcnt_sel, Tcnt_0_rd, cnt_lock0, cnt_lock1, cnt_lock2, Tcnt_clr, cnt_clr0, cnt_clr1, cnt_clr2, Tcnt_ack, Tcnt_err : STD_LOGIC;
 signal fifo_sel, fifo_csel, f_rd, f_empty, f_wr, f_full, lclk160, lmode_sel, lpatt0_sel, lpatt1_sel, l_on, l_on0, l_on1, l_tg1, l_tg, l_fbin, l_fbout, a_t, a0_t, an_t : STD_LOGIC;
 signal l_cnt : STD_LOGIC_VECTOR (1 downto 0);
@@ -1077,10 +1078,10 @@ end if;
 end if;
 end process;
 
-tcma: tcm_side port map(CLKA=>CLKA,  RST=>reset, SRST=>sreset, TD_P=>TDA_P, TD_N=>TDA_N, Config=>hdmia_config, Status=>Status_a, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrA, stat_chg=>as_chg, side_OK=>sideA_OK, TDD=>TDA, rd_lock=> rd_lock_a,
+tcma: tcm_side port map(CLKA=>CLKA,  RST=>reset, SRST=>sreset, TD_P=>TDA_P, TD_N=>TDA_N, Config=>hdmia_config, Status=>Status_a, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrA, stat_chg=>as_blk, side_OK=>sideA_OK, TDD=>TDA, rd_lock=> rd_lock_a,
                          Or_o=>OrA_i, CLK320_o=>CLK320A, clksys40_o => clksys40, pll_lock=> pll_lock_a, mt_cou_o=>bitcnt_A, Time_o=>TimeA_o, Avg_o=>AvgA, Ampl_O=>AmplA, Nchan=> Nchan_A, req=> reqA, bkgnd=> bkgndA);
 
-tcmc: tcm_side port map(CLKA=>CLKC,  RST=>reset, SRST=>sreset, TD_P=>TDC_P, TD_N=>TDC_N, Config=>hdmic_config, Status=>Status_C, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrC, stat_chg=>cs_chg, side_OK=>sideC_OK, TDD=>TDC0, rd_lock=> rd_lock_c, 
+tcmc: tcm_side port map(CLKA=>CLKC,  RST=>reset, SRST=>sreset, TD_P=>TDC_P, TD_N=>TDC_N, Config=>hdmic_config, Status=>Status_C, stat_adr=> ipb_addr(3 downto 0), stat_clr=>stat_clrC, stat_chg=>cs_blk, side_OK=>sideC_OK, TDD=>TDC0, rd_lock=> rd_lock_c, 
                         Or_o=>OrC_B, CLK320_o=>CLK320C, clksys40_o=> open, pll_lock=> pll_lock_c, mt_cou_o=>bitcnt_c, Time_o=>TimeC_o, Avg_o=>AvgC, Ampl_o=>AmplC0, Nchan=> Nchan_C0, req=> reqC, bkgnd=> bkgndC0);
 
 TresbM<=TimeC(8) & TimeC & "00000000000000";
@@ -1173,6 +1174,10 @@ PM_rst <= rst_spi2 and (not rst_spi1);
 
 bccorr_rd<= bccorr_sel or bccorrA_sel or bccorrC_sel; bccorr_ack<=bccorr_ack0 and bccorr_rd; 
 
+hdmi_to0<='1' when (PM_tcou/=31250000) else '0';
+as_blk<=as_chg or hdmi_to; cs_blk<=cs_chg or hdmi_to;
+
+
 process(ipb_clk)
 begin
 if (ipb_clk'event and ipb_clk='1') then
@@ -1210,8 +1215,17 @@ if (rst_spi1='1') then RST_req<='0'; clk_frs<='0';
 
 end if;
 
+if (ipb_rst='1') then hdmia_config<=(others=>'0'); hdmic_config<=(others=>'0');
+  else
+   hdmi_to<=hdmi_to0;
+   if (PM_rst='1') then PM_tcou<=(others=>'0');
+     else
+   if (hdmi_to0='1') then PM_tcou<=PM_tcou+1; end if;  
+   end if;
+
 if (hdmiac_select='1') and (ipb_iswr='1') then hdmia_config<=ipb_data_out; as_chg<='1'; end if;
 if (hdmicc_select='1') and (ipb_iswr='1') then hdmic_config<=ipb_data_out; cs_chg<='1'; end if;
+end if;
 
 if (as_chg='1') then as_chg<='0'; end if; if (cs_chg='1') then cs_chg<='0'; end if;
 
