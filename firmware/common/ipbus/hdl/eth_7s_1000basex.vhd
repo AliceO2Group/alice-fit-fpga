@@ -146,7 +146,7 @@ architecture rtl of eth_7s_1000basex is
 	signal gmii_rx_clk: std_logic;
 	signal clk125, txoutclk_ub, txoutclk, clk125_ub, rxoutclk, rxoutclk_ub : std_logic;
 	signal clk62_5_ub, clk62_5, clkfb: std_logic;
-	signal rstn, pll_rst, phy_done, mmcm_locked, locked_int: std_logic;
+	signal rstn, pll_rst, phy_done, mmcm_locked, locked_int : std_logic;
 	signal decoupled_clk: std_logic := '0';
 	signal status_vector: std_logic_vector(15 downto 0);
 	signal speed10100, speed100, clk_en, sgmii, rst_pcs, rdy : std_logic;
@@ -172,23 +172,24 @@ mmcm: MMCM125ETH port map(clkout1 => clk62_5, clkout2 => clk125, clkin1 => txout
 	
 	process(clk_gt125)
 	begin
-		if rising_edge(clk_gt125) then
+	 if rising_edge(clk_gt125) then
 			locked_int <= mmcm_locked and phy_done;
 			
-			if (rsti='1') then 
-			 sgmii<='1'; to_cnt<= (others=>'0'); rst_cnt<= (others=>'1'); rdy<= '0';
+		 if (rsti='1') then 
+			 sgmii<='0'; to_cnt<= (others=>'0'); rst_cnt<= (others=>'1'); rdy<= '0';
 			else
-			if (rst_cnt/="111") then rst_cnt<= rst_cnt+1; end if;
-			if (locked_int='1') then
-			 if (to_cnt/= "111" & x"FFFFF") then to_cnt<= to_cnt+1;
-			  else 
-			   if (rdy='0') then rdy<= '1';
-			     if (status_vector(0)='0')  then sgmii<='0'; rst_cnt<= (others =>'0');   end if;
-			   end if;
-			  end if; 
-			 end if;
-			end if;
-		end if;
+			 if (rst_cnt/="111") then rst_cnt<= rst_cnt+1; end if;
+			 if (locked_int='1') and (rdy='0') then
+              if (to_cnt/= "111" & x"FFFFF") then to_cnt<= to_cnt+1;
+               else 
+                  if (status_vector(0)='0')  then sgmii<= not sgmii; rst_cnt<= (others =>'0');
+                   if (sgmii='0') then to_cnt<= (others=>'0'); end if;
+                  end if;
+                  if (sgmii='1') or (status_vector(0)='1') then rdy<='1';  end if;
+              end if; 
+  	        end if;
+		 end if;
+      end if;
 	end process;
 
 	locked <= locked_int;
