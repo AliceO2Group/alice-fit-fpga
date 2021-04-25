@@ -121,14 +121,14 @@ set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
  [file normalize "${origin_dir}/hdl/tcm.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/counter32.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/Flash_prog.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/pm-spi.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/cnt_ctrl.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/trigger_out.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/tcm_side.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/HDMIRX.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/counter32.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/Flash_prog.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/pm-spi.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/cnt_ctrl.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/trigger_out.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/tcm_side.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_proto/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
@@ -416,6 +416,7 @@ set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExpl
 set_property -name "steps.route_design.args.directive" -value "NoTimingRelaxation" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
 
 # set the current impl run
 current_run -implementation [get_runs impl_1]

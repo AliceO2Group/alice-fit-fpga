@@ -58,7 +58,8 @@ entity hdmirx is
            bp_stable : out  STD_LOGIC;
            dl_low : out  STD_LOGIC;
            dl_high : out  STD_LOGIC;
-           mast_dl_err : out  STD_LOGIC;
+           mast_dl_low : out  STD_LOGIC;
+           mast_dl_high : out  STD_LOGIC;
            mast_stable : out  STD_LOGIC;
            dly_ctrl_ena : in  STD_LOGIC;
            syn_err : out  STD_LOGIC;
@@ -187,7 +188,7 @@ if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
       else 
     if ( mast_stable_i='1') then   
      if (edge(i)='1') then 
-      if ((ph_cnt(i)="11111") and (el(i)='1') and (dl_high_i(i)='0')) or ((ph_cnt(i)="00000") and (el(i)='0') and (dl_low_i(i)='0')) then dl_ce(i)<='1'; dl_inc(i)<=el(i); ph_cnt(i)<="01111";
+      if ((ph_cnt(i)="11110") and (el(i)='1') and (dl_high_i(i)='0')) or ((ph_cnt(i)=0) and (el(i)='0') and (dl_low_i(i)='0')) then dl_ce(i)<='1'; dl_inc(i)<=el(i); ph_cnt(i)<="01111";
        else 
          if (el(i)='1') then ph_cnt(i)<=ph_cnt(i)+1; else ph_cnt(i)<=ph_cnt(i)-1; end if;
       end if; 
@@ -210,7 +211,7 @@ if (dvalue(i)="11111") then dl_high_i(i)<= '1'; else dl_high_i(i)<='0'; end if;
   if (rst='1') or (sig_lost(0)='1') or (ena='0') or ((master='0') and (dly_ctrl_ena='0')) then ph_cnt(0)<="01111";
       else 
     if (edge(0)='1') then 
-      if ((ph_cnt(0)="11111") and (el(0)='1') and (dl_high_i(0)='0')) or ((ph_cnt(0)="00000") and (el(0)='0') and (dl_low_i(0)='0')) then dl_ce0<='1'; 
+      if ((ph_cnt(0)="11110") and (el(0)='1') and (dl_high_i(0)='0')) or ((ph_cnt(0)=0) and (el(0)='0') and (dl_low_i(0)='0')) then dl_ce0<='1'; 
                 dl_inc0<=el(0); ph_cnt(0)<="01111";
        else
           if (el(0)='1') then ph_cnt(0)<=ph_cnt(0)+1; else ph_cnt(0)<=ph_cnt(0)-1; end if;
@@ -283,7 +284,7 @@ end generate;
 
 dl_low0<= ena when (dl_low_i(3 downto 1)/="000") or ((master='0') and (dl_low_i(0)='1')) else '0';
 dl_high0<= ena when (dl_high_i(3 downto 1)/="000") or ((master='0') and (dl_high_i(0)='1')) else '0';
-mast_dl_err <= dl_low_i(0) or dl_high_i(0);
+mast_dl_low <= dl_low_i(0); mast_dl_high <= dl_high_i(0);
 
 TLogic: for i in 0 to 7 generate
 TDV(i)<= (TTsr(0)(i) and TTsr(1)(i) and TTsr(2)(i) and TTsr(3)(i));
