@@ -7,6 +7,7 @@ build
 .Xil
 *.zip
 
+__pycache__
 simulation_inputs
 simulation_outputs
 test_data
@@ -14,4 +15,3 @@ test_data
 .idea
 venv
 *.pyc
-

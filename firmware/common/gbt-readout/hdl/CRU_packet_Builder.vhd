@@ -51,7 +51,7 @@ end CRU_packet_Builder;
 architecture Behavioral of CRU_packet_Builder is
 	
 	constant nwords_in_SOP	: integer := 5;
-	constant nwords_in_EOP	: integer := 1;
+	constant nwords_in_EOP	: integer := 2;
 
 	type SOP_format_type is array (0 to nwords_in_SOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
 	type EOP_format_type is array (0 to nwords_in_EOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
@@ -153,8 +153,8 @@ begin
 	
 	
 	
-	--EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
-	EOP_format(0) <= '0' & x"20000000000000000000"; -- eop CRU
+	EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
+	EOP_format(1) <= '0' & x"20000000000000000000"; -- eop CRU
 -- ***************************************************
 
 
