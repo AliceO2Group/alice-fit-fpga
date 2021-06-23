@@ -247,16 +247,14 @@ begin
 								'1' WHEN (  (trgfifo_out_orbit = rawfifo_packet_orbit_ff) and (trgfifo_out_bc > rawfifo_packet_bc_ff) ) ELSE
 								'0';
 								
-	trgfifo_empty_real <= 		'1'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								'0' WHEN (trgfifo_empty = '0') ELSE
+	trgfifo_empty_real <= 		'0' WHEN (trgfifo_empty = '0') ELSE
 								'0' WHEN (trgfifo_we = '1') ELSE
 								'0' WHEN (trgfifo_we_ff01 = '1') ELSE
 								'0' WHEN (trgfifo_we_ff02 = '1') ELSE
 								'0' WHEN (trgfifo_we_ff03 = '1') ELSE
 								trgfifo_empty;
 								
-	is_hb_response <= 			'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								'0' WHEN (trgfifo_empty = '1') ELSE
+	is_hb_response <= 			'0' WHEN (trgfifo_empty = '1') ELSE
 								'1' WHEN ((trgfifo_out_trigger and TRG_const_HB) > 0) ELSE
 								'0';
 -- ***************************************************
@@ -336,7 +334,7 @@ port map(
 		
 		is_hb_response_s<=Control_register_I.is_hb_response;
 		
-			IF(FSM_Clocks_I.Reset40 = '1') THEN
+			IF(FSM_Clocks_I.Reset_dclk = '1') THEN
 				Readout_Mode_ff01 <= mode_IDLE;
 				
 				trgfifo_we_ff01 <= '0';
@@ -374,7 +372,7 @@ port map(
 	PROCESS (FSM_Clocks_I.System_Clk)
 	BEGIN
 		IF(FSM_Clocks_I.System_Clk'EVENT and FSM_Clocks_I.System_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset = '1') THEN
+			IF(FSM_Clocks_I.Reset_sclk = '1') THEN
 			
 			    Readout_Mode_ff00_syscl <= mode_IDLE;
 				cntpckws_state <= s0_simpl_pcw;
@@ -446,15 +444,14 @@ port map(
 	rawfifo_packet_bc_ff <= rawfifo_packet_bc;
   
   -- FSM ***********************************************
-  Readout_Mode_manage_next <=	mode_IDLE 			WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								Readout_Mode_ff00_syscl 	WHEN (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
+  Readout_Mode_manage_next <=	Readout_Mode_ff00_syscl 	WHEN (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
 								Readout_Mode_ff01 	WHEN (Readout_Mode_ff01 /= mode_IDLE) ELSE
 								Readout_Mode_manage	WHEN (trgfifo_empty_real = '0') ELSE
 								Readout_Mode_ff01;
   
   
   
-	FSM_STATE_NEXT <= s0_DT_comp 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+	FSM_STATE_NEXT <=  		
 	
 					-- ------------------- IDL -------------------
 					  s0_DT_comp		WHEN (Readout_Mode_manage = mode_IDLE) ELSE
@@ -486,7 +483,7 @@ port map(
 					  
 					  
 					  
-	is_sending_packet_ff_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+	is_sending_packet_ff_next <= 	
 					-- ------------------- IDL -------------------
 									'0'	WHEN (Readout_Mode_manage = mode_IDLE) ELSE
 					-- ------------------- SLCT FIFO FULL -------------------
@@ -504,9 +501,7 @@ port map(
 					  
 					  
 					  
-	rdata_state_next <= s0_start	WHEN (FSM_Clocks_I.Reset = '1') ELSE
---						s0_start    WHEN (Readout_Mode_manage = mode_IDLE) ELSE
-						s0_start	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (is_fullpacket_in_rawfifo = '0') ELSE
+	rdata_state_next <=	s0_start	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) and (is_fullpacket_in_rawfifo = '0') ELSE
 						s1_header	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
 						s3_lastw	WHEN (FSM_STATE = s1_dread) and (rdata_state = s1_header) and (data_header_nwrd_ff=1) ELSE
 						s2_data		WHEN (FSM_STATE = s1_dread) and (rdata_state = s1_header) ELSE
@@ -515,8 +510,7 @@ port map(
 						s0_start;
 						
 						
-	cntpckws_state_next <= 	s0_simpl_pcw	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
+	cntpckws_state_next <= s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 							s1_closefr_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (is_hb_response = '1') and (is_frame_open = '1') ELSE
 							s0_simpl_pcw	WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 							cntpckws_state;
@@ -535,8 +529,7 @@ port map(
 --						  is_frame_open;
  						  
 						  
-	is_frame_open_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE 
-						  '0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+	is_frame_open_next <= '0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
 						  '1' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (is_hb_response = '1') ELSE
 						  '0' WHEN (FSM_STATE_NEXT = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 						  is_frame_open;
@@ -548,8 +541,7 @@ port map(
 						  -- pages_counter + 1 WHEN (FSM_STATE_NEXT = s2_send_wpacket) ELSE
 						  -- pages_counter;
 
-	pages_counter_next <= (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE 
-						  (others => '0') WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+	pages_counter_next <=  (others => '0') WHEN (Readout_Mode_manage = mode_IDLE) ELSE
 						  (others => '0') WHEN (cntpckfifo_we = '1') and (cntpckws_state = s1_closefr_pcw) ELSE
 						  pages_counter + 1 WHEN (cntpckfifo_we = '1') ELSE
 						  pages_counter;
@@ -559,19 +551,16 @@ port map(
 
 
 
-	current_hb_orbit_next <= 	(others => '0') 					WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								FIT_GBT_status_I.ORBIT_from_CRU 	WHEN (Readout_Mode_manage = mode_IDLE) and ((FIT_GBT_status_I.Trigger_from_CRU and TRG_const_HB) > 0) ELSE
+	current_hb_orbit_next <= 	FIT_GBT_status_I.ORBIT_from_CRU 	WHEN (Readout_Mode_manage = mode_IDLE) and ((FIT_GBT_status_I.Trigger_from_CRU and TRG_const_HB) > 0) ELSE
 								trgfifo_out_orbit 					WHEN (is_hb_response = '1') and (cntpckws_state = s1_closefr_pcw) ELSE
 								current_hb_orbit;
 	
-	current_hb_bc_next <= 	(others => '0') 						WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								FIT_GBT_status_I.BCID_from_CRU 		WHEN (Readout_Mode_manage = mode_IDLE) and ((FIT_GBT_status_I.Trigger_from_CRU and TRG_const_HB) > 0) ELSE
+	current_hb_bc_next <= 	FIT_GBT_status_I.BCID_from_CRU 		WHEN (Readout_Mode_manage = mode_IDLE) and ((FIT_GBT_status_I.Trigger_from_CRU and TRG_const_HB) > 0) ELSE
 								trgfifo_out_bc 						WHEN (is_hb_response = '1') and (cntpckws_state = s1_closefr_pcw) ELSE
 								current_hb_bc;
 
 	
-	wcnt_inpck_next <=  (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						(others => '0') WHEN (rdata_state = s0_start) ELSE
+	wcnt_inpck_next <= (others => '0') WHEN (rdata_state = s0_start) ELSE
 						wcnt_inpck + 1 	WHEN (FSM_STATE = s1_dread) ELSE
 						(others => '0');
 	
@@ -582,21 +571,17 @@ port map(
 --                                                wcnt_fullpck + 1     WHEN (slck_fifo_we = '1') ELSE
 --                                                wcnt_fullpck;
                         
-	wcnt_fullpck_next <=  	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-                            (others => '0')     WHEN (FSM_STATE = s2_send_wpacket) and (cntpckfifo_we = '1') ELSE
+	wcnt_fullpck_next <=  	 (others => '0')     WHEN (FSM_STATE = s2_send_wpacket) and (cntpckfifo_we = '1') ELSE
                             wcnt_fullpck + 1    WHEN (slck_fifo_we = '1') ELSE
                             wcnt_fullpck;
     
-	data_header_nwrd_ff_next <= (others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							rawfifo_packet_ndwords_ff	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
+	data_header_nwrd_ff_next <= rawfifo_packet_ndwords_ff	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
 							data_header_nwrd_ff;
 		
-	data_header_orbit_ff_next <= (others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							rawfifo_packet_orbit_ff	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
+	data_header_orbit_ff_next <= rawfifo_packet_orbit_ff	WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
 							data_header_orbit_ff;
 							
-	data_header_bc_ff_next <= (others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							rawfifo_packet_bc_ff		WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
+	data_header_bc_ff_next <=rawfifo_packet_bc_ff		WHEN (FSM_STATE = s1_dread) and (rdata_state = s0_start) ELSE
 							data_header_bc_ff;
 						
 				
@@ -604,49 +589,42 @@ port map(
 				
 				
 				
-	trgfifo_reset <= FSM_Clocks_I.Reset40;
-	RAWFIFO_RESET_O <= FSM_Clocks_I.Reset;
-	SLCTFIFO_RESET_O <= FSM_Clocks_I.Reset;
-	cntpckfifo_reset <= FSM_Clocks_I.Reset;
+	trgfifo_reset <= FSM_Clocks_I.Reset_dclk;
+	RAWFIFO_RESET_O <= FSM_Clocks_I.Reset_sclk;
+	SLCTFIFO_RESET_O <= FSM_Clocks_I.Reset_sclk;
+	cntpckfifo_reset <= FSM_Clocks_I.Reset_sclk;
 
 				
-	trgfifo_we <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN ((x"ffffffff" and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
+	trgfifo_we <= '1' WHEN ((x"ffffffff" and FIT_GBT_status_I.Trigger_from_CRU) > 0) and (Readout_Mode_ff00_syscl /= mode_IDLE) ELSE
 					'0';
 					
-	trgfifo_re  <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) ELSE
+	trgfifo_re  <='1' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) ELSE
 					'0' WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s0_simpl_pcw) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 					'0';
 					
 						
 						
 						
-	RAWFIFO_RE_O <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN (FSM_STATE = s1_dread)	and (rdata_state /= s0_start) ELSE 
+	RAWFIFO_RE_O <= '1' WHEN (FSM_STATE = s1_dread)	and (rdata_state /= s0_start) ELSE 
 					'0';
 					
 				  
 					  
 					  
-	slck_fifo_we <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-					'1' WHEN (FSM_STATE = s1_dread) and (rdata_state /= s0_start) and (is_sending_packet_ff = '1') ELSE
+	slck_fifo_we <=	'1' WHEN (FSM_STATE = s1_dread) and (rdata_state /= s0_start) and (is_sending_packet_ff = '1') ELSE
 					'0';
 	
 	SLCTFIFO_data_word_O <= RAWFIFO_data_word_I;
 	
 						
-	cntpckfifo_we <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+	cntpckfifo_we <=	'0' WHEN (Readout_Mode_manage = mode_IDLE) ELSE
 						'1' WHEN (FSM_STATE = s2_send_wpacket) and (is_hb_response = '1') and (is_hb_response_s = '1') ELSE
 						'1' WHEN (FSM_STATE = s2_send_wpacket) and (wcnt_fullpck_ff >= max_data_packet_payload) ELSE
 						'0';
 						
 
 						
-	cntpckfifo_data_toff <= (others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
-	
-		func_CNTPCKword_get_word('1', pages_counter, wcnt_fullpck, TRG_const_void, ORBIT_const_void, BC_const_void, current_hb_orbit, current_hb_bc) 	-- close frame
+	cntpckfifo_data_toff <= 		func_CNTPCKword_get_word('1', pages_counter, wcnt_fullpck, TRG_const_void, ORBIT_const_void, BC_const_void, current_hb_orbit, current_hb_bc) 	-- close frame
 		WHEN (FSM_STATE = s2_send_wpacket) and (cntpckws_state = s1_closefr_pcw) ELSE
 				
 		func_CNTPCKword_get_word('0', pages_counter, wcnt_fullpck, TRG_const_void, ORBIT_const_void, BC_const_void, current_hb_orbit, current_hb_bc)	-- data overload 
@@ -669,45 +647,37 @@ reset_drop_counters <= Control_register_I.reset_drophit_counter;
 						  -- '1'	WHEN (FIT_GBT_status_I.Start_run = '1') ELSE
 						  -- '0';
 						  
-data_rate_counter_next <= (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						  (others => '0') WHEN (FIT_GBT_status_I.BCID_from_CRU = x"001") ELSE
+data_rate_counter_next <= (others => '0') WHEN (FIT_GBT_status_I.BCID_from_CRU = x"001") ELSE
 						  data_rate_counter + 1 WHEN (FSM_STATE = s1_dread) and (rdata_state = s1_header) and (is_sending_packet_ff = '1') ELSE
 						  data_rate_counter;
 						  
-hits_send_porbit_next <= (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						data_rate_counter WHEN (FIT_GBT_status_I.BCID_from_CRU = x"000") ELSE
+hits_send_porbit_next <= data_rate_counter WHEN (FIT_GBT_status_I.BCID_from_CRU = x"000") ELSE
 						hits_send_porbit;
 							
 						  
 
-is_dropping_event	<=  '0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						'0'		WHEN (Readout_Mode_manage = mode_IDLE) ELSE
+is_dropping_event	<=  '0'		WHEN (Readout_Mode_manage = mode_IDLE) ELSE
 						'1'		WHEN (FSM_STATE = s1_dread) and (rdata_state = s1_header) and (SLCTFIFO_Is_spacefpacket_I = '0') ELSE
 --						'1'		WHEN (FSM_STATE = s1_dread) and (rdata_state = s1_header) and (data_header_orbit_ff /= current_hb_orbit) ELSE
 						'0';
 
-dropped_events_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
+dropped_events_next <= 	(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 						dropped_events + 1	WHEN (is_dropping_event = '1') ELSE
 						dropped_events;
 
-last_dropped_orbit_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
+last_dropped_orbit_next <= 	(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							data_header_orbit_ff		WHEN (is_dropping_event = '1') ELSE
 							last_dropped_orbit;
 
-last_dropped_bc_next <= 		(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-								(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
+last_dropped_bc_next <= 		(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 								data_header_bc_ff			WHEN (is_dropping_event = '1') ELSE
 								last_dropped_bc;
 
-first_dropped_orbit_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
+first_dropped_orbit_next <= (others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							data_header_orbit_ff		WHEN (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) ELSE
 							first_dropped_orbit;
 
-first_dropped_bc_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
+first_dropped_bc_next <= 	(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							data_header_bc_ff			WHEN (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) ELSE
 							first_dropped_bc;
 							

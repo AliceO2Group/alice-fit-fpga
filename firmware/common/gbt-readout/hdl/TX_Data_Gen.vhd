@@ -99,7 +99,7 @@ port map(
            wr_clk        => FSM_Clocks_I.System_Clk,
            rd_clk        => FSM_Clocks_I.Data_Clk,
      	   wr_data_count => open,
-           rst           => FSM_Clocks_I.Reset,
+           rst           => FSM_Clocks_I.Reset_sclk,
            WR_EN 		 => data320to40fifo_WREN,
            RD_EN         => data320to40fifo_RDEN,
            DIN           => RAWFIFO_data_word_I,
@@ -122,7 +122,7 @@ IsData_bypass <= not data320to40fifo_empty;
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset40 = '1') THEN
+			IF (FSM_Clocks_I.Reset_dclk = '1') THEN
 				gen_counter_ff		<= (others => '0');
 				cont_counter_ff		<= (others => '0');
 			ELSE
@@ -138,13 +138,13 @@ IsData_bypass <= not data320to40fifo_empty;
 
 
 -- ***************************************************
-gen_counter_ff_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+gen_counter_ff_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						(others => '0')	WHEN (gen_counter_ff = count_val_data+1) ELSE
 						gen_counter_ff + 1;
 			
 			
 			
-cont_counter_ff_next <= (others => '0')        WHEN (FSM_Clocks_I.Reset = '1') ELSE
+cont_counter_ff_next <= (others => '0')        WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 					    (others => '0')        WHEN (Control_register_I.Data_Gen.usage_generator /= use_TX_generator) ELSE
 					    cont_counter_ff         WHEN (gen_counter_ff < count_val_void) ELSE
                         cont_counter_ff         WHEN (gen_counter_ff = count_val_void) ELSE
@@ -153,14 +153,14 @@ cont_counter_ff_next <= (others => '0')        WHEN (FSM_Clocks_I.Reset = '1') E
                                     
 
 			
-TX_generation <=	x"00000000000000000000" WHEN (FSM_Clocks_I.Reset = '1') ELSE
+TX_generation <=	x"00000000000000000000" WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 					x"00000000000000000000" WHEN (gen_counter_ff < count_val_void) ELSE
 					data_word_cnst_SOP 		WHEN (gen_counter_ff = count_val_void) ELSE
 					data_word_cnst_EOP 		WHEN (gen_counter_ff = count_val_data+1) ELSE
 					TX_data_gen;
 					--x"123456789abcdef01234";
 					
-TX_IsData_generation <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+TX_IsData_generation <=	'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'0' WHEN (gen_counter_ff < count_val_void) ELSE
 						'0'	WHEN (gen_counter_ff = count_val_void) ELSE
 						'0'	WHEN (gen_counter_ff = count_val_data+1) ELSE

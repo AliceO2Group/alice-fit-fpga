@@ -112,7 +112,7 @@ begin
 IF(FSM_Clocks_I.System_Clk'EVENT and FSM_Clocks_I.System_Clk = '1') THEN
 	RX_CLK_from00 <= rx_clk_tg; RX_CLK_from01 <= RX_CLK_from00; RX_CLK_from02 <= RX_CLK_from01;
 
- if ((Control_register_I.strt_rdmode_lock or Control_register_I.reset_rxph_error or FSM_Clocks_I.Reset)= '1') then is_phase_changed<='0'; c_locked<='0';
+ if ((Control_register_I.strt_rdmode_lock or Control_register_I.reset_rxph_error or FSM_Clocks_I.Reset_sclk)= '1') then is_phase_changed<='0'; c_locked<='0';
     else
     if (RX_CLK_from01 /= RX_CLK_from02) then
       CLK_PH_counter_stop<= FSM_Clocks_I.System_Counter(2 downto 0);

@@ -128,8 +128,8 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 
 -- ===== FIT GBT Readout types =================================
 	type FSM_Clocks_type is record
-		Reset 			: std_logic;
-		Reset40 		: std_logic;
+		Reset_dclk 		: std_logic;
+		Reset_sclk 		: std_logic;
 		Data_Clk 		: std_logic;
 		System_Clk		: std_logic;
 		System_Counter	: std_logic_vector(3 downto 0);
@@ -186,12 +186,17 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		n_BCID_delay 	: std_logic_vector(BC_id_bitdepth-1 downto 0); -- delay between ID from TX and ID in module data
 		crutrg_delay_comp 	: std_logic_vector(BC_id_bitdepth-1 downto 0); -- how long data keeped in raw fifo waiting trigger
 		max_data_payload: std_logic_vector(GEN_count_bitdepth-1 downto 0);
+		
 		reset_orbc_synd : std_logic; -- sync ORBIT, BC to CRU then moved from 0->1
 		reset_drophit_counter : std_logic; -- reset FIFO statistic then moved from 0->1
 		reset_gen_offset: std_logic; -- reset generators offset
+		
 		reset_gbt_rxerror: std_logic; -- reset gbt rx error bit
-		reset_gbt 		:std_logic; -- reset gbt (not ready)
-		reset_rxph_error:std_logic; -- reset gbt (not ready)
+		reset_rxph_error:std_logic; -- reset gbt
+		
+		reset_readout	:std_logic; -- reset readout fsm
+		reset_gbt 		:std_logic; -- reset gbt
+		
 		strt_rdmode_lock  : std_logic;
 	end record;
 	
@@ -235,6 +240,7 @@ constant data_word_cnst_EOP : std_logic_vector(GBT_data_word_bitdepth-1 downto 0
 		reset_drophit_counter 		=> '0',
 		reset_gen_offset			=> '0',
 		reset_gbt_rxerror			=> '0',
+		reset_readout   			=> '0',
 		reset_gbt					=> '0',
 		reset_rxph_error			=> '0',
 		strt_rdmode_lock			=> '0'
@@ -536,7 +542,7 @@ begin
 	end if;
 
 		
-	reset_contr := "00" & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gen_offset & cntrl_reg.reset_drophit_counter & cntrl_reg.reset_orbc_synd;
+	reset_contr := "0" & cntrl_reg.reset_readout & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gen_offset & cntrl_reg.reset_drophit_counter & cntrl_reg.reset_orbc_synd;
 
 	
 
@@ -615,6 +621,7 @@ begin
 	cntr_reg.reset_gbt_rxerror				:=  cntrl_reg_addrreg(0)(11);
 	cntr_reg.reset_gbt						:=  cntrl_reg_addrreg(0)(12);
 	cntr_reg.reset_rxph_error				:=  cntrl_reg_addrreg(0)(13);
+	cntr_reg.reset_readout			      	:=  cntrl_reg_addrreg(0)(14);
 
 	
 	cntr_reg.Data_Gen.trigger_resp_mask 		:= cntrl_reg_addrreg(1);

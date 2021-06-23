@@ -165,7 +165,7 @@ begin
 	PROCESS (FSM_Clocks_I.Data_Clk)
 	BEGIN
 		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset40 = '1') THEN
+			IF(FSM_Clocks_I.Reset_dclk = '1') THEN
 				IsData_ff <= '0';
 				Data_ff <= (others => '0');
 --				dataheader_ff <= (others => '0');
@@ -190,7 +190,7 @@ begin
 
 
 -- FSM ***********************************************
-FSM_STATE_NEXT <=	s0_start 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+FSM_STATE_NEXT <=	s0_start 	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 	s1_sop		WHEN (FSM_STATE = s0_start) and (CNTPFIFO_Is_Empty_I = '0') ELSE
 	s3_eop		WHEN (FSM_STATE = s1_sop)   and (Word_Count = header_payload) and (dwords_payload = GEN_const_void) ELSE
 	s2_data		WHEN (FSM_STATE = s1_sop) 	and (Word_Count = header_payload) ELSE
@@ -199,43 +199,38 @@ FSM_STATE_NEXT <=	s0_start 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 	FSM_STATE;
 
 	
-Word_Count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+Word_Count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
         (others => '0') WHEN (FSM_STATE = s0_start)     ELSE
         (others => '0')    WHEN (FSM_STATE = s1_sop)     and (Word_Count = header_payload) ELSE
         (others => '0')    WHEN (FSM_STATE = s2_data)    and (Word_Count+1 = dwords_payload) ELSE
         (others => '0')    WHEN (FSM_STATE = s3_eop)     and (Word_Count = trailer_payload) ELSE
         Word_Count+1;
         
-cont_packet_count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+cont_packet_count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
             (others => '0')                 WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE)     ELSE
             cont_packet_count+1             WHEN (FSM_STATE = s3_eop)     and (Word_Count = trailer_payload) ELSE
             cont_packet_count;
-            
-	
--- dataheader_ff_next <=	(others => '0')	 WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						-- FIFO_data_word_I WHEN (FSM_STATE = s1_sop) and (Word_Count = 0) ELSE
-						-- dataheader_ff;
+            						
 						
-						
-IsData_ff_next <= '0'	 													WHEN (FSM_Clocks_I.Reset = '1') ELSE
+IsData_ff_next <= '0'	 													WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 	SOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth) 	WHEN (FSM_STATE = s1_sop) ELSE
 	'1'					 													WHEN (FSM_STATE = s2_data) ELSE
 	EOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth)	WHEN (FSM_STATE = s3_eop) ELSE
 	'0';
 
 	
-Data_ff_next <= (others => '0')	    							                    WHEN (FSM_Clocks_I.Reset = '1') ELSE
+Data_ff_next <= (others => '0')	    							                    WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 	SOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth-1 downto 0)	WHEN (FSM_STATE = s1_sop) ELSE
 	SLCTFIFO_data_word_I										                    WHEN (FSM_STATE = s2_data) ELSE
 	EOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth-1 downto 0)	WHEN (FSM_STATE = s3_eop) ELSE
 	(others => '0');
 
 	
-SLCTFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+SLCTFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 					'1' WHEN (FSM_STATE = s2_data)  	ELSE
 					'0';
 
-CNTPFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+CNTPFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 					'1' WHEN (FSM_STATE = s3_eop) and (Word_Count = trailer_payload) ELSE
 					'0';
 

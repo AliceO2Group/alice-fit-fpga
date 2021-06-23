@@ -106,8 +106,8 @@ raw_data_fifo_space_is_for_packet <= 	'1' when (unsigned(raw_data_fifo_words_cou
 slct_data_fifo_is_space_for_packet <= 	'1' when (unsigned(slct_data_fifo_words_count_wr) <= slctfifo_depth-total_data_words-1) else
 										'0';
 
-raw_data_fifo_reset <= FSM_Clocks_I.Reset;
-slct_data_fifo_reset <= FSM_Clocks_I.Reset;
+raw_data_fifo_reset <= FSM_Clocks_I.Reset_sclk;
+slct_data_fifo_reset <= FSM_Clocks_I.Reset_sclk;
 
 fifo_status_O.raw_fifo_count <= raw_data_fifo_words_count_wr;
 fifo_status_O.slct_fifo_count <= slct_data_fifo_words_count_wr;

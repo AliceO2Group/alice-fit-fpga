@@ -92,7 +92,7 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
 	signal Data_FIFO_map_counter_ff, Data_FIFO_map_counter_ff_next : integer;
 	signal Is_DATA_Readign : std_logic;
 	
-	signal gbt_word_counter, gbt_word_counter_next : std_logic_vector(15 downto 0);
+	signal gbt_word_counter, gbt_word_counter_next : std_logic_vector(15 downto 0) := x"0000";
 	
 	signal rst_ipbus_ff, rst_ipbus_ff_next, rst_dclk : std_logic;
 	signal rst_counter, rst_counter_next : std_logic_vector(3 downto 0);
@@ -200,7 +200,7 @@ hdmi_fifo_rden <= '1' when (GBTRX_IsData_rxclk_I = '0') and (hdmi_fifo_isempty =
 
 hdmi_fifo_comp : entity work.hdmi_data_fifo
   PORT MAP (
-    rst 	=> FSM_Clocks_I.Reset,
+    rst 	=> FSM_Clocks_I.Reset_sclk,
     wr_clk 	=> hdmi_fifo_wrclk_I,
     rd_clk 	=> FSM_Clocks_I.GBT_RX_Clk,
     din 	=> hdmi_fifo_datain_I,
@@ -222,7 +222,7 @@ data_fifo_wren <= '1' when (GBTRX_IsData_rxclk_I = '1') or (hdmi_fifo_rden = '1'
 
 ipbus_data_fifo_comp : entity work.ipbus_data_fifo
   PORT MAP (
-    rst 	=> FSM_Clocks_I.Reset,
+    rst 	=> FSM_Clocks_I.Reset_dclk,
     wr_clk 	=> FSM_Clocks_I.GBT_RX_Clk,
     rd_clk 	=> FSM_Clocks_I.IPBUS_Data_Clk,
     din 	=> data_fifo_datain,
@@ -241,17 +241,14 @@ ipbus_data_fifo_comp : entity work.ipbus_data_fifo
   BEGIN
 	  IF(FSM_Clocks_I.GBT_RX_Clk'EVENT and FSM_Clocks_I.GBT_RX_Clk = '1') THEN
 	  
-		  IF(FSM_Clocks_I.Reset = '1') THEN
-			  gbt_word_counter <= (others => '0');
-		  ELSE
+
 			  gbt_word_counter <= gbt_word_counter_next;                  
-		  END IF;
+
 		  
 	  END IF;
   END PROCESS;
   
-  gbt_word_counter_next <= (others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						   gbt_word_counter WHEN (data_fifo_wren = '0') ELSE
+  gbt_word_counter_next <= gbt_word_counter WHEN (data_fifo_wren = '0') ELSE
 						   (others => '0') WHEN (gbt_word_counter = x"ffff") ELSE
 						   gbt_word_counter + 1;    
 -- ***************************************************

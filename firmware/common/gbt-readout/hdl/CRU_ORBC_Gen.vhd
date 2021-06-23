@@ -134,7 +134,7 @@ Current_Trigger_from_O <= TRG_result;
 -- BC Counter ==================================================
 	BC_counter_datagen_comp : entity work.BC_counter
 	port map (
-		RESET_I			=> FSM_Clocks_I.Reset40,
+		RESET_I			=> FSM_Clocks_I.Reset_dclk,
 		DATA_CLK_I		=> FSM_Clocks_I.Data_Clk,
 		
 		IS_INIT_I		=> EV_ID_counter_set,
@@ -167,7 +167,7 @@ Current_Trigger_from_O <= TRG_result;
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset40 = '1') THEN
+			IF (FSM_Clocks_I.Reset_dclk = '1') THEN
 				RX_Data_gen_ff 		<= (others => '0');
 				RX_IsData_gen_ff	<= '0';
 --				phtrg_counter_ff		<= (others => '0');
@@ -208,35 +208,35 @@ Current_Trigger_from_O <= TRG_result;
 
 ---------- Counters ---------------------------------
 reset_offset <= Control_register_I.reset_gen_offset;
--- phtrg_counter_ff_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+-- phtrg_counter_ff_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							-- (others => '0')	WHEN (phtrg_counter_ff = Control_register_I.Trigger_Gen.trigger_rate) ELSE
 							-- phtrg_counter_ff + 1;
 
-bfreq_counter_next <= 	(others => '0') 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+bfreq_counter_next <= 	(others => '0') 		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						(others => '0') 		WHEN (bfreq_counter = bunch_freq-1) ELSE
 						(others => '0') 		WHEN (bunch_freq = 0) ELSE
 						(others => '0') 		WHEN (is_boffset_sync = '0') ELSE
 						x"0001"			 		WHEN (EV_ID_counter(11 downto 0) = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) ELSE
 						bfreq_counter + 1;
 
-is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'0' WHEN (reset_offset = '1') ELSE
 						'1' WHEN (is_boffset_sync = '0') and (EV_ID_counter(11 downto 0) = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) ELSE
 						is_boffset_sync;
 
 						
-bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							0		WHEN (bfreq_counter >= bunch_freq-1) ELSE
 							64 		WHEN (is_boffset_sync = '0') ELSE
 							64 		WHEN (bpattern_counter = 64) ELSE
 							bpattern_counter + 1;
 						
-is_sentd_cont_trg <= 		'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+is_sentd_cont_trg <= 		'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							'0' WHEN (FIT_GBT_status_I.BCIDsync_Mode /= mode_SYNC) ELSE
 							'0' WHEN cont_trg_bunch_mask_comp = '0' ELSE
 							'1' WHEN cont_trg_bunch_mask_comp = '1';
 							
-cont_trg_send <= 			(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+cont_trg_send <= 			(others => '0') WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							(others => '0') WHEN is_sentd_cont_trg = '0' ELSE
 							cont_trg_value;
 							
@@ -257,24 +257,24 @@ TRG_evid <=  (TRG_const_HB) WHEN (IS_Orbit_trg_counter = '1') ELSE
             (others => '0');
 
 
-RX_Data_gen_ff_next <=	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+RX_Data_gen_ff_next <=	(others => '0') WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						(others => '0') WHEN (is_trigger_sending = '0') ELSE
 --						"000" & isTRG_valid & EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
 -- new versions of LTU GBT word, corrected on 18/11/2020
 						EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth) & x"0" & EV_ID_counter(BC_id_bitdepth-1 downto 0) & TRG_result;	
 
-RX_IsData_gen_ff_next <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+RX_IsData_gen_ff_next <=	'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							'1' WHEN (is_trigger_sending = '1') ELSE
 							'0';
 
 							
 							
 -- single trigger
-is_send_single_trg <= '0' WHEN  (FSM_Clocks_I.Reset = '1') ELSE
+is_send_single_trg <= '0' WHEN  (FSM_Clocks_I.Reset_dclk = '1') ELSE
 					  '1' WHEN (single_trg_val /= x"00000000") and (single_trg_val_ff = x"00000000") ELSE
 					  '0';
 						
-single_trg_send_val <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+single_trg_send_val <= 	(others => '0') WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						single_trg_val  WHEN (single_trg_val /= x"00000000") and (single_trg_val_ff = x"00000000") ELSE
 						(others => '0');
 							
@@ -296,7 +296,7 @@ TRG_readout_command <=  TRG_const_SOT WHEN (rd_trg_send_mode = s1_trg_SOT) and (
 
 -- type readout_trg_type is (s0_idle, s1_trg_SOC, s1_trg_SOT, s1_trg_EOC, s1_trg_EOT);
 -- type Readout_command_type is (idle, continious, trigger);
-rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset = '1') ELSE
+rd_trg_send_mode_next <= s0_idle WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
     s1_trg_SOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = continious) 	and (readout_command_ff1 = idle)) ELSE
     s1_trg_EOC WHEN ((Control_register_I.Trigger_Gen.Readout_command = idle) 	and (readout_command_ff1 = continious)) ELSE
     s1_trg_SOT WHEN ((Control_register_I.Trigger_Gen.Readout_command = trigger) 	and (readout_command_ff1 = idle)) ELSE

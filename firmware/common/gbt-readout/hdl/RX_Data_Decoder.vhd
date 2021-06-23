@@ -136,7 +136,7 @@ begin
 -- BC Counter ==================================================
 	BC_counter_rxdecoder_comp : entity work.BC_counter
 	port map (
-		RESET_I			=> FSM_Clocks_I.Reset40,
+		RESET_I			=> FSM_Clocks_I.Reset_dclk,
 		DATA_CLK_I		=> FSM_Clocks_I.Data_Clk,
 		
 		IS_INIT_I		=> ORBC_counter_init,
@@ -155,7 +155,7 @@ begin
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset40 = '1') THEN
+			IF (FSM_Clocks_I.Reset_dclk = '1') THEN
 				STATE_SYNC <= mode_STR;
 				STATE_RDMODE <= mode_IDLE;
 				CRU_readout_mode <= mode_IDLE;
@@ -196,7 +196,7 @@ begin
 
 
 -- FSM ***********************************************
-STATE_RDMODE_NEXT <=	mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
+STATE_RDMODE_NEXT <=	mode_IDLE WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						mode_IDLE WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
 						mode_IDLE WHEN (STATE_SYNC = mode_LOST) ELSE
 						
@@ -215,18 +215,18 @@ STATE_RDMODE_NEXT <=	mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						
 						STATE_RDMODE;
 
-Start_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+Start_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'1' WHEN ((Trigger_ff and TRG_const_SOC) /= TRG_const_void) ELSE
 						'1' WHEN ((Trigger_ff and TRG_const_SOT) /= TRG_const_void) ELSE
 						'0';
 
-Stop_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+Stop_run_ff_next <= 	'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'1' WHEN ((Trigger_ff and TRG_const_EOC) /= TRG_const_void) ELSE
 						'1' WHEN ((Trigger_ff and TRG_const_EOT) /= TRG_const_void) ELSE
 						'0';
 
 -- SYNC FSM
-STATE_SYNC_NEXT <=	mode_STR	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+STATE_SYNC_NEXT <=	mode_STR	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 --					mode_STR	WHEN (STATE_SYNC = mode_LOST) ELSE
 					mode_STR    WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
 					mode_STR	WHEN (Control_register_I.reset_orbc_synd = '1') ELSE
@@ -234,19 +234,19 @@ STATE_SYNC_NEXT <=	mode_STR	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 					mode_LOST	WHEN (EV_ID_counter /= ORBC_ID_received_ff) and (STATE_SYNC = mode_SYNC) and TRGTYPE_ORBCrsv_ff ELSE
 					STATE_SYNC;
 
-ORBC_counter_init <=	'0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+ORBC_counter_init <=	'0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'1' WHEN TRGTYPE_ORBCrsv_ff_next and (STATE_SYNC = mode_STR) ELSE
 						'0';
 						
-TRGTYPE_received_ff_next <= (others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+TRGTYPE_received_ff_next <= (others => '0')		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							TRGTYPE_received	WHEN (STATE_SYNC = mode_SYNC) ELSE
 							(others => '0');
 						
-ORBC_ID_from_CRU_ff_next <=	(others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+ORBC_ID_from_CRU_ff_next <=	(others => '0')		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						EV_ID_counter		WHEN STATE_SYNC = mode_SYNC ELSE
 						(others => '0');
 						
-ORBC_ID_from_CRU_corrected_ff_next <=	(others => '0')		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+ORBC_ID_from_CRU_corrected_ff_next <=	(others => '0')		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 								EV_ID_counter_corrected		WHEN STATE_SYNC = mode_SYNC ELSE
 								(others => '0');
 						
@@ -271,7 +271,7 @@ EV_ID_counter_corrected <= EV_ID_counter_ORBIT_corrected & EV_ID_counter_BC_corr
 Trigger_ff_next <= TRGTYPE_received_ff;
 
 
-CRU_readout_mode_next <= mode_IDLE WHEN (FSM_Clocks_I.Reset = '1') ELSE
+CRU_readout_mode_next <= mode_IDLE WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
                          CRU_readout_mode WHEN (Trigger_valid_bit = '0') ELSE
 						 mode_IDLE WHEN (TRGTYPE_received and TRG_const_RS) = TRG_const_void ELSE
 						 mode_TRG WHEN (TRGTYPE_received and TRG_const_RT) = TRG_const_void ELSE 

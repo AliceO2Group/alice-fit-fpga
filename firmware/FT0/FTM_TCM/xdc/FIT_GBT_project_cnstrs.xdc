@@ -48,7 +48,7 @@ set_clock_groups -name ASYNC_CLOCIPB -asynchronous -group [get_clocks -include_g
 
 
 #RESET ==========================================================================
-set_false_path -from [get_cells Reset_Generator_comp/GenRes_DataClk_ff*_reg] 
+#set_false_path -from [get_cells Reset_Generator_comp/GenRes_DataClk_ff*_reg] 
 #================================================================================
 
 

@@ -125,6 +125,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 		reset_drophit_counter 		=> '0',
 		reset_gen_offset			=> '0',
 		reset_gbt_rxerror			=> '0',
+		reset_readout   			=> '0',
 		reset_gbt					=> '0',
 		reset_rxph_error			=> '0',
 		strt_rdmode_lock			=> '0'
@@ -135,7 +136,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 
 BEGIN
 
-FSM_Clocks_signal.Reset <= RESET;
+FSM_Clocks_signal.Reset_dclk <= RESET;
 FSM_Clocks_signal.Data_Clk <= DATA_CLK;
 FSM_Clocks_signal.System_Clk <= SYS_CLK;
 FSM_Clocks_signal.System_Counter <= x"0";
@@ -152,7 +153,7 @@ FitGbtPrg: entity work.FIT_GBT_project
 	)
 	
 	Port map(
-		RESET_I				=>	FSM_Clocks_signal.Reset,
+		RESET_I				=>	FSM_Clocks_signal.Reset_dclk,
 		SysClk_I			=>	FSM_Clocks_signal.System_Clk,
 		DataClk_I			=>	FSM_Clocks_signal.Data_Clk,
 		MgtRefClk_I			=>	FSM_Clocks_signal.Data_Clk,
@@ -202,7 +203,7 @@ Sys1_process :process
    
    begin
    
-		if(was_reset < 8) then
+		if(was_reset < 16) then
 			was_reset := was_reset + 1;
 			RESET <= '1';
 			
@@ -302,8 +303,9 @@ Sys2_process :process
        -- -----------------------------
         BEGIN
 		IF(FSM_Clocks_signal.Data_Clk'EVENT and FSM_Clocks_signal.Data_Clk = '1') THEN
-			IF(FSM_Clocks_signal.Reset = '1') THEN
+			IF(FSM_Clocks_signal.Reset_dclk = '1') THEN
                     data_from_file := (others=>0);
+                    Control_register_from_file <= (others=>(others=>'0'));
 			ELSE
                 if (DATA_CLK = '1') and (DATA_CLK_ff = '0') then
                     iter_num := iter_num + 1;

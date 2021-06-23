@@ -137,7 +137,7 @@ begin
 tcm_data_160to80bit_fifo_comp : entity work.tcm_data_160to80bit_fifo
 port map(
            clk           => FSM_Clocks_I.System_Clk,
-           srst          => FSM_Clocks_I.Reset,
+           srst          => FSM_Clocks_I.Reset_sclk,
            WR_EN 		 => Board_data_I.is_data,
            RD_EN         => not raw_data_fifo_isempty,
            DIN           => Board_data_I.data_word,
@@ -167,7 +167,7 @@ is_data_from_fifo <= not raw_data_fifo_isempty;
 	PROCESS (FSM_Clocks_I.System_Clk)
 	BEGIN
 		IF(FSM_Clocks_I.System_Clk'EVENT and FSM_Clocks_I.System_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset = '1') THEN
+			IF(FSM_Clocks_I.Reset_sclk = '1') THEN
 				Board_data_sysclkff <= board_data_void_const;
 				sending_event <= '0';
 				FIFO_is_space_for_packet_ff <= '0';
@@ -212,12 +212,9 @@ is_data_from_fifo <= not raw_data_fifo_isempty;
 FIFO_is_space_for_packet_ff_next <= FIFO_is_space_for_packet_I;
 
 reset_drop_counters <= Control_register_I.reset_drophit_counter;
--- reset_drop_counters <= 	  '1'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
-						  -- '1'	WHEN (FIT_GBT_status_I.Start_run = '1') ELSE
-						  -- '0';
 	
 	
-sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 						'0'	WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 --						'1'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='1') ELSE
 						'1'	WHEN (is_header_from_fifo = '1') and (Control_register_I.readout_bypass='1') ELSE
@@ -225,44 +222,44 @@ sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset = '1') ELSE
 						'1'	WHEN (is_header_from_fifo = '1') ELSE
 						sending_event;
 		
-FIFO_data_word_ff_next <= 	(others => '0')	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+FIFO_data_word_ff_next <= 	(others => '0')	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							header_word 	WHEN ((sending_event = '1')or(sending_event_next = '1')) and (is_header_from_fifo = '1') ELSE
 							data_word		WHEN ((sending_event = '1')or(sending_event_next = '1')) and (is_data_from_fifo = '1') ELSE
 							(others => '0');
 							
-FIFO_WE_ff_next <= 			'0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+FIFO_WE_ff_next <= 			'0' 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 --							'1'		WHEN (is_data_from_fifo = '1') and ((sending_event = '1')or(sending_event_next = '1')) ELSE
 							'1'		WHEN (is_data_from_fifo = '1') and (sending_event_next = '1') ELSE
 							'0';
 							
 -- Event counter ------------------------------------
 
-is_dropping_event	<=  '0' 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+is_dropping_event	<=  '0' 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 						'0'		WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
 						'1'		WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 						'0';
 
-dropped_events_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+dropped_events_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 						(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 						dropped_events + 1	WHEN (is_dropping_event = '1') ELSE
 						dropped_events;
 
-last_dropped_orbit_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+last_dropped_orbit_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							header_orbit		WHEN (is_dropping_event = '1') ELSE
 							last_dropped_orbit;
 
-last_dropped_bc_next <= 		(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+last_dropped_bc_next <= 		(others => '0') 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 								(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 								header_bc			WHEN (is_dropping_event = '1') ELSE
 								last_dropped_bc;
 
-first_dropped_orbit_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+first_dropped_orbit_next <= (others => '0') 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							header_orbit		WHEN (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) ELSE
 							first_dropped_orbit;
 
-first_dropped_bc_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+first_dropped_bc_next <= 	(others => '0') 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							(others => '0') 	WHEN (reset_drop_counters = '1') ELSE
 							header_bc			WHEN (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) ELSE
 							first_dropped_bc;

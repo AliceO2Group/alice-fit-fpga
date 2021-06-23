@@ -133,8 +133,6 @@ end FIT_TESTMODULE_v2;
 architecture Behavioral of FIT_TESTMODULE_v2 is
 
 -- Reset signals
-    signal reset_to_syscount 		: std_logic;
-    signal Is_SysClkCounter_ready   : std_logic;
     signal reset_aft_pllready : std_logic;
     signal SDclk_pll_ready, clk200_rdy : std_logic;
     signal gbt_reset, reset_to_syscount40    :std_logic;
@@ -682,7 +680,7 @@ port map(
     clk_ipb_o => ipb_clk,
     rst_ipb_o => ipb_rst,
           
-    RESET => FSM_Clocks.Reset,
+    RESET => reset_aft_pllready,
     
     leds => ipb_leds, -- status LEDs
     mac_addr => mac_addr,
@@ -814,7 +812,7 @@ pm_sc:    pm_spi
  LAI(4) <= not tcm_miso;
  
  LAI(8) <= reset_aft_pllready;
- LAI(9) <= FSM_Clocks.Reset;
+ LAI(9) <='0';
                     	
 
 tcm_sc1:   tcm_sc 
@@ -849,29 +847,19 @@ port map (
 -- Reset FSM =================================================
 Reset_Generator_comp: entity work.Reset_Generator
 port map(
-			RESET_I => RESET,
-			SysClk_I => FSM_Clocks.System_Clk,
-			DataClk_I => FSM_Clocks.Data_Clk,
-			Sys_Cntr_ready_I => Is_SysClkCounter_ready,
-			Reset_DClk_O => reset_to_syscount,
-			General_reset_O => FSM_Clocks.Reset,
-			Reset_DClk40_O => reset_to_syscount40,
-			General_reset40_O => FSM_Clocks.Reset40
+		RESET40_I => reset_aft_pllready,
+		SysClk_I => FSM_Clocks.System_Clk,
+		DataClk_I => FSM_Clocks.Data_Clk,
+		
+		Control_register_I	=> TESTM_control,
+		
+		SysClk_count_O	=> FSM_Clocks.System_Counter,
+		
+		Reset_DClk_O =>	FSM_Clocks.Reset_dclk,
+		Reset_SClk_O =>	FSM_Clocks.Reset_sclk,
+		ResetGBT_O   =>  gbt_reset
 		);
--- ===========================================================
-
--- Data Clk strobe ===========================================
-DataClk_I_strobe_comp: entity work.DataClk_strobe
-port map(
-			RESET_I => reset_to_syscount,
-			RESET40_I => FSM_Clocks.Reset40,
-			SysClk_I => FSM_Clocks.System_Clk,
-			DataClk_I => FSM_Clocks.Data_Clk,
-			SysClk_count_O => FSM_Clocks.System_Counter,
-			Counter_ready_O => Is_SysClkCounter_ready
-		);
-
--- ===========================================================
+-- =============================================================
 
 
 -- IP-BUS data sender ==================================
@@ -887,7 +875,7 @@ FIT_TESTMODULE_IPBUS_sender_comp : entity work.FIT_TESTMODULE_IPBUS_sender
 		
 		hdmi_fifo_datain_I => x"E" & TESTM_status.ORBIT_from_CRU & TESTM_status.BCID_from_CRU & HDMI0_d_sysclk,
         hdmi_fifo_wren_I => hdmi_ready_sysclk,
-        hdmi_fifo_wrclk_I => SysClk_to_FIT_GBT,
+        hdmi_fifo_wrclk_I => FSM_Clocks.System_Clk,
 		
 		IPBUS_rst_I => ipb_rst,
 		IPBUS_data_out_O => ipb_data_in_tm,
@@ -910,7 +898,7 @@ FitGbtPrg: entity work.FIT_GBT_project
 	)
 	
 	Port map(
-		RESET_I				=>	reset_to_syscount,
+		RESET_I				=>	FSM_Clocks.Reset_dclk,
 		SysClk_I			=>	FSM_Clocks.System_Clk,
 		DataClk_I			=>	FSM_Clocks.Data_Clk,
 		MgtRefClk_I			=>	MgtRefClk_to_FIT_GBT,

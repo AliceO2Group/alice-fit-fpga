@@ -36,11 +36,10 @@ entity FIT_GBT_project is
 		DataClk_I 			: in  STD_LOGIC; -- 40MHz data clock
 		MgtRefClk_I 		: in  STD_LOGIC; -- 200MHz ref clock
 		RxDataClk_I			: in STD_LOGIC; -- 40MHz data clock in RX domain
---		FabricClk_I 		: in STD_LOGIC;	-- GBT fabric clk
 		GBT_RxFrameClk_O	: out STD_LOGIC; --Rx GBT frame clk 40MHz
 		
 		Board_data_I		: in board_data_type; --PM or TCM data
-		Control_register_I	: in CONTROL_REGISTER_type;
+		Control_register_I	: in CONTROL_REGISTER_type; -- control registers @DataClk
 		
 		MGT_RX_P_I 		: in  STD_LOGIC;
 		MGT_RX_N_I 		: in  STD_LOGIC;
@@ -170,28 +169,20 @@ begin
 -- Reset FSM =================================================
 Reset_Generator_comp: entity work.Reset_Generator
 port map(
-			RESET_I => RESET_I,
-			SysClk_I => SysClk_I,
-			DataClk_I => DataClk_I,
-			Sys_Cntr_ready_I => Is_SysClkCounter_ready,
-			Reset_DClk_O => reset_to_syscount,
-			General_reset_O => FSM_Clocks.Reset,
-			Reset_DClk40_O => reset_to_syscount40,
-			General_reset40_O => FSM_Clocks.Reset40
+		RESET40_I => RESET_I,
+		SysClk_I => SysClk_I,
+		DataClk_I => DataClk_I,
+		
+		Control_register_I	=> Control_register_I,
+		
+		SysClk_count_O	=> FSM_Clocks.System_Counter,
+		
+		Reset_DClk_O =>	FSM_Clocks.Reset_dclk,
+		Reset_SClk_O =>	FSM_Clocks.Reset_sclk,
+		ResetGBT_O   =>  gbt_reset
 		);
--- ===========================================================
+-- =============================================================
 
--- Data Clk strobe ===========================================
-DataClk_I_strobe_comp: entity work.DataClk_strobe
-port map(
-			RESET_I => reset_to_syscount,
-			RESET40_I => reset_to_syscount40,
-			SysClk_I => SysClk_I,
-			DataClk_I => DataClk_I,
-			SysClk_count_O => FSM_Clocks.System_Counter,
-			Counter_ready_O => Is_SysClkCounter_ready
-		);
--- ===========================================================
 
 -- RX Data Clk Sync ============================================
 RxData_ClkSync_comp : entity work.RXDATA_CLKSync
@@ -299,33 +290,33 @@ port map (
 
 
 -- Data ff data clk **********************************
-	process (FSM_Clocks.Data_Clk)
-	begin
+--	process (FSM_Clocks.Data_Clk)
+--	begin
 	
 	   
-		IF(rising_edge(FSM_Clocks.Data_Clk) )THEN
-	     reset_l<=Control_register_I.reset_gbt;
+--		IF(rising_edge(FSM_Clocks.Data_Clk) )THEN
+--	     reset_l<=Control_register_I.reset_gbt;
 
-			IF (FSM_Clocks.Reset40 = '1') THEN
-				RX_ErrDet_latch <= '0';
-			ELSE
-				RX_ErrDet_latch <= RX_ErrDet_latch_next;	
-			END IF;
-		END IF;
+--			IF (FSM_Clocks.Reset40 = '1') THEN
+--				RX_ErrDet_latch <= '0';
+--			ELSE
+--				RX_ErrDet_latch <= RX_ErrDet_latch_next;	
+--			END IF;
+--		END IF;
 		
-	end process;			
+--	end process;			
 	
-	FIT_GBT_STATUS.GBT_status.gbtRx_ErrorLatch <= RX_ErrDet_latch;
+--	FIT_GBT_STATUS.GBT_status.gbtRx_ErrorLatch <= RX_ErrDet_latch;
 	
-	RX_ErrDet_latch_next <= '0' WHEN FSM_Clocks.Reset = '1' ELSE
-							'0' WHEN (Control_register_I.reset_gbt_rxerror = '1') ELSE
-							'1' WHEN (FIT_GBT_STATUS.GBT_status.gbtRx_ErrorDet = '1') ELSE
-							'1' WHEN (RX_ErrDet_latch = '1') ELSE
-							'0' WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
-							'0';
+--	RX_ErrDet_latch_next <= '0' WHEN FSM_Clocks.Reset = '1' ELSE
+--							'0' WHEN (Control_register_I.reset_gbt_rxerror = '1') ELSE
+--							'1' WHEN (FIT_GBT_STATUS.GBT_status.gbtRx_ErrorDet = '1') ELSE
+--							'1' WHEN (RX_ErrDet_latch = '1') ELSE
+--							'0' WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
+--							'0';
 -- ***************************************************
 
-gbt_reset <=    RESET_I or reset_l;
+-- <=    RESET_I or reset_l;
 
 
 

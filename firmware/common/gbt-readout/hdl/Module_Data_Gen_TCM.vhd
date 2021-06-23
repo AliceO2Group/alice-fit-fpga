@@ -132,7 +132,7 @@ begin
 
 
 		IF(rising_edge(FSM_Clocks_I.Data_Clk) )THEN
-			IF (FSM_Clocks_I.Reset40 = '1') THEN
+			IF (FSM_Clocks_I.Reset_dclk = '1') THEN
 				
 				bfreq_counter			<= (others => '0');
 				bpattern_counter		<= 0;
@@ -159,7 +159,7 @@ begin
 	begin
 
 		IF(rising_edge(FSM_Clocks_I.System_Clk) )THEN
-			IF (FSM_Clocks_I.Reset = '1') THEN
+			IF (FSM_Clocks_I.Reset_sclk = '1') THEN
 				Board_data_in_ff	<= Board_data_void;
 				Board_data_gen_ff	<= Board_data_void;
 				
@@ -205,23 +205,23 @@ reset_offset <= Control_register_I.reset_gen_offset;
 				-- '0';
 
 
-cnt_packet_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+cnt_packet_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							cnt_packet_counter + 1	WHEN (is_packet_send_for_cntr = '1') and (is_packet_send_for_cntr_ff = '0') ELSE
 							cnt_packet_counter;
 
-bfreq_counter_next <= 	(others => '0') 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+bfreq_counter_next <= 	(others => '0') 		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						(others => '0') 		WHEN (bfreq_counter = bunch_freq-1) ELSE
 						(others => '0') 		WHEN (bunch_freq = 0) ELSE
 						(others => '0') 		WHEN (is_boffset_sync = '0') ELSE
 						x"0001"			 		WHEN (FIT_GBT_status_I.BCID_from_CRU_corrected = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) and (is_boffset_sync = '0') ELSE
 						bfreq_counter + 1;
 
-is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+is_boffset_sync_next <= '0' WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 						'0' WHEN (reset_offset = '1') ELSE
 						'1' WHEN (is_boffset_sync = '0') and (FIT_GBT_status_I.BCID_from_CRU_corrected = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) ELSE
 						is_boffset_sync;
 						
-bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
+bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
 							0		WHEN (bfreq_counter = bunch_freq-1) ELSE
 							8 		WHEN (is_boffset_sync = '0') ELSE
 							8 		WHEN (bpattern_counter = 8) ELSE
@@ -229,14 +229,14 @@ bpattern_counter_next <= 	0 		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 
 							
 							
-pword_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset = '1') ELSE
+pword_counter_next <= 	(others => '0') WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 						(others => '0')	WHEN (FSM_STATE = s0_wait) ELSE
 						(others => '0')	WHEN (FSM_STATE = s1_header) ELSE
 						pword_counter + 1;
 
 											
 
-FSM_STATE_NEXT <= 	s0_wait		WHEN (FSM_Clocks_I.Reset = '1') ELSE	
+FSM_STATE_NEXT <= 	s0_wait		WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE	
 					s1_header	WHEN (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"0") and (n_words_in_packet_mask(bpattern_counter)  > 0) ELSE
 					s1_header	WHEN (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"0") and ((Trigger_from_CRU_320ff and trigger_resp_mask) > 0) ELSE
 					s2_data		WHEN (FSM_STATE = s1_header) ELSE
@@ -244,12 +244,12 @@ FSM_STATE_NEXT <= 	s0_wait		WHEN (FSM_Clocks_I.Reset = '1') ELSE
 					s0_wait		WHEN (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) ELSE
 					s0_wait;
 						
-is_packet_send_for_cntr_next <=  '0' WHEN (FSM_Clocks_I.Reset = '1') ELSE
+is_packet_send_for_cntr_next <=  '0' WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
                                 '1' WHEN (FSM_STATE = s2_data) and (FSM_STATE_NEXT = s0_wait) ELSE
                                 '0' WHEN (FSM_Clocks_I.System_Counter = x"0")  ELSE
                                 is_packet_send_for_cntr;
 						
-n_words_in_packet_send_next <= 	(others => '0')         					WHEN (FSM_Clocks_I.Reset = '1') ELSE
+n_words_in_packet_send_next <= 	(others => '0')         					WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 								n_words_in_packet_mask(0) 					WHEN (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) and ((Trigger_from_CRU_320ff and trigger_resp_mask) > 0) ELSE
 								n_words_in_packet_mask(bpattern_counter) 	WHEN (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) ELSE
 								n_words_in_packet_send;
@@ -257,7 +257,7 @@ n_words_in_packet_send_next <= 	(others => '0')         					WHEN (FSM_Clocks_I.
 
 
 ---------- Board data gen ---------------------------
-Board_data_gen_ff_next <=	Board_data_void 	WHEN (FSM_Clocks_I.Reset = '1') ELSE
+Board_data_gen_ff_next <=	Board_data_void 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 							Board_data_void 	WHEN (FSM_STATE = s0_wait) ELSE
 							Board_data_header 	WHEN (FSM_STATE = s1_header) ELSE
 							Board_data_data 	WHEN (FSM_STATE = s2_data) ELSE
