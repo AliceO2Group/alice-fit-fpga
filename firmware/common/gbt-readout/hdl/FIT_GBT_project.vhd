@@ -279,38 +279,6 @@ port map (
 
 
 
-
--- Data ff data clk **********************************
---	process (FSM_Clocks.Data_Clk)
---	begin
-	
-	   
---		IF(rising_edge(FSM_Clocks.Data_Clk) )THEN
---	     reset_l<=Control_register_I.reset_gbt;
-
---			IF (FSM_Clocks.Reset40 = '1') THEN
---				RX_ErrDet_latch <= '0';
---			ELSE
---				RX_ErrDet_latch <= RX_ErrDet_latch_next;	
---			END IF;
---		END IF;
-		
---	end process;			
-	
---	FIT_GBT_STATUS.GBT_status.gbtRx_ErrorLatch <= RX_ErrDet_latch;
-	
---	RX_ErrDet_latch_next <= '0' WHEN FSM_Clocks.Reset = '1' ELSE
---							'0' WHEN (Control_register_I.reset_gbt_rxerror = '1') ELSE
---							'1' WHEN (FIT_GBT_STATUS.GBT_status.gbtRx_ErrorDet = '1') ELSE
---							'1' WHEN (RX_ErrDet_latch = '1') ELSE
---							'0' WHEN (Control_register_I.strt_rdmode_lock = '1') ELSE
---							'0';
--- ***************************************************
-
--- <=    RESET_I or reset_l;
-
-
-
 gbt_bank_gen: if GENERATE_GBT_BANK = 1 generate 
  gbtBankDsgn : entity work.GBT_TX_RX
      port map (
@@ -328,6 +296,7 @@ gbt_bank_gen: if GENERATE_GBT_BANK = 1 generate
             RXData => RX_Data_rxclk_from_GBT,
             RXData_SC => open,
             IsRXData => RX_IsData_rxclk_from_GBT,
+			reset_rx_errors => Control_register_I.reset_gbt_rxerror,
             GBT_Status_O => from_gbt_bank_prj_GBT_status
             );
 end generate gbt_bank_gen;
@@ -338,25 +307,7 @@ gbt_bank_gen_sim: if GENERATE_GBT_BANK = 0 generate
             GBT_RxFrameClk_O <= DataClk_I;
             RX_Data_rxclk_from_GBT <= (others => '0');
             RX_IsData_rxclk_from_GBT <= '0';
-            
-            from_gbt_bank_prj_GBT_status.txWordClk <= '0';
-            from_gbt_bank_prj_GBT_status.rxFrameClk <= '0';
-            from_gbt_bank_prj_GBT_status.rxWordClk <= '0';
-            from_gbt_bank_prj_GBT_status.txOutClkFabric <= '0';
-            
-            from_gbt_bank_prj_GBT_status.mgt_phalin_cplllock <= '0';
-            
-            from_gbt_bank_prj_GBT_status.rxWordClkReady <= '0';
-            from_gbt_bank_prj_GBT_status.rxFrameClkReady <= '0';
-            
-            from_gbt_bank_prj_GBT_status.mgtLinkReady <= '0';
-            from_gbt_bank_prj_GBT_status.tx_resetDone <= '0';
-            from_gbt_bank_prj_GBT_status.tx_fsmResetDone    <= '0';
-            
-            from_gbt_bank_prj_GBT_status.gbtRx_Ready    <= '0';
-            from_gbt_bank_prj_GBT_status.gbtRx_ErrorDet    <= '0';
-            from_gbt_bank_prj_GBT_status.gbtRx_ErrorLatch    <= '0';
-            from_gbt_bank_prj_GBT_status.Rx_Phase_error    <= '0';
+            from_gbt_bank_prj_GBT_status <= test_gbt_status_void;
 end generate gbt_bank_gen_sim;
 
 
