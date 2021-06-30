@@ -53,18 +53,6 @@ package fit_gbt_common_package is
 
 
 -- Trigger constants -------------------------------------------
-  -- constant TRG_const_void            : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000000";
-  -- constant TRG_const_Orbit   : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000001";
-  -- constant TRG_const_HB              : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000002";
-  -- constant TRG_const_HC              : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000003";
-  -- constant TRG_const_Ph              : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000010";
-  -- constant TRG_const_SOT             : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000080";
-  -- constant TRG_const_EOT             : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000100";
-  -- constant TRG_const_SOC             : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000200";
-  -- constant TRG_const_EOC             : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000400";
-  -- constant TRG_const_ORBCrsv : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"0000000f";
-  -- constant TRG_const_response        : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"ffffffff";
-
   constant TRG_const_void  : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000000";
   constant TRG_const_Orbit : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000001";  --0
   constant TRG_const_HB    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00000002";  --1

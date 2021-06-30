@@ -247,12 +247,7 @@ CRU_ORBC_Gen_comp : entity work.CRU_ORBC_Gen
 		RX_Data_I 			=> RX_Data_DataClk,
 		
 		RX_IsData_O 		=> RX_IsData_from_orbcgen,
-		RX_Data_O 			=> RX_Data_from_orbcgen,
-		
-		Current_BCID_from_O => open,
-		Current_ORBIT_from_O=> open,
-		Current_Trigger_from_O => open
-
+		RX_Data_O 			=> RX_Data_from_orbcgen
 		);		
 -- =====================================================
 
@@ -273,7 +268,6 @@ port map (
 
 		TX_Data_O 			=> TX_Data_from_packager,
 		TX_IsData_O 		=> TX_IsData_from_packager
---		GPIO_O => GPIO_O
 );
 -- =============================================================
 
