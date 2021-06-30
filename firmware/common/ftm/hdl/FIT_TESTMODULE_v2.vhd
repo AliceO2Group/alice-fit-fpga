@@ -923,8 +923,6 @@ FitGbtPrg: entity work.FIT_GBT_project
 		
 		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
 		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
-		rx_ph320 => open,
-		ph_error320 => open, 
 
 		FIT_GBT_status_O 	=> TESTM_status
 		);		

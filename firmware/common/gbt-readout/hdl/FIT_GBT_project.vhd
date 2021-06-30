@@ -60,12 +60,7 @@ entity FIT_GBT_project is
 		IsRxData_rxclk_from_GBT_O	: out  STD_LOGIC;
 
 		-- FIT readour status, including BCOR_ID to PM/TCM
-		FIT_GBT_status_O : out FIT_GBT_status_type;
-		rx_ph320 : out std_logic_vector(2 downto 0);
-		ph_error320 : out std_logic
-		
-		
-		--GPIO_O : out std_logic_vector(15 downto 0)
+		FIT_GBT_status_O : out FIT_GBT_status_type
 	);
 end FIT_GBT_project;
 
@@ -82,7 +77,6 @@ signal RX_IsData_DataClk		:  std_logic;
 signal RX_exData_from_RXsync    :  std_logic_vector(GBT_data_word_bitdepth+GBT_slowcntr_bitdepth-1 downto 0);
 
 signal RX_Data_DataClk 			:  std_logic_vector(GBT_data_word_bitdepth-1 downto 0); 
-signal RX_Phase_Counter 		:  std_logic_vector(rx_phase_bitdepth-1 downto 0);
 
 -- status
 signal from_gbt_bank_prj_GBT_status : Type_GBT_status;
@@ -149,7 +143,6 @@ begin
 	FIT_GBT_STATUS.BCID_from_CRU_corrected 		<= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
 	FIT_GBT_STATUS.ORBIT_from_CRU_corrected 	<= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
 		
-	FIT_GBT_STATUS.rx_phase 					<= RX_Phase_Counter;
 
 	
 	
@@ -179,7 +172,7 @@ port map(
 		
 		Reset_DClk_O =>	FSM_Clocks.Reset_dclk,
 		Reset_SClk_O =>	FSM_Clocks.Reset_sclk,
-		ResetGBT_O   =>  gbt_reset
+		ResetGBT_O   => gbt_reset
 		);
 -- =============================================================
 
@@ -196,10 +189,8 @@ port map (
 			RX_DATA_RXCLK_I      => x"0" & RxData_rxclk_to_FITrd_I,
 			RX_IS_DATA_DATACLK_O => RX_IsData_DataClk,
 			RX_DATA_DataClk_O    => RX_exData_from_RXsync,
-			CLK_PH_CNT_O         => RX_Phase_Counter,
-			CLK_PH_ERROR_O 		 => FIT_GBT_STATUS.GBT_status.Rx_Phase_error,
-			rx_ph320             => rx_ph320,
-			ph_error320          => ph_error320
+			CLK_PH_CNT_O         => FIT_GBT_STATUS.rx_phase,
+			CLK_PH_ERROR_O 		 => FIT_GBT_STATUS.GBT_status.Rx_Phase_error
 );
 -- =============================================================
 
