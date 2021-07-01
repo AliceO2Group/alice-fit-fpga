@@ -377,7 +377,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
 
-set imported_files [import_files -fileset sources_1 $files]
+add_files -norecurse -fileset sources_1 $files
 
 #-------------------------------------------------------------------------------
 if {[string equal $proj_create "yes"]} {
