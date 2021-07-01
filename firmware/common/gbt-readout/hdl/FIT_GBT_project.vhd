@@ -38,7 +38,7 @@ entity FIT_GBT_project is
 		RxDataClk_I			: in STD_LOGIC; -- 40MHz data clock in RX domain
 		GBT_RxFrameClk_O	: out STD_LOGIC; --Rx GBT frame clk 40MHz
 		
-		Board_data_I		: in board_data_type; --PM or TCM data
+		Board_data_I		: in board_data_type; --PM or TCM data @320MHz
 		Control_register_I	: in CONTROL_REGISTER_type; -- control registers @DataClk
 		
 		MGT_RX_P_I 		: in  STD_LOGIC;
