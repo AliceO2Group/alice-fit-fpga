@@ -2,27 +2,10 @@
 -- Company: INR RAS
 -- Engineer: Finogeev D. A. dmitry-finogeev@yandex.ru
 -- 
--- Create Date:    07/11/2017 
--- Design Name: 
--- Module Name:   
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Create Date:    2017 
+-- Description: convert data from FEE to RDH format
 --
--- Dependencies: 
---
--- Revision: 
--- Revision
--- Additional Comments: 
---
-
--- TO DO: 
--- 		check packets from PM without space
---		FIFO full
--- 		FIFO reset
--- 320 CLock
-
+-- Revision: 07/2021
 ----------------------------------------------------------------------------------
 
 library IEEE;

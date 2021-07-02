@@ -89,12 +89,6 @@ package fit_gbt_common_package is
 
 
 -- FIFO constants ----------------------------------------------
-  -- raw_data_fifo
-  constant fifo_data_bitdepth        : integer := GBT_data_word_bitdepth;
-  constant rawfifo_depth             : integer := 4096;
-  constant rawfifo_count_bitdepth    : integer := 13;
-  constant slctfifo_depth            : integer := 4096;
-  constant slctfifo_count_bitdepth   : integer := 13;
   -- trg_fifo_comt
   constant trgfifo_data_bitdepth     : integer := Orbit_id_bitdepth+BC_id_bitdepth+Trigger_bitdepth;  --76
   constant trgfifo_depth             : integer := 512;
@@ -185,7 +179,7 @@ package fit_gbt_common_package is
     reset_readout : std_logic;          -- reset readout fsm
     reset_gbt     : std_logic;          -- reset gbt
 
-    strt_rdmode_lock : std_logic;
+    force_idle : std_logic;
   end record;
 
   constant test_CONTROL_REG : CONTROL_REGISTER_type :=
@@ -231,7 +225,7 @@ package fit_gbt_common_package is
       reset_readout         => '0',
       reset_gbt             => '0',
       reset_rxph_error      => '0',
-      strt_rdmode_lock      => '0'
+      force_idle      => '0'
       );
 -- =============================================================
 
@@ -557,7 +551,7 @@ package body fit_gbt_common_package is
 
 
 
-    cntr_reg_addrreg(0) := x"00" & "0"&cntrl_reg.strt_rdmode_lock&cntrl_reg.readout_bypass&cntrl_reg.is_hb_response & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
+    cntr_reg_addrreg(0) := x"00" & "0"&cntrl_reg.force_idle&cntrl_reg.readout_bypass&cntrl_reg.is_hb_response & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
 
     cntr_reg_addrreg(1) := cntrl_reg.Data_Gen.trigger_resp_mask;
     cntr_reg_addrreg(2) := cntrl_reg.Data_Gen.bunch_pattern;
@@ -624,7 +618,7 @@ package body fit_gbt_common_package is
 
     cntr_reg.is_hb_response   := cntrl_reg_addrreg(0)(20);
     cntr_reg.readout_bypass   := cntrl_reg_addrreg(0)(21);
-    cntr_reg.strt_rdmode_lock := cntrl_reg_addrreg(0)(22);
+    cntr_reg.force_idle := cntrl_reg_addrreg(0)(22);
 
     cntr_reg.reset_orbc_synd       := cntrl_reg_addrreg(0)(8);
     cntr_reg.reset_drophit_counter := cntrl_reg_addrreg(0)(9);

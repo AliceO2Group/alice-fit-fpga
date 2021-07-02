@@ -86,7 +86,7 @@ begin
       RX_IS_DATA_DATACLK_O <= RX_IS_DATA_DATACLK;
       CLK_PH_CNT_O         <= CLK_PH_counter_stop;
 	  
-	  rx_error_reset <= Control_register_I.strt_rdmode_lock or Control_register_I.reset_rxph_error;
+	  rx_error_reset <= Control_register_I.force_idle or Control_register_I.reset_rxph_error;
     end if;
   end process;
 -- ***************************************************

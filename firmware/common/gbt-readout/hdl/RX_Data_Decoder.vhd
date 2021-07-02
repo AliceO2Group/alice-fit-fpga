@@ -181,7 +181,7 @@ begin
 
 
 -- FSM ***********************************************
-  STATE_RDMODE_NEXT <= mode_IDLE when (Control_register_I.strt_rdmode_lock = '1') else
+  STATE_RDMODE_NEXT <= mode_IDLE when (Control_register_I.force_idle = '1') else
                        mode_IDLE when (STATE_SYNC = mode_LOST) else
 
                        mode_TRG when (STATE_RDMODE = mode_IDLE) and ((TRGTYPE_received_ff and TRG_const_SOT) /= TRG_const_void) else
@@ -208,7 +208,7 @@ begin
                       '0';
 
 -- SYNC FSM
-  STATE_SYNC_NEXT <= mode_STR  when (Control_register_I.strt_rdmode_lock = '1') else
+  STATE_SYNC_NEXT <= mode_STR  when (Control_register_I.force_idle = '1') else
                      mode_STR  when (Control_register_I.reset_orbc_synd = '1') else
                      mode_STR  when (STATE_SYNC = mode_LOST) and (STATE_RDMODE = mode_IDLE) else -- 30/06/21 - auto resync out of RUN
                      mode_SYNC when TRGTYPE_ORBCrsv_ff_next and (STATE_SYNC = mode_STR) else

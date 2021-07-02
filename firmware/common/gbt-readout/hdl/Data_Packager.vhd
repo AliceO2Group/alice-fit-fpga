@@ -34,103 +34,43 @@ entity Data_Packager is
 		
 		Board_data_I		: in board_data_type;
 		
-		fifo_status_O 				: out FIFO_STATUS_type;
-		hits_rd_counter_converter_O	: out hit_rd_counter_type;
-		hits_rd_counter_selector_O 	: out hit_rd_counter_type;
-
 		TX_Data_O : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 		TX_IsData_O : out STD_LOGIC
---		GPIO_O : out std_logic_vector(15 downto 0)
-
 	 );
 end Data_Packager;
 
 architecture Behavioral of Data_Packager is
 
+	signal raw_fifo_dout : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+	signal raw_fifo_empty : std_logic;
+	signal raw_fifo_rden : std_logic;
+	
+	signal slct_fifo_cnt : std_logic_vector(12 downto 0);
+	signal slct_fifo_din : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+	signal slct_fifo_out : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+	signal slct_fifo_empty : std_logic;
+	signal slct_fifo_wren : std_logic;
+	signal slct_fifo_rden : std_logic;
+	signal slct_fifo_full : std_logic;
+	
+	
 	signal data_from_cru_constructor : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 	signal is_data_from_cru_constructor : STD_LOGIC;
-	
-	signal raw_data_fifo_words_count_rd : std_logic_vector(rawfifo_count_bitdepth-1 downto 0);
-	signal raw_data_fifo_words_count_wr : std_logic_vector(rawfifo_count_bitdepth-1 downto 0);
-	signal raw_data_fifo_data_tofifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-	signal raw_data_fifo_data_fromfifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-	signal raw_data_fifo_isempty : std_logic;
-	signal raw_data_fifo_wren : std_logic;
-	signal raw_data_fifo_rden_selector : std_logic;
-	signal raw_data_fifo_rden : std_logic;
-	signal raw_data_fifo_space_is_for_packet : STD_LOGIC;
-	signal raw_data_fifo_reset : std_logic;
-	signal raw_data_fifo_rden_txgenerator : std_logic;
-	signal readout_bypass_s : std_logic;
-
-
-	signal slct_data_fifo_words_count_wr : std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
-	signal slct_data_fifo_data_tofifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-	signal slct_data_fifo_data_fromfifo : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-	signal slct_data_fifo_isempty : std_logic;
-	signal slct_data_fifo_is_space_for_packet : std_logic;
-	signal slct_data_fifo_wren : std_logic;
-	signal slct_data_fifo_rden : std_logic;
-	signal slct_data_fifo_space_is_for_packet : STD_LOGIC;
-	signal slct_data_fifo_reset : std_logic;
-	
-	signal trg_fifo_count	: std_logic_vector(trgfifo_count_bitdepth-1 downto 0);
-	signal cntr_fifo_count	: std_logic_vector(cntpckfifo_count_bitdepth-1 downto 0);
-
 	signal cntpck_fifo_data_fromfifo : std_logic_vector(cntpckfifo_data_bitdepth-1 downto 0);
 	signal cntpck_fifo_isempty : std_logic;
 	signal cntpck_fifo_rden : std_logic;
 
 	
 	attribute keep : string;
-	attribute keep of raw_data_fifo_data_fromfifo : signal is "true";
-	attribute keep of raw_data_fifo_rden : signal is "true";
-	attribute keep of slct_data_fifo_data_fromfifo : signal is "true";
-	attribute keep of slct_data_fifo_rden : signal is "true";
-	attribute keep of raw_data_fifo_data_tofifo : signal is "true";
-	attribute keep of slct_data_fifo_data_tofifo : signal is "true";	
-	attribute keep of raw_data_fifo_isempty : signal is "true";
-	attribute keep of slct_data_fifo_isempty : signal is "true";
+	attribute keep of raw_fifo_cnt : signal is "true";
 	
 	
 	
 
 begin
--- --Wiring =====================================================
--- TX_Data_O(83 downto 0) <= (others=>'0'); -- test generation
---raw_data_fifo_space_is_for_packet <= 	'1' when (unsigned(raw_data_fifo_words_count_wr) <= 150-total_data_words-1) else
-raw_data_fifo_space_is_for_packet <= 	'1' when (unsigned(raw_data_fifo_words_count_wr) <= rawfifo_depth-total_data_words-1) else
-										'0';
-										
---slct_data_fifo_is_space_for_packet <= '1' when (unsigned(slct_data_fifo_words_count_wr) <= 150-total_data_words-1) else
-slct_data_fifo_is_space_for_packet <= 	'1' when (unsigned(slct_data_fifo_words_count_wr) <= slctfifo_depth-total_data_words-1) else
-										'0';
-
-raw_data_fifo_reset <= FSM_Clocks_I.Reset_sclk;
-slct_data_fifo_reset <= FSM_Clocks_I.Reset_sclk;
-
-fifo_status_O.raw_fifo_count <= raw_data_fifo_words_count_wr;
-fifo_status_O.slct_fifo_count <= slct_data_fifo_words_count_wr;
-fifo_status_O.trg_fifo_count <= trg_fifo_count;
-fifo_status_O.cntr_fifo_count <= cntr_fifo_count;
-fifo_status_O.ftmipbus_fifo_count 	<= (others => '0');
-
-
-process(FSM_Clocks_I.System_Clk)	
-begin									
-if (FSM_Clocks_I.System_Clk'event) and (FSM_Clocks_I.System_Clk='1') then
-          readout_bypass_s <=Control_register_I.readout_bypass;
-end if;
-end process;
-
--- -- ===========================================================
-
-
+--          readout_bypass_s <=Control_register_I.readout_bypass;
 
 -- Data Converter ===============================================
--- PM data already formed
--- DataConverter_gen: if (Board_DataConversion_type = one_word) or (Board_DataConversion_type = one_word) generate
-
 DataConverter_comp: entity work.DataConverter
     port map(
 		FSM_Clocks_I => FSM_Clocks_I,
@@ -140,64 +80,13 @@ DataConverter_comp: entity work.DataConverter
 		
 		Board_data_I => Board_data_I,
 		
-		FIFO_is_space_for_packet_I => raw_data_fifo_space_is_for_packet,
-		
-		FIFO_WE_O => raw_data_fifo_wren,
-		FIFO_data_word_O => raw_data_fifo_data_tofifo,
-		
-		hits_rd_counter_converter_O => hits_rd_counter_converter_O
-
+		fifo_data_o => raw_fifo_dout,
+		fifo_empty_o => raw_fifo_empty,
+		fifo_rden_i => raw_fifo_rden,
+		drop_ounter_o => open
+		fifo_cnt_max_o => open
 		);
-		
--- end generate;
 -- ===========================================================
-
-
-
-
-
--- Raw_data_fifo =============================================
---raw_data_fifo_comp : entity work.raw_data_fifo
---port map(
---           wr_clk        => FSM_Clocks_I.System_Clk,
---           rd_clk        => FSM_Clocks_I.System_Clk,
---     	   wr_data_count => raw_data_fifo_words_count_wr,
---     	   rd_data_count => raw_data_fifo_words_count_rd,
---           rst           => raw_data_fifo_reset,
---           WR_EN 		 => raw_data_fifo_wren,
---           RD_EN         => raw_data_fifo_rden,
---           DIN           => raw_data_fifo_data_tofifo,
---           DOUT          => raw_data_fifo_data_fromfifo,
---           FULL          => open,
---           EMPTY         => raw_data_fifo_isempty
---        );
---GPIO_O(15) <= raw_data_fifo_wren;
---GPIO_O(14) <= raw_data_fifo_rden;
---GPIO_O(4 downto 0) <= raw_data_fifo_words_count_rd(4 downto 0);
-
--- ===========================================================
-
----- Raw_data_fifo =============================================
-raw_data_fifo_comp : entity work.raw_data_fifo
-port map(
-           clk        => FSM_Clocks_I.System_Clk,
-     	   data_count => raw_data_fifo_words_count_wr,
-           srst           => raw_data_fifo_reset,
-           WR_EN 		 => raw_data_fifo_wren,
-           RD_EN         => raw_data_fifo_rden,
-           DIN           => raw_data_fifo_data_tofifo,
-           DOUT          => raw_data_fifo_data_fromfifo,
-           FULL          => open,
-           EMPTY         => raw_data_fifo_isempty
-        );
-raw_data_fifo_words_count_rd <= raw_data_fifo_words_count_wr;
-
-raw_data_fifo_rden <= raw_data_fifo_rden_txgenerator WHEN (readout_bypass_s = '1')
-	               ELSE raw_data_fifo_rden_selector;
-
----- ===========================================================
-
-
 
 
 -- Slc_data_fifo =============================================
@@ -206,7 +95,7 @@ port map(
            wr_clk        => FSM_Clocks_I.System_Clk,
            rd_clk        => FSM_Clocks_I.Data_Clk,
      	   wr_data_count => slct_data_fifo_words_count_wr,
-           rst           => slct_data_fifo_reset,
+           rst           => FSM_Clocks_I.Reset_dclk,
            WR_EN 		 => slct_data_fifo_wren,
            RD_EN         => slct_data_fifo_rden,
            DIN           => slct_data_fifo_data_tofifo,
@@ -224,11 +113,11 @@ port map	(
 			FIT_GBT_status_I => FIT_GBT_status_I,
 			Control_register_I => Control_register_I,
 		
-			RAWFIFO_data_word_I => raw_data_fifo_data_fromfifo,
-			RAWFIFO_Is_Empty_I => raw_data_fifo_isempty,
-			RAWFIFO_data_count_I => raw_data_fifo_words_count_rd,
-			RAWFIFO_RE_O => raw_data_fifo_rden_selector,
-			RAWFIFO_RESET_O => raw_data_fifo_reset,
+			RAWFIFO_data_word_I => raw_fifo_dout,
+			RAWFIFO_Is_Empty_I => raw_fifo_empty,
+			RAWFIFO_data_count_I => (others => '0'),
+			RAWFIFO_RE_O => open,
+			RAWFIFO_RESET_O => open,
 			
 			SLCTFIFO_data_word_O => slct_data_fifo_data_tofifo,
 			SLCTFIFO_Is_spacefpacket_I => slct_data_fifo_is_space_for_packet,
@@ -237,10 +126,10 @@ port map	(
 			
 			CNTPTFIFO_data_word_O => cntpck_fifo_data_fromfifo,
             CNTPFIFO_Is_Empty_O => cntpck_fifo_isempty,
-			CNTPFIFO_count_O => cntr_fifo_count,
+			CNTPFIFO_count_O => open,
             CNTPFIFO_RE_I => cntpck_fifo_rden,
 			
-			TRGFIFO_count_O => trg_fifo_count,
+			TRGFIFO_count_O => open,
 			
 			hits_rd_counter_selector_O => hits_rd_counter_selector_O
 			);

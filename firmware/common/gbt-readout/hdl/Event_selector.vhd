@@ -262,9 +262,9 @@ begin
  
  
 -- RAW FIFO ******************************************
-is_fullpacket_in_rawfifo <= 	'0' WHEN (RAWFIFO_Is_Empty_I = '1') ELSE
-								'1' when (unsigned(RAWFIFO_data_count_I) > unsigned(rawfifo_packet_ndwords_ff)) else
-								'0';
+is_fullpacket_in_rawfifo <= 	'0' WHEN (RAWFIFO_Is_Empty_I = '1') ELSE '1';
+--								'1' when (unsigned(RAWFIFO_data_count_I) > unsigned(rawfifo_packet_ndwords_ff)) else
+--								'0';
 
 rawfifo_packet_ndwords <= func_FITDATAHD_ndwords(RAWFIFO_data_word_I);
 rawfifo_packet_orbit <= func_FITDATAHD_orbit(RAWFIFO_data_word_I);
