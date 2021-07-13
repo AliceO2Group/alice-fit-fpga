@@ -128,7 +128,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 		reset_readout   			=> '0',
 		reset_gbt					=> '0',
 		reset_rxph_error			=> '0',
-		strt_rdmode_lock			=> '0'
+		force_idle			=> '0'
 	);	
 	signal  testbench_CONTROL_REG_dynamic : CONTROL_REGISTER_type := testbench_CONTROL_REG_default;
 

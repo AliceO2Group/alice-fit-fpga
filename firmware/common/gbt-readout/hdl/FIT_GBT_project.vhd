@@ -262,9 +262,9 @@ port map (
 		
 		Board_data_I => Board_data_from_main_gen,
 		
-		fifo_status_O 				=> FIT_GBT_STATUS.fifo_status,
-		hits_rd_counter_converter_O	=> FIT_GBT_STATUS.hits_rd_counter_converter,
-		hits_rd_counter_selector_O 	=> FIT_GBT_STATUS.hits_rd_counter_selector,
+		--fifo_status_O 				=> FIT_GBT_STATUS.fifo_status,
+		--hits_rd_counter_converter_O	=> FIT_GBT_STATUS.hits_rd_counter_converter,
+		--hits_rd_counter_selector_O 	=> FIT_GBT_STATUS.hits_rd_counter_selector,
 
 		TX_Data_O 			=> TX_Data_from_packager,
 		TX_IsData_O 		=> TX_IsData_from_packager

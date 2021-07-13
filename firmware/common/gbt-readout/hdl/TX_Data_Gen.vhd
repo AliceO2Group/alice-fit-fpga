@@ -26,7 +26,7 @@ entity TX_Data_Gen is
     TX_IsData_I      : in std_logic;
     TX_Data_I        : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
-    RAWFIFO_data_word_I : in  std_logic_vector(fifo_data_bitdepth-1 downto 0);
+    RAWFIFO_data_word_I : in  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     RAWFIFO_Is_Empty_I  : in  std_logic;
     RAWFIFO_RE_O        : out std_logic;
 

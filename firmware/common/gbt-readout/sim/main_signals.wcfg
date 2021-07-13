@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="712589994fs"></ZoomStartTime>
-      <ZoomEndTime time="712720595fs"></ZoomEndTime>
-      <Cursor1Time time="712642194fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2588000001fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="323"></NameColumnWidth>
-      <ValueColumnWidth column_width="223"></ValueColumnWidth>
+      <ValueColumnWidth column_width="219"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject fp_name="group177" type="group">
@@ -34,7 +34,6 @@
       <wvobject fp_name="/testbench_readout/Control_register_from_file" type="array">
          <obj_property name="ElementShortName">Control_register_from_file[0:12][31:0]</obj_property>
          <obj_property name="ObjectShortName">Control_register_from_file[0:12][31:0]</obj_property>
-         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
@@ -143,7 +142,6 @@
          <wvobject fp_name="group284" type="group">
             <obj_property name="label">data_gen</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_pattern" type="array">
                <obj_property name="ElementShortName">bunch_pattern[31:0]</obj_property>
                <obj_property name="ObjectShortName">bunch_pattern[31:0]</obj_property>
@@ -177,8 +175,8 @@
                <obj_property name="ObjectShortName">bpattern_counter_sclk</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/cnt_packet_counter" type="array">
-               <obj_property name="ElementShortName">cnt_packet_counter[79:0]</obj_property>
-               <obj_property name="ObjectShortName">cnt_packet_counter[79:0]</obj_property>
+               <obj_property name="ElementShortName">cnt_packet_counter[35:0]</obj_property>
+               <obj_property name="ObjectShortName">cnt_packet_counter[35:0]</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/pword_counter" type="array">
                <obj_property name="ElementShortName">pword_counter[3:0]</obj_property>
@@ -218,49 +216,62 @@
          <wvobject fp_name="group80" type="group">
             <obj_property name="label">converter</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/send_mode_ison_sclk" type="other">
+               <obj_property name="ElementShortName">send_mode_ison_sclk</obj_property>
+               <obj_property name="ObjectShortName">send_mode_ison_sclk</obj_property>
+            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/Board_data_I" type="array">
                <obj_property name="ElementShortName">Board_data_I</obj_property>
                <obj_property name="ObjectShortName">Board_data_I</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/raw_data_fifo_isempty" type="logic">
-               <obj_property name="ElementShortName">raw_data_fifo_isempty</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_isempty</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_word" type="array">
+               <obj_property name="ElementShortName">header_word[79:0]</obj_property>
+               <obj_property name="ObjectShortName">header_word[79:0]</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fromfifo" type="array">
-               <obj_property name="ElementShortName">data_fromfifo[79:0]</obj_property>
-               <obj_property name="ObjectShortName">data_fromfifo[79:0]</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_word" type="array">
+               <obj_property name="ElementShortName">data_word[79:0]</obj_property>
+               <obj_property name="ObjectShortName">data_word[79:0]</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_header_from_fifo" type="logic">
-               <obj_property name="ElementShortName">is_header_from_fifo</obj_property>
-               <obj_property name="ObjectShortName">is_header_from_fifo</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_header" type="logic">
+               <obj_property name="ElementShortName">is_header</obj_property>
+               <obj_property name="ObjectShortName">is_header</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_data_from_fifo" type="logic">
-               <obj_property name="ElementShortName">is_data_from_fifo</obj_property>
-               <obj_property name="ObjectShortName">is_data_from_fifo</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_data" type="logic">
+               <obj_property name="ElementShortName">is_data</obj_property>
+               <obj_property name="ObjectShortName">is_data</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_is_space_for_packet_ff" type="logic">
-               <obj_property name="ElementShortName">FIFO_is_space_for_packet_ff</obj_property>
-               <obj_property name="ObjectShortName">FIFO_is_space_for_packet_ff</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_word_latch" type="array">
+               <obj_property name="ElementShortName">header_word_latch[79:0]</obj_property>
+               <obj_property name="ObjectShortName">header_word_latch[79:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_pcklen_latch" type="array">
+               <obj_property name="ElementShortName">header_pcklen_latch[7:0]</obj_property>
+               <obj_property name="ObjectShortName">header_pcklen_latch[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/word_counter" type="array">
+               <obj_property name="ElementShortName">word_counter[7:0]</obj_property>
+               <obj_property name="ObjectShortName">word_counter[7:0]</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/sending_event" type="logic">
                <obj_property name="ElementShortName">sending_event</obj_property>
                <obj_property name="ObjectShortName">sending_event</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_WE_O" type="logic">
-               <obj_property name="ElementShortName">FIFO_WE_O</obj_property>
-               <obj_property name="ObjectShortName">FIFO_WE_O</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_fifo_din" type="array">
+               <obj_property name="ElementShortName">header_fifo_din[79:0]</obj_property>
+               <obj_property name="ObjectShortName">header_fifo_din[79:0]</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_data_word_O" type="array">
-               <obj_property name="ElementShortName">FIFO_data_word_O[79:0]</obj_property>
-               <obj_property name="ObjectShortName">FIFO_data_word_O[79:0]</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fifo_din" type="array">
+               <obj_property name="ElementShortName">data_fifo_din[79:0]</obj_property>
+               <obj_property name="ObjectShortName">data_fifo_din[79:0]</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/raw_data_fifo_data_fromfifo" type="array">
-               <obj_property name="ElementShortName">raw_data_fifo_data_fromfifo[79:0]</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_data_fromfifo[79:0]</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_fifo_we" type="logic">
+               <obj_property name="ElementShortName">header_fifo_we</obj_property>
+               <obj_property name="ObjectShortName">header_fifo_we</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/raw_data_fifo_rden" type="logic">
-               <obj_property name="ElementShortName">raw_data_fifo_rden</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_rden</obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fifo_we" type="logic">
+               <obj_property name="ElementShortName">data_fifo_we</obj_property>
+               <obj_property name="ObjectShortName">data_fifo_we</obj_property>
             </wvobject>
          </wvobject>
          <wvobject fp_name="group123" type="group">
@@ -350,7 +361,6 @@
          <wvobject fp_name="group137" type="group">
             <obj_property name="label">selector_logic</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/FSM_STATE" type="other">
                <obj_property name="ElementShortName">FSM_STATE</obj_property>
                <obj_property name="ObjectShortName">FSM_STATE</obj_property>

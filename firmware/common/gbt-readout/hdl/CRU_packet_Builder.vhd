@@ -35,7 +35,7 @@ entity CRU_packet_Builder is
 		FIT_GBT_status_I : in FIT_GBT_status_type;
 		Control_register_I : in CONTROL_REGISTER_type;
 		
-		SLCTFIFO_data_word_I : in std_logic_vector(fifo_data_bitdepth-1 downto 0);
+		SLCTFIFO_data_word_I : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 		SLCTFIFO_Is_Empty_I : in STD_LOGIC;
 		SLCTFIFO_RE_O : out STD_LOGIC;
 		

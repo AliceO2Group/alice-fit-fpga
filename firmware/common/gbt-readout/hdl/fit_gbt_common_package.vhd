@@ -268,14 +268,6 @@ package fit_gbt_common_package is
   end record;
 
 
-  type FIFO_STATUS_type is record
-    raw_fifo_count      : std_logic_vector(rawfifo_count_bitdepth-1 downto 0);
-    slct_fifo_count     : std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
-    ftmipbus_fifo_count : std_logic_vector(slctfifo_count_bitdepth-1 downto 0);
-    trg_fifo_count      : std_logic_vector(trgfifo_count_bitdepth-1 downto 0);
-    cntr_fifo_count     : std_logic_vector(cntpckfifo_count_bitdepth-1 downto 0);
-  end record;
-
   type hit_rd_counter_type is record
     hits_send_porbit  : std_logic_vector(15 downto 0);
     hits_skipped      : std_logic_vector(31 downto 0);
@@ -303,7 +295,6 @@ package fit_gbt_common_package is
 
     Data_gen_report : std_logic_vector(31 downto 0);  -- info of generated data; used only in simulation
 
-    fifo_status               : FIFO_STATUS_type;
     hits_rd_counter_converter : hit_rd_counter_type;
     hits_rd_counter_selector  : hit_rd_counter_type;
 
@@ -355,9 +346,9 @@ package fit_gbt_common_package is
       )
     return std_logic_vector;
 
-  function func_FITDATAHD_ndwords (header_w : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector;
-  function func_FITDATAHD_orbit (header_w   : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector;
-  function func_FITDATAHD_bc (header_w      : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector;
+  function func_FITDATAHD_ndwords (header_w : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
+  function func_FITDATAHD_orbit (header_w   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
+  function func_FITDATAHD_bc (header_w      : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector;
 -- ----------------------------------------------------------------
 
 
@@ -432,13 +423,13 @@ package body fit_gbt_common_package is
 
 
 
-  function func_FITDATAHD_ndwords (header_w : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector is
-  begin return x"0"&header_w(fifo_data_bitdepth-1-4 downto fifo_data_bitdepth-n_pckt_wrds_bitdepth); end function;
+  function func_FITDATAHD_ndwords (header_w : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector is
+  begin return x"0"&header_w(GBT_data_word_bitdepth-1-4 downto GBT_data_word_bitdepth-n_pckt_wrds_bitdepth); end function;
 
-  function func_FITDATAHD_orbit (header_w : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector is
+  function func_FITDATAHD_orbit (header_w : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector is
   begin return header_w(BC_id_bitdepth+Orbit_id_bitdepth-1 downto BC_id_bitdepth); end function;
 
-  function func_FITDATAHD_bc (header_w : std_logic_vector(fifo_data_bitdepth-1 downto 0)) return std_logic_vector is
+  function func_FITDATAHD_bc (header_w : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector is
   begin return header_w(BC_id_bitdepth-1 downto 0); end function;
 -- ----------------------------------------------------------------
 
@@ -667,8 +658,6 @@ package body fit_gbt_common_package is
     variable bcid_sync_mode      : std_logic_vector(3 downto 0);
     variable rd_mode             : std_logic_vector(3 downto 0);
     variable cru_rd_mode         : std_logic_vector(3 downto 0);
-    variable slct_fifo_count_reg : std_logic_vector(15 downto 0);
-    variable raw_fifo_count_reg  : std_logic_vector(15 downto 0);
 
   begin
 
@@ -716,18 +705,16 @@ package body fit_gbt_common_package is
       bcid_sync_mode := x"f";
     end if;
 
-    slct_fifo_count_reg := "000" & status_reg.fifo_status.slct_fifo_count;
-    raw_fifo_count_reg  := "000" & status_reg.fifo_status.raw_fifo_count;
 
 
     status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
     status_reg_addrreg(2) := x"00000" & status_reg.BCID_from_CRU;
-    status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;
+    status_reg_addrreg(3) := x"00000000";
     status_reg_addrreg(4) := status_reg.hits_rd_counter_selector.first_orbit_hdrop;
     status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
     status_reg_addrreg(6) := status_reg.hits_rd_counter_selector.hits_skipped;
-    status_reg_addrreg(7) := "000" & status_reg.fifo_status.ftmipbus_fifo_count & status_reg.hits_rd_counter_selector.hits_send_porbit;
+    status_reg_addrreg(7) := x"00000000";
 
 
     return status_reg_addrreg;
@@ -747,8 +734,6 @@ package body fit_gbt_common_package is
     variable bcid_sync_mode      : std_logic_vector(3 downto 0);
     variable rd_mode             : std_logic_vector(3 downto 0);
     variable cru_rd_mode         : std_logic_vector(3 downto 0);
-    variable slct_fifo_count_reg : std_logic_vector(15 downto 0);
-    variable raw_fifo_count_reg  : std_logic_vector(15 downto 0);
 
   begin
 
@@ -796,18 +781,16 @@ package body fit_gbt_common_package is
       bcid_sync_mode := x"f";
     end if;
 
-    slct_fifo_count_reg := "000" & status_reg.fifo_status.slct_fifo_count;
-    raw_fifo_count_reg  := "000" & status_reg.fifo_status.raw_fifo_count;
 
 
     status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
     status_reg_addrreg(2) := x"00000" & status_reg.BCID_from_CRU;
-    status_reg_addrreg(3) := slct_fifo_count_reg & raw_fifo_count_reg;
+    status_reg_addrreg(3) := x"00000000";
     status_reg_addrreg(4) := status_reg.hits_rd_counter_selector.first_orbit_hdrop;
     status_reg_addrreg(5) := status_reg.hits_rd_counter_selector.last_orbit_hdrop;
     status_reg_addrreg(6) := status_reg.hits_rd_counter_selector.hits_skipped;
-    status_reg_addrreg(7) := "000" & status_reg.fifo_status.ftmipbus_fifo_count & status_reg.hits_rd_counter_selector.hits_send_porbit;
+    status_reg_addrreg(7) := x"00000000";
 
     status_reg_addrreg(8)  := status_reg.ORBIT_from_CRU_corrected;
     status_reg_addrreg(9)  := x"00000" & status_reg.BCID_from_CRU_corrected;

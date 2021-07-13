@@ -44,7 +44,6 @@ package fit_gbt_board_package is
 	type board_data_type is record
 		is_header		: std_logic;
 		is_data		: std_logic;
-		is_packet		: std_logic;
 		data_word	: std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 	end record;
 	
@@ -52,7 +51,6 @@ package fit_gbt_board_package is
 	(						
 		is_header => '0',
 		is_data => '0',
-		is_packet => '0',
 		data_word => (others => '0')
 	);
 -- =============================================================

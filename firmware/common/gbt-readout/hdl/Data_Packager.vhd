@@ -61,9 +61,6 @@ architecture Behavioral of Data_Packager is
 	signal cntpck_fifo_rden : std_logic;
 
 	
-	attribute keep : string;
-	attribute keep of raw_fifo_cnt : signal is "true";
-	
 	
 	
 
@@ -80,10 +77,13 @@ DataConverter_comp: entity work.DataConverter
 		
 		Board_data_I => Board_data_I,
 		
-		fifo_data_o => raw_fifo_dout,
-		fifo_empty_o => raw_fifo_empty,
-		fifo_rden_i => raw_fifo_rden,
-		drop_ounter_o => open
+		header_fifo_data_o => open,
+		data_fifo_data_o => open,
+		header_fifo_rden_i=>'0',
+		data_fifo_rden_i=>'0',
+		header_fifo_empty_o => open,
+		
+		drop_ounter_o => open,
 		fifo_cnt_max_o => open
 		);
 -- ===========================================================
@@ -94,14 +94,14 @@ slct_data_fifo_comp : entity work.slct_data_fifo
 port map(
            wr_clk        => FSM_Clocks_I.System_Clk,
            rd_clk        => FSM_Clocks_I.Data_Clk,
-     	   wr_data_count => slct_data_fifo_words_count_wr,
+     	   wr_data_count => open,
            rst           => FSM_Clocks_I.Reset_dclk,
-           WR_EN 		 => slct_data_fifo_wren,
-           RD_EN         => slct_data_fifo_rden,
-           DIN           => slct_data_fifo_data_tofifo,
-           DOUT          => slct_data_fifo_data_fromfifo,
+           WR_EN 		 => '0',
+           RD_EN         => '0',
+           DIN           => (others=>'0'),
+           DOUT          => open,
            FULL          => open,
-           EMPTY         => slct_data_fifo_isempty
+           EMPTY         => open
         );
 -- ===========================================================
 
@@ -115,14 +115,14 @@ port map	(
 		
 			RAWFIFO_data_word_I => raw_fifo_dout,
 			RAWFIFO_Is_Empty_I => raw_fifo_empty,
-			RAWFIFO_data_count_I => (others => '0'),
+--			RAWFIFO_data_count_I => (others => '0'),
 			RAWFIFO_RE_O => open,
 			RAWFIFO_RESET_O => open,
 			
-			SLCTFIFO_data_word_O => slct_data_fifo_data_tofifo,
-			SLCTFIFO_Is_spacefpacket_I => slct_data_fifo_is_space_for_packet,
-			SLCTFIFO_WE_O => slct_data_fifo_wren,
-			SLCTFIFO_RESET_O => slct_data_fifo_reset,
+			SLCTFIFO_data_word_O => open,
+			SLCTFIFO_Is_spacefpacket_I => '0',
+			SLCTFIFO_WE_O => open,
+			SLCTFIFO_RESET_O => open,
 			
 			CNTPTFIFO_data_word_O => cntpck_fifo_data_fromfifo,
             CNTPFIFO_Is_Empty_O => cntpck_fifo_isempty,
@@ -131,7 +131,7 @@ port map	(
 			
 			TRGFIFO_count_O => open,
 			
-			hits_rd_counter_selector_O => hits_rd_counter_selector_O
+			hits_rd_counter_selector_O => open
 			);
 -- ===========================================================
 
@@ -143,9 +143,9 @@ port map	(
 			FIT_GBT_status_I => FIT_GBT_status_I,
 			Control_register_I => Control_register_I,
 		
-			SLCTFIFO_data_word_I => slct_data_fifo_data_fromfifo,
-			SLCTFIFO_Is_Empty_I => slct_data_fifo_isempty,
-			SLCTFIFO_RE_O => slct_data_fifo_rden,
+			SLCTFIFO_data_word_I => (others => '0'),
+			SLCTFIFO_Is_Empty_I => '0',
+			SLCTFIFO_RE_O => open,
 			
 			CNTPTFIFO_data_word_I => cntpck_fifo_data_fromfifo,
 			CNTPFIFO_Is_Empty_I => cntpck_fifo_isempty,
@@ -169,9 +169,9 @@ port map(
 			TX_IsData_I => is_data_from_cru_constructor,
 			TX_Data_I => data_from_cru_constructor,
 			
-			RAWFIFO_data_word_I => raw_data_fifo_data_fromfifo,
-			RAWFIFO_Is_Empty_I => raw_data_fifo_isempty,
-			RAWFIFO_RE_O => raw_data_fifo_rden_txgenerator,
+			RAWFIFO_data_word_I => (others => '0'),
+			RAWFIFO_Is_Empty_I => '0',
+			RAWFIFO_RE_O => open,
 			
 			TX_IsData_O => TX_IsData_O,
 			TX_Data_O => TX_Data_O
