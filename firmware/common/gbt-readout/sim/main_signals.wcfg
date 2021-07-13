@@ -13,9 +13,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="2588000001fs"></ZoomEndTime>
-      <Cursor1Time time="0fs"></Cursor1Time>
+      <ZoomStartTime time="4386483147fs"></ZoomStartTime>
+      <ZoomEndTime time="4387130148fs"></ZoomEndTime>
+      <Cursor1Time time="4386872314fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="323"></NameColumnWidth>
@@ -257,6 +257,10 @@
                <obj_property name="ElementShortName">sending_event</obj_property>
                <obj_property name="ObjectShortName">sending_event</obj_property>
             </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/rawfifo_full" type="logic">
+               <obj_property name="ElementShortName">rawfifo_full</obj_property>
+               <obj_property name="ObjectShortName">rawfifo_full</obj_property>
+            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_fifo_din" type="array">
                <obj_property name="ElementShortName">header_fifo_din[79:0]</obj_property>
                <obj_property name="ObjectShortName">header_fifo_din[79:0]</obj_property>
@@ -272,6 +276,14 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fifo_we" type="logic">
                <obj_property name="ElementShortName">data_fifo_we</obj_property>
                <obj_property name="ObjectShortName">data_fifo_we</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/rawfifo_cnt_max" type="array">
+               <obj_property name="ElementShortName">rawfifo_cnt_max[12:0]</obj_property>
+               <obj_property name="ObjectShortName">rawfifo_cnt_max[12:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/drop_counter" type="array">
+               <obj_property name="ElementShortName">drop_counter[15:0]</obj_property>
+               <obj_property name="ObjectShortName">drop_counter[15:0]</obj_property>
             </wvobject>
          </wvobject>
          <wvobject fp_name="group123" type="group">
