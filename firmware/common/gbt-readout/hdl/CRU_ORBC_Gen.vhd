@@ -22,7 +22,7 @@ entity CRU_ORBC_Gen is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    FIT_GBT_status_I   : in FIT_GBT_status_type;
+    Status_register_I   : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     RX_IsData_I : in std_logic;
@@ -67,7 +67,7 @@ architecture Behavioral of CRU_ORBC_Gen is
   signal cont_trg_bunch_mask           : std_logic_vector(64 downto 0);
   signal cont_trg_bunch_mask_comp      : std_logic;
   signal bunch_freq                    : std_logic_vector(15 downto 0);
-  signal bunch_freq_hboffset           : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal bc_start           : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal reset_offset                  : std_logic;
 
   signal bfreq_counter, bfreq_counter_next       : std_logic_vector(15 downto 0);
@@ -100,11 +100,11 @@ begin
   single_trg_val      <= Control_register_I.Trigger_Gen.trigger_single_val;
   cont_trg_value      <= Control_register_I.Trigger_Gen.trigger_cont_value;
   cont_trg_bunch_mask <= '0' & Control_register_I.Trigger_Gen.trigger_pattern;
-  bunch_freq          <= Control_register_I.Trigger_Gen.bunch_freq;  -- first packet in bunch = bunch_freq_hboffset + delay
-  bunch_freq_hboffset <= Control_register_I.Trigger_Gen.bunch_freq_hboffset;
+  bunch_freq          <= Control_register_I.Trigger_Gen.bunch_freq;  -- first packet in bunch = bc_start + delay
   readout_command_ff  <= Control_register_I.Trigger_Gen.Readout_command;
   reset_offset        <= Control_register_I.reset_gen_offset;
 
+  bc_start <= x"deb" when Control_register_I.Trigger_Gen.bc_start = 0 else Control_register_I.Trigger_Gen.bc_start - 1;
 
 -- BC Counter ==================================================
   BC_counter_datagen_comp : entity work.BC_counter
@@ -170,11 +170,11 @@ begin
   bfreq_counter_next <= (others => '0') when (bfreq_counter = bunch_freq-1) else
                         (others => '0') when (bunch_freq = 0) else
                         (others => '0') when (is_boffset_sync = '0') else
-                        x"0001"         when (EV_ID_counter(11 downto 0) = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) else
+                        x"0001"         when (EV_ID_counter(11 downto 0) = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) else
                         bfreq_counter + 1;
 
   is_boffset_sync_next <= '0' when (reset_offset = '1') else
-                          '1' when (is_boffset_sync = '0') and (EV_ID_counter(11 downto 0) = bunch_freq_hboffset) and (FIT_GBT_status_I.BCIDsync_Mode = mode_SYNC) else
+                          '1' when (is_boffset_sync = '0') and (EV_ID_counter(11 downto 0) = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) else
                           is_boffset_sync;
 
 
@@ -183,7 +183,7 @@ begin
                            64 when (bpattern_counter = 64) else
                            bpattern_counter + 1;
 
-  is_sentd_cont_trg <= '0' when (FIT_GBT_status_I.BCIDsync_Mode /= mode_SYNC) else
+  is_sentd_cont_trg <= '0' when (Status_register_I.BCIDsync_Mode /= mode_SYNC) else
                        '0' when cont_trg_bunch_mask_comp = '0' else
                        '1' when cont_trg_bunch_mask_comp = '1';
 

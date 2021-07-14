@@ -21,7 +21,7 @@ entity DataConverter is
     Port ( 
 		FSM_Clocks_I : in FSM_Clocks_type;
 		
-		FIT_GBT_status_I : in FIT_GBT_status_type;
+		Status_register_I : in FIT_GBT_status_type;
 		Control_register_I : in CONTROL_REGISTER_type;
 		
 		Board_data_I		: in board_data_type;
@@ -139,7 +139,7 @@ is_data_from_fifo <= not raw_data_fifo_isempty;
 	packet_lenght_fromheader <= func_PMHEADER_n_dwords( data_fromfifo );
 	header_orbit <=func_PMHEADER_getORBIT(data_fromfifo);
 	header_bc <= func_PMHEADER_getBC(data_fromfifo);
-	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error, '1');
+	header_word <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
 	data_word <= data_fromfifo;
 -- ***************************************************
 
@@ -199,9 +199,9 @@ reset_drop_counters <= Control_register_I.reset_drophit_counter;
 	
 sending_event_next <= 	'0'	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 						'0'	WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
---						'1'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='1') ELSE
+--						'1'	WHEN (is_header_from_fifo = '1') and (Status_register_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='1') ELSE
 						'1'	WHEN (is_header_from_fifo = '1') and (Control_register_I.readout_bypass='1') ELSE
-						'0'	WHEN (is_header_from_fifo = '1') and (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
+						'0'	WHEN (is_header_from_fifo = '1') and (Status_register_I.Readout_Mode = mode_IDLE) ELSE
 						'1'	WHEN (is_header_from_fifo = '1') ELSE
 						sending_event;
 		
@@ -218,7 +218,7 @@ FIFO_WE_ff_next <= 			'0' 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
 -- Event counter ------------------------------------
 
 is_dropping_event	<=  '0' 	WHEN (FSM_Clocks_I.Reset_sclk = '1') ELSE
-						'0'		WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE) ELSE
+						'0'		WHEN (Status_register_I.Readout_Mode = mode_IDLE) ELSE
 						'1'		WHEN (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') ELSE
 						'0';
 

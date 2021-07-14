@@ -22,7 +22,7 @@ entity TX_Data_Gen is
 
     Control_register_I : in CONTROL_REGISTER_type;
 
-    FIT_GBT_status_I : in FIT_GBT_status_type;
+    Status_register_I : in FIT_GBT_status_type;
     TX_IsData_I      : in std_logic;
     TX_Data_I        : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 

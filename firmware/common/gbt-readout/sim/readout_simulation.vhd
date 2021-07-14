@@ -94,7 +94,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 			trigger_resp_mask 	=> TRG_const_void,
 			bunch_pattern 		=> x"10e0766f",
 			bunch_freq 			=> x"0dff",
-			bunch_freq_hboffset => x"001"
+			bc_start => x"001"
 			),
 			
 		Trigger_Gen => (
@@ -105,7 +105,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 			trigger_pattern 		=> x"0000000080000000",
 			trigger_cont_value 			=> TRG_const_Ph,
 			bunch_freq 				=> x"0deb",
-			bunch_freq_hboffset 	=> x"ddc"
+			bc_start 	=> x"ddc"
 			),
 		
 		RDH_data => (

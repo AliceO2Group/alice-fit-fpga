@@ -31,7 +31,7 @@ entity Event_selector is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    FIT_GBT_status_I   : in FIT_GBT_status_type;
+    Status_register_I   : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     header_fifo_data_i  : in  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -67,7 +67,7 @@ architecture Behavioral of Event_selector is
   type FSM_STATE_T is (s0_idle, s1_dread, s2_rdh);
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
 
-  signal is_hbtrg, is_databcid_actual, start_reading_data, reading_last_word : boolean;
+  signal is_hbtrg, data_trigger_matching, is_databcid_actual, start_reading_data, reading_last_word : boolean;
   signal header_fifo_rd, data_fifo_rd                                        : std_logic;
 
   signal word_counter : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
@@ -86,9 +86,11 @@ begin
                         true when (trgfifo_empty = '1') and (data_orbit < curr_orbit_sc)                                    else  -- no trigger for data
                         true when (trgfifo_empty = '1') and (data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)         else  -- no trigger for data
                         true when (trgfifo_empty = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) else  -- trigger = data                                             
-                        true when (trgfifo_empty = '0') and (data_orbit < curr_orbit_sc)                                    else  -- data earlier than trigger
-                        true when (trgfifo_empty = '0') and (data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)         else  -- data earlier than trigger
+                        true when (trgfifo_empty = '0') and (data_orbit < curr_orbit_sc)                                    else  -- data later than trigger
+                        true when (trgfifo_empty = '0') and (data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)         else  -- data later than trigger
                         false;
+						
+  data_trigger_matching <= (trgfifo_empty = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc);
 
 -- TRG FIFO =============================================
   trg_fifo_comp_c : entity work.trg_fifo_comp
@@ -104,8 +106,8 @@ begin
       EMPTY => trgfifo_empty
       );
 
-  trgfifo_we          <= '1' when FIT_GBT_status_I.Trigger_from_CRU /= 0 else '0';
-  trgfifo_din         <= FIT_GBT_status_I.Trigger_from_CRU & FIT_GBT_status_I.ORBIT_from_CRU & FIT_GBT_status_I.BCID_from_CRU;
+  trgfifo_we          <= '1' when Status_register_I.Trigger_from_CRU /= 0 else '0';
+  trgfifo_din         <= Status_register_I.Trigger_from_CRU & Status_register_I.ORBIT_from_CRU & Status_register_I.BCID_from_CRU;
   trgfifo_out_trigger <= trgfifo_dout(75 downto BC_id_bitdepth + Orbit_id_bitdepth);
   trgfifo_out_orbit   <= trgfifo_dout(BC_id_bitdepth + Orbit_id_bitdepth -1 downto BC_id_bitdepth);
   trgfifo_out_bc      <= trgfifo_dout(BC_id_bitdepth - 1 downto 0);
@@ -117,12 +119,12 @@ begin
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-      if FIT_GBT_status_I.BCID_from_CRU >= bcid_delay then
-        curr_orbit <= FIT_GBT_status_I.ORBIT_from_CRU;
-        curr_bc    <= (FIT_GBT_status_I.BCID_from_CRU - bcid_delay);
+      if Status_register_I.BCID_from_CRU >= bcid_delay then
+        curr_orbit <= Status_register_I.ORBIT_from_CRU;
+        curr_bc    <= (Status_register_I.BCID_from_CRU - bcid_delay);
       else
-        curr_orbit <= FIT_GBT_status_I.ORBIT_from_CRU - 1;
-        curr_bc    <= FIT_GBT_status_I.BCID_from_CRU - bcid_delay + LHC_BCID_max + 1;
+        curr_orbit <= Status_register_I.ORBIT_from_CRU - 1;
+        curr_bc    <= Status_register_I.BCID_from_CRU - bcid_delay + LHC_BCID_max + 1;
       end if;
 
 

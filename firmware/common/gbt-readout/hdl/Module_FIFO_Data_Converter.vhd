@@ -27,7 +27,7 @@ entity Module_FIFO_Data_Converter is
     Port ( 
 		FSM_Clocks_I : in FSM_Clocks_type;
 		
-		FIT_GBT_status_I : in FIT_GBT_status_type;
+		Status_register_I : in FIT_GBT_status_type;
 		Control_register_I : in CONTROL_REGISTER_type;
 		
 		MODULE_data_I : in module_data_type;

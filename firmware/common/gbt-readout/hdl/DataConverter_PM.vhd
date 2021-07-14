@@ -21,7 +21,7 @@ entity DataConverter is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    FIT_GBT_status_I   : in FIT_GBT_status_type;
+    Status_register_I   : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     Board_data_I : in board_data_type;
@@ -131,7 +131,7 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-      send_mode_ison <= (FIT_GBT_status_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
+      send_mode_ison <= (Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
     end if;
@@ -145,7 +145,7 @@ begin
 
       reset_drop_counters <= Control_register_I.reset_drophit_counter;
 
-      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, FIT_GBT_status_I.rx_phase, FIT_GBT_status_I.GBT_status.Rx_Phase_error, '0');
+      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
       data_word        <= Board_data_I.data_word;
       is_data          <= Board_data_I.is_data;
       is_header        <= Board_data_I.is_header;

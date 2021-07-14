@@ -199,7 +199,7 @@ RX_Data_Decoder_comp : entity work.RX_Data_Decoder
 Port map ( 
 		FSM_Clocks_I => FSM_Clocks,
 		
-		FIT_GBT_status_I => FIT_GBT_STATUS,
+		Status_register_I => FIT_GBT_STATUS,
 		Control_register_I => Control_register_I,
 			
 		RX_IsData_I => RX_IsData_from_orbcgen,
@@ -223,7 +223,7 @@ Module_Data_Gen_comp : entity work.Module_Data_Gen
 	Port map(
 		FSM_Clocks_I 		=> FSM_Clocks,
 		
-		FIT_GBT_status_I	=> FIT_GBT_STATUS,
+		Status_register_I	=> FIT_GBT_STATUS,
 		Control_register_I	=> Control_register_I,
 		
 		Board_data_I		=> Board_data_I,
@@ -240,7 +240,7 @@ CRU_ORBC_Gen_comp : entity work.CRU_ORBC_Gen
 	Port map(
 		FSM_Clocks_I 		=> FSM_Clocks,
 		
-		FIT_GBT_status_I	=> FIT_GBT_STATUS,
+		Status_register_I	=> FIT_GBT_STATUS,
 		Control_register_I	=> Control_register_I,
 		
 		RX_IsData_I 		=> RX_IsData_DataClk,
@@ -257,7 +257,7 @@ Data_Packager_comp : entity work.Data_Packager
 port map (
 		FSM_Clocks_I 		=> FSM_Clocks,
 		
-		FIT_GBT_status_I 	=> FIT_GBT_STATUS,
+		Status_register_I 	=> FIT_GBT_STATUS,
 		Control_register_I 	=> Control_register_I,
 		
 		Board_data_I => Board_data_from_main_gen,

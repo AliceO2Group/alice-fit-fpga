@@ -29,7 +29,7 @@ entity Data_Packager is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    FIT_GBT_status_I   : in FIT_GBT_status_type;
+    Status_register_I   : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     Board_data_I : in board_data_type;
@@ -71,7 +71,7 @@ begin
     port map(
       FSM_Clocks_I => FSM_Clocks_I,
 
-      FIT_GBT_status_I   => FIT_GBT_status_I,
+      Status_register_I   => Status_register_I,
       Control_register_I => Control_register_I,
 
       Board_data_I => Board_data_I,
@@ -79,7 +79,7 @@ begin
       header_fifo_data_o  => raw_header_dout,
       data_fifo_data_o    => raw_data_dout,
       header_fifo_rden_i  => raw_heaer_rden,
-      data_fifo_rden_i    => raw_heaer_rden,
+      data_fifo_rden_i    => raw_data_rden,
       header_fifo_empty_o => raw_header_empty,
 
       drop_ounter_o  => open,
@@ -92,7 +92,7 @@ begin
     port map (
       FSM_Clocks_I => FSM_Clocks_I,
 
-      FIT_GBT_status_I   => FIT_GBT_status_I,
+      Status_register_I   => Status_register_I,
       Control_register_I => Control_register_I,
 
       header_fifo_data_i  => raw_header_dout,
@@ -111,7 +111,7 @@ begin
     port map (
       FSM_Clocks_I => FSM_Clocks_I,
 
-      FIT_GBT_status_I   => FIT_GBT_status_I,
+      Status_register_I   => Status_register_I,
       Control_register_I => Control_register_I,
 
       SLCTFIFO_data_word_I => (others => '0'),
@@ -135,7 +135,7 @@ begin
       FSM_Clocks_I => FSM_Clocks_I,
 
       Control_register_I => Control_register_I,
-      FIT_GBT_status_I   => FIT_GBT_status_I,
+      Status_register_I   => Status_register_I,
 
       TX_IsData_I => is_data_from_cru_constructor,
       TX_Data_I   => data_from_cru_constructor,

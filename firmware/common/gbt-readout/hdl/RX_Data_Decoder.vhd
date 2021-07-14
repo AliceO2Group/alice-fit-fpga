@@ -20,7 +20,7 @@ entity RX_Data_Decoder is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    FIT_GBT_status_I   : in FIT_GBT_status_type;
+    Status_register_I   : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     -- RX data @ DataClk, ff in RX sync

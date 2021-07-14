@@ -29,7 +29,7 @@ entity Data_Packager is
     Port ( 
 		FSM_Clocks_I : in FSM_Clocks_type;
 
-		FIT_GBT_status_I : in FIT_GBT_status_type;
+		Status_register_I : in FIT_GBT_status_type;
 		Control_register_I : in CONTROL_REGISTER_type;  
 		
 		Board_data_I		: in board_data_type;
@@ -133,7 +133,7 @@ DataConverter_comp: entity work.DataConverter
     port map(
 		FSM_Clocks_I => FSM_Clocks_I,
 
-		FIT_GBT_status_I => FIT_GBT_status_I,
+		Status_register_I => Status_register_I,
 		Control_register_I => Control_register_I,
 		
 		Board_data_I => Board_data_I,
@@ -205,7 +205,7 @@ Event_Selector_comp : entity work.Event_Selector
 port map	(
 			FSM_Clocks_I => FSM_Clocks_I,
 			
-			FIT_GBT_status_I => FIT_GBT_status_I,
+			Status_register_I => Status_register_I,
 			Control_register_I => Control_register_I,
 		
 			RAWFIFO_data_word_I => raw_data_fifo_data_fromfifo,
@@ -235,7 +235,7 @@ CRU_packet_Builder_comp : entity work.CRU_packet_Builder
 port map	(
 			FSM_Clocks_I => FSM_Clocks_I,
 			
-			FIT_GBT_status_I => FIT_GBT_status_I,
+			Status_register_I => Status_register_I,
 			Control_register_I => Control_register_I,
 		
 			SLCTFIFO_data_word_I => slct_data_fifo_data_fromfifo,
@@ -259,7 +259,7 @@ port map(
 			FSM_Clocks_I => FSM_Clocks_I,
 			
 			Control_register_I => Control_register_I,
-			FIT_GBT_status_I => FIT_GBT_status_I,
+			Status_register_I => Status_register_I,
 			
 			TX_IsData_I => is_data_from_cru_constructor,
 			TX_Data_I => data_from_cru_constructor,

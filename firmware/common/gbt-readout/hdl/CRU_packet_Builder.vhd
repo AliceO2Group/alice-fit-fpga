@@ -32,7 +32,7 @@ entity CRU_packet_Builder is
     Port ( 
 		FSM_Clocks_I : in FSM_Clocks_type;
 
-		FIT_GBT_status_I : in FIT_GBT_status_type;
+		Status_register_I : in FIT_GBT_status_type;
 		Control_register_I : in CONTROL_REGISTER_type;
 		
 		SLCTFIFO_data_word_I : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -207,7 +207,7 @@ Word_Count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
         Word_Count+1;
         
 cont_packet_count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-            (others => '0')                 WHEN (FIT_GBT_status_I.Readout_Mode = mode_IDLE)     ELSE
+            (others => '0')                 WHEN (Status_register_I.Readout_Mode = mode_IDLE)     ELSE
             cont_packet_count+1             WHEN (FSM_STATE = s3_eop)     and (Word_Count = trailer_payload) ELSE
             cont_packet_count;
             						

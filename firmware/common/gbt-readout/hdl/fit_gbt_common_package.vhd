@@ -133,7 +133,7 @@ package fit_gbt_common_package is
     trigger_resp_mask   : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- data generated for this trigger
     bunch_pattern       : std_logic_vector(31 downto 0);  -- pattern lenghts of packet 
     bunch_freq          : std_logic_vector(15 downto 0);  -- pattern frequency
-    bunch_freq_hboffset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
+    bc_start : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
   end record;
 
 
@@ -147,7 +147,7 @@ package fit_gbt_common_package is
     trigger_pattern     : std_logic_vector(63 downto 0);  -- trigger pattern 32 BC lenght
     trigger_cont_value  : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- trigger that sendign continious
     bunch_freq          : std_logic_vector(15 downto 0);  -- trigger frequency
-    bunch_freq_hboffset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
+    bc_start : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
   end record;
 
   type RDH_data_type is record
@@ -191,7 +191,7 @@ package fit_gbt_common_package is
         trigger_resp_mask   => TRG_const_void,
         bunch_pattern       => x"10e0766f",
         bunch_freq          => x"0deb",
-        bunch_freq_hboffset => x"ddc"
+        bc_start => x"ddc"
         ),
 
       Trigger_Gen           => (
@@ -202,7 +202,7 @@ package fit_gbt_common_package is
         trigger_pattern     => x"0000000080000000",
         trigger_cont_value  => TRG_const_Ph,
         bunch_freq          => x"0deb",
-        bunch_freq_hboffset => x"ddc"
+        bc_start => x"ddc"
         ),
 
       RDH_data    => (
@@ -551,7 +551,7 @@ package body fit_gbt_common_package is
     cntr_reg_addrreg(5) := cntrl_reg.Trigger_Gen.trigger_pattern(31 downto 0);
     cntr_reg_addrreg(6) := cntrl_reg.Trigger_Gen.trigger_cont_value;
     cntr_reg_addrreg(7) := cntrl_reg.Trigger_Gen.bunch_freq & cntrl_reg.Data_Gen.bunch_freq;
-    cntr_reg_addrreg(8) := x"0"&cntrl_reg.Trigger_Gen.bunch_freq_hboffset & x"0"&cntrl_reg.Data_Gen.bunch_freq_hboffset;
+    cntr_reg_addrreg(8) := x"0"&cntrl_reg.Trigger_Gen.bc_start & x"0"&cntrl_reg.Data_Gen.bc_start;
 
     cntr_reg_addrreg(9)  := cntrl_reg.RDH_data.FEE_ID & cntrl_reg.RDH_data.PAR;
     cntr_reg_addrreg(10) := cntrl_reg.max_data_payload & cntrl_reg.RDH_data.DET_Field;
@@ -631,8 +631,8 @@ package body fit_gbt_common_package is
     cntr_reg.Trigger_Gen.bunch_freq := cntrl_reg_addrreg(7)(31 downto 16);
     cntr_reg.Data_Gen.bunch_freq    := cntrl_reg_addrreg(7)(15 downto 0);
 
-    cntr_reg.Trigger_Gen.bunch_freq_hboffset := cntrl_reg_addrreg(8)(27 downto 16);
-    cntr_reg.Data_Gen.bunch_freq_hboffset    := cntrl_reg_addrreg(8)(11 downto 0);
+    cntr_reg.Trigger_Gen.bc_start := cntrl_reg_addrreg(8)(27 downto 16);
+    cntr_reg.Data_Gen.bc_start    := cntrl_reg_addrreg(8)(11 downto 0);
 
     cntr_reg.RDH_data.FEE_ID := cntrl_reg_addrreg(9)(31 downto 16);
     cntr_reg.RDH_data.PAR    := cntrl_reg_addrreg(9)(15 downto 0);

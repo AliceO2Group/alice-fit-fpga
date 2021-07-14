@@ -55,7 +55,7 @@ architecture Behavioral of FIT_GBT_IPBUS_control is
 	signal ipbus_ack, ipbus_err :std_logic;
 	
 	--   |  DataClk_I                                                 				|                                IPBUS clock		   		         |
-	--  -|> FIT_GBT_status_I -#-> ipbus_status_reg_map -> ipbus_status_reg_map_dc  -|->  ipbus_status_reg_ipbclk -> IBBUS  						      	 |
+	--  -|> Status_register_I -#-> ipbus_status_reg_map -> ipbus_status_reg_map_dc  -|->  ipbus_status_reg_ipbclk -> IBBUS  						      	 |
 	
 	--  <|- Control_register_reg_dc      	              						  <-|-   Control_register_reg_map_ipbclk <-#- ipbus_control_reg <- IBBUS |
 	--  -|> Control_register_reg_dc -#-> Control_register_rdmap_dc  			   -|->  Control_register_rdmap_ipbclk -> IBBUS                          |
@@ -122,7 +122,7 @@ Control_register_O <= Control_register_reg_dc;
 Control_register_reg_map_ipbclk <= func_CNTRREG_getcntrreg(ipbus_control_reg);
 
 Control_register_rdmap_dc <= func_CNTRREG_getaddrreg(Control_register_reg_dc);
-ipbus_status_reg_map <= func_STATREG_getaddrreg(FIT_GBT_status_I);
+ipbus_status_reg_map <= func_STATREG_getaddrreg(Status_register_I);
 
 ipbus_arrd_int <= to_integer(unsigned(IPBUS_addr_I));
 ipbus_base_arrd_int <= to_integer(unsigned(IPBUS_base_addr_I));
