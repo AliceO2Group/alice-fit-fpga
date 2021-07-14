@@ -22,7 +22,7 @@ entity CRU_ORBC_Gen is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    Status_register_I   : in FIT_GBT_status_type;
+    Status_register_I  : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     RX_IsData_I : in std_logic;
@@ -67,7 +67,7 @@ architecture Behavioral of CRU_ORBC_Gen is
   signal cont_trg_bunch_mask           : std_logic_vector(64 downto 0);
   signal cont_trg_bunch_mask_comp      : std_logic;
   signal bunch_freq                    : std_logic_vector(15 downto 0);
-  signal bc_start           : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal bc_start                      : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal reset_offset                  : std_logic;
 
   signal bfreq_counter, bfreq_counter_next       : std_logic_vector(15 downto 0);
