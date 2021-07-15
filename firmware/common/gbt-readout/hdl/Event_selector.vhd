@@ -64,7 +64,7 @@ architecture Behavioral of Event_selector is
   signal trgfifo_out_orbit                     : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal trgfifo_out_bc                        : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
-  type FSM_STATE_T is (s0_idle, s1_dread, s2_rdh);
+  type FSM_STATE_T is (s0_idle, s1_dread);
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
 
   signal is_hbtrg, read_data, read_trigger, start_reading_data, reading_header, reading_last_word : boolean;
@@ -233,34 +233,24 @@ begin
 
 
   FSM_STATE_NEXT <=
--- RDH from IDLE
-    s2_rdh when (FSM_STATE = s0_idle) and is_hbtrg and read_trigger else
--- RDH from DREAD
-    s2_rdh when (FSM_STATE = s1_dread) and is_hbtrg and reading_last_word and read_trigger else
-
 -- READING from IDLE
     s1_dread when (FSM_STATE = s0_idle) and read_data else
 -- READING from DREAD
     s1_dread when (FSM_STATE = s1_dread) and read_data and reading_last_word else
--- READING from RDH
-    s1_dread when (FSM_STATE = s2_rdh) and read_data else
 
 -- IDLE from IDLE
     s0_idle when (FSM_STATE = s0_idle) and not read_data else
 -- IDLE from DREAD
     s0_idle when (FSM_STATE = s1_dread) and reading_last_word and not read_data else
--- IDLE from RDH
-    s0_idle when (FSM_STATE = s2_rdh) and not read_data else
 -- FSM state the same
     FSM_STATE;
 
 -- not reading trigger
   trgfifo_re <= '0' when not read_trigger else
 -- reading trigger when not reading data
-                '1' when (FSM_STATE = s0_idle) and not read_data and not is_hbtrg else
--- reading trigger wiht data together
-                '1' when (FSM_STATE = s1_dread) and read_data and reading_header and not is_hbtrg else
-                '1' when (FSM_STATE = s2_rdh) and is_hbtrg else
+                '1' when (FSM_STATE = s0_idle) and not read_data else
+-- reading trigger wiht data together while header
+                '1' when (FSM_STATE = s1_dread) and read_data and reading_header else
                 '0';
 
 -- reading header when counter 0 and fsm state is reading data 
