@@ -203,7 +203,7 @@ begin
 
 
 -- RX data
-  TRG_evid <= (TRG_const_HB) when (IS_Orbit_trg_counter = '1') else
+  TRG_evid <= (TRG_const_HB or TRG_const_Orbit) when (IS_Orbit_trg_counter = '1') else
               (others => '0');
 
   RX_Data_gen_ff_next <= (others => '0') when (is_trigger_sending = '0') else

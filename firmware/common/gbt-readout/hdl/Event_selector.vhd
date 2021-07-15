@@ -81,7 +81,7 @@ begin
   data_orbit   <= func_FITDATAHD_orbit(header_fifo_data_i);
   data_bc      <= func_FITDATAHD_bc(header_fifo_data_i);
 
-  is_hbtrg <= (trgfifo_out_trigger and TRG_const_Orbit) > 0;
+  is_hbtrg <= (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
 
 
 
@@ -201,9 +201,9 @@ begin
 				
 
 -- RDH from IDLE
-  FSM_STATE_NEXT <= s2_rdh when (FSM_STATE = s0_idle) and is_hbtrg else
+  FSM_STATE_NEXT <= s2_rdh when (FSM_STATE = s0_idle) and is_hbtrg and read_trigger else
 -- RDH from DREAD
-                    s2_rdh when (FSM_STATE = s1_dread) and is_hbtrg and reading_last_word else
+                    s2_rdh when (FSM_STATE = s1_dread) and is_hbtrg and reading_last_word and read_trigger else
 
 -- READING from IDLE
                     s1_dread when (FSM_STATE = s0_idle) and read_data else
@@ -221,8 +221,14 @@ begin
 -- FSM state the same
                     FSM_STATE;
 
+-- not reading trigger
+  trgfifo_re <= '0' when not read_trigger else
 -- reading trigger when not reading data
-  trgfifo_re <= '1' when read_trigger and (FSM_STATE /= s1_dread) else '0';
+                '1' when (FSM_STATE = s0_idle) and not read_data and not is_hbtrg else 
+-- reading trigger wiht data together
+                '1' when (FSM_STATE = s1_dread) and read_data and reading_header and not is_hbtrg  else
+                '1' when (FSM_STATE = s2_rdh)  and is_hbtrg  else
+                '0';
   
 -- reading header when counter 0 and fsm state is reading data 
   header_fifo_rd <= '1' when reading_header else '0';
