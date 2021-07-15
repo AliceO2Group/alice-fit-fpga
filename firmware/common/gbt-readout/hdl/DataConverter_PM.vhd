@@ -62,29 +62,26 @@ architecture Behavioral of DataConverter is
 
   signal sending_event     : boolean;
   signal word_counter      : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  signal fifo_reset_offset : natural range 0 to 15 := 0;
 
   signal header_fifo_din, data_fifo_din : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_we, data_fifo_we   : std_logic;
-  signal fifo_reset                     : std_logic;
 
 
-  attribute keep                        : string;
-  attribute keep of reset_drop_counters : signal is "true";
-  attribute keep of header_fifo_din     : signal is "true";
-  attribute keep of data_fifo_din       : signal is "true";
-  attribute keep of header_fifo_we      : signal is "true";
-  attribute keep of data_fifo_we        : signal is "true";
-  attribute keep of word_counter        : signal is "true";
-  attribute keep of sending_event       : signal is "true";
-  attribute keep of header_word         : signal is "true";
-  attribute keep of data_word           : signal is "true";
-  attribute keep of is_data             : signal is "true";
-  attribute keep of is_header           : signal is "true";
-  attribute keep of header_pcklen_ff    : signal is "true";
-  attribute keep of header_word_latch   : signal is "true";
-  attribute keep of header_pcklen_latch : signal is "true";
-  attribute keep of fifo_reset          : signal is "true";
+  attribute mark_debug                        : string;
+  attribute mark_debug of reset_drop_counters : signal is "true";
+  attribute mark_debug of header_fifo_din     : signal is "true";
+  attribute mark_debug of data_fifo_din       : signal is "true";
+  attribute mark_debug of header_fifo_we      : signal is "true";
+  attribute mark_debug of data_fifo_we        : signal is "true";
+  attribute mark_debug of word_counter        : signal is "true";
+  attribute mark_debug of sending_event       : signal is "true";
+  attribute mark_debug of header_word         : signal is "true";
+  attribute mark_debug of data_word           : signal is "true";
+  attribute mark_debug of is_data             : signal is "true";
+  attribute mark_debug of is_header           : signal is "true";
+  attribute mark_debug of header_pcklen_ff    : signal is "true";
+  attribute mark_debug of header_word_latch   : signal is "true";
+  attribute mark_debug of header_pcklen_latch : signal is "true";
 
 begin
 
@@ -97,7 +94,7 @@ begin
   raw_header_fifo_comp : entity work.raw_data_fifo
     port map(
       clk        => FSM_Clocks_I.System_Clk,
-      srst       => fifo_reset,
+      srst       => FSM_Clocks_I.Reset_sclk,
       WR_EN      => header_fifo_we,
       RD_EN      => header_fifo_rden_i,
       DIN        => header_fifo_din,
@@ -114,7 +111,7 @@ begin
   raw_data_fifo_comp : entity work.raw_data_fifo
     port map(
       clk        => FSM_Clocks_I.System_Clk,
-      srst       => fifo_reset,
+      srst       => FSM_Clocks_I.Reset_sclk,
       WR_EN      => data_fifo_we,
       RD_EN      => data_fifo_rden_i,
       DIN        => data_fifo_din,
@@ -159,20 +156,8 @@ begin
         drop_counter      <= (others => '0');
         rawfifo_cnt_max   <= (others => '0');
         word_counter      <= (others => '1');
-        fifo_reset_offset <= 0;
-        fifo_reset        <= '1';
 
       else
-
-        if send_mode_ison_sclk then
-          if fifo_reset_offset < 15 then fifo_reset_offset <= fifo_reset_offset + 1; end if;
-          fifo_reset                                       <= '0';
-        elsif not sending_event then
-          fifo_reset_offset <= 0;
-        end if;
-
-        if fifo_reset_offset > 0 and fifo_reset_offset < 6 then fifo_reset <= '1'; else fifo_reset <= '0'; end if;
-
 
         if is_header = '1' then
 
@@ -180,7 +165,7 @@ begin
           header_pcklen_latch <= header_pcklen_ff;
           word_counter        <= (others => '0');
 
-          sending_event <= (rawfifo_full = '0') and send_mode_ison_sclk and (fifo_reset_offset >= 15);
+          sending_event <= (rawfifo_full = '0') and send_mode_ison_sclk;
 
           if (rawfifo_full = '1') and send_mode_ison_sclk then
             drop_counter <= drop_counter + 1;

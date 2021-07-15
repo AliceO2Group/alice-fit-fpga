@@ -137,6 +137,38 @@ begin
   trgfifo_out_bc      <= trgfifo_dout(BC_id_bitdepth - 1 downto 0);
 -- ===========================================================
 
+-- CNTPCK FIFO =============================================
+-- cntpck_fifo_comp_c : entity work.cntpck_fifo_comp
+-- port map(
+   -- wr_clk        => FSM_Clocks_I.System_Clk,
+   -- rd_clk        => FSM_Clocks_I.Data_Clk,
+   -- rst           => cntpckfifo_reset,
+   -- DIN           => cntpckfifo_data_toff,
+   -- WR_EN 		 => cntpckfifo_we,
+   -- RD_EN         => cntpckfifo_re,
+   
+   -- DOUT          => cntpckfifo_data_fromff,
+   -- rd_data_count => cntpckfifo_dcount_rd,
+   -- EMPTY         => cntpckfifo_empty
+   -- );
+-- ===========================================================
+
+-- Slc_data_fifo =============================================
+-- slct_data_fifo_comp : entity work.slct_data_fifo
+-- port map(
+           -- wr_clk        => FSM_Clocks_I.System_Clk,
+           -- rd_clk        => FSM_Clocks_I.Data_Clk,
+     	   -- wr_data_count => slct_data_fifo_words_count_wr,
+           -- rst           => slct_data_fifo_reset,
+           -- WR_EN 		 => slct_data_fifo_wren,
+           -- RD_EN         => slct_data_fifo_rden,
+           -- DIN           => slct_data_fifo_data_tofifo,
+           -- DOUT          => slct_data_fifo_data_fromfifo,
+           -- FULL          => open,
+           -- EMPTY         => slct_data_fifo_isempty
+        -- );
+-- ===========================================================
+
 
  -- Data ff data clk ***********************************
   process (FSM_Clocks_I.Data_Clk)
