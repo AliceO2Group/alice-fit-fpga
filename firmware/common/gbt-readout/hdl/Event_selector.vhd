@@ -68,7 +68,7 @@ architecture Behavioral of Event_selector is
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
 
   signal is_hbtrg, read_data, read_trigger, start_reading_data, reading_header, reading_last_word : boolean;
-  signal header_fifo_rd, data_fifo_rd                                             : std_logic;
+  signal header_fifo_rd, data_fifo_rd                                                             : std_logic;
 
   signal word_counter : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
@@ -95,23 +95,23 @@ begin
 
   -- no data in fifo
   read_data <= false when header_fifo_empty_i = '1' else
-  -- no trigger for data
+               -- no trigger for data
                true when (trgfifo_empty = '1') and (data_orbit < curr_orbit_sc) else
                true when (trgfifo_empty = '1') and (data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc) else
-  -- trigger equal data                                            
+               -- trigger equal data                                            
                true when (trgfifo_empty = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) else
-  -- no trigger for data
+               -- no trigger for data
                true when (trgfifo_empty = '0') and (data_orbit < trgfifo_out_orbit) else
                true when (trgfifo_empty = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc) else
                false;
 
   -- no trigger in fifo
   read_trigger <= false when trgfifo_empty = '1' else
-  -- no data for trigger
+                  -- no data for trigger
                   true when header_fifo_empty_i = '1' else
                   true when (data_orbit > trgfifo_out_orbit) else
                   true when (data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc) else
-  -- trigger equal data 
+                  -- trigger equal data 
                   true when (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) else
                   false;
 
@@ -140,37 +140,37 @@ begin
 -- CNTPCK FIFO =============================================
 -- cntpck_fifo_comp_c : entity work.cntpck_fifo_comp
 -- port map(
-   -- wr_clk        => FSM_Clocks_I.System_Clk,
-   -- rd_clk        => FSM_Clocks_I.Data_Clk,
-   -- rst           => cntpckfifo_reset,
-   -- DIN           => cntpckfifo_data_toff,
-   -- WR_EN 		 => cntpckfifo_we,
-   -- RD_EN         => cntpckfifo_re,
-   
-   -- DOUT          => cntpckfifo_data_fromff,
-   -- rd_data_count => cntpckfifo_dcount_rd,
-   -- EMPTY         => cntpckfifo_empty
-   -- );
+  -- wr_clk        => FSM_Clocks_I.System_Clk,
+  -- rd_clk        => FSM_Clocks_I.Data_Clk,
+  -- rst           => cntpckfifo_reset,
+  -- DIN           => cntpckfifo_data_toff,
+  -- WR_EN               => cntpckfifo_we,
+  -- RD_EN         => cntpckfifo_re,
+
+  -- DOUT          => cntpckfifo_data_fromff,
+  -- rd_data_count => cntpckfifo_dcount_rd,
+  -- EMPTY         => cntpckfifo_empty
+  -- );
 -- ===========================================================
 
 -- Slc_data_fifo =============================================
 -- slct_data_fifo_comp : entity work.slct_data_fifo
 -- port map(
-           -- wr_clk        => FSM_Clocks_I.System_Clk,
-           -- rd_clk        => FSM_Clocks_I.Data_Clk,
-     	   -- wr_data_count => slct_data_fifo_words_count_wr,
-           -- rst           => slct_data_fifo_reset,
-           -- WR_EN 		 => slct_data_fifo_wren,
-           -- RD_EN         => slct_data_fifo_rden,
-           -- DIN           => slct_data_fifo_data_tofifo,
-           -- DOUT          => slct_data_fifo_data_fromfifo,
-           -- FULL          => open,
-           -- EMPTY         => slct_data_fifo_isempty
-        -- );
+  -- wr_clk        => FSM_Clocks_I.System_Clk,
+  -- rd_clk        => FSM_Clocks_I.Data_Clk,
+  -- wr_data_count => slct_data_fifo_words_count_wr,
+  -- rst           => slct_data_fifo_reset,
+  -- WR_EN               => slct_data_fifo_wren,
+  -- RD_EN         => slct_data_fifo_rden,
+  -- DIN           => slct_data_fifo_data_tofifo,
+  -- DOUT          => slct_data_fifo_data_fromfifo,
+  -- FULL          => open,
+  -- EMPTY         => slct_data_fifo_isempty
+  -- );
 -- ===========================================================
 
 
- -- Data ff data clk ***********************************
+  -- Data ff data clk ***********************************
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
@@ -228,42 +228,43 @@ begin
   start_reading_data <= true when FSM_STATE /= s1_dread and FSM_STATE_NEXT = s1_dread else
                         true when reading_last_word and FSM_STATE_NEXT = s1_dread else
                         false;
-  reading_header <= word_counter = 0 and FSM_STATE = s1_dread;					
-  reading_last_word  <= FSM_STATE = s1_dread and word_counter = data_ndwords_reading;
-				
+  reading_header    <= word_counter = 0 and FSM_STATE = s1_dread;
+  reading_last_word <= FSM_STATE = s1_dread and word_counter = data_ndwords_reading;
 
+
+  FSM_STATE_NEXT <=
 -- RDH from IDLE
-  FSM_STATE_NEXT <= s2_rdh when (FSM_STATE = s0_idle) and is_hbtrg and read_trigger else
+    s2_rdh when (FSM_STATE = s0_idle) and is_hbtrg and read_trigger else
 -- RDH from DREAD
-                    s2_rdh when (FSM_STATE = s1_dread) and is_hbtrg and reading_last_word and read_trigger else
+    s2_rdh when (FSM_STATE = s1_dread) and is_hbtrg and reading_last_word and read_trigger else
 
 -- READING from IDLE
-                    s1_dread when (FSM_STATE = s0_idle) and read_data else
+    s1_dread when (FSM_STATE = s0_idle) and read_data else
 -- READING from DREAD
-                    s1_dread when (FSM_STATE = s1_dread) and read_data and reading_last_word else
+    s1_dread when (FSM_STATE = s1_dread) and read_data and reading_last_word else
 -- READING from RDH
-                    s1_dread when (FSM_STATE = s2_rdh) and read_data else
+    s1_dread when (FSM_STATE = s2_rdh) and read_data else
 
 -- IDLE from IDLE
-                    s0_idle when (FSM_STATE = s0_idle) and not read_data else
+    s0_idle when (FSM_STATE = s0_idle) and not read_data else
 -- IDLE from DREAD
-                    s0_idle when (FSM_STATE = s1_dread) and reading_last_word and not read_data else
+    s0_idle when (FSM_STATE = s1_dread) and reading_last_word and not read_data else
 -- IDLE from RDH
-                    s0_idle when (FSM_STATE = s2_rdh) and not read_data else
+    s0_idle when (FSM_STATE = s2_rdh) and not read_data else
 -- FSM state the same
-                    FSM_STATE;
+    FSM_STATE;
 
 -- not reading trigger
   trgfifo_re <= '0' when not read_trigger else
 -- reading trigger when not reading data
-                '1' when (FSM_STATE = s0_idle) and not read_data and not is_hbtrg else 
+                '1' when (FSM_STATE = s0_idle) and not read_data and not is_hbtrg else
 -- reading trigger wiht data together
-                '1' when (FSM_STATE = s1_dread) and read_data and reading_header and not is_hbtrg  else
-                '1' when (FSM_STATE = s2_rdh)  and is_hbtrg  else
+                '1' when (FSM_STATE = s1_dread) and read_data and reading_header and not is_hbtrg else
+                '1' when (FSM_STATE = s2_rdh) and is_hbtrg else
                 '0';
-  
+
 -- reading header when counter 0 and fsm state is reading data 
-  header_fifo_rd <= '1' when reading_header else '0';
+  header_fifo_rd <= '1' when reading_header                             else '0';
 -- reading data when counter /= 0 and fsm state is reading data 
   data_fifo_rd   <= '1' when word_counter /= 0 and FSM_STATE = s1_dread else '0';
 
