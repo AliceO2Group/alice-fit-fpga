@@ -25,7 +25,7 @@ import lib.status_reg as status_reg
 infile_gen = in_file_gen.input_generator_class()
 
 infile_gen.control_reg.trg_data_select = 0xFFFFFFFF
-infile_gen.control_reg.bcid_delay = 0x50
+infile_gen.control_reg.bcid_delay = 0x0
 infile_gen.control_reg.data_trg_respond_mask = 0x40
 
 
@@ -37,7 +37,7 @@ infile_gen.control_reg.trg_cont_val = 0x40
 infile_gen.control_reg.data_bunch_freq = 0x37b
 infile_gen.control_reg.trg_bunch_freq = 0x500
 
-infile_gen.control_reg.data_freq_offset = 0xdeb-1 - 0x50
+infile_gen.control_reg.data_freq_offset = 0xdeb-1
 infile_gen.control_reg.trg_freq_offset = 0x150
 
 # reset generators

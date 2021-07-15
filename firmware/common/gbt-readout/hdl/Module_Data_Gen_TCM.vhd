@@ -32,8 +32,12 @@ end Module_Data_Gen;
 
 architecture Behavioral of Module_Data_Gen is
 
-  signal Board_data_gen_ff, Board_data_gen_ff_next, Board_data_in_ff               : board_data_type;
+  signal Board_data_gen_ff_next, Board_data_in_ff               : board_data_type;
   signal Board_data_header, Board_data_header_sc, Board_data_data, Board_data_void : board_data_type;
+
+  -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector
+  type board_data_type_arr16   is array (0 to 15) of board_data_type;
+  signal Board_data_gen_pipe : board_data_type_arr16;
 
 
   signal Trigger_from_CRU_sclk : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- Trigger ID from CRUS
@@ -65,10 +69,6 @@ architecture Behavioral of Module_Data_Gen is
 
 
 
-  attribute keep                      : string;
-  attribute keep of Board_data_gen_ff : signal is "true";
-
-
 begin
   bunch_pattern <= Control_register_I.Data_Gen.bunch_pattern;
   bunch_freq    <= Control_register_I.Data_Gen.bunch_freq;
@@ -76,7 +76,7 @@ begin
   bc_start      <= x"deb" when Control_register_I.Data_Gen.bc_start = 0 else
               Control_register_I.Data_Gen.bc_start - 1;
 
-  Board_data_O      <= Board_data_gen_ff when (use_gen_sclk = use_MAIN_generator) else Board_data_in_ff;
+  Board_data_O      <= Board_data_gen_pipe(15) when (use_gen_sclk = use_MAIN_generator) else Board_data_in_ff;
   data_gen_report_O <= data_gen_report;
 
 -- ***************************************************  
@@ -159,7 +159,7 @@ begin
 
       if (FSM_Clocks_I.Reset_sclk = '1') then
         Board_data_in_ff  <= Board_data_void;
-        Board_data_gen_ff <= Board_data_void;
+        Board_data_gen_pipe <= (others => Board_data_void);
 
         FSM_STATE              <= s0_wait;
         pword_counter          <= (others => '0');
@@ -171,7 +171,8 @@ begin
 
       else
         Board_data_in_ff  <= Board_data_I;
-        Board_data_gen_ff <= Board_data_gen_ff_next;
+        Board_data_gen_pipe(0) <= Board_data_gen_ff_next;
+		Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
 
         FSM_STATE              <= FSM_STATE_NEXT;
         pword_counter          <= pword_counter_next;
