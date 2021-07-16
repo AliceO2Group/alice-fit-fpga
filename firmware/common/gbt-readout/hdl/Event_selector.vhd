@@ -53,6 +53,7 @@ architecture Behavioral of Event_selector is
 
   -- actual bcid is dalayed to take a chance to trigger go throught fifo
   constant bcid_delay : natural := 32;
+  constant max_rdh_size : natural := 500;
 
   signal data_ndwords, data_ndwords_reading : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
   signal data_orbit                         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
@@ -74,10 +75,18 @@ architecture Behavioral of Event_selector is
   type FSM_STATE_T is (s0_idle, s1_dread);
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
 
+  signal header_fifo_rd, data_fifo_rd : std_logic;
+  signal word_counter                 : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+  signal rdh_size_counter             : natural;
+
+  signal rdh_trigger : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal rdh_orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal rdh_bc      : std_logic_vector(BC_id_bitdepth-1 downto 0);
+
   -- cru readout states
   signal send_mode_sc, send_trg_mode_sc                                       : boolean;
   -- data-trg comparison
-  signal is_hbtrg, is_sel_trg, read_data, read_trigger                        : boolean;
+  signal is_hbtrg, is_sel_trg, read_data, read_trigger, rdh_close             : boolean;
   signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg : boolean;
   -- packet reading states
   signal start_reading_data, reading_header, reading_last_word                : boolean;
@@ -87,9 +96,6 @@ architecture Behavioral of Event_selector is
   signal send_gear                                                            : boolean;
 
 
-  signal header_fifo_rd, data_fifo_rd : std_logic;
-
-  signal word_counter : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
 begin
 
@@ -260,6 +266,15 @@ begin
         -- selectind data by trigger in TRG mode
         if start_reading_data then data_trg_reject <= send_trg_mode_sc and not (trg_eq_data and is_sel_trg); end if;
 
+        if is_hbtrg and trgfifo_re = '1' then
+          rdh_trigger <= trgfifo_out_trigger;
+          rdh_orbit   <= trgfifo_out_orbit;
+          rdh_bc      <= trgfifo_out_bc;
+        end if;
+		
+		-- gbt words counter in RDH packet. increadin while reading header
+		if rdh_close then rdh_size_counter <= 0; elsif reading_header and slct_fifo_wren='1' then rdh_size_counter <= rdh_size_counter + 1; end if;
+
         FSM_STATE <= FSM_STATE_NEXT;
 
       end if;
@@ -293,8 +308,13 @@ begin
                 -- reading trigger when not reading data
                 '1' when (FSM_STATE = s0_idle) and not read_data else
                 -- reading trigger wiht data together while header
-                '1' when (FSM_STATE = s1_dread) and read_data and reading_header else
+                '1' when (FSM_STATE = s1_dread) and reading_header else
                 '0';
+				
+  -- closing rdh by HB while void
+  rdh_close <= is_hbtrg when (trgfifo_re='1') and (FSM_STATE = s0_idle) else
+               is_hbtrg when start_reading_data and read_trigger else false;
+  
 
 
 
