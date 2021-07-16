@@ -31,6 +31,7 @@ entity DataConverter is
     header_fifo_rden_i  : in  std_logic;
     data_fifo_rden_i    : in  std_logic;
     header_fifo_empty_o : out std_logic;
+	no_data_o           : out boolean;
 
     drop_ounter_o  : out std_logic_vector(15 downto 0);
     fifo_cnt_max_o : out std_logic_vector(15 downto 0)
@@ -65,6 +66,7 @@ architecture Behavioral of DataConverter is
 
   signal header_fifo_din, data_fifo_din : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_we, data_fifo_we   : std_logic;
+  signal header_fifo_empty, data_fifo_empty : std_logic;
 
 
   attribute mark_debug                        : string;
@@ -85,6 +87,8 @@ architecture Behavioral of DataConverter is
 
 begin
 
+  header_fifo_empty_o <= header_fifo_empty;
+
   header_pcklen <= func_PMHEADER_n_dwords(Board_data_I.data_word);
   header_orbit  <= func_PMHEADER_getORBIT(Board_data_I.data_word);
   header_bc     <= func_PMHEADER_getBC(Board_data_I.data_word);
@@ -102,7 +106,7 @@ begin
       data_count => open,
       prog_full  => header_rawfifo_full,
       FULL       => open,
-      EMPTY      => header_fifo_empty_o
+      EMPTY      => header_fifo_empty
       );
 ---- ===========================================================
 
@@ -119,7 +123,7 @@ begin
       data_count => data_rawfifo_cnt,
       prog_full  => data_rawfifo_full,
       FULL       => open,
-      EMPTY      => open
+      EMPTY      => data_fifo_empty
       );
 ---- ===========================================================
 
@@ -204,5 +208,8 @@ begin
   data_fifo_din <= data_word;
   data_fifo_we  <= '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
+  -- all data sent in run
+  no_data_o <= header_fifo_empty='1' and data_fifo_empty='1' and not sending_event;
+  
 end Behavioral;
 

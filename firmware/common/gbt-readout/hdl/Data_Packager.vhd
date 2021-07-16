@@ -43,6 +43,7 @@ architecture Behavioral of Data_Packager is
 
   signal raw_header_dout, raw_data_dout                   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_heaer_rden, raw_data_rden, raw_header_empty : std_logic;
+  signal no_raw_data : boolean;
 
   signal slct_fifo_cnt   : std_logic_vector(12 downto 0);
   signal slct_fifo_din   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -81,6 +82,7 @@ begin
       header_fifo_rden_i  => raw_heaer_rden,
       data_fifo_rden_i    => raw_data_rden,
       header_fifo_empty_o => raw_header_empty,
+	  no_data_o           => no_raw_data,
 
       drop_ounter_o  => open,
       fifo_cnt_max_o => open
@@ -100,8 +102,9 @@ begin
       header_fifo_rden_o  => raw_heaer_rden,
       data_fifo_rden_o    => raw_data_rden,
       header_fifo_empty_i => raw_header_empty,
+	  no_raw_data_i => no_raw_data,
 
-      CNTPFIFO_RE_I         => '0'
+      slct_fifo_rden_i         => '0'
 
       );
 -- ===========================================================

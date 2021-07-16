@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="783666fs"></ZoomStartTime>
-      <ZoomEndTime time="1043267fs"></ZoomEndTime>
-      <Cursor1Time time="1000000fs"></Cursor1Time>
+      <ZoomStartTime time="711938773fs"></ZoomStartTime>
+      <ZoomEndTime time="713240774fs"></ZoomEndTime>
+      <Cursor1Time time="712540773fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="323"></NameColumnWidth>
-      <ValueColumnWidth column_width="215"></ValueColumnWidth>
+      <ValueColumnWidth column_width="211"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject fp_name="group177" type="group">
@@ -272,11 +272,6 @@
                <obj_property name="ElementShortName">bfreq_counter[15:0]</obj_property>
                <obj_property name="ObjectShortName">bfreq_counter[15:0]</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_gen_ff" type="array">
-               <obj_property name="ElementShortName">Board_data_gen_ff</obj_property>
-               <obj_property name="ObjectShortName">Board_data_gen_ff</obj_property>
-               <obj_property name="isExpanded"></obj_property>
-            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_O" type="array">
                <obj_property name="ElementShortName">Board_data_O</obj_property>
                <obj_property name="ObjectShortName">Board_data_O</obj_property>
@@ -287,14 +282,6 @@
             <obj_property name="label">converter</obj_property>
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="isExpanded"></obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/fifo_reset" type="logic">
-               <obj_property name="ElementShortName">fifo_reset</obj_property>
-               <obj_property name="ObjectShortName">fifo_reset</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/fifo_reset_offset" type="other">
-               <obj_property name="ElementShortName">fifo_reset_offset</obj_property>
-               <obj_property name="ObjectShortName">fifo_reset_offset</obj_property>
-            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/send_mode_ison_sclk" type="other">
                <obj_property name="ElementShortName">send_mode_ison_sclk</obj_property>
                <obj_property name="ObjectShortName">send_mode_ison_sclk</obj_property>
@@ -342,18 +329,26 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_fifo_din" type="array">
                <obj_property name="ElementShortName">header_fifo_din[79:0]</obj_property>
                <obj_property name="ObjectShortName">header_fifo_din[79:0]</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fifo_din" type="array">
                <obj_property name="ElementShortName">data_fifo_din[79:0]</obj_property>
                <obj_property name="ObjectShortName">data_fifo_din[79:0]</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/header_fifo_we" type="logic">
                <obj_property name="ElementShortName">header_fifo_we</obj_property>
                <obj_property name="ObjectShortName">header_fifo_we</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fifo_we" type="logic">
                <obj_property name="ElementShortName">data_fifo_we</obj_property>
                <obj_property name="ObjectShortName">data_fifo_we</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/rawfifo_cnt_max" type="array">
                <obj_property name="ElementShortName">rawfifo_cnt_max[12:0]</obj_property>
@@ -371,6 +366,10 @@
                <obj_property name="ElementShortName">drop_counter[15:0]</obj_property>
                <obj_property name="ObjectShortName">drop_counter[15:0]</obj_property>
             </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/no_data_o" type="other">
+               <obj_property name="ElementShortName">no_data_o</obj_property>
+               <obj_property name="ObjectShortName">no_data_o</obj_property>
+            </wvobject>
          </wvobject>
          <wvobject fp_name="group145" type="group">
             <obj_property name="label">readout_mode</obj_property>
@@ -380,6 +379,12 @@
             <obj_property name="label">selector_logic</obj_property>
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/RX_Data_Decoder_comp/Trigger_O" type="array">
+               <obj_property name="ElementShortName">Trigger_O[31:0]</obj_property>
+               <obj_property name="ObjectShortName">Trigger_O[31:0]</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/header_fifo_data_i" type="array">
                <obj_property name="ElementShortName">header_fifo_data_i[79:0]</obj_property>
                <obj_property name="ObjectShortName">header_fifo_data_i[79:0]</obj_property>
@@ -404,6 +409,12 @@
                <obj_property name="CustomSignalColor">#00FFFF</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/header_fifo_empty_i" type="logic">
+               <obj_property name="ElementShortName">header_fifo_empty_i</obj_property>
+               <obj_property name="ObjectShortName">header_fifo_empty_i</obj_property>
+               <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/data_ndwords" type="array">
                <obj_property name="ElementShortName">data_ndwords[7:0]</obj_property>
                <obj_property name="ObjectShortName">data_ndwords[7:0]</obj_property>
@@ -415,6 +426,8 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/data_bc" type="array">
                <obj_property name="ElementShortName">data_bc[11:0]</obj_property>
                <obj_property name="ObjectShortName">data_bc[11:0]</obj_property>
+               <obj_property name="CustomSignalColor">#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/curr_orbit_sc" type="array">
                <obj_property name="ElementShortName">curr_orbit_sc[31:0]</obj_property>
@@ -435,6 +448,8 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_out_bc" type="array">
                <obj_property name="ElementShortName">trgfifo_out_bc[11:0]</obj_property>
                <obj_property name="ObjectShortName">trgfifo_out_bc[11:0]</obj_property>
+               <obj_property name="CustomSignalColor">#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_empty" type="logic">
                <obj_property name="ElementShortName">trgfifo_empty</obj_property>
@@ -446,20 +461,22 @@
                <obj_property name="CustomSignalColor">#00FFFF</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/header_fifo_empty_i" type="logic">
-               <obj_property name="ElementShortName">header_fifo_empty_i</obj_property>
-               <obj_property name="ObjectShortName">header_fifo_empty_i</obj_property>
-            </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/FSM_STATE" type="other">
                <obj_property name="ElementShortName">FSM_STATE</obj_property>
                <obj_property name="ObjectShortName">FSM_STATE</obj_property>
-               <obj_property name="CustomSignalColor">#FFD700</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_hbtrg" type="other">
                <obj_property name="ElementShortName">is_hbtrg</obj_property>
                <obj_property name="ObjectShortName">is_hbtrg</obj_property>
-               <obj_property name="CustomSignalColor">#FFD700</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trg_eq_data" type="other">
+               <obj_property name="ElementShortName">trg_eq_data</obj_property>
+               <obj_property name="ObjectShortName">trg_eq_data</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/read_data" type="other">
@@ -477,7 +494,7 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/start_reading_data" type="other">
                <obj_property name="ElementShortName">start_reading_data</obj_property>
                <obj_property name="ObjectShortName">start_reading_data</obj_property>
-               <obj_property name="CustomSignalColor">#FFD700</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/reading_header" type="other">
@@ -489,7 +506,7 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/reading_last_word" type="other">
                <obj_property name="ElementShortName">reading_last_word</obj_property>
                <obj_property name="ObjectShortName">reading_last_word</obj_property>
-               <obj_property name="CustomSignalColor">#FFD700</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/data_ndwords_reading" type="array">
@@ -499,6 +516,30 @@
             <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/word_counter" type="array">
                <obj_property name="ElementShortName">word_counter[7:0]</obj_property>
                <obj_property name="ObjectShortName">word_counter[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/send_gear" type="other">
+               <obj_property name="ElementShortName">send_gear</obj_property>
+               <obj_property name="ObjectShortName">send_gear</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/data_trg_reject" type="other">
+               <obj_property name="ElementShortName">data_trg_reject</obj_property>
+               <obj_property name="ObjectShortName">data_trg_reject</obj_property>
+               <obj_property name="CustomSignalColor">#FFA500</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/slct_fifo_din" type="array">
+               <obj_property name="ElementShortName">slct_fifo_din[79:0]</obj_property>
+               <obj_property name="ObjectShortName">slct_fifo_din[79:0]</obj_property>
+               <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/slct_fifo_wren" type="logic">
+               <obj_property name="ElementShortName">slct_fifo_wren</obj_property>
+               <obj_property name="ObjectShortName">slct_fifo_wren</obj_property>
+               <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
             </wvobject>
          </wvobject>
       </wvobject>
