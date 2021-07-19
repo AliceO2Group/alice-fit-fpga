@@ -104,7 +104,8 @@ begin
       header_fifo_empty_i => raw_header_empty,
 	  no_raw_data_i => no_raw_data,
 
-      slct_fifo_rden_i         => '0'
+      slct_fifo_rden_i         => '0',
+	  cntpck_fifo_rden_i => '0'
 
       );
 -- ===========================================================

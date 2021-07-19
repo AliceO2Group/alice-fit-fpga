@@ -32,11 +32,11 @@ end Module_Data_Gen;
 
 architecture Behavioral of Module_Data_Gen is
 
-  signal Board_data_gen_ff_next, Board_data_in_ff               : board_data_type;
+  signal Board_data_gen_ff_next, Board_data_in_ff                                  : board_data_type;
   signal Board_data_header, Board_data_header_sc, Board_data_data, Board_data_void : board_data_type;
-  
+
   -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector
-  type board_data_type_arr16   is array (0 to 15) of board_data_type;
+  type board_data_type_arr16 is array (0 to 15) of board_data_type;
   signal Board_data_gen_pipe : board_data_type_arr16;
 
 
@@ -110,9 +110,6 @@ begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
       data_gen_report <= x"0000_000" & n_words_in_packet_mask(bpattern_counter);
-      Board_data_header.data_word <= func_FITDATAHD_get_header(x"0"&n_words_in_packet_send, Status_register_I.ORBIT_from_CRU_corrected,
-                                                               Status_register_I.BCID_from_CRU_corrected, Status_register_I.rx_phase,
-                                                               Status_register_I.GBT_status.Rx_Phase_error, '0');
 
 
       if (FSM_Clocks_I.Reset_dclk = '1') then
@@ -162,7 +159,7 @@ begin
 
 
       if (FSM_Clocks_I.Reset_sclk = '1') then
-        Board_data_in_ff  <= Board_data_void;
+        Board_data_in_ff    <= Board_data_void;
         Board_data_gen_pipe <= (others => Board_data_void);
 
         FSM_STATE              <= s0_wait;
@@ -175,9 +172,9 @@ begin
         cnt_packet_counter         <= (others => '0');
 
       else
-        Board_data_in_ff  <= Board_data_I;
-        Board_data_gen_pipe(0) <= Board_data_gen_ff_next;
-		Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
+        Board_data_in_ff             <= Board_data_I;
+        Board_data_gen_pipe(0)       <= Board_data_gen_ff_next;
+        Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
 
         FSM_STATE              <= FSM_STATE_NEXT;
         pword_counter          <= pword_counter_next;
@@ -205,22 +202,22 @@ begin
                         (others => '0') when (FSM_STATE = s1_header) else
                         pword_counter + 1;
 
-  FSM_STATE_NEXT <= s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"0") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-                    s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"0") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
+  FSM_STATE_NEXT <= s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
+                    s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
                     s2_data   when (FSM_STATE = s1_header) else
                     s2_data   when (FSM_STATE = s2_data) and (n_words_in_packet_send > pword_counter_next) else
-					
-					s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"0") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-					s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"0") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
-					
-                    s0_wait   when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) else
+
+                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
+                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
+
+                    s0_wait when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) else
                     s0_wait;
 
   is_packet_send_for_cntr_next <= '1' when (FSM_STATE = s2_data) and (FSM_STATE_NEXT = s0_wait) else
-                                  '0' when (FSM_Clocks_I.System_Counter = x"0") else
+                                  '0' when (FSM_Clocks_I.System_Counter = x"1") else
                                   is_packet_send_for_cntr;
 
-  n_words_in_packet_send_next <= n_words_in_packet_mask_sclk(0) when (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
+  n_words_in_packet_send_next <= n_words_in_packet_mask_sclk(0) when (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) else
                                  n_words_in_packet_mask_sclk(bpattern_counter_sclk) when (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) else
                                  n_words_in_packet_send;
 
@@ -230,10 +227,13 @@ begin
 
   wchannel_counter_w2       <= wchannel_counter + 1;
   Board_data_data.data_word <= wchannel_counter & cnt_packet_counter & wchannel_counter_w2 & cnt_packet_counter;
+  Board_data_header.data_word <= func_FITDATAHD_get_header(x"0"&n_words_in_packet_send, Status_register_I.ORBIT_from_CRU_corrected,
+                                                           Status_register_I.BCID_from_CRU_corrected, Status_register_I.rx_phase,
+                                                           Status_register_I.GBT_status.Rx_Phase_error, '0');
 
   Board_data_gen_ff_next <= Board_data_void when (FSM_STATE = s0_wait) else
-                            Board_data_header_sc when (FSM_STATE = s1_header) else
-                            Board_data_data      when (FSM_STATE = s2_data) else
+                            Board_data_header when (FSM_STATE = s1_header) else
+                            Board_data_data   when (FSM_STATE = s2_data) else
                             Board_data_void;
 
 
