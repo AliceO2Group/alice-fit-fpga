@@ -34,7 +34,12 @@ entity DataConverter is
 	no_data_o           : out boolean;
 
     drop_ounter_o  : out std_logic_vector(15 downto 0);
-    fifo_cnt_max_o : out std_logic_vector(15 downto 0)
+    fifo_cnt_max_o : out std_logic_vector(15 downto 0);
+	
+    -- errors indicate unexpected FSM state, should be reset and debugged
+    -- 0 - data_fifo is not empty while start of run
+    -- 1 - header_fifo is not empty while start of run
+    errors_o : out std_logic_vector(1 downto 0)
     );
 end DataConverter;
 
@@ -53,7 +58,7 @@ architecture Behavioral of DataConverter is
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
 
-  signal send_mode_ison, send_mode_ison_sclk : boolean;
+  signal send_mode_ison, send_mode_ison_sclk, send_mode_ison_sclk_ff : boolean;
   signal reset_drop_counters                 : std_logic;
   signal drop_counter                        : std_logic_vector(15 downto 0);
 
@@ -67,6 +72,8 @@ architecture Behavioral of DataConverter is
   signal header_fifo_din, data_fifo_din : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_we, data_fifo_we   : std_logic;
   signal header_fifo_empty, data_fifo_empty : std_logic;
+  
+  signal errors : std_logic_vector(1 downto 0);
 
 
   attribute mark_debug                        : string;
@@ -135,6 +142,7 @@ begin
       send_mode_ison <= (Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
+	  errors_o <= errors;
     end if;
   end process;
 
@@ -153,6 +161,7 @@ begin
       header_pcklen_ff <= header_pcklen;
 
       send_mode_ison_sclk <= send_mode_ison;
+	  send_mode_ison_sclk_ff <= send_mode_ison_sclk;
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
@@ -160,6 +169,7 @@ begin
         drop_counter      <= (others => '0');
         rawfifo_cnt_max   <= (others => '0');
         word_counter      <= (others => '1');
+		errors <= (others => '0');
 
       else
 
@@ -193,6 +203,8 @@ begin
           drop_counter    <= (others => '0');
           rawfifo_cnt_max <= (others => '0');
         end if;
+		
+		if not send_mode_ison_sclk_ff and send_mode_ison_sclk then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
 
 
       end if;

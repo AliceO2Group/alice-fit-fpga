@@ -110,7 +110,7 @@ begin
       cntpck_fifo_empty_o => cntpck_fifo_empty,
       cntpck_fifo_rden_i  => cntpck_fifo_rden,
 
-      fifo_cnt_max_o => open
+      slct_fifo_cnt_max_o => open
       );
 -- ===========================================================
 

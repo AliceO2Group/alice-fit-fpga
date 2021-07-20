@@ -201,7 +201,7 @@ Sys1_process :process
    
    begin
    
-		if(was_reset < 16) then
+		if(was_reset < 32) then
 			was_reset := was_reset + 1;
 			RESET <= '1';
 			

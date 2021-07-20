@@ -41,15 +41,23 @@ entity Event_selector is
     header_fifo_empty_i : in  std_logic;
     no_raw_data_i       : in  boolean;
 
-    slct_fifo_dout_o : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-    slct_fifo_empty_o : out  std_logic;
-    slct_fifo_rden_i : in  std_logic;
+    slct_fifo_dout_o  : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    slct_fifo_empty_o : out std_logic;
+    slct_fifo_rden_i  : in  std_logic;
 
     cntpck_fifo_dout_o  : out std_logic_vector(127 downto 0);
-    cntpck_fifo_empty_o : out std_logic;	
+    cntpck_fifo_empty_o : out std_logic;
     cntpck_fifo_rden_i  : in  std_logic;
 
-    fifo_cnt_max_o : out std_logic_vector(15 downto 0)
+    slct_fifo_cnt_max_o : out std_logic_vector(15 downto 0);
+    packets_dropped_o   : out std_logic_vector(15 downto 0);
+
+    -- errors indicate unexpected FSM state, should be reset and debugged
+    -- 0 - slct_fifo is not empty when run starts
+    -- 1 - cntpck_fifo is not empty when run starts
+    -- 2 - trg_fifo is not empty when run starts
+    -- 3 - trg_fifo was full
+    errors_o : out std_logic_vector(3 downto 0)
     );
 end Event_selector;
 
@@ -66,32 +74,36 @@ architecture Behavioral of Event_selector is
   signal curr_bc, curr_bc_sc                : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal trigger_select_val_sc              : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
-  signal trgfifo_dout, trgfifo_din             : std_logic_vector(75 downto 0);
-  signal trgfifo_empty, trgfifo_re, trgfifo_we : std_logic;
-  signal trgfifo_out_trigger                   : std_logic_vector(Trigger_bitdepth-1 downto 0);
-  signal trgfifo_out_orbit                     : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal trgfifo_out_bc                        : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal trgfifo_dout, trgfifo_din                                               : std_logic_vector(75 downto 0);
+  signal trgfifo_empty, trgfifo_re, trgfifo_we, trgfifo_full, trgfifo_full_latch : std_logic;
+  signal trgfifo_out_trigger                                                     : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal trgfifo_out_orbit                                                       : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal trgfifo_out_bc                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   signal slct_fifo_din                    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
-  signal slct_fifo_wren, slct_fifo_busy   : std_logic;
+  signal drop_counter                     : std_logic_vector(15 downto 0);
 
-  signal cntpck_fifo_din  : std_logic_vector(127 downto 0);
-  signal cntpck_fifo_wren : std_logic;
+  signal slct_fifo_wren, slct_fifo_busy, slct_fifo_full, slct_fifo_empty : std_logic;
+
+  signal cntpck_fifo_din                                       : std_logic_vector(127 downto 0);
+  signal cntpck_fifo_wren, cntpck_fifo_full, cntpck_fifo_empty : std_logic;
+
+  signal fifo_notempty_while_start : std_logic_vector(2 downto 0);
 
   type FSM_STATE_T is (s0_idle, s1_dread);
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
 
   signal header_fifo_rd, data_fifo_rd         : std_logic;
   signal word_counter                         : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  signal rdh_size_counter, rdh_packet_counter : natural;
+  signal rdh_size_counter, rdh_size_counter_actual, rdh_packet_counter : natural;
 
   signal rdh_trigger : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal rdh_orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal rdh_bc      : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- cru readout states
-  signal send_mode_sc, send_trg_mode_sc                                       : boolean;
+  signal send_mode_sc, send_mode_sc_ff, send_trg_mode_sc                      : boolean;
   -- data-trg comparison
   signal is_hbtrg, is_sel_trg, read_data, read_trigger, rdh_close             : boolean;
   signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg : boolean;
@@ -101,15 +113,19 @@ architecture Behavioral of Event_selector is
   signal data_trg_reject                                                      : boolean;
   -- becames true after first rdh to not respond it; and becomes false after last rdh_close sent to do not send in continiosly
   signal send_gear_rdh                                                        : boolean;
-  -- becomes true after first HB trigger to not send data before ROX
-  signal send_gear_data                                                       : boolean;
+  -- dropping data when select fifo is full
+  signal dropping_data                                                        : boolean;
   signal is_hbtrg_lgc                                                         : std_logic;
+  signal reset_drop_cnt_sc                                                    : boolean;
 
 begin
 
-  header_fifo_rden_o <= header_fifo_rd;
-  data_fifo_rden_o   <= data_fifo_rd;
-  fifo_cnt_max_o     <= '0'&fifo_cnt_max;
+  header_fifo_rden_o  <= header_fifo_rd;
+  data_fifo_rden_o    <= data_fifo_rd;
+  slct_fifo_cnt_max_o <= '0'&fifo_cnt_max;
+  slct_fifo_empty_o   <= slct_fifo_empty;
+  cntpck_fifo_empty_o <= cntpck_fifo_empty;
+
 
   data_ndwords <= func_FITDATAHD_ndwords(header_fifo_data_i);
   data_orbit   <= func_FITDATAHD_orbit(header_fifo_data_i);
@@ -163,7 +179,8 @@ begin
       RD_EN  => trgfifo_re,
 
       DOUT  => trgfifo_dout,
-      EMPTY => trgfifo_empty
+      EMPTY => trgfifo_empty,
+      FULL  => trgfifo_full
       );
 
   trgfifo_we          <= '1' when Status_register_I.Trigger_from_CRU /= 0 and Status_register_I.Readout_Mode /= mode_IDLE else '0';
@@ -184,7 +201,8 @@ begin
       RD_EN  => cntpck_fifo_rden_i,
 
       DOUT  => cntpck_fifo_dout_o,
-      EMPTY => cntpck_fifo_empty_o
+      EMPTY => cntpck_fifo_empty,
+      full  => cntpck_fifo_full
       );
 -- ===========================================================
 
@@ -200,8 +218,8 @@ begin
       RD_EN         => slct_fifo_rden_i,
       DIN           => slct_fifo_din,
       DOUT          => slct_fifo_dout_o,
-      prog_full     => open,
-      EMPTY         => slct_fifo_empty_o,
+      prog_full     => slct_fifo_full,
+      EMPTY         => slct_fifo_empty,
       wr_rst_busy   => slct_fifo_busy,
       rd_rst_busy   => open
       );
@@ -211,6 +229,9 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
+
+      packets_dropped_o <= drop_counter;
+      errors_o          <= (not trgfifo_full_latch) & fifo_notempty_while_start;
 
       if Status_register_I.BCID_from_CRU >= bcid_delay then
         curr_orbit <= Status_register_I.ORBIT_from_CRU;
@@ -222,15 +243,20 @@ begin
 
       if(FSM_Clocks_I.Reset_dclk = '1') then
 
-        fifo_cnt_max_o <= (others => '0');
+        fifo_cnt_max       <= (others => '0');
+        trgfifo_full_latch <= '0';
 
       else
 
+        -- select data fifo max count 
         if Control_register_I.reset_drophit_counter = '1' then
-          fifo_cnt_max_o <= (others => '0');
+          fifo_cnt_max <= (others => '0');
         else
           if fifo_cnt_max < slct_fifo_count_wr then fifo_cnt_max <= slct_fifo_count_wr; end if;
         end if;
+
+        -- trigger fifo full latching
+        if trgfifo_full = '1' then trgfifo_full_latch <= '1'; end if;
 
       end if;
 
@@ -246,12 +272,17 @@ begin
       curr_orbit_sc         <= curr_orbit;
       curr_bc_sc            <= curr_bc;
       send_mode_sc          <= Status_register_I.Readout_Mode /= mode_IDLE;
+      send_mode_sc_ff       <= send_mode_sc;
       send_trg_mode_sc      <= Status_register_I.Readout_Mode = mode_TRG;
       trigger_select_val_sc <= Control_register_I.trg_data_select;
+      reset_drop_cnt_sc     <= Control_register_I.reset_drophit_counter = '1';
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
-        FSM_STATE    <= s0_idle;
-        word_counter <= (others => '0');
+        FSM_STATE                 <= s0_idle;
+        word_counter              <= (others => '0');
+        drop_counter              <= (others => '0');
+        fifo_notempty_while_start <= (others => '0');
+
 
       else
 
@@ -284,6 +315,14 @@ begin
         if rdh_close then rdh_size_counter                <= 0; elsif slct_fifo_wren = '1' then rdh_size_counter <= rdh_size_counter + 1; end if;
         -- RDH counter in timeframe
         if rdh_close and is_hbtrg then rdh_packet_counter <= 0; elsif rdh_close then rdh_packet_counter <= rdh_packet_counter + 1; end if;
+
+        -- dropping packets when fifos are full
+        if start_reading_data then dropping_data              <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1'); end if;
+        if reading_header and dropping_data then drop_counter <= drop_counter + 1; end if;
+        if reset_drop_cnt_sc then drop_counter                <= (others => '0'); end if;
+
+        -- errors if fifos are not empty while run starts
+        if not send_mode_sc_ff and send_mode_sc then fifo_notempty_while_start <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
 
         FSM_STATE <= FSM_STATE_NEXT;
 
@@ -332,8 +371,10 @@ begin
                false;
 
 
+  -- if closing rdh while readind data, rdh_size is one more than counter
+  rdh_size_counter_actual <= rdh_size_counter+1 when slct_fifo_wren = '1' else rdh_size_counter;
   -- pushing RDH info while closing RDH packet                     
-  cntpck_fifo_din  <= std_logic_vector(to_unsigned(0, 128-97)) & is_hbtrg_lgc & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
+  cntpck_fifo_din  <= std_logic_vector(to_unsigned(0, 128-97)) & is_hbtrg_lgc & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter_actual, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
   cntpck_fifo_wren <= '1' when rdh_close else '0';
 
 
@@ -348,8 +389,8 @@ begin
 
 
 -- pushing data from raw to slct fifo
-  slct_fifo_din  <= header_fifo_data_i               when header_fifo_rd = '1'                                                       else data_fifo_data_i;
-  slct_fifo_wren <= (header_fifo_rd or data_fifo_rd) when not data_trg_reject and (send_gear_rdh or (is_hbtrg and trgfifo_re = '1')) else '0';
+  slct_fifo_din  <= header_fifo_data_i               when header_fifo_rd = '1'                                                                             else data_fifo_data_i;
+  slct_fifo_wren <= (header_fifo_rd or data_fifo_rd) when not data_trg_reject and (send_gear_rdh or (is_hbtrg and trgfifo_re = '1')) and not dropping_data else '0';
 end Behavioral;
 
 

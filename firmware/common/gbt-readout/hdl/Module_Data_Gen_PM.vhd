@@ -203,12 +203,12 @@ begin
                         pword_counter + 1;
 
   FSM_STATE_NEXT <= s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-                    s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
+                    s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) and n_words_in_packet_mask_sclk(0) > 0 else
                     s2_data   when (FSM_STATE = s1_header) else
                     s2_data   when (FSM_STATE = s2_data) and (n_words_in_packet_send > pword_counter_next) else
 
                     s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) > 0) else
+                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) else
 
                     s0_wait when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) else
                     s0_wait;

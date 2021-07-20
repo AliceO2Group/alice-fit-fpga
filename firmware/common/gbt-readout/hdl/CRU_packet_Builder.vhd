@@ -44,7 +44,11 @@ entity CRU_packet_Builder is
     CNTPFIFO_RE_O         : out std_logic;
 
     Is_Data_O : out std_logic;
-    Data_O    : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0)
+    Data_O    : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+
+    -- errors indicate unexpected FSM state, should be reset and debugged
+    -- 0 - slct_fifo is empty while reading data
+    errors_o : out std_logic_vector(0 downto 0)
     );
 end CRU_packet_Builder;
 
@@ -95,13 +99,6 @@ begin
   -- ======================================================================================    
 
 
-
-
-
-
-
-
-
   -- Data ff data clk ***********************************
   process (FSM_Clocks_I.Data_Clk)
   begin
@@ -110,6 +107,7 @@ begin
       if(FSM_Clocks_I.Reset_dclk = '1') then
 
         FSM_STATE <= s0_wait;
+        errors_o  <= (others => '0');
 
       else
 
@@ -127,8 +125,10 @@ begin
 
         -- word counter
         if (FSM_STATE_NEXT = s1_sop) and ((FSM_STATE = s0_wait) or (FSM_STATE = s3_eop)) then word_counter <= 0;
-        elsif word_counter                                                                                  <= 512+5+1 +1 then word_counter <= word_counter + 1; end if;
+        elsif word_counter                                                                                 <= 512+5+1 +1 then word_counter <= word_counter + 1; end if;
 
+        -- if select fifo becomes empty while reading data, raise error
+        if (FSM_STATE = s2_data) and SLCTFIFO_Is_Empty_I = '1' then errors_o(0) <= '1'; end if;
 
 
       end if;
@@ -138,6 +138,7 @@ begin
 -- ****************************************************
 
   FSM_STATE_NEXT <= s1_sop when (FSM_STATE = s0_wait) and (CNTPFIFO_Is_Empty_I = '0') else
+                    s3_eop when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) and (rdh_nwords = 0) else
                     s2_data when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) else
                     s3_eop  when (FSM_STATE = s2_data) and (word_counter = rdh_nwords + nwords_in_SOP-1) else
                     s0_wait when (FSM_STATE = s3_eop) and (word_counter = rdh_nwords + nwords_in_SOP + nwords_in_EOP-1) and (CNTPFIFO_Is_Empty_I = '1') else
@@ -148,13 +149,13 @@ begin
   slct_fifo_re   <= '1' when (FSM_STATE = s2_data)                     else '0';
 
   Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s1_sop) else
-            SLCTFIFO_data_word_I when (FSM_STATE = s2_data) else
+            SLCTFIFO_data_word_I                                                                     when (FSM_STATE = s2_data) else
             EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s3_eop) else
             (others => '0');
 
   Is_Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth) when (FSM_STATE = s1_sop) else
-               '1' when (FSM_STATE = s2_data) else
-               EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth) when (FSM_STATE = s3_eop)  else
+               '1'                                                                           when (FSM_STATE = s2_data) else
+               EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth) when (FSM_STATE = s3_eop) else
                '0';
 
 
