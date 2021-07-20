@@ -29,7 +29,7 @@ entity Data_Packager is
   port (
     FSM_Clocks_I : in FSM_Clocks_type;
 
-    Status_register_I   : in FIT_GBT_status_type;
+    Status_register_I  : in FIT_GBT_status_type;
     Control_register_I : in CONTROL_REGISTER_type;
 
     Board_data_I : in board_data_type;
@@ -41,24 +41,21 @@ end Data_Packager;
 
 architecture Behavioral of Data_Packager is
 
-  signal raw_header_dout, raw_data_dout                   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal raw_header_dout, raw_data_dout                  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_heaer_rden, raw_data_rden, raw_header_empty : std_logic;
-  signal no_raw_data : boolean;
+  signal no_raw_data                                     : boolean;
 
-  signal slct_fifo_cnt   : std_logic_vector(12 downto 0);
-  signal slct_fifo_din   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal slct_fifo_out   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal slct_fifo_dout  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal slct_fifo_empty : std_logic;
-  signal slct_fifo_wren  : std_logic;
   signal slct_fifo_rden  : std_logic;
-  signal slct_fifo_full  : std_logic;
+
+  signal cntpck_fifo_dout  : std_logic_vector(127 downto 0);
+  signal cntpck_fifo_empty : std_logic;
+  signal cntpck_fifo_rden  : std_logic;
 
 
   signal data_from_cru_constructor    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_data_from_cru_constructor : std_logic;
-  signal cntpck_fifo_data_fromfifo    : std_logic_vector(cntpckfifo_data_bitdepth-1 downto 0);
-  signal cntpck_fifo_isempty          : std_logic;
-  signal cntpck_fifo_rden             : std_logic;
 
 
 
@@ -72,7 +69,7 @@ begin
     port map(
       FSM_Clocks_I => FSM_Clocks_I,
 
-      Status_register_I   => Status_register_I,
+      Status_register_I  => Status_register_I,
       Control_register_I => Control_register_I,
 
       Board_data_I => Board_data_I,
@@ -82,7 +79,7 @@ begin
       header_fifo_rden_i  => raw_heaer_rden,
       data_fifo_rden_i    => raw_data_rden,
       header_fifo_empty_o => raw_header_empty,
-	  no_data_o           => no_raw_data,
+      no_data_o           => no_raw_data,
 
       drop_ounter_o  => open,
       fifo_cnt_max_o => open
@@ -94,7 +91,7 @@ begin
     port map (
       FSM_Clocks_I => FSM_Clocks_I,
 
-      Status_register_I   => Status_register_I,
+      Status_register_I  => Status_register_I,
       Control_register_I => Control_register_I,
 
       header_fifo_data_i  => raw_header_dout,
@@ -102,11 +99,18 @@ begin
       header_fifo_rden_o  => raw_heaer_rden,
       data_fifo_rden_o    => raw_data_rden,
       header_fifo_empty_i => raw_header_empty,
-	  no_raw_data_i => no_raw_data,
+      no_raw_data_i       => no_raw_data,
 
-      slct_fifo_rden_i         => '0',
-	  cntpck_fifo_rden_i => '0'
 
+      slct_fifo_dout_o  => slct_fifo_dout,
+      slct_fifo_empty_o => slct_fifo_empty,
+      slct_fifo_rden_i  => slct_fifo_rden,
+
+      cntpck_fifo_dout_o  => cntpck_fifo_dout,
+      cntpck_fifo_empty_o => cntpck_fifo_empty,
+      cntpck_fifo_rden_i  => cntpck_fifo_rden,
+
+      fifo_cnt_max_o => open
       );
 -- ===========================================================
 
@@ -115,15 +119,15 @@ begin
     port map (
       FSM_Clocks_I => FSM_Clocks_I,
 
-      Status_register_I   => Status_register_I,
+      Status_register_I  => Status_register_I,
       Control_register_I => Control_register_I,
 
-      SLCTFIFO_data_word_I => (others => '0'),
-      SLCTFIFO_Is_Empty_I  => '0',
-      SLCTFIFO_RE_O        => open,
+      SLCTFIFO_data_word_I => slct_fifo_dout,
+      SLCTFIFO_Is_Empty_I  => slct_fifo_empty,
+      SLCTFIFO_RE_O        => slct_fifo_rden,
 
-      CNTPTFIFO_data_word_I => cntpck_fifo_data_fromfifo,
-      CNTPFIFO_Is_Empty_I   => cntpck_fifo_isempty,
+      CNTPTFIFO_data_word_I => cntpck_fifo_dout,
+      CNTPFIFO_Is_Empty_I   => cntpck_fifo_empty,
       CNTPFIFO_RE_O         => cntpck_fifo_rden,
 
       Is_Data_O => is_data_from_cru_constructor,
@@ -139,7 +143,7 @@ begin
       FSM_Clocks_I => FSM_Clocks_I,
 
       Control_register_I => Control_register_I,
-      Status_register_I   => Status_register_I,
+      Status_register_I  => Status_register_I,
 
       TX_IsData_I => is_data_from_cru_constructor,
       TX_Data_I   => data_from_cru_constructor,

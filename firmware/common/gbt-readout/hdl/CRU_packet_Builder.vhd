@@ -19,9 +19,9 @@
 
 ----------------------------------------------------------------------------------
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_1164.all;
 use ieee.numeric_std.all;
-use ieee.std_logic_unsigned.all ;
+use ieee.std_logic_unsigned.all;
 -- use ieee.STD_LOGIC_ARITH.all;
 
 use work.fit_gbt_common_package.all;
@@ -29,214 +29,139 @@ use work.fit_gbt_board_package.all;
 
 
 entity CRU_packet_Builder is
-    Port ( 
-		FSM_Clocks_I : in FSM_Clocks_type;
+  port (
+    FSM_Clocks_I : in FSM_Clocks_type;
 
-		Status_register_I : in FIT_GBT_status_type;
-		Control_register_I : in CONTROL_REGISTER_type;
-		
-		SLCTFIFO_data_word_I : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-		SLCTFIFO_Is_Empty_I : in STD_LOGIC;
-		SLCTFIFO_RE_O : out STD_LOGIC;
-		
-		CNTPTFIFO_data_word_I : in std_logic_vector(cntpckfifo_data_bitdepth-1 downto 0);
-		CNTPFIFO_Is_Empty_I : in STD_LOGIC;
-		CNTPFIFO_RE_O : out STD_LOGIC;
-		
-		Is_Data_O : out STD_LOGIC;
-		Data_O : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0)
-	 );
+    Status_register_I  : in FIT_GBT_status_type;
+    Control_register_I : in CONTROL_REGISTER_type;
+
+    SLCTFIFO_data_word_I : in  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    SLCTFIFO_Is_Empty_I  : in  std_logic;
+    SLCTFIFO_RE_O        : out std_logic;
+
+    CNTPTFIFO_data_word_I : in  std_logic_vector(127 downto 0);
+    CNTPFIFO_Is_Empty_I   : in  std_logic;
+    CNTPFIFO_RE_O         : out std_logic;
+
+    Is_Data_O : out std_logic;
+    Data_O    : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0)
+    );
 end CRU_packet_Builder;
 
 architecture Behavioral of CRU_packet_Builder is
-	
-	constant nwords_in_SOP	: integer := 5;
-	constant nwords_in_EOP	: integer := 2;
 
-	type SOP_format_type is array (0 to nwords_in_SOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
-	type EOP_format_type is array (0 to nwords_in_EOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
-    signal SOP_format : SOP_format_type;
-    signal EOP_format : EOP_format_type;
-	
-	
-	type FSM_STATE_T is (s0_start, s1_sop, s2_data, s3_eop);
-	signal FSM_STATE, FSM_STATE_NEXT  : FSM_STATE_T;
-	
-	signal Word_Count, Word_Count_next : std_logic_vector(GEN_count_bitdepth-1 downto 0);
-	signal cont_packet_count, cont_packet_count_next : std_logic_vector(63 downto 0);
-	signal header_payload : std_logic_vector(GEN_count_bitdepth-1 downto 0);
-	signal dwords_payload : std_logic_vector(GEN_count_bitdepth-1 downto 0);
-	signal trailer_payload : std_logic_vector(GEN_count_bitdepth-1 downto 0);
-	signal data_payload_bytes : integer;
-	
-	signal is_close_frame  : std_logic;
-	signal header_size     : std_logic_vector(7 downto 0);
-	signal block_lenght    : std_logic_vector(15 downto 0);
-	signal pages_counter   : std_logic_vector(RDH_pages_counter_bitdepth-1 downto 0);
-    signal HB_Orbit    : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-    signal HB_BC       : std_logic_vector(BC_id_bitdepth-1 downto 0);
-    signal TRG_Orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-    signal TRG_BC      : std_logic_vector(BC_id_bitdepth-1 downto 0);
-	signal TRG_Type    : std_logic_vector(Trigger_bitdepth-1 downto 0);
-	signal Link_ID 	   : std_logic_vector(7 downto 0);
-	signal System_ID   : std_logic_vector(7 downto 0);
-	signal Memory_size : std_logic_vector(15 downto 0);
+  -- PACKET format
+  constant nwords_in_SOP : natural := 5;
+  constant nwords_in_EOP : natural := 1;
+  type SOP_format_type is array (0 to nwords_in_SOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
+  type EOP_format_type is array (0 to nwords_in_EOP-1) of std_logic_vector(GBT_data_word_bitdepth downto 0);
+  signal SOP_format      : SOP_format_type;
+  signal EOP_format      : EOP_format_type;
 
-	
-	signal Data_ff, Data_ff_next : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-	signal IsData_ff, IsData_ff_next : STD_LOGIC;
+  -- header data
+  constant rdh_header_version : std_logic_vector(7 downto 0)  := x"06";
+  constant rdh_header_size    : std_logic_vector(7 downto 0)  := x"40";
+  constant rdh_detector_field : std_logic_vector(31 downto 0) := x"00000000";
+  constant rdh_par            : std_logic_vector(31 downto 0) := x"00000000";
 
-	-- signal dataheader_ff, dataheader_ff_next : std_logic_vector(GBT_data_word_bitdepth-1 downto 0); --header for first event in packets
-	
-	
-	attribute keep : string;	
-	attribute keep of Data_ff : signal is "true";
-	attribute keep of IsData_ff : signal is "true";
-	attribute keep of cont_packet_count : signal is "true";
+  signal rdh_feeid         : std_logic_vector(15 downto 0);
+  signal rdh_sysid         : std_logic_vector(7 downto 0);
+  signal rdh_priority_bit  : std_logic_vector(7 downto 0);
+  signal rdh_orbit         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal rdh_bc            : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal rdh_trg           : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal rdh_stop          : std_logic_vector(7 downto 0);
+  signal rdh_pages_counter : std_logic_vector(15 downto 0);
+
+  -- FSM signals
+  type FSM_STATE_T is (s0_wait, s1_sop, s2_data, s3_eop);
+  signal FSM_STATE, FSM_STATE_NEXT    : FSM_STATE_T;
+  signal word_counter, rdh_nwords     : natural range 0 to 512+5+1 +1;
+  signal cntpck_fifo_re, slct_fifo_re : std_logic;
+
 
 begin
 
-	Is_Data_O <= IsData_ff;
-	Data_O <= Data_ff;
+  SLCTFIFO_RE_O <= slct_fifo_re;
+  CNTPFIFO_RE_O <= cntpck_fifo_re;
 
-	header_payload <= std_logic_vector(to_unsigned((nwords_in_SOP-1), GEN_count_bitdepth));
-	dwords_payload <= func_CNTPCKword_npwords(CNTPTFIFO_data_word_I);
-	trailer_payload <= std_logic_vector(to_unsigned((nwords_in_EOP-1), GEN_count_bitdepth));
-
-    data_payload_bytes <= (to_integer(unsigned(dwords_payload)) + 4) * 16;
-
--- Data format ***************************************
-	is_close_frame <= func_CNTPCKword_isclf(CNTPTFIFO_data_word_I);
-	pages_counter <= func_CNTPCKword_pgcounter(CNTPTFIFO_data_word_I);
---	header_size <= std_logic_vector(to_unsigned((nwords_in_SOP-1), 8));
---	header_size <= x"28";
-	header_size <= x"40";
-	block_lenght <= std_logic_vector(to_unsigned((  data_payload_bytes ), 16));
-	HB_Orbit    <= func_CNTPCKword_hborbit(CNTPTFIFO_data_word_I);
-	HB_BC       <= func_CNTPCKword_hbbc(CNTPTFIFO_data_word_I);
-	TRG_Orbit   <= func_CNTPCKword_trgorbit(CNTPTFIFO_data_word_I);
-	TRG_BC      <= func_CNTPCKword_trgbc(CNTPTFIFO_data_word_I);
-	TRG_Type    <= func_CNTPCKword_trigger(CNTPTFIFO_data_word_I);
-	Link_ID		<= x"20";
-	System_ID	<= x"00";
-	Memory_size	<= x"0000";
-
-	--             is data
-	SOP_format(0) <= '0' & x"10000000000000000000"; -- SOP CRU
-	--SOP_format(0) <= '0' & x"00000000000000000001"; -- SOP G-RORC
-	--SOP_format(0) <= '0' & data_word_cnst_SOP;
-
-
-    -- v4 ===================================================================================	
-     --            is data      reserved      priority bit      FEE ID                 Block lenght    header size        header versions
-    --SOP_format(1) <= '1' &      x"000000"&       x"01"&    Control_register_I.RDH_data.FEE_ID&  block_lenght&   header_size&       x"04";
-    
-    --SOP_format(2) <= '1' &      x"0000"&  HB_Orbit &  TRG_Orbit;
-    
-    --SOP_format(3) <= '1' &      x"0000"& TRG_Type   &   x"0"&HB_BC   &   x"0"&TRG_BC;
-    --             is data      reserved     pages counter   stop bit                           PAR               detector field
-    --SOP_format(4) <= '1' &      x"000000"&    pages_counter&       "0000000"&is_close_frame&   Control_register_I.RDH_data.PAR&   Control_register_I.RDH_data.DET_Field;
-    -- ======================================================================================    
-    
-	
-    -- v6 ===================================================================================
-     --            is data                    reserved            priority bit     | FEE ID                                           header versions
-    SOP_format(1) <= '1' &      block_lenght& x"0000"& System_ID&    x"01"&        Control_register_I.RDH_data.FEE_ID& header_size& x"06";
-    --                                               reserved
-    SOP_format(2) <= '1' &      x"0000"&  HB_Orbit & x"0000_0"&  HB_BC;
-    --                                    reserved
-    SOP_format(3) <= '1' &      x"0000"&  x"00"&      x"0"&"000"&is_close_frame   &  pages_counter   &   TRG_Type;
-	--                                    reserved
-    SOP_format(4) <= '1' &      x"0000"&  x"0000"&   Control_register_I.RDH_data.PAR&   x"0000"&Control_register_I.RDH_data.DET_Field;
-    -- ======================================================================================    
-	
-	
-	
-	
-	EOP_format(0) <= '1' & x"ffff" & cont_packet_count; -- test trailer
-	EOP_format(1) <= '0' & x"20000000000000000000"; -- eop CRU
--- ***************************************************
+  -- v6 ===================================================================================
+  SOP_format(0) <= '0' & x"10000000000000000000";  -- SOP CRU
+  SOP_format(1) <= '1' & x"0000_0000" & rdh_sysid & rdh_priority_bit & rdh_feeid & rdh_header_size & rdh_header_version;
+  SOP_format(2) <= '1' & x"0000" & rdh_orbit & x"0000_0" & rdh_bc;
+  SOP_format(3) <= '1' & x"0000_00" & rdh_stop & rdh_pages_counter & rdh_trg;
+  SOP_format(4) <= '1' & x"0000_0000" & rdh_par & rdh_detector_field;
+  EOP_format(0) <= '0' & x"20000000000000000000";  -- eop CRU
+  -- ======================================================================================    
 
 
 
 
 
--- Data clock flip-flops *****************************
-	PROCESS (FSM_Clocks_I.Data_Clk)
-	BEGIN
-		IF(FSM_Clocks_I.Data_Clk'EVENT and FSM_Clocks_I.Data_Clk = '1') THEN
-			IF(FSM_Clocks_I.Reset_dclk = '1') THEN
-				IsData_ff <= '0';
-				Data_ff <= (others => '0');
---				dataheader_ff <= (others => '0');
-				
-				FSM_STATE <= s0_start;
-				Word_Count <= (others => '0');
-				cont_packet_count <= (others => '0');
-			ELSE
-				IsData_ff <= IsData_ff_next;
-				Data_ff <= Data_ff_next;
---				dataheader_ff <= dataheader_ff_next;
-				
-				FSM_STATE <= FSM_STATE_NEXT;
-				Word_Count <= Word_Count_next;
-				cont_packet_count <= cont_packet_count_next;
-			END IF;
-		END IF;
-	END PROCESS;
--- ***************************************************
 
 
 
 
--- FSM ***********************************************
-FSM_STATE_NEXT <=	s0_start 	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-	s1_sop		WHEN (FSM_STATE = s0_start) and (CNTPFIFO_Is_Empty_I = '0') ELSE
-	s3_eop		WHEN (FSM_STATE = s1_sop)   and (Word_Count = header_payload) and (dwords_payload = GEN_const_void) ELSE
-	s2_data		WHEN (FSM_STATE = s1_sop) 	and (Word_Count = header_payload) ELSE
-	s3_eop		WHEN (FSM_STATE = s2_data) 	and (Word_Count+1 = dwords_payload) ELSE
-	s0_start	WHEN (FSM_STATE = s3_eop) 	and (Word_Count = trailer_payload) ELSE
-	FSM_STATE;
+  -- Data ff data clk ***********************************
+  process (FSM_Clocks_I.Data_Clk)
+  begin
+    if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-	
-Word_Count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-        (others => '0') WHEN (FSM_STATE = s0_start)     ELSE
-        (others => '0')    WHEN (FSM_STATE = s1_sop)     and (Word_Count = header_payload) ELSE
-        (others => '0')    WHEN (FSM_STATE = s2_data)    and (Word_Count+1 = dwords_payload) ELSE
-        (others => '0')    WHEN (FSM_STATE = s3_eop)     and (Word_Count = trailer_payload) ELSE
-        Word_Count+1;
-        
-cont_packet_count_next <=	(others => '0')	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-            (others => '0')                 WHEN (Status_register_I.Readout_Mode = mode_IDLE)     ELSE
-            cont_packet_count+1             WHEN (FSM_STATE = s3_eop)     and (Word_Count = trailer_payload) ELSE
-            cont_packet_count;
-            						
-						
-IsData_ff_next <= '0'	 													WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-	SOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth) 	WHEN (FSM_STATE = s1_sop) ELSE
-	'1'					 													WHEN (FSM_STATE = s2_data) ELSE
-	EOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth)	WHEN (FSM_STATE = s3_eop) ELSE
-	'0';
+      if(FSM_Clocks_I.Reset_dclk = '1') then
 
-	
-Data_ff_next <= (others => '0')	    							                    WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-	SOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth-1 downto 0)	WHEN (FSM_STATE = s1_sop) ELSE
-	SLCTFIFO_data_word_I										                    WHEN (FSM_STATE = s2_data) ELSE
-	EOP_format(to_integer(unsigned(Word_Count)))(GBT_data_word_bitdepth-1 downto 0)	WHEN (FSM_STATE = s3_eop) ELSE
-	(others => '0');
+        FSM_STATE <= s0_wait;
 
-	
-SLCTFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-					'1' WHEN (FSM_STATE = s2_data)  	ELSE
-					'0';
+      else
 
-CNTPFIFO_RE_O <= 	'0'	WHEN (FSM_Clocks_I.Reset_dclk = '1') ELSE
-					'1' WHEN (FSM_STATE = s3_eop) and (Word_Count = trailer_payload) ELSE
-					'0';
+        FSM_STATE <= FSM_STATE_NEXT;
 
--- ***************************************************
-	
-	
-		
+        -- latching RDH info from fifo
+        if cntpck_fifo_re = '1' then
+          rdh_trg           <= CNTPTFIFO_data_word_I(31 downto 0);
+          rdh_bc            <= CNTPTFIFO_data_word_I(43 downto 32);
+          rdh_orbit         <= CNTPTFIFO_data_word_I(75 downto 44);
+          rdh_nwords        <= to_integer(unsigned(CNTPTFIFO_data_word_I(87 downto 76)));
+          rdh_pages_counter <= x"00" & CNTPTFIFO_data_word_I(95 downto 88);
+          rdh_stop          <= "0000000" & CNTPTFIFO_data_word_I(96);
+        end if;
+
+        -- word counter
+        if (FSM_STATE_NEXT = s1_sop) and ((FSM_STATE = s0_wait) or (FSM_STATE = s3_eop)) then word_counter <= 0;
+        elsif word_counter                                                                                  <= 512+5+1 +1 then word_counter <= word_counter + 1; end if;
+
+
+
+      end if;
+
+    end if;
+  end process;
+-- ****************************************************
+
+  FSM_STATE_NEXT <= s1_sop when (FSM_STATE = s0_wait) and (CNTPFIFO_Is_Empty_I = '0') else
+                    s2_data when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) else
+                    s3_eop  when (FSM_STATE = s2_data) and (word_counter = rdh_nwords + nwords_in_SOP-1) else
+                    s0_wait when (FSM_STATE = s3_eop) and (word_counter = rdh_nwords + nwords_in_SOP + nwords_in_EOP-1) and (CNTPFIFO_Is_Empty_I = '1') else
+                    s1_sop  when (FSM_STATE = s3_eop) and (word_counter = rdh_nwords + nwords_in_SOP + nwords_in_EOP-1) and (CNTPFIFO_Is_Empty_I = '0') else
+                    FSM_STATE;
+
+  cntpck_fifo_re <= '1' when (FSM_STATE = s1_sop) and word_counter = 0 else '0';
+  slct_fifo_re   <= '1' when (FSM_STATE = s2_data)                     else '0';
+
+  Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s1_sop) else
+            SLCTFIFO_data_word_I when (FSM_STATE = s2_data) else
+            EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s3_eop) else
+            (others => '0');
+
+  Is_Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth) when (FSM_STATE = s1_sop) else
+               '1' when (FSM_STATE = s2_data) else
+               EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth) when (FSM_STATE = s3_eop)  else
+               '0';
+
+
+
+
+
+
+
 end Behavioral;
 

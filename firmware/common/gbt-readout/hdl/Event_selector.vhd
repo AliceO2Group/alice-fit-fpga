@@ -42,11 +42,12 @@ entity Event_selector is
     no_raw_data_i       : in  boolean;
 
     slct_fifo_dout_o : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    slct_fifo_empty_o : out  std_logic;
     slct_fifo_rden_i : in  std_logic;
 
     cntpck_fifo_dout_o  : out std_logic_vector(127 downto 0);
+    cntpck_fifo_empty_o : out std_logic;	
     cntpck_fifo_rden_i  : in  std_logic;
-    cntpck_fifo_empty_o : out std_logic;
 
     fifo_cnt_max_o : out std_logic_vector(15 downto 0)
     );
@@ -200,7 +201,7 @@ begin
       DIN           => slct_fifo_din,
       DOUT          => slct_fifo_dout_o,
       prog_full     => open,
-      EMPTY         => open,
+      EMPTY         => slct_fifo_empty_o,
       wr_rst_busy   => slct_fifo_busy,
       rd_rst_busy   => open
       );
