@@ -102,7 +102,7 @@ begin
   cont_trg_bunch_mask <= '0' & Control_register_I.Trigger_Gen.trigger_pattern;
   bunch_freq          <= Control_register_I.Trigger_Gen.bunch_freq;  -- first packet in bunch = bc_start + delay
   readout_command_ff  <= Control_register_I.Trigger_Gen.Readout_command;
-  reset_offset        <= Control_register_I.reset_gen_offset;
+  reset_offset        <= Control_register_I.reset_gensync;
 
   bc_start <= x"deb" when Control_register_I.Trigger_Gen.bc_start = 0 else Control_register_I.Trigger_Gen.bc_start - 1;
 

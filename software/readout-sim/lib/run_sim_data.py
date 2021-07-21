@@ -85,8 +85,8 @@ class run_sim_data_class:
                (dyn_ctrl_reg.trg_rd_command != cntrl_reg.readout_cmd.idle):
                 return -2 # run type switched
 
-            if (not self.run_control.is_equal(dyn_ctrl_reg)):
-                return -6 #control reg is different
+            #if (not self.run_control.is_equal(dyn_ctrl_reg)):
+            #    return -6 #control reg is different
 
 
             if dyn_ctrl_reg.trg_rd_command == cntrl_reg.readout_cmd.idle:

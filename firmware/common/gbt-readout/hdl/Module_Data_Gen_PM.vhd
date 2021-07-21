@@ -74,7 +74,7 @@ architecture Behavioral of Module_Data_Gen is
 begin
   bunch_pattern <= Control_register_I.Data_Gen.bunch_pattern;
   bunch_freq    <= Control_register_I.Data_Gen.bunch_freq;
-  reset_offset  <= Control_register_I.reset_gen_offset;
+  reset_offset  <= Control_register_I.reset_gensync;
   bc_start      <= x"deb" when Control_register_I.Data_Gen.bc_start = 0 else
               Control_register_I.Data_Gen.bc_start - 1;
 

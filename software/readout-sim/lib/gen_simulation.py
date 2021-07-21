@@ -48,7 +48,7 @@ class gen_simulation_class:
             if (dyn_ctrl_reg.reset_gen_offset == 1):
                 trg_gen_fsm = 1
 
-            if (trg_gen_fsm == 2) and (freq_offset_cnt == dyn_ctrl_reg.trg_freq_offset):
+            if (trg_gen_fsm == 2) and (freq_offset_cnt == dyn_ctrl_reg.trg_bc_start):
                 trg_gen_fsm = 3
                 freq_offset_cnt = 0
                 period_cnt = 0

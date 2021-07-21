@@ -94,16 +94,16 @@ class run_testbench_class:
             # HEADER --------------------------------------------
             new_dyn_pos = dyn_rdh_header.read_data(self.simulation.gbt_data_list, dyn_pos)
 
-            if dyn_rdh_header.fee_id != self.run_data.run_control.RDH_feeid:
-                self.errors_messages.append("Wrong FEE ID: %x, expected: %x"%(dyn_rdh_header.fee_id, self.run_data.run_control.RDH_feeid))
+            if dyn_rdh_header.fee_id != self.run_data.run_control.RDH_FEEID:
+                self.errors_messages.append("Wrong FEE ID: %x, expected: %x" % (dyn_rdh_header.fee_id, self.run_data.run_control.RDH_FEEID))
                 return -1
 
-            if dyn_rdh_header.par_bit != self.run_data.run_control.RDH_par:
-                self.errors_messages.append("Wrong PAR ID: %x, expected: %x"%(dyn_rdh_header.par_bit, self.run_data.run_control.RDH_par))
+            if dyn_rdh_header.par_bit != self.run_data.run_control.RDH_SYS_ID:
+                self.errors_messages.append("Wrong PAR ID: %x, expected: %x" % (dyn_rdh_header.par_bit, self.run_data.run_control.RDH_SYS_ID))
                 return -1
 
-            if dyn_rdh_header.det_field != self.run_data.run_control.RDH_detf:
-                self.errors_messages.append("Wrong DEF_F ID: %x, expected: %x"%(dyn_rdh_header.det_field, self.run_data.run_control.RDH_detf))
+            if dyn_rdh_header.det_field != self.run_data.run_control.RDH_PRT_BIT:
+                self.errors_messages.append("Wrong DEF_F ID: %x, expected: %x" % (dyn_rdh_header.det_field, self.run_data.run_control.RDH_PRT_BIT))
                 return -1
 
             n_dw_in_packet = (dyn_rdh_header.block_lenght / 16) - 5

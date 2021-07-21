@@ -108,19 +108,19 @@ package fit_gbt_common_package is
 
     readout_bypass  : std_logic;
     is_hb_response  : std_logic;
+    force_idle : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
     BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
     reset_orbc_sync       : std_logic;  -- sync ORBIT, BC to CRU
     reset_data_counters : std_logic;  -- reset FIFO statistic
-    reset_gen_offset      : std_logic;  -- reset generators offset
+    reset_gensync      : std_logic;  -- reset generators offset
     reset_gbt_rxerror     : std_logic;  -- reset gbt rx error bit
     reset_rxph_error      : std_logic;  -- reset gbt phase error
     reset_readout         : std_logic;  -- reset readout fsm
     reset_gbt             : std_logic;  -- reset gbt
 
-    force_idle : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
   end record;
 
   constant test_CONTROL_REG : CONTROL_REGISTER_type :=
@@ -157,7 +157,7 @@ package fit_gbt_common_package is
 
       reset_orbc_sync       => '0',
       reset_data_counters => '0',
-      reset_gen_offset      => '0',
+      reset_gensync      => '0',
       reset_gbt_rxerror     => '0',
       reset_readout         => '0',
       reset_gbt             => '0',
@@ -351,7 +351,7 @@ package body fit_gbt_common_package is
     end if;
 
 
-    reset_contr := "0" & cntrl_reg.reset_readout & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gen_offset & cntrl_reg.reset_data_counters & cntrl_reg.reset_orbc_sync;
+    reset_contr := "0" & cntrl_reg.reset_readout & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gensync & cntrl_reg.reset_data_counters & cntrl_reg.reset_orbc_sync;
 
 
 
@@ -426,7 +426,7 @@ package body fit_gbt_common_package is
 
     cntr_reg.reset_orbc_sync       := cntrl_reg_addrreg(0)(8);
     cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
-    cntr_reg.reset_gen_offset      := cntrl_reg_addrreg(0)(10);
+    cntr_reg.reset_gensync      := cntrl_reg_addrreg(0)(10);
     cntr_reg.reset_gbt_rxerror     := cntrl_reg_addrreg(0)(11);
     cntr_reg.reset_gbt             := cntrl_reg_addrreg(0)(12);
     cntr_reg.reset_rxph_error      := cntrl_reg_addrreg(0)(13);
