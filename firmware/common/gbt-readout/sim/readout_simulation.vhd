@@ -48,7 +48,7 @@ ARCHITECTURE behavior OF testbench_readout IS
    file output_rd_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_output.txt";
    file output_rd_info_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_info_output.txt";
    file output_st_reg_file : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_status_reg_output.txt";
-   signal Control_register_from_file : cntr_reg_addrreg_type;
+   signal Control_register_from_file : ctrl_reg_t;
    -- ---------------------------------------------------
 
 
@@ -73,7 +73,7 @@ ARCHITECTURE behavior OF testbench_readout IS
 
  	--Outputs
 	signal GBT_status : FIT_GBT_status_type;
-	signal GBT_status_reg : status_reg_addrreg_sim_type;
+	signal GBT_status_reg : stat_reg_sim_t;
 	
     signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     signal IsData_from_FITrd        : STD_LOGIC;
@@ -85,52 +85,7 @@ ARCHITECTURE behavior OF testbench_readout IS
     signal sim_iter_num : std_logic_vector(63 downto 0);
 	
    	
-	constant testbench_CONTROL_REG_default : CONTROL_REGISTER_type :=
-	(
-		Data_Gen => (
-			--usage_generator		=> use_TX_generator,
-			usage_generator	=> use_MAIN_generator,
-			
-			trigger_resp_mask 	=> TRG_const_void,
-			bunch_pattern 		=> x"10e0766f",
-			bunch_freq 			=> x"0dff",
-			bc_start => x"001"
-			),
-			
-		Trigger_Gen => (
-			usage_generator		=> use_CONT_generator,
-			--usage_generator	=> use_NO_generator
-			Readout_command		 => idle,
-			trigger_single_val 		=> x"00000000",
-			trigger_pattern 		=> x"0000000080000000",
-			trigger_cont_value 			=> TRG_const_Ph,
-			bunch_freq 				=> x"0deb",
-			bc_start 	=> x"ddc"
-			),
-		
-		RDH_data => (
-			FEE_ID 					=> x"0001",	
-			PAR 					=> x"ffff",
-			DET_Field 				=> x"1234"
-			),
-			
-		readout_bypass              => '0',
-	    is_hb_response              => '1',
-        trg_data_select             => x"00000010",
-
-		n_BCID_delay 				=> x"01f",
-		crutrg_delay_comp 			=> x"00f",
-		max_data_payload			=> x"00f0",
-		reset_orbc_synd 			=> '0',
-		reset_drophit_counter 		=> '0',
-		reset_gen_offset			=> '0',
-		reset_gbt_rxerror			=> '0',
-		reset_readout   			=> '0',
-		reset_gbt					=> '0',
-		reset_rxph_error			=> '0',
-		force_idle			=> '0'
-	);	
-	signal  testbench_CONTROL_REG_dynamic : CONTROL_REGISTER_type := testbench_CONTROL_REG_default;
+	signal  testbench_CONTROL_REG_dynamic : CONTROL_REGISTER_type := test_CONTROL_REG;
 
 
 
@@ -290,14 +245,14 @@ Sys2_process :process
 	PROCESS (FSM_Clocks_signal.Data_Clk)
        -- file data ------------------
        variable iter_num : std_logic_vector(63 downto 0) := (others=>'0');
-       constant infile_num_col : integer := cntr_reg_n_32word*2;
+       constant infile_num_col : integer := ctrl_reg_size*2;
        variable infile_line : line;
        variable outfile_line : line;
        variable temp_line : line;
        type infile_data_type is array (integer range <>) of integer;
        
        variable data_from_file : infile_data_type(0 to infile_num_col-1);
-       variable datavec_from_file : cntr_reg_addrreg_type;
+       variable datavec_from_file : ctrl_reg_t;
        -- -----------------------------
         BEGIN
 		IF(FSM_Clocks_signal.Data_Clk'EVENT and FSM_Clocks_signal.Data_Clk = '1') THEN
@@ -314,7 +269,7 @@ Sys2_process :process
 					  for irow in 0 to infile_num_col-1 loop
 						  read(infile_line, data_from_file(irow));
 					  end loop;
-					  for irow in 0 to cntr_reg_n_32word-1 loop
+					  for irow in 0 to ctrl_reg_size-1 loop
 						  Control_register_from_file(irow)(15 downto 0) <= std_logic_vector(to_unsigned(data_from_file(irow*2+1),16));
 						  Control_register_from_file(irow)(31 downto 16) <= std_logic_vector(to_unsigned(data_from_file(irow*2),16));
 					  end loop;
@@ -334,7 +289,7 @@ Sys2_process :process
                   end if;
                   
                   outfile_line := "";
-                  for ireg in 0 to status_reg_sim_n_32word-1 loop
+                  for ireg in 0 to stat_reg_size_sim-1 loop
                     hwrite(outfile_line, GBT_status_reg(ireg), left, 11);
                   end loop;
                   writeline(output_st_reg_file, outfile_line);

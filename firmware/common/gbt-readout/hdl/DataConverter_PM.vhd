@@ -152,7 +152,7 @@ begin
   begin
     if(rising_edge(FSM_Clocks_I.System_Clk)) then
 
-      reset_drop_counters <= Control_register_I.reset_drophit_counter;
+      reset_drop_counters <= Control_register_I.reset_data_counters;
 
       header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
       data_word        <= Board_data_I.data_word;

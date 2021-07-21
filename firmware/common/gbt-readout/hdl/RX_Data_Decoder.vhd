@@ -209,7 +209,7 @@ begin
 
 -- SYNC FSM
   STATE_SYNC_NEXT <= mode_STR  when (Control_register_I.force_idle = '1') else
-                     mode_STR  when (Control_register_I.reset_orbc_synd = '1') else
+                     mode_STR  when (Control_register_I.reset_orbc_sync = '1') else
                      mode_STR  when (STATE_SYNC = mode_LOST) and (STATE_RDMODE = mode_IDLE) else -- 30/06/21 - auto resync out of RUN
                      mode_SYNC when TRGTYPE_ORBCrsv_ff_next and (STATE_SYNC = mode_STR) else
                      mode_LOST when (EV_ID_counter /= ORBC_ID_received_ff) and (STATE_SYNC = mode_SYNC) and TRGTYPE_ORBCrsv_ff else
@@ -230,7 +230,7 @@ begin
 
 
 -- Event ID delayed (corrected)
-  EV_ID_delay <= Control_register_I.n_BCID_delay;
+  EV_ID_delay <= Control_register_I.BCID_offset;
 
   EV_ID_counter_BC    <= EV_ID_counter(BC_id_bitdepth-1 downto 0);
   EV_ID_counter_ORBIT <= EV_ID_counter(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);

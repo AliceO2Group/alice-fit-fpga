@@ -194,7 +194,7 @@ begin
 --Board_data_sysclkff_next <= Board_data_I;
   FIFO_is_space_for_packet_ff_next <= FIFO_is_space_for_packet_I;
 
-  reset_drop_counters <= Control_register_I.reset_drophit_counter;
+  reset_drop_counters <= Control_register_I.reset_data_counters;
 
 
   sending_event_next <= '0' when (FSM_Clocks_I.Reset_sclk = '1') else

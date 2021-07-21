@@ -70,8 +70,8 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
 	
 	signal FIT_GBT_status : FIT_GBT_status_type;
 	signal Control_register_reg_map_ipbclk, Control_register_reg_dc : CONTROL_REGISTER_type;
-    signal ipbus_control_reg, Control_register_rdmap_dc, Control_register_rdmap_ipbclk : cntr_reg_addrreg_type;
-    signal ipbus_status_reg_map, ipbus_status_reg_map_dc, ipbus_status_reg_ipbclk : status_reg_addrreg_type;
+    signal ipbus_control_reg, Control_register_rdmap_dc, Control_register_rdmap_ipbclk : ctrl_reg_t;
+    signal ipbus_status_reg_map, ipbus_status_reg_map_dc, ipbus_status_reg_ipbclk : stat_reg_t;
 	signal ipbus_arrd_int : integer := 0;
     signal ipbus_base_arrd_int : integer := 0;
 

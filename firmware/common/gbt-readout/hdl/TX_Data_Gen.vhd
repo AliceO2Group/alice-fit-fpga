@@ -27,7 +27,9 @@ entity TX_Data_Gen is
     TX_Data_I         : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
     TX_IsData_O : out std_logic;
-    TX_Data_O   : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0)
+    TX_Data_O   : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+	
+	gbt_data_counter_o : out std_logic_vector(31 downto 0)
     );
 end TX_Data_Gen;
 
@@ -40,6 +42,10 @@ architecture Behavioral of TX_Data_Gen is
 
   signal gen_counter_ff, gen_counter_ff_next   : std_logic_vector(15 downto 0);
   signal cont_counter_ff, cont_counter_ff_next : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  
+  signal is_rdmode, is_rdmode_ff : boolean;
+  signal tx_isdata : std_logic;
+  signal gbt_data_counter   : std_logic_vector(31 downto 0);
 
   constant count_val_void : std_logic_vector(15 downto 0) := x"0f00";
   constant count_val_data : std_logic_vector(15 downto 0) := x"0f0a";
@@ -51,8 +57,11 @@ begin
   TX_Data_O <= TX_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
                TX_Data_I;
 
-  TX_IsData_O <= TX_IsData_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
+  TX_IsData_O <= tx_isdata;
+  tx_isdata   <= TX_IsData_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
                  TX_IsData_I;
+				 
+  gbt_data_counter_o <= gbt_data_counter;
 
   TX_data_gen <= cont_counter_ff;
 
@@ -63,11 +72,23 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
       if (FSM_Clocks_I.Reset_dclk = '1') then
+	  
         gen_counter_ff  <= (others => '0');
         cont_counter_ff <= (others => '0');
+        gbt_data_counter <= (others => '0');
+		
       else
+	  
+	    -- counting gbt words, reset by start of run and reset_data_counters
+	    is_rdmode <= Status_register_I.Readout_Mode /= mode_IDLE;
+		is_rdmode_ff <= is_rdmode;
+		if is_rdmode and not is_rdmode_ff then gbt_data_counter <= (others => '0');
+		elsif Control_register_I.reset_data_counters = '1' then  gbt_data_counter <= (others => '0');
+		elsif tx_isdata = '1' then gbt_data_counter <= gbt_data_counter + 1; end if;
+		
         gen_counter_ff  <= gen_counter_ff_next;
         cont_counter_ff <= cont_counter_ff_next;
+		
       end if;
     end if;
 
@@ -95,8 +116,8 @@ begin
 
   TX_generation <= x"00000000000000000000" when (FSM_Clocks_I.Reset_dclk = '1') else
                    x"00000000000000000000" when (gen_counter_ff < count_val_void) else
-                   data_word_cnst_SOP      when (gen_counter_ff = count_val_void) else
-                   data_word_cnst_EOP      when (gen_counter_ff = count_val_data+1) else
+                   x"10000000000000000000" when (gen_counter_ff = count_val_void) else
+                   x"20000000000000000000" when (gen_counter_ff = count_val_data+1) else
                    TX_data_gen;
                                         --x"123456789abcdef01234";
 

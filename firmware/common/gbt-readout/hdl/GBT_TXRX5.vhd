@@ -299,11 +299,6 @@ begin  --========####   Architecture Body   ####========--
       GBT_Status_O.gbtRx_Ready    <= from_gbtBank_gbtRx(1).ready;
       GBT_Status_O.gbtRx_ErrorDet <= from_gbtBank_gbtRx(1).rxErrorDetected;
 
-      GBT_Status_O.txWordClk      <= from_gbtBank_clks.mgt_clks.tx_wordClk(1);
-      GBT_Status_O.rxFrameClk     <= rxFrameClk_from_gbtBank_rxFrmClkPhAlgnr(1);
-      GBT_Status_O.rxWordClk      <= from_gbtBank_clks.mgt_clks.rx_wordClk(1);
-      GBT_Status_O.txOutClkFabric <= from_gbtBank_clks.mgt_clks.tx_outclkfabric(1);
-
       GBT_Status_O.mgt_phalin_cplllock <= pllLocked_from_gbtBank_rxFrmClkPhAlgnr(1);
 
       GBT_Status_O.rxWordClkReady  <= from_gbtBank_mgt.mgtLink(1).rxWordClkReady;

@@ -61,8 +61,8 @@ architecture Behavioral of FIT_GBT_IPBUS_control is
 	--  -|> Control_register_reg_dc -#-> Control_register_rdmap_dc  			   -|->  Control_register_rdmap_ipbclk -> IBBUS                          |
 	
 	signal Control_register_reg_map_ipbclk, Control_register_reg_dc : CONTROL_REGISTER_type;
-	signal	ipbus_control_reg, Control_register_rdmap_dc, Control_register_rdmap_ipbclk : cntr_reg_addrreg_type;
-	signal	ipbus_status_reg_map, ipbus_status_reg_map_dc, ipbus_status_reg_ipbclk : status_reg_addrreg_type;
+	signal	ipbus_control_reg, Control_register_rdmap_dc, Control_register_rdmap_ipbclk : ctrl_reg_t;
+	signal	ipbus_status_reg_map, ipbus_status_reg_map_dc, ipbus_status_reg_ipbclk : stat_reg_t;
 	signal ipbus_arrd_int : integer := 0;
 	signal ipbus_base_arrd_int : integer := 0;
 	
@@ -159,10 +159,10 @@ ipbus_base_arrd_int <= to_integer(unsigned(IPBUS_base_addr_I));
 			ELSIF(IPBUS_isrd_I = '1') THEN
 			
                 -- if(ipbus_ack = '1') then
-                    -- if(ipbus_arrd_int < cntr_reg_n_32word) then
+                    -- if(ipbus_arrd_int < ctrl_reg_size) then
                         -- ipbus_do <= Control_register_rdmap_ipbclk(ipbus_arrd_int);
                     -- else
-                        -- ipbus_do <= ipbus_status_reg_ipbclk(ipbus_arrd_int - cntr_reg_n_32word);
+                        -- ipbus_do <= ipbus_status_reg_ipbclk(ipbus_arrd_int - ctrl_reg_size);
                     -- end if;
                     
                 -- end if;
@@ -185,14 +185,14 @@ ipbus_base_arrd_int <= to_integer(unsigned(IPBUS_base_addr_I));
 -- FSM ***********************************************
 ipbus_err <= '0';
 ipbus_ack <='0' WHEN (IPBUS_rst_I = '1') ELSE
-			'1'		WHEN (IPBUS_isrd_I = '1') and (ipbus_arrd_int < (cntr_reg_n_32word + status_reg_n_32word) ) ELSE
-			'1'		WHEN (IPBUS_iswr_I = '1') and (ipbus_arrd_int < (cntr_reg_n_32word) ) ELSE
+			'1'		WHEN (IPBUS_isrd_I = '1') and (ipbus_arrd_int < (ctrl_reg_size + stat_reg_size) ) ELSE
+			'1'		WHEN (IPBUS_iswr_I = '1') and (ipbus_arrd_int < (ctrl_reg_size) ) ELSE
 			'0';
 			
 ipbus_do <= (others => '0') WHEN (IPBUS_rst_I = '1') ELSE
 			(others => '0') WHEN ( ipbus_ack = '0') ELSE
-			Control_register_rdmap_ipbclk(ipbus_arrd_int) WHEN (ipbus_arrd_int < cntr_reg_n_32word) ELSE
-			ipbus_status_reg_ipbclk(ipbus_arrd_int - cntr_reg_n_32word);
+			Control_register_rdmap_ipbclk(ipbus_arrd_int) WHEN (ipbus_arrd_int < ctrl_reg_size) ELSE
+			ipbus_status_reg_ipbclk(ipbus_arrd_int - ctrl_reg_size);
 			
 			
 end Behavioral;

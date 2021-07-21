@@ -249,7 +249,7 @@ begin
       else
 
         -- select data fifo max count 
-        if Control_register_I.reset_drophit_counter = '1' then
+        if Control_register_I.reset_data_counters = '1' then
           fifo_cnt_max <= (others => '0');
         else
           if fifo_cnt_max < slct_fifo_count_wr then fifo_cnt_max <= slct_fifo_count_wr; end if;
@@ -275,7 +275,7 @@ begin
       send_mode_sc_ff       <= send_mode_sc;
       send_trg_mode_sc      <= Status_register_I.Readout_Mode = mode_TRG;
       trigger_select_val_sc <= Control_register_I.trg_data_select;
-      reset_drop_cnt_sc     <= Control_register_I.reset_drophit_counter = '1';
+      reset_drop_cnt_sc     <= Control_register_I.reset_data_counters = '1';
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
         FSM_STATE                 <= s0_idle;
