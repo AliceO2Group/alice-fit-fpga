@@ -148,10 +148,6 @@ begin
       TX_IsData_I => is_data_from_cru_constructor,
       TX_Data_I   => data_from_cru_constructor,
 
-      RAWFIFO_data_word_I => (others => '0'),
-      RAWFIFO_Is_Empty_I  => '0',
-      RAWFIFO_RE_O        => open,
-
       TX_IsData_O => TX_IsData_O,
       TX_Data_O   => TX_Data_O
       );

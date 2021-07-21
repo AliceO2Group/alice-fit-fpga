@@ -21,14 +21,10 @@ entity TX_Data_Gen is
     FSM_Clocks_I : in FSM_Clocks_type;
 
     Control_register_I : in CONTROL_REGISTER_type;
-
     Status_register_I : in FIT_GBT_status_type;
-    TX_IsData_I      : in std_logic;
-    TX_Data_I        : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-
-    RAWFIFO_data_word_I : in  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-    RAWFIFO_Is_Empty_I  : in  std_logic;
-    RAWFIFO_RE_O        : out std_logic;
+	
+    TX_IsData_I       : in std_logic;
+    TX_Data_I         : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
     TX_IsData_O : out std_logic;
     TX_Data_O   : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0)
@@ -41,61 +37,24 @@ architecture Behavioral of TX_Data_Gen is
   signal Data_bypass          : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal TX_data_gen          : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal TX_IsData_generation : std_logic;
-  signal IsData_bypass        : std_logic;
 
-  signal data320to40fifo_empty : std_logic;
-  signal data320to40fifo_WREN  : std_logic;
-  signal data320to40fifo_RDEN  : std_logic;
-
-  signal gen_counter_ff, gen_counter_ff_next   : std_logic_vector(GEN_count_bitdepth-1 downto 0);
+  signal gen_counter_ff, gen_counter_ff_next   : std_logic_vector(15 downto 0);
   signal cont_counter_ff, cont_counter_ff_next : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal count_val_void, count_val_data        : std_logic_vector(GEN_count_bitdepth-1 downto 0);
 
--- signal rx_phase_latch : std_logic_vector(rx_phase_bitdepth-1 downto 0); 
-  attribute keep                    : string;
-  attribute keep of gen_counter_ff  : signal is "true";
-  attribute keep of cont_counter_ff : signal is "true";
+  constant count_val_void : std_logic_vector(15 downto 0) := x"0f00";
+  constant count_val_data : std_logic_vector(15 downto 0) := x"0f0a";
+
 
 
 begin
 
   TX_Data_O <= TX_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
-               Data_bypass when (Control_register_I.readout_bypass = '1') else
                TX_Data_I;
 
   TX_IsData_O <= TX_IsData_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
-                 IsData_bypass when (Control_register_I.readout_bypass = '1') else
                  TX_IsData_I;
 
--- TX_data_gen <= x"01231111" & Control_register_I.PAR & x"1111" & Control_register_I.FEE_ID;
-  TX_data_gen    <= cont_counter_ff;
-  count_val_void <= x"0f00";
-  count_val_data <= x"0f0a";
-
-
-
--- Slc_data_fifo =============================================
-  data320to40_fifo_comp : entity work.slct_data_fifo
-    port map(
-      wr_clk        => FSM_Clocks_I.System_Clk,
-      rd_clk        => FSM_Clocks_I.Data_Clk,
-      wr_data_count => open,
-      rst           => FSM_Clocks_I.Reset_sclk,
-      WR_EN         => data320to40fifo_WREN,
-      RD_EN         => data320to40fifo_RDEN,
-      DIN           => RAWFIFO_data_word_I,
-      DOUT          => Data_bypass,
-      FULL          => open,
-      EMPTY         => data320to40fifo_empty
-      );
-
-  data320to40fifo_WREN <= not RAWFIFO_Is_Empty_I;
-  data320to40fifo_RDEN <= not data320to40fifo_empty;
-  RAWFIFO_RE_O         <= not RAWFIFO_Is_Empty_I;
-  IsData_bypass        <= not data320to40fifo_empty;
--- ===========================================================
-
-
+  TX_data_gen <= cont_counter_ff;
 
 
 -- Data ff data clk **********************************
