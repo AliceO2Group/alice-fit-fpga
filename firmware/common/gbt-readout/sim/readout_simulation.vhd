@@ -216,8 +216,6 @@ begin
           hwrite(file_line, GBT_status_reg(ireg), left, 11);
         end loop;
         writeline(output_dat_file, file_line);
-        if  GBT_status_reg(11) /= x"00000000" then stop; end if;
-        if  GBT_status.data_gen_header /= x"00000000000000000000" then stop; end if;
 
 
       end if;

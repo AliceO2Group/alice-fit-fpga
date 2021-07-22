@@ -541,8 +541,7 @@ package body fit_gbt_common_package is
     status_reg_addrreg_sim(8)  := status_reg.ORBIT_from_CRU_corrected;
     status_reg_addrreg_sim(9)  := x"00000" & status_reg.BCID_from_CRU_corrected;
     status_reg_addrreg_sim(10) := status_reg.Trigger_from_CRU;
-    status_reg_addrreg_sim(11) := status_reg.data_gen_header(31 downto 0);
-    --status_reg_addrreg_sim(11) := x"AAAAFFFF";
+    status_reg_addrreg_sim(11) := func_FITDATAHD_orbit(status_reg.data_gen_header);
     status_reg_addrreg_sim(12) := x"00" & func_FITDATAHD_ndwords(status_reg.data_gen_header) & x"0" & func_FITDATAHD_bc(status_reg.data_gen_header);
     return status_reg_addrreg_sim;
   end function;

@@ -65,6 +65,8 @@ architecture Behavioral of Module_Data_Gen is
   signal bpattern_counter, bpattern_counter_sclk, bpattern_counter_next                    : integer := 0;
   signal cnt_packet_counter, cnt_packet_counter_next                                       : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0);  -- continious packet counter
   signal pword_counter, pword_counter_next                                                 : std_logic_vector(3 downto 0);
+  
+  signal data_gen_sim_sc : board_data_type;
 
 
 
@@ -78,7 +80,7 @@ begin
               Control_register_I.Data_Gen.bc_start - 1;
 
   Board_data_O      <= Board_data_gen_pipe(15) when (use_gen_sclk = use_MAIN_generator) else Board_data_in_ff;
-  data_gen_header_O <= Board_data_gen_pipe(15).data_word when Board_data_gen_pipe(15).is_header = '1' else (others=>'0');
+  data_gen_header_O <= data_gen_sim_sc.data_word when data_gen_sim_sc.is_header = '1' else (others=>'0');
 
 -- ***************************************************  
   Board_data_header.is_header <= '1';
@@ -180,7 +182,10 @@ begin
         is_packet_send_for_cntr_ff <= is_packet_send_for_cntr;
         cnt_packet_counter         <= cnt_packet_counter_next;
         wchannel_counter           <= wchannel_counter_next;
-
+		
+		-- latching header for simulation
+		if FSM_Clocks_I.System_Counter = x"2" then data_gen_sim_sc <= Board_data_gen_pipe(15); end if;
+		  
 
       end if;
     end if;
