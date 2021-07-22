@@ -14,7 +14,7 @@ CONFIG.Clock_Type_AXI                               string  false      Common_Cl
 CONFIG.Component_Name                               string  false      cntpck_fifo_comp
 CONFIG.DATA_WIDTH                                   string  false      64
 CONFIG.Data_Count                                   string  false      false
-CONFIG.Data_Count_Width                             string  false      7
+CONFIG.Data_Count_Width                             string  false      8
 CONFIG.Disable_Timing_Violations                    string  false      false
 CONFIG.Disable_Timing_Violations_AXI                string  false      false
 CONFIG.Dout_Reset_Value                             string  false      0
@@ -60,14 +60,14 @@ CONFIG.FIFO_Implementation_wdch                     string  false      Common_Cl
 CONFIG.FIFO_Implementation_wrch                     string  false      Common_Clock_Block_RAM
 CONFIG.Fifo_Implementation                          string  false      Independent_Clocks_Block_RAM
 CONFIG.Full_Flags_Reset_Value                       string  false      1
-CONFIG.Full_Threshold_Assert_Value                  string  false      127
+CONFIG.Full_Threshold_Assert_Value                  string  false      255
 CONFIG.Full_Threshold_Assert_Value_axis             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wrch             string  false      1023
-CONFIG.Full_Threshold_Negate_Value                  string  false      126
+CONFIG.Full_Threshold_Negate_Value                  string  false      254
 CONFIG.HAS_ACLKEN                                   string  false      false
 CONFIG.HAS_TKEEP                                    string  false      false
 CONFIG.HAS_TSTRB                                    string  false      false
@@ -87,8 +87,8 @@ CONFIG.Inject_Sbit_Error_rdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wach                       string  false      false
 CONFIG.Inject_Sbit_Error_wdch                       string  false      false
 CONFIG.Inject_Sbit_Error_wrch                       string  false      false
-CONFIG.Input_Data_Width                             string  false      160
-CONFIG.Input_Depth                                  string  false      128
+CONFIG.Input_Data_Width                             string  false      128
+CONFIG.Input_Depth                                  string  false      256
 CONFIG.Input_Depth_axis                             string  false      1024
 CONFIG.Input_Depth_rach                             string  false      16
 CONFIG.Input_Depth_rdch                             string  false      1024
@@ -100,8 +100,8 @@ CONFIG.MASTER_ACLK.INSERT_VIP                       string  false      0
 CONFIG.M_AXI.INSERT_VIP                             string  false      0
 CONFIG.M_AXIS.INSERT_VIP                            string  false      0
 CONFIG.Master_interface_Clock_enable_memory_mapped  string  false      false
-CONFIG.Output_Data_Width                            string  false      160
-CONFIG.Output_Depth                                 string  false      128
+CONFIG.Output_Data_Width                            string  false      128
+CONFIG.Output_Depth                                 string  false      256
 CONFIG.Output_Register_Type                         string  false      Embedded_Reg
 CONFIG.Overflow_Flag                                string  false      false
 CONFIG.Overflow_Flag_AXI                            string  false      false
@@ -157,7 +157,7 @@ CONFIG.Underflow_Sense_AXI                          string  false      Active_Hi
 CONFIG.Use_Dout_Reset                               string  false      true
 CONFIG.Use_Embedded_Registers                       string  false      false
 CONFIG.Use_Embedded_Registers_axis                  string  false      false
-CONFIG.Use_Extra_Logic                              string  false      true
+CONFIG.Use_Extra_Logic                              string  false      false
 CONFIG.Valid_Flag                                   string  false      false
 CONFIG.Valid_Sense                                  string  false      Active_High
 CONFIG.WRITE_CLK.FREQ_HZ                            string  false      100000000
