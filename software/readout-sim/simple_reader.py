@@ -9,7 +9,7 @@ ctrl_reg_in_file = open('simulation_inputs/simple_sig_inputs.txt', 'r')
 
 flines_status = list(status_reg_out_file)
 
-dynamic_status_reg = status_reg.status_reg_class()
+dynamic_status_reg = status_reg.status_reg()
 dynamic_status_reg.read_reg_line_hex(flines_status[30200])
 dynamic_status_reg.print_struct()
 

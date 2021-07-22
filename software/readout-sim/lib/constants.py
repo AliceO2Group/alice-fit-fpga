@@ -8,7 +8,12 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 '''
 
 # files path constants
-filename_ctrlreg = 'simulation_inputs/simple_sig_inputs.txt'
+# control register as simulation inputs
+filename_ctrlreg = 'sim_data/sim_in_ctrlreg.txt'
+# generated runs meta info
+filename_runmeta = 'sim_data/runmeta.pickle'
+# readout simulation ouput
+filename_simout = 'sim_data/sim_out_data.txt'
 
 # readout constants
 TRG_const_void = 0x00000000

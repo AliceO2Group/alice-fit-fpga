@@ -44,10 +44,8 @@ end testbench_readout;
 architecture behavior of testbench_readout is
 
   -- inputs file --------------------------------------
-  file input_reg_file               : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_inputs\simple_sig_inputs.txt";
-  file output_rd_file               : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_output.txt";
-  file output_rd_info_file          : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_gbt_info_output.txt";
-  file output_st_reg_file           : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\simulation_outputs\readout_status_reg_output.txt";
+  file input_reg_file               : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_in_ctrlreg.txt";
+  file output_dat_file               : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_out_data.txt";
   signal Control_register_from_file : ctrl_reg_t;
   -- ---------------------------------------------------
 
@@ -82,9 +80,6 @@ begin
   FSM_Clocks_signal.System_Clk     <= SYS_CLK;
   FSM_Clocks_signal.System_Counter <= x"0";
   FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
-
-  GBT_status_reg <= func_STATREG_getaddrreg_sim(GBT_status);
-
 
 
 -- FIT GBT project =====================================
@@ -172,14 +167,16 @@ begin
 
     -- reading / writing
     constant infile_num_col : integer := ctrl_reg_size*2;
-    variable infile_line    : line;
+    variable file_line    : line;
     type infile_data_type is array (integer range <>) of integer;
     variable data_from_file : infile_data_type(0 to infile_num_col-1);
-    variable outfile_line   : line;
     -- -----------------------------
 
   begin
     if (rising_edge(FSM_Clocks_signal.Data_Clk)) then
+    
+      GBT_status_reg <= func_STATREG_getaddrreg_sim(GBT_status);
+
 
       if(FSM_Clocks_signal.Reset_dclk = '1') then
 
@@ -196,9 +193,9 @@ begin
         -- reading control registers from file
         if(not endfile(input_reg_file)) then
 
-          readline(input_reg_file, infile_line);
+          readline(input_reg_file, file_line);
           for irow in 0 to infile_num_col-1 loop
-            read(infile_line, data_from_file(irow));
+            read(file_line, data_from_file(irow));
           end loop;
 
           for irow in 0 to ctrl_reg_size-1 loop
@@ -212,24 +209,15 @@ begin
           stop;
         end if;
 
-
-        -- writing readout outputs
-        if (IsData_from_FITrd = '1') then
-          outfile_line := "";
-          hwrite(outfile_line, Data_from_FITrd);
-          writeline(output_rd_file, outfile_line);
-
-          outfile_line := "";
-          hwrite(outfile_line, iter_num);
-          writeline(output_rd_info_file, outfile_line);
-        end if;
-
-        -- writing readout status
-        outfile_line := "";
+        -- writing simulation status
+        file_line := "";
+		hwrite(file_line, Data_from_FITrd, left, 23);
         for ireg in 0 to stat_reg_size_sim-1 loop
-          hwrite(outfile_line, GBT_status_reg(ireg), left, 11);
+          hwrite(file_line, GBT_status_reg(ireg), left, 11);
         end loop;
-        writeline(output_st_reg_file, outfile_line);
+        writeline(output_dat_file, file_line);
+        if  GBT_status_reg(11) /= x"00000000" then stop; end if;
+        if  GBT_status.data_gen_header /= x"00000000000000000000" then stop; end if;
 
 
       end if;

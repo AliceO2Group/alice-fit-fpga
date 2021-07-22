@@ -1,11 +1,14 @@
 '''
 
-Generate inputs for simulation
+Main function for generating inputs for readout simulation
 
 Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
+
+import copy
+import pickle
 
 import lib.constants as cnst
 from lib.control_reg import control_reg as ctrl_rec
@@ -18,6 +21,7 @@ def generate_sim_inputs():
     test_ctrl_reg = ctrl_rec()
     run_gen = run_generator(test_ctrl_reg)
     run_gen.reset_file()
+    run_list = []
 
     # common control registers parameters
     test_ctrl_reg.data_gen = gen_mode.main_gen
@@ -39,7 +43,7 @@ def generate_sim_inputs():
 
     # RENERATING RUN ========================================
     run_gen.run_comment = """
-        - CONTINIOuS RUN
+        - CONTINIOUS RUN
         - data in first RDH
         - 4 X 8 packets per orbit
            - no gaps
@@ -50,25 +54,55 @@ def generate_sim_inputs():
            - gap = 1
            - 0xFFAFFAA...
         """
-
     test_ctrl_reg.trg_rd_command = readout_cmd.continious
-
     test_ctrl_reg.bcid_offset = 0x0
-
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
     test_ctrl_reg.data_bunch_pattern = 0xFF010777
     test_ctrl_reg.data_bunch_freq = cnst.orbit_size / 4
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
-
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
     test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
     test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 4
-    test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size/2
-
+    test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
-
     run_gen.generate_ctrl_pattern(5)
+    run_list.append(copy.copy(run_gen))
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - TRIGGER RUN
+        - data in first RDH
+        - 4 X 8 packets per orbit
+           - no gaps
+           - lenght 16
+           - lenght 1
+        - 48 CLB triggers with data response
+           - without gaps
+           - gap = 1
+           - 0xFFAFFAA...
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.trigger
+    test_ctrl_reg.bcid_offset = 0x0
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0xFF010777
+    test_ctrl_reg.data_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    run_gen.generate_ctrl_pattern(5)
+    run_list.append(copy.copy(run_gen))
+
+    # print generated runs
+    for irun in run_list: irun.print_run_meta()
+
+    # saving run metadata
+    with open(cnst.filename_runmeta, 'wb') as f:
+        pickle.dump(run_list, f)
 
 
 if __name__ == '__main__':

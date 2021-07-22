@@ -168,7 +168,7 @@ package fit_gbt_common_package is
 
 -- ===== FIT GBT STATUS ========================================
   constant stat_reg_size     : integer := 8;
-  constant stat_reg_size_sim : integer := stat_reg_size+4;
+  constant stat_reg_size_sim : integer := stat_reg_size+5;
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
 
@@ -223,7 +223,7 @@ package fit_gbt_common_package is
     -- 6 - [Converter] header_fifo is not empty while start of run
     fsm_errors : std_logic_vector(15 downto 0);
 	
-    Data_gen_report : std_logic_vector(31 downto 0);  -- info of generated data; used only in simulation
+    data_gen_header : std_logic_vector(79 downto 0);  -- header of generated data; used only in simulation
 
   end record;
 
@@ -541,7 +541,9 @@ package body fit_gbt_common_package is
     status_reg_addrreg_sim(8)  := status_reg.ORBIT_from_CRU_corrected;
     status_reg_addrreg_sim(9)  := x"00000" & status_reg.BCID_from_CRU_corrected;
     status_reg_addrreg_sim(10) := status_reg.Trigger_from_CRU;
-    status_reg_addrreg_sim(11) := status_reg.Data_gen_report;
+    status_reg_addrreg_sim(11) := status_reg.data_gen_header(31 downto 0);
+    --status_reg_addrreg_sim(11) := x"AAAAFFFF";
+    status_reg_addrreg_sim(12) := x"00" & func_FITDATAHD_ndwords(status_reg.data_gen_header) & x"0" & func_FITDATAHD_bc(status_reg.data_gen_header);
     return status_reg_addrreg_sim;
   end function;
 -- ----------------------------------------------------------------

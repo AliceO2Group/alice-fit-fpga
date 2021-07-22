@@ -32,7 +32,7 @@ class gen_simulation_class:
 
         # main simulation loop -----------------------------------------------
         dyn_ctrl_reg = cntrl_reg.control_reg_class()
-        dyn_stat_reg = stat_reg.status_reg_class()
+        dyn_stat_reg = stat_reg.status_reg()
 
         curr_pos = 0
         while curr_pos < len(self.ctrl_data_list):

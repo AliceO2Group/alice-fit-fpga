@@ -8,9 +8,7 @@ build
 *.zip
 
 __pycache__
-simulation_inputs
-simulation_outputs
-test_data
+sim_data
 
 .idea
 venv

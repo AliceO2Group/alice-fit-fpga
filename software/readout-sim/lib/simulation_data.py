@@ -84,7 +84,7 @@ class simulation_data_class:
 
 
     def get_gen_lists(self):
-        dyn_stat_reg = stat_reg.status_reg_class()
+        dyn_stat_reg = stat_reg.status_reg()
 
         curr_pos = 5
         while curr_pos < len(self.status_data_list):
