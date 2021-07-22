@@ -56,7 +56,7 @@ architecture behavior of testbench_readout is
   constant ipbus_clock_period  : time      := 33.333 ns;
   signal RESET                 : std_logic := '0';
   signal SYS_CLK               : std_logic := '0';
-  signal DATA_CLK, DATA_CLK_ff : std_logic := '0';
+  signal DATA_CLK              : std_logic := '0';
   signal IPBUS_CLK             : std_logic := '0';
   signal GBT_RxFrameClk        : std_logic := '0';
   signal FSM_Clocks_signal     : FSM_Clocks_type;

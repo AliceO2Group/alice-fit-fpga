@@ -88,6 +88,10 @@ begin
 
   SLCTFIFO_RE_O <= slct_fifo_re;
   CNTPFIFO_RE_O <= cntpck_fifo_re;
+  
+  rdh_feeid <= Control_register_I.RDH_data.FEE_ID;
+  rdh_sysid <= Control_register_I.RDH_data.SYS_ID;
+  rdh_priority_bit <= Control_register_I.RDH_data.PRT_BIT;
 
   -- v6 ===================================================================================
   SOP_format(0) <= '0' & x"10000000000000000000";  -- SOP CRU

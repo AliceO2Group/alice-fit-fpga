@@ -97,7 +97,7 @@ package fit_gbt_common_package is
 
   type RDH_data_type is record
     FEE_ID  : std_logic_vector(15 downto 0);
-    SYS_ID  : std_logic_vector(15 downto 0);
+    SYS_ID  : std_logic_vector(7 downto 0);
     PRT_BIT : std_logic_vector(7 downto 0);
   end record;
 
@@ -145,7 +145,7 @@ package fit_gbt_common_package is
 
       RDH_data  => (
         FEE_ID  => x"0001",
-        SYS_ID  => x"ffff",
+        SYS_ID  => x"ff",
         PRT_BIT => x"00"
         ),
 
@@ -366,8 +366,8 @@ package body fit_gbt_common_package is
     cntr_reg_addrreg(7) := cntrl_reg.Trigger_Gen.bunch_freq & cntrl_reg.Data_Gen.bunch_freq;
     cntr_reg_addrreg(8) := x"0"&cntrl_reg.Trigger_Gen.bc_start & x"0"&cntrl_reg.Data_Gen.bc_start;
 
-    cntr_reg_addrreg(9)  := cntrl_reg.RDH_data.FEE_ID & cntrl_reg.RDH_data.SYS_ID;
-    cntr_reg_addrreg(10) := x"0000_00" & cntrl_reg.RDH_data.PRT_BIT;
+    cntr_reg_addrreg(9)  := cntrl_reg.RDH_data.PRT_BIT & cntrl_reg.RDH_data.SYS_ID & cntrl_reg.RDH_data.FEE_ID;
+    cntr_reg_addrreg(10) := x"0000_0000";
 
     cntr_reg_addrreg(11) := x"0000_0" & cntrl_reg.BCID_offset;
     cntr_reg_addrreg(12) := cntrl_reg.trg_data_select;
@@ -446,9 +446,9 @@ package body fit_gbt_common_package is
     cntr_reg.Trigger_Gen.bc_start   := cntrl_reg_addrreg(8)(27 downto 16);
     cntr_reg.Data_Gen.bc_start      := cntrl_reg_addrreg(8)(11 downto 0);
 
-    cntr_reg.RDH_data.FEE_ID  := cntrl_reg_addrreg(9)(31 downto 16);
-    cntr_reg.RDH_data.SYS_ID  := cntrl_reg_addrreg(9)(15 downto 0);
-    cntr_reg.RDH_data.PRT_BIT := cntrl_reg_addrreg(10)(7 downto 0);
+    cntr_reg.RDH_data.FEE_ID  := cntrl_reg_addrreg(9)(15 downto 0);
+    cntr_reg.RDH_data.SYS_ID  := cntrl_reg_addrreg(9)(23 downto 16);
+    cntr_reg.RDH_data.PRT_BIT := cntrl_reg_addrreg(9)(31 downto 24);
 
     cntr_reg.BCID_offset     := cntrl_reg_addrreg(11)(11 downto 0);
     cntr_reg.trg_data_select := cntrl_reg_addrreg(12)(31 downto 0);

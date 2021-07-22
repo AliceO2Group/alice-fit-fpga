@@ -11,10 +11,10 @@
 
 
 
-from lib.control_reg import control_reg_class as ctrl_rec_c
+from lib.control_reg import control_reg as ctrl_rec
 from lib.control_reg import gen_mode, readout_cmd
 
-test_ctrl_reg = ctrl_rec_c()
+test_ctrl_reg = ctrl_rec()
 
 test_ctrl_reg.data_gen = gen_mode.main_gen
 test_ctrl_reg.data_trg_respond_mask = 0xFAFA

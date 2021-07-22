@@ -1,5 +1,10 @@
 '''
+
 write / reading readout control registers
+
+Dmitry Finogeev dmitry.finogeev@cern.ch
+07/2021
+
 '''
 
 from aenum import Enum
@@ -21,7 +26,7 @@ class readout_cmd(Enum):
     trigger = 2
 
 
-class control_reg_class:
+class control_reg:
     def __init__(self):
         self.data_gen = gen_mode.no_gen
         self.data_trg_respond_mask = 0
@@ -119,8 +124,8 @@ class control_reg_class:
 
         bitarray.append(bitstring.pack('2*uint:16', self.trg_bunch_freq, self.data_bunch_freq))
         bitarray.append(bitstring.pack('2*uint:16', self.trg_bc_start, self.data_bc_start))
-        bitarray.append(bitstring.pack('2*uint:16', self.RDH_FEEID, self.RDH_SYS_ID))
-        bitarray.append(bitstring.pack('uint:24=0, uint:8', self.RDH_PRT_BIT))
+        bitarray.append(bitstring.pack('2*uint:8, uint:16', self.RDH_PRT_BIT, self.RDH_SYS_ID, self.RDH_FEEID))
+        bitarray.append(bitstring.pack('uint:32=0'))
         bitarray.append(bitstring.pack('uint:20=0, uint:12', self.bcid_offset))
         bitarray.append(bitstring.pack('uint:32', self.trg_data_select))
 
@@ -152,20 +157,19 @@ class control_reg_class:
         self.trg_bunch_freq = bitarray[7][-32:-16].uint
         self.data_bc_start = bitarray[8][-16:].uint
         self.trg_bc_start = bitarray[8][-32:-16].uint
-        self.RDH_SYS_ID = bitarray[9][-16:].uint
-        self.RDH_FEEID = bitarray[9][-32:-16].uint
-        self.RDH_PRT_BIT = bitarray[10][-8:].uint
+        self.RDH_SYS_ID = bitarray[9][-24:-16].uint
+        self.RDH_FEEID = bitarray[9][-16:].uint
+        self.RDH_PRT_BIT = bitarray[10][-32:-24].uint
         self.bcid_offset = bitarray[11][-12:].uint
         self.trg_data_select = bitarray[12][:].uint
 
     def get_reg_line_16(self):
-        print(self.get_reg())
         res_str = ""
         for ireg in self.get_reg():
             res_str += str(ireg[-32:-16].uint) + " " + str(ireg[-16:].uint) + " "
         return res_str
 
-    def set_reg_line_16(self, line="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"):
+    def set_reg_line_16(self, line):
         line_regs = line.split(" ")
         bitarray = []
         for ireg in range(0, len(line_regs) - 1, 2):

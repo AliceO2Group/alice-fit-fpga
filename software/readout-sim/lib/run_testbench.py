@@ -3,7 +3,7 @@
 import lib.control_reg as cntrl_reg
 import lib.RDH_data as rdh_data
 import lib.pylog as pylog
-import lib.readout_constants as rdconst
+import lib.constants as rdconst
 
 log = pylog.log
 
