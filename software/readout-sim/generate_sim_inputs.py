@@ -44,6 +44,34 @@ def generate_sim_inputs():
     # RENERATING RUN ========================================
     run_gen.run_comment = """
         - CONTINIOUS RUN
+        - DATA GEN TEST
+        - 2 packets per orbit
+           - no gaps
+           - lenght 16
+           - lenght 1
+        - 48 CLB triggers with data response
+           - without gaps
+           - gap = 1
+           - 0xFFAFFAA...
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0x50
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0xFF010777
+    test_ctrl_reg.data_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.data_bc_start = 0x100
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    run_gen.generate_ctrl_pattern(5)
+    run_list.append(copy.copy(run_gen))
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - CONTINIOUS RUN
         - data in first RDH
         - 4 X 8 packets per orbit
            - no gaps

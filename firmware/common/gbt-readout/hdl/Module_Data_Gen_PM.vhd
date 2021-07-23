@@ -32,55 +32,45 @@ end Module_Data_Gen;
 
 architecture Behavioral of Module_Data_Gen is
 
-  signal Board_data_gen_ff_next, Board_data_in_ff                                  : board_data_type;
-  signal Board_data_header, Board_data_header_sc, Board_data_data, Board_data_void : board_data_type;
+
+  -- data generator bunch pattern 
+  signal gen_sync_reset, gen_sync_reset_sc : boolean;
+  signal bc_start                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal bunch_freq                        : natural range 0 to 65535;
+  signal using_generator_sc                : boolean;
+
+  type packet_size_mask_t is array (0 to 7) of std_logic_vector(3 downto 0);
+  signal packet_size_mask                          : packet_size_mask_t;
+  signal packet_size_select, packet_size_select_sc : natural range 0 to 15;
+  signal data_gen_sim_sc                           : board_data_type;
+
+  -- fsm signals
+  signal bunch_counter                                                        : natural range 0 to 65535;
+  signal bunch_in_sync                                                        : boolean;
+  signal event_orbit, event_orbit_sc                                                          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal event_bc  , event_bc_sc                                                           : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal event_rx_ph                                                          : std_logic_vector(rx_phase_bitdepth-1 downto 0);
+  signal event_rx_ph_err                                                      : std_logic;
+  signal event_size                                                           : natural range 0 to 15;
+  signal word_counter                                                         : natural range 0 to 16;
+  signal cnt_packet_counter                                                   : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0);  -- continious packet counter
+  signal Board_data_header, Board_data_data, Board_data_void, data_gen_result : board_data_type;
+
 
   -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector
   type board_data_type_arr16 is array (0 to 15) of board_data_type;
   signal Board_data_gen_pipe : board_data_type_arr16;
 
 
-  signal Trigger_from_CRU_sclk : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- Trigger ID from CRUS
-
-  signal trigger_resp_mask_sclk      : std_logic_vector(Trigger_bitdepth-1 downto 0);
-  signal bunch_pattern               : std_logic_vector(31 downto 0);
-  signal bunch_freq, bunch_freq_ff01 : std_logic_vector(15 downto 0);
-  signal bc_start                    : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal reset_offset                : std_logic;
-  signal use_gen_sclk                : Type_Gen_use_type;
-
-  type n_words_in_packet_arr_type is array (0 to 8) of std_logic_vector(3 downto 0);
-  signal n_words_in_packet_mask, n_words_in_packet_mask_sclk          : n_words_in_packet_arr_type;
-  signal n_words_in_packet_send, n_words_in_packet_send_next          : std_logic_vector(3 downto 0);
-  signal n_words_in_packet_send_tcm                                   : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  signal wchannel_counter, wchannel_counter_w2, wchannel_counter_next : std_logic_vector(tdwords_bitdepth-1 downto 0);
-
-
-  type FSM_STATE_T is (s0_wait, s1_header, s2_data);
-  signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
-
-  signal is_packet_send_for_cntr, is_packet_send_for_cntr_ff, is_packet_send_for_cntr_next : std_logic;
-  signal bfreq_counter, bfreq_counter_next                                                 : std_logic_vector(15 downto 0);
-  signal is_boffset_sync, is_boffset_sync_next                                             : std_logic;
-  signal bpattern_counter, bpattern_counter_sclk, bpattern_counter_next                    : integer := 0;
-  signal cnt_packet_counter, cnt_packet_counter_next                                       : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0);  -- continious packet counter
-  signal pword_counter, pword_counter_next                                                 : std_logic_vector(3 downto 0);
-  
-  signal data_gen_sim_sc : board_data_type;
-
-
-
-
-
 begin
-  bunch_pattern <= Control_register_I.Data_Gen.bunch_pattern;
-  bunch_freq    <= Control_register_I.Data_Gen.bunch_freq;
-  reset_offset  <= Control_register_I.reset_gensync;
-  bc_start      <= x"deb" when Control_register_I.Data_Gen.bc_start = 0 else
-              Control_register_I.Data_Gen.bc_start - 1;
 
-  Board_data_O      <= Board_data_gen_pipe(15) when (use_gen_sclk = use_MAIN_generator) else Board_data_in_ff;
-  data_gen_header_O <= data_gen_sim_sc.data_word when data_gen_sim_sc.is_header = '1' else (others=>'0');
+  Board_data_O      <= Board_data_gen_pipe(15)   when using_generator_sc              else Board_data_I;
+  data_gen_header_O <= data_gen_sim_sc.data_word when data_gen_sim_sc.is_header = '1' else (others => '0');
+
+  gen_sync_reset <= Control_register_I.reset_gensync = '1';
+  bunch_freq     <= to_integer(unsigned(Control_register_I.Data_Gen.bunch_freq));
+  bc_start       <= x"deb" when Control_register_I.Data_Gen.bc_start = 0 else
+              Control_register_I.Data_Gen.bc_start - 1;
 
 -- ***************************************************  
   Board_data_header.is_header <= '1';
@@ -91,19 +81,15 @@ begin
   Board_data_void.is_header   <= '0';
   Board_data_void.is_data     <= '0';
 
-
-  n_words_in_packet_mask(0) <= bunch_pattern(3 downto 0);
-  n_words_in_packet_mask(1) <= bunch_pattern(7 downto 4);
-  n_words_in_packet_mask(2) <= bunch_pattern(11 downto 8);
-  n_words_in_packet_mask(3) <= bunch_pattern(15 downto 12);
-  n_words_in_packet_mask(4) <= bunch_pattern(19 downto 16);
-  n_words_in_packet_mask(5) <= bunch_pattern(23 downto 20);
-  n_words_in_packet_mask(6) <= bunch_pattern(27 downto 24);
-  n_words_in_packet_mask(7) <= bunch_pattern(31 downto 28);
-  n_words_in_packet_mask(8) <= (others => '0');
+  packet_size_mask(0) <= Control_register_I.Data_Gen.bunch_pattern(3 downto 0);
+  packet_size_mask(1) <= Control_register_I.Data_Gen.bunch_pattern(7 downto 4);
+  packet_size_mask(2) <= Control_register_I.Data_Gen.bunch_pattern(11 downto 8);
+  packet_size_mask(3) <= Control_register_I.Data_Gen.bunch_pattern(15 downto 12);
+  packet_size_mask(4) <= Control_register_I.Data_Gen.bunch_pattern(19 downto 16);
+  packet_size_mask(5) <= Control_register_I.Data_Gen.bunch_pattern(23 downto 20);
+  packet_size_mask(6) <= Control_register_I.Data_Gen.bunch_pattern(27 downto 24);
+  packet_size_mask(7) <= Control_register_I.Data_Gen.bunch_pattern(31 downto 28);
 -- ***************************************************
-
-
 
 -- Data ff data clk **********************************
   process (FSM_Clocks_I.Data_Clk)
@@ -112,130 +98,105 @@ begin
 
       if (FSM_Clocks_I.Reset_dclk = '1') then
 
-        bfreq_counter    <= (others => '0');
-        bpattern_counter <= 0;
-        is_boffset_sync  <= '0';
+        bunch_counter <= 0;
+        bunch_in_sync <= false;
+
       else
 
-        bfreq_counter    <= bfreq_counter_next;
-        bpattern_counter <= bpattern_counter_next;
-        is_boffset_sync  <= is_boffset_sync_next;
+        if (bunch_counter > 0) and (bunch_counter <= 8) then
+          packet_size_select <= to_integer(unsigned(packet_size_mask(bunch_counter-1)));
+        elsif ((Status_register_I.Trigger_from_CRU and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void) then
+          packet_size_select <= to_integer(unsigned(packet_size_mask(0)));
+        else packet_size_select <= 0; end if;
 
-        bunch_freq_ff01 <= bunch_freq;
+        -- bunch counter fsm
+        -- reset by gensync
+        if gen_sync_reset then bunch_counter                                                           <= 0;
+        -- start since bc_start and not in sync
+        elsif (not bunch_in_sync) and (Status_register_I.BCID_from_CRU = bc_start) then bunch_counter <= 1;
+        -- bunch_in_sync rised next cycle after sync, reset if not
+        elsif (not bunch_in_sync) then bunch_counter <= 0;
+        -- generator is off, counter max
+        elsif (bunch_freq = 0) or (bunch_counter = 65535) then bunch_counter                           <= 0;
+        -- counter cycle
+        elsif bunch_counter = bunch_freq-1 then bunch_counter                                            <= 0;
+        -- counter iteration
+        else bunch_counter                                                                             <= bunch_counter + 1; end if;
+
+        -- reset sync
+        if gen_sync_reset then bunch_in_sync                                                          <= false;
+        -- start sync when bc_start
+        elsif (not bunch_in_sync) and (Status_register_I.BCID_from_CRU = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) then bunch_in_sync <= true; end if;
+		
+		-- Event id latched to match fired bc
+		    event_orbit        <= Status_register_I.ORBIT_from_CRU_corrected;
+          event_bc           <= Status_register_I.BCID_from_CRU_corrected;
+
+
+
       end if;
+
     end if;
 
   end process;
 -- ***************************************************
-
-  bfreq_counter_next <= (others => '0') when (bfreq_counter = bunch_freq-1) else
-                        (others => '0') when (bunch_freq = 0) else
-                        (others => '0') when (is_boffset_sync = '0') else
-                        x"0001"         when (Status_register_I.BCID_from_CRU = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) else
-                        bfreq_counter + 1;
-
-  is_boffset_sync_next <= '0' when (reset_offset = '1') else
-                          '1' when (is_boffset_sync = '0') and (Status_register_I.BCID_from_CRU = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) else
-                          is_boffset_sync;
-
-  bpattern_counter_next <= 0 when (bfreq_counter = bunch_freq-1) else
-                           8 when (is_boffset_sync = '0') else
-                           8 when (bpattern_counter = 8) else
-                           bpattern_counter + 1;
 
 -- Data ff system clk **********************************
   process (FSM_Clocks_I.System_Clk)
   begin
 
     if(rising_edge(FSM_Clocks_I.System_Clk))then
-      bpattern_counter_sclk       <= bpattern_counter;
-      n_words_in_packet_mask_sclk <= n_words_in_packet_mask;
-      Trigger_from_CRU_sclk       <= Status_register_I.Trigger_from_CRU;
-      trigger_resp_mask_sclk      <= Control_register_I.Data_Gen.trigger_resp_mask;
-      use_gen_sclk                <= Control_register_I.Data_Gen.usage_generator;
-      Board_data_header_sc        <= Board_data_header;
 
 
       if (FSM_Clocks_I.Reset_sclk = '1') then
-        Board_data_in_ff    <= Board_data_void;
+
+        word_counter        <= 16;
         Board_data_gen_pipe <= (others => Board_data_void);
-
-        FSM_STATE              <= s0_wait;
-        pword_counter          <= (others => '0');
-        n_words_in_packet_send <= (others => '0');
-        wchannel_counter       <= (others => '0');
-
-        is_packet_send_for_cntr    <= '0';
-        is_packet_send_for_cntr_ff <= '0';
-        cnt_packet_counter         <= (others => '0');
+        using_generator_sc  <= false;
+        gen_sync_reset_sc   <= gen_sync_reset;
+        cnt_packet_counter  <= (others => '0');
 
       else
-        Board_data_in_ff             <= Board_data_I;
-        Board_data_gen_pipe(0)       <= Board_data_gen_ff_next;
+
+        packet_size_select_sc <= packet_size_select;
+        using_generator_sc    <= Control_register_I.Data_Gen.usage_generator = use_MAIN_generator;
+
+        Board_data_gen_pipe(0)       <= data_gen_result;
         Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
 
-        FSM_STATE              <= FSM_STATE_NEXT;
-        pword_counter          <= pword_counter_next;
-        n_words_in_packet_send <= n_words_in_packet_send_next;
+        -- latching header for simulation
+        if FSM_Clocks_I.System_Counter = x"3" then data_gen_sim_sc <= Board_data_gen_pipe(15); end if;
 
-        is_packet_send_for_cntr    <= is_packet_send_for_cntr_next;
-        is_packet_send_for_cntr_ff <= is_packet_send_for_cntr;
-        cnt_packet_counter         <= cnt_packet_counter_next;
-        wchannel_counter           <= wchannel_counter_next;
-		
-		-- latching header for simulation
-		if FSM_Clocks_I.System_Counter = x"2" then data_gen_sim_sc <= Board_data_gen_pipe(15); end if;
-		  
+        -- start event
+        if (FSM_Clocks_I.System_Counter = x"1") and (word_counter = 16 or word_counter = event_size) and (packet_size_select_sc > 0) then
+          event_size         <= packet_size_select_sc;
+          event_orbit_sc        <= event_orbit;
+          event_bc_sc           <= event_bc;
+          event_rx_ph        <= Status_register_I.rx_phase;
+          event_rx_ph_err    <= Status_register_I.GBT_status.Rx_Phase_error;
+          word_counter       <= 0;
+          cnt_packet_counter <= cnt_packet_counter + 1;
+        -- not sending
+        elsif word_counter = 16 then word_counter         <= 16;
+        -- stop event
+        elsif word_counter = event_size then word_counter <= 16;
+        -- sending event
+        else word_counter                                 <= word_counter +1; end if;
+
+        -- reset packet counter
+        if gen_sync_reset_sc then cnt_packet_counter <= (others => '0'); end if;
 
       end if;
     end if;
 
   end process;
 -- ***************************************************
+  Board_data_data.data_word   <= std_logic_vector(to_unsigned(event_size*2, tdwords_bitdepth)) & cnt_packet_counter & std_logic_vector(to_unsigned(event_size*2+1, tdwords_bitdepth)) & cnt_packet_counter;
+  Board_data_header.data_word <= func_FITDATAHD_get_header(std_logic_vector(to_unsigned(event_size, 8)), event_orbit_sc, event_bc_sc, event_rx_ph, event_rx_ph_err, '0');
 
-  n_words_in_packet_send_tcm <= x"0" & n_words_in_packet_send(2 downto 0) & "1";
-
-
-  cnt_packet_counter_next <= cnt_packet_counter + 1 when (is_packet_send_for_cntr = '1') and (is_packet_send_for_cntr_ff = '0') else
-                             cnt_packet_counter;
-
-  pword_counter_next <= (others => '0') when (FSM_STATE = s0_wait) else
-                        (others => '0') when (FSM_STATE = s1_header) else
-                        pword_counter + 1;
-
-  FSM_STATE_NEXT <= s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-                    s1_header when (FSM_STATE = s0_wait) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) and n_words_in_packet_mask_sclk(0) > 0 else
-                    s2_data   when (FSM_STATE = s1_header) else
-                    s2_data   when (FSM_STATE = s2_data) and (n_words_in_packet_send > pword_counter_next) else
-
-                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and (n_words_in_packet_mask_sclk(bpattern_counter_sclk) > 0) else
-                    s1_header when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) and (FSM_Clocks_I.System_Counter = x"1") and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) else
-
-                    s0_wait when (FSM_STATE = s2_data) and (n_words_in_packet_send = pword_counter_next) else
-                    s0_wait;
-
-  is_packet_send_for_cntr_next <= '1' when (FSM_STATE = s2_data) and (FSM_STATE_NEXT = s0_wait) else
-                                  '0' when (FSM_Clocks_I.System_Counter = x"1") else
-                                  is_packet_send_for_cntr;
-
-  n_words_in_packet_send_next <= n_words_in_packet_mask_sclk(0) when (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) and ((Trigger_from_CRU_sclk and trigger_resp_mask_sclk) /= TRG_const_void) else
-                                 n_words_in_packet_mask_sclk(bpattern_counter_sclk) when (FSM_STATE = s0_wait) and (FSM_STATE_NEXT = s1_header) else
-                                 n_words_in_packet_send;
-
-  wchannel_counter_next <= x"1" when (FSM_STATE = s0_wait) else
-                           x"1" when (FSM_STATE = s1_header) else
-                           wchannel_counter + x"2";
-
-  wchannel_counter_w2       <= wchannel_counter + 1;
-  Board_data_data.data_word <= wchannel_counter & cnt_packet_counter & wchannel_counter_w2 & cnt_packet_counter;
-  Board_data_header.data_word <= func_FITDATAHD_get_header(x"0"&n_words_in_packet_send, Status_register_I.ORBIT_from_CRU_corrected,
-                                                           Status_register_I.BCID_from_CRU_corrected, Status_register_I.rx_phase,
-                                                           Status_register_I.GBT_status.Rx_Phase_error, '0');
-
-  Board_data_gen_ff_next <= Board_data_void when (FSM_STATE = s0_wait) else
-                            Board_data_header when (FSM_STATE = s1_header) else
-                            Board_data_data   when (FSM_STATE = s2_data) else
-                            Board_data_void;
+  data_gen_result <= Board_data_void when (word_counter = 16) else
+                     Board_data_header when (word_counter = 0) else
+                     Board_data_data;
 
 
 end Behavioral;

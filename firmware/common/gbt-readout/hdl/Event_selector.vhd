@@ -96,7 +96,7 @@ architecture Behavioral of Event_selector is
 
   signal header_fifo_rd, data_fifo_rd         : std_logic;
   signal word_counter                         : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  signal rdh_size_counter, rdh_size_counter_actual, rdh_packet_counter : natural;
+  signal rdh_size_counter, rdh_size_counter_actual, rdh_packet_counter : natural range 0 to max_rdh_size+2;
 
   signal rdh_trigger : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal rdh_orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
