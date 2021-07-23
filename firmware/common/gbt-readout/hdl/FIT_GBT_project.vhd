@@ -213,7 +213,7 @@ begin
       Board_data_I => Board_data_I,
       Board_data_O => Board_data_from_main_gen,
 
-      data_gen_header_O => FIT_GBT_STATUS.data_gen_header
+      datagen_report_o => FIT_GBT_STATUS.datagen_report
       );
 -- =====================================================
 

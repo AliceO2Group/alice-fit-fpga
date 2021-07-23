@@ -26,7 +26,7 @@ entity Module_Data_Gen is
 
     Board_data_I      : in  board_data_type;
     Board_data_O      : out board_data_type;
-    data_gen_header_O : out std_logic_vector(79 downto 0)
+    datagen_report_o    : out Type_datagen_report
     );
 end Module_Data_Gen;
 
@@ -42,7 +42,6 @@ architecture Behavioral of Module_Data_Gen is
   type packet_size_mask_t is array (0 to 7) of std_logic_vector(3 downto 0);
   signal packet_size_mask                          : packet_size_mask_t;
   signal packet_size_select, packet_size_select_sc : natural range 0 to 15;
-  signal data_gen_sim_sc                           : board_data_type;
 
   -- fsm signals
   signal bunch_counter                                                        : natural range 0 to 65535;
@@ -55,6 +54,7 @@ architecture Behavioral of Module_Data_Gen is
   signal word_counter                                                         : natural range 0 to 16;
   signal cnt_packet_counter                                                   : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0);  -- continious packet counter
   signal Board_data_header, Board_data_data, Board_data_void, data_gen_result : board_data_type;
+  signal datagen_report    : Type_datagen_report;
 
 
   -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector
@@ -65,7 +65,6 @@ architecture Behavioral of Module_Data_Gen is
 begin
 
   Board_data_O      <= Board_data_gen_pipe(15)   when using_generator_sc              else Board_data_I;
-  data_gen_header_O <= data_gen_sim_sc.data_word when data_gen_sim_sc.is_header = '1' else (others => '0');
 
   gen_sync_reset <= Control_register_I.reset_gensync = '1';
   bunch_freq     <= to_integer(unsigned(Control_register_I.Data_Gen.bunch_freq));
@@ -155,6 +154,12 @@ begin
         using_generator_sc  <= false;
         gen_sync_reset_sc   <= gen_sync_reset;
         cnt_packet_counter  <= (others => '0');
+        
+        datagen_report.orbit <= (others => '0');
+		  datagen_report.bc <= (others => '0');
+		  datagen_report.size <= (others => '0');
+		  datagen_report.packet_num <= (others => '0');
+
 
       else
 
@@ -163,9 +168,12 @@ begin
 
         Board_data_gen_pipe(0)       <= data_gen_result;
         Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
-
-        -- latching header for simulation
-        if FSM_Clocks_I.System_Counter = x"3" then data_gen_sim_sc <= Board_data_gen_pipe(15); end if;
+		
+		        datagen_report.orbit <= (others => '0');
+		  datagen_report.bc <= (others => '0');
+		  datagen_report.size <= (others => '0');
+		  datagen_report.packet_num <= (others => '0');
+if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report; end if;
 
         -- start event
         if (FSM_Clocks_I.System_Counter = x"1") and (word_counter = 16 or word_counter = event_size) and (packet_size_select_sc > 0) then
@@ -176,6 +184,12 @@ begin
           event_rx_ph_err    <= Status_register_I.GBT_status.Rx_Phase_error;
           word_counter       <= 0;
           cnt_packet_counter <= cnt_packet_counter + 1;
+		  
+		  datagen_report.orbit <= event_orbit;
+		  datagen_report.bc <= event_bc;
+		  datagen_report.size <= std_logic_vector(to_unsigned(packet_size_select_sc, 8));
+		  datagen_report.packet_num <= cnt_packet_counter + 1;
+		  
         -- not sending
         elsif word_counter = 16 then word_counter         <= 16;
         -- stop event

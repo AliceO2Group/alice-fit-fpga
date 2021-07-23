@@ -28,7 +28,7 @@ def generate_sim_inputs():
 
     # read simulation outputs
     sim_run = run_reader(run_list[1])
-    for i in sim_run.gbt_data: print(hex(i))
+    sim_run.print_run_info()
 
 
 

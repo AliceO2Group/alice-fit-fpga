@@ -26,6 +26,7 @@ use ieee.std_logic_unsigned.all;
 package fit_gbt_common_package is
 
 
+
 -- signal size constants ---------------------------------------
   constant GBT_data_word_bitdepth : integer := 80;
   constant GBT_slowcntr_bitdepth  : integer := 4;
@@ -107,18 +108,18 @@ package fit_gbt_common_package is
 
     readout_bypass  : std_logic;
     is_hb_response  : std_logic;
-    force_idle : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
+    force_idle      : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
     BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
-    reset_orbc_sync       : std_logic;  -- sync ORBIT, BC to CRU
-    reset_data_counters : std_logic;  -- reset FIFO statistic
-    reset_gensync      : std_logic;  -- reset generators offset
-    reset_gbt_rxerror     : std_logic;  -- reset gbt rx error bit
-    reset_rxph_error      : std_logic;  -- reset gbt phase error
-    reset_readout         : std_logic;  -- reset readout fsm
-    reset_gbt             : std_logic;  -- reset gbt
+    reset_orbc_sync     : std_logic;    -- sync ORBIT, BC to CRU
+    reset_data_counters : std_logic;    -- reset FIFO statistic
+    reset_gensync       : std_logic;    -- reset generators offset
+    reset_gbt_rxerror   : std_logic;    -- reset gbt rx error bit
+    reset_rxph_error    : std_logic;    -- reset gbt phase error
+    reset_readout       : std_logic;    -- reset readout fsm
+    reset_gbt           : std_logic;    -- reset gbt
 
   end record;
 
@@ -153,14 +154,14 @@ package fit_gbt_common_package is
 
       BCID_offset => x"01f",
 
-      reset_orbc_sync       => '0',
+      reset_orbc_sync     => '0',
       reset_data_counters => '0',
-      reset_gensync      => '0',
-      reset_gbt_rxerror     => '0',
-      reset_readout         => '0',
-      reset_gbt             => '0',
-      reset_rxph_error      => '0',
-      force_idle            => '0'
+      reset_gensync       => '0',
+      reset_gbt_rxerror   => '0',
+      reset_readout       => '0',
+      reset_gbt           => '0',
+      reset_rxph_error    => '0',
+      force_idle          => '0'
       );
 -- =============================================================
 
@@ -187,9 +188,18 @@ package fit_gbt_common_package is
     Rx_Phase_error : std_logic;         --reg bit 9
   end record;
 
+  type Type_datagen_report is record
+    orbit      : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+    bc         : std_logic_vector(BC_id_bitdepth-1 downto 0);
+    size       : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+    packet_num : std_logic_vector(35 downto 0);
+  end record;
+
 
   type FIT_GBT_status_type is record
     GBT_status       : Type_GBT_status;
+    datagen_report   : Type_datagen_report;  -- header of generated data; used only in simulation
+	
     Readout_Mode     : Type_Readout_Mode;
     CRU_Readout_Mode : Type_Readout_Mode;
     BCIDsync_Mode    : Type_BCIDsync_Mode;
@@ -202,15 +212,15 @@ package fit_gbt_common_package is
     BCID_from_CRU_corrected  : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
     ORBIT_from_CRU_corrected : std_logic_vector(Orbit_id_bitdepth-1 downto 0);  -- ORBIT from CRUS
 
-    rx_phase   : std_logic_vector(rx_phase_bitdepth-1 downto 0);
-	cnv_fifo_max : std_logic_vector(15 downto 0);
-	cnv_drop_cnt : std_logic_vector(15 downto 0);
-	sel_fifo_max : std_logic_vector(15 downto 0);
-	sel_drop_cnt : std_logic_vector(15 downto 0);
-	gbt_data_cnt : std_logic_vector(31 downto 0);
-	
-	
-	
+    rx_phase     : std_logic_vector(rx_phase_bitdepth-1 downto 0);
+    cnv_fifo_max : std_logic_vector(15 downto 0);
+    cnv_drop_cnt : std_logic_vector(15 downto 0);
+    sel_fifo_max : std_logic_vector(15 downto 0);
+    sel_drop_cnt : std_logic_vector(15 downto 0);
+    gbt_data_cnt : std_logic_vector(31 downto 0);
+
+
+
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data
     -- 1 - [Selector] slct_fifo is not empty when run starts
@@ -220,9 +230,6 @@ package fit_gbt_common_package is
     -- 5 - [Converter] data_fifo is not empty while start of run
     -- 6 - [Converter] header_fifo is not empty while start of run
     fsm_errors : std_logic_vector(15 downto 0);
-	
-    data_gen_header : std_logic_vector(79 downto 0);  -- header of generated data; used only in simulation
-
   end record;
 
   constant test_gbt_status_void : Type_GBT_status :=
@@ -422,13 +429,13 @@ package body fit_gbt_common_package is
     cntr_reg.readout_bypass := cntrl_reg_addrreg(0)(21);
     cntr_reg.force_idle     := cntrl_reg_addrreg(0)(22);
 
-    cntr_reg.reset_orbc_sync       := cntrl_reg_addrreg(0)(8);
+    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
     cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
-    cntr_reg.reset_gensync      := cntrl_reg_addrreg(0)(10);
-    cntr_reg.reset_gbt_rxerror     := cntrl_reg_addrreg(0)(11);
-    cntr_reg.reset_gbt             := cntrl_reg_addrreg(0)(12);
-    cntr_reg.reset_rxph_error      := cntrl_reg_addrreg(0)(13);
-    cntr_reg.reset_readout         := cntrl_reg_addrreg(0)(14);
+    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
+    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
+    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
+    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
+    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
 
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
@@ -535,12 +542,13 @@ package body fit_gbt_common_package is
     for i in 0 to stat_reg_size-1 loop
       status_reg_addrreg_sim(i) := status_reg_addrreg(i);
     end loop;
-    
+
     status_reg_addrreg_sim(8)  := status_reg.ORBIT_from_CRU_corrected;
     status_reg_addrreg_sim(9)  := x"00000" & status_reg.BCID_from_CRU_corrected;
     status_reg_addrreg_sim(10) := status_reg.Trigger_from_CRU;
-    status_reg_addrreg_sim(11) := func_FITDATAHD_orbit(status_reg.data_gen_header);
-    status_reg_addrreg_sim(12) := x"00" & func_FITDATAHD_ndwords(status_reg.data_gen_header) & x"0" & func_FITDATAHD_bc(status_reg.data_gen_header);
+    status_reg_addrreg_sim(11) := status_reg.datagen_report.orbit;
+    status_reg_addrreg_sim(12) := x"00" & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
+    --packet_num
     return status_reg_addrreg_sim;
   end function;
 -- ----------------------------------------------------------------
