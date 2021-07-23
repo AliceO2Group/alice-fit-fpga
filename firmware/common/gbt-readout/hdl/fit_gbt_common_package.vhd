@@ -88,7 +88,6 @@ package fit_gbt_common_package is
   type Trigger_Gen_CONTROL_type is record
     usage_generator    : Type_trgGen_use_type;
     Readout_command    : Readout_command_type;
-    trigger_single_val : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- send this trigger (once then moved from 0->1)
     trigger_pattern    : std_logic_vector(63 downto 0);  -- trigger pattern 32 BC lenght
     trigger_cont_value : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- trigger that sendign continious
     bunch_freq         : std_logic_vector(15 downto 0);  -- trigger frequency
@@ -136,7 +135,6 @@ package fit_gbt_common_package is
       Trigger_Gen          => (
         usage_generator    => use_CONT_generator,
         Readout_command    => idle,
-        trigger_single_val => x"00000000",
         trigger_pattern    => x"0000000080000000",
         trigger_cont_value => TRG_const_Ph,
         bunch_freq         => x"0deb",
@@ -359,7 +357,7 @@ package body fit_gbt_common_package is
 
     cntr_reg_addrreg(1) := cntrl_reg.Data_Gen.trigger_resp_mask;
     cntr_reg_addrreg(2) := cntrl_reg.Data_Gen.bunch_pattern;
-    cntr_reg_addrreg(3) := cntrl_reg.Trigger_Gen.trigger_single_val;
+    -- reg3 is empty
     cntr_reg_addrreg(4) := cntrl_reg.Trigger_Gen.trigger_pattern(63 downto 32);
     cntr_reg_addrreg(5) := cntrl_reg.Trigger_Gen.trigger_pattern(31 downto 0);
     cntr_reg_addrreg(6) := cntrl_reg.Trigger_Gen.trigger_cont_value;
@@ -435,7 +433,7 @@ package body fit_gbt_common_package is
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);
-    cntr_reg.Trigger_Gen.trigger_single_val            := cntrl_reg_addrreg(3);
+    -- reg3 is empty
     cntr_reg.Trigger_Gen.trigger_pattern(63 downto 32) := cntrl_reg_addrreg(4);
     cntr_reg.Trigger_Gen.trigger_pattern(31 downto 0)  := cntrl_reg_addrreg(5);
     cntr_reg.Trigger_Gen.trigger_cont_value            := cntrl_reg_addrreg(6);

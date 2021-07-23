@@ -36,7 +36,6 @@ class control_reg:
 
         self.trg_gen = gen_mode.no_gen
         self.trg_rd_command = readout_cmd.idle
-        self.trg_single_val = 0
         self.trg_pattern_0 = 0
         self.trg_pattern_1 = 0
         self.trg_cont_val = 0
@@ -117,7 +116,7 @@ class control_reg:
                            reset_field.int, self.trg_gen.value, self.data_gen.value))
         bitarray.append(bitstring.pack('uint:32', self.data_trg_respond_mask))
         bitarray.append(bitstring.pack('uint:32', self.data_bunch_pattern))
-        bitarray.append(bitstring.pack('uint:32', self.trg_single_val))
+        bitarray.append(bitstring.pack('uint:32=0'))
         bitarray.append(bitstring.pack('uint:32', self.trg_pattern_1))
         bitarray.append(bitstring.pack('uint:32', self.trg_pattern_0))
         bitarray.append(bitstring.pack('uint:32', self.trg_cont_val))
@@ -149,7 +148,6 @@ class control_reg:
 
         self.data_trg_respond_mask = bitarray[1][:].uint
         self.data_bunch_pattern = bitarray[2][:].uint
-        self.trg_single_val = bitarray[3][:].uint
         self.trg_pattern_1 = bitarray[4][:].uint
         self.trg_pattern_0 = bitarray[5][:].uint
         self.trg_cont_val = bitarray[6][:].uint
