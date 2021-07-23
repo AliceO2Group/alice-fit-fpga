@@ -47,8 +47,8 @@ architecture Behavioral of Module_Data_Gen is
   -- fsm signals
   signal bunch_counter                                                        : natural range 0 to 65535;
   signal bunch_in_sync                                                        : boolean;
-  signal event_orbit, event_orbit_sc                                                          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal event_bc  , event_bc_sc                                                           : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal event_orbit, event_orbit_sc                                          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal event_bc, event_bc_sc                                                : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal event_rx_ph                                                          : std_logic_vector(rx_phase_bitdepth-1 downto 0);
   signal event_rx_ph_err                                                      : std_logic;
   signal event_size                                                           : natural range 0 to 15;
@@ -111,26 +111,26 @@ begin
 
         -- bunch counter fsm
         -- reset by gensync
-        if gen_sync_reset then bunch_counter                                                           <= 0;
+        if gen_sync_reset then bunch_counter                                                          <= 0;
         -- start since bc_start and not in sync
         elsif (not bunch_in_sync) and (Status_register_I.BCID_from_CRU = bc_start) then bunch_counter <= 1;
         -- bunch_in_sync rised next cycle after sync, reset if not
-        elsif (not bunch_in_sync) then bunch_counter <= 0;
+        elsif (not bunch_in_sync) then bunch_counter                                                  <= 0;
         -- generator is off, counter max
-        elsif (bunch_freq = 0) or (bunch_counter = 65535) then bunch_counter                           <= 0;
+        elsif (bunch_freq = 0) or (bunch_counter = 65535) then bunch_counter                          <= 0;
         -- counter cycle
-        elsif bunch_counter = bunch_freq-1 then bunch_counter                                            <= 0;
+        elsif bunch_counter = bunch_freq-1 then bunch_counter                                         <= 0;
         -- counter iteration
-        else bunch_counter                                                                             <= bunch_counter + 1; end if;
+        else bunch_counter                                                                            <= bunch_counter + 1; end if;
 
         -- reset sync
-        if gen_sync_reset then bunch_in_sync                                                          <= false;
+        if gen_sync_reset then bunch_in_sync                                                                                                            <= false;
         -- start sync when bc_start
         elsif (not bunch_in_sync) and (Status_register_I.BCID_from_CRU = bc_start) and (Status_register_I.BCIDsync_Mode = mode_SYNC) then bunch_in_sync <= true; end if;
-		
-		-- Event id latched to match fired bc
-		    event_orbit        <= Status_register_I.ORBIT_from_CRU_corrected;
-          event_bc           <= Status_register_I.BCID_from_CRU_corrected;
+
+        -- Event id latched to match fired bc
+        event_orbit <= Status_register_I.ORBIT_from_CRU_corrected;
+        event_bc    <= Status_register_I.BCID_from_CRU_corrected;
 
 
 
@@ -170,8 +170,8 @@ begin
         -- start event
         if (FSM_Clocks_I.System_Counter = x"1") and (word_counter = 16 or word_counter = event_size) and (packet_size_select_sc > 0) then
           event_size         <= packet_size_select_sc;
-          event_orbit_sc        <= event_orbit;
-          event_bc_sc           <= event_bc;
+          event_orbit_sc     <= event_orbit;
+          event_bc_sc        <= event_bc;
           event_rx_ph        <= Status_register_I.rx_phase;
           event_rx_ph_err    <= Status_register_I.GBT_status.Rx_Phase_error;
           word_counter       <= 0;

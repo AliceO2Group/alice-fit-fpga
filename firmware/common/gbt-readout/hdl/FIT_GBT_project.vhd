@@ -219,7 +219,7 @@ begin
 
 
 -- CRU ORBC GENERATOR ==================================
-  CRU_ORBC_Gen_comp : entity work.CRU_ORBC_Gen
+  cru_ltu_emu_comp : entity work.cru_ltu_emu
 
     port map(
       FSM_Clocks_I => FSM_Clocks,

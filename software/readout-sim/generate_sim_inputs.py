@@ -60,7 +60,7 @@ def generate_sim_inputs():
     test_ctrl_reg.data_bunch_pattern = 0xFF010777
     test_ctrl_reg.data_bunch_freq = cnst.orbit_size
     test_ctrl_reg.data_bc_start = 0x100
-    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
     test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
     test_ctrl_reg.trg_bunch_freq = cnst.orbit_size

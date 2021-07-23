@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="216566731fs"></ZoomStartTime>
-      <ZoomEndTime time="217867732fs"></ZoomEndTime>
-      <Cursor1Time time="216850898fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2602000001fs"></ZoomEndTime>
+      <Cursor1Time time="2316722474fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="364"></NameColumnWidth>
       <ValueColumnWidth column_width="171"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="6" />
+   <WVObjectSize size="7" />
    <wave_markers>
       <marker time="3741300838" label="" />
    </wave_markers>
@@ -55,10 +55,134 @@
          <obj_property name="isExpanded"></obj_property>
       </wvobject>
    </wvobject>
+   <wvobject fp_name="group235" type="group">
+      <obj_property name="label">RXGENERATOR</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_pattern" type="array">
+         <obj_property name="ElementShortName">.trigger_pattern[63:0]</obj_property>
+         <obj_property name="ObjectShortName">.trigger_pattern[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_cont_value" type="array">
+         <obj_property name="ElementShortName">.trigger_cont_value[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.trigger_cont_value[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.bunch_freq" type="array">
+         <obj_property name="ElementShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="ObjectShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.bc_start" type="array">
+         <obj_property name="ElementShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.reset_gensync" type="logic">
+         <obj_property name="ElementShortName">.reset_gensync</obj_property>
+         <obj_property name="ObjectShortName">.reset_gensync</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_gen" type="array">
+         <obj_property name="ElementShortName">orbit_gen[31:0]</obj_property>
+         <obj_property name="ObjectShortName">orbit_gen[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bc_gen" type="array">
+         <obj_property name="ElementShortName">bc_gen[11:0]</obj_property>
+         <obj_property name="ObjectShortName">bc_gen[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_command" type="other">
+         <obj_property name="ElementShortName">run_command</obj_property>
+         <obj_property name="ObjectShortName">run_command</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_state" type="other">
+         <obj_property name="ElementShortName">run_state</obj_property>
+         <obj_property name="ObjectShortName">run_state</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_trgcnt" type="other">
+         <obj_property name="ElementShortName">send_trgcnt</obj_property>
+         <obj_property name="ObjectShortName">send_trgcnt</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_soc" type="other">
+         <obj_property name="ElementShortName">send_soc</obj_property>
+         <obj_property name="ObjectShortName">send_soc</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_eoc" type="other">
+         <obj_property name="ElementShortName">send_eoc</obj_property>
+         <obj_property name="ObjectShortName">send_eoc</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_sot" type="other">
+         <obj_property name="ElementShortName">send_sot</obj_property>
+         <obj_property name="ObjectShortName">send_sot</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_eot" type="other">
+         <obj_property name="ElementShortName">send_eot</obj_property>
+         <obj_property name="ObjectShortName">send_eot</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bunch_in_sync" type="other">
+         <obj_property name="ElementShortName">bunch_in_sync</obj_property>
+         <obj_property name="ObjectShortName">bunch_in_sync</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bunch_counter" type="other">
+         <obj_property name="ElementShortName">bunch_counter</obj_property>
+         <obj_property name="ObjectShortName">bunch_counter</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_cnt" type="array">
+         <obj_property name="ElementShortName">trggen_cnt[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_cnt[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_sox" type="array">
+         <obj_property name="ElementShortName">trggen_sox[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_sox[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_hb" type="array">
+         <obj_property name="ElementShortName">trggen_hb[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_hb[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_rdstate" type="array">
+         <obj_property name="ElementShortName">trggen_rdstate[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_rdstate[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/rx_data_gen" type="array">
+         <obj_property name="ElementShortName">rx_data_gen[79:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_data_gen[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/rx_isdata_gen" type="logic">
+         <obj_property name="ElementShortName">rx_isdata_gen</obj_property>
+         <obj_property name="ObjectShortName">rx_isdata_gen</obj_property>
+      </wvobject>
+   </wvobject>
    <wvobject fp_name="group449" type="group">
       <obj_property name="label">DGENERATOR</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Status_register_I.BCIDsync_Mode" type="other">
          <obj_property name="ElementShortName">.BCIDsync_Mode</obj_property>
          <obj_property name="ObjectShortName">.BCIDsync_Mode</obj_property>
