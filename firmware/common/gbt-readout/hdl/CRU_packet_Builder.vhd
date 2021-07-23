@@ -68,14 +68,15 @@ architecture Behavioral of CRU_packet_Builder is
   constant rdh_detector_field : std_logic_vector(31 downto 0) := x"00000000";
   constant rdh_par            : std_logic_vector(31 downto 0) := x"00000000";
 
-  signal rdh_feeid         : std_logic_vector(15 downto 0);
-  signal rdh_sysid         : std_logic_vector(7 downto 0);
-  signal rdh_priority_bit  : std_logic_vector(7 downto 0);
-  signal rdh_orbit         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal rdh_bc            : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal rdh_trg           : std_logic_vector(Trigger_bitdepth-1 downto 0);
-  signal rdh_stop          : std_logic_vector(7 downto 0);
-  signal rdh_pages_counter : std_logic_vector(15 downto 0);
+  signal rdh_feeid             : std_logic_vector(15 downto 0);
+  signal rdh_sysid             : std_logic_vector(7 downto 0);
+  signal rdh_priority_bit      : std_logic_vector(7 downto 0);
+  signal rdh_orbit             : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal rdh_bc                : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal rdh_trg               : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal rdh_stop              : std_logic_vector(7 downto 0);
+  signal rdh_pages_counter     : std_logic_vector(15 downto 0);
+  signal rdh_offset_new_packet : std_logic_vector(15 downto 0);
 
   -- FSM signals
   type FSM_STATE_T is (s0_wait, s1_sop, s2_data, s3_eop);
@@ -88,14 +89,15 @@ begin
 
   SLCTFIFO_RE_O <= slct_fifo_re;
   CNTPFIFO_RE_O <= cntpck_fifo_re;
-  
-  rdh_feeid <= Control_register_I.RDH_data.FEE_ID;
-  rdh_sysid <= Control_register_I.RDH_data.SYS_ID;
-  rdh_priority_bit <= Control_register_I.RDH_data.PRT_BIT;
+
+  rdh_feeid             <= Control_register_I.RDH_data.FEE_ID;
+  rdh_sysid             <= Control_register_I.RDH_data.SYS_ID;
+  rdh_priority_bit      <= Control_register_I.RDH_data.PRT_BIT;
+  rdh_offset_new_packet <= std_logic_vector(to_unsigned(((rdh_nwords+4)*16), 16));
 
   -- v6 ===================================================================================
   SOP_format(0) <= '0' & x"10000000000000000000";  -- SOP CRU
-  SOP_format(1) <= '1' & x"0000_0000" & rdh_sysid & rdh_priority_bit & rdh_feeid & rdh_header_size & rdh_header_version;
+  SOP_format(1) <= '1' & rdh_offset_new_packet & x"0000" & rdh_sysid & rdh_priority_bit & rdh_feeid & rdh_header_size & rdh_header_version;
   SOP_format(2) <= '1' & x"0000" & rdh_orbit & x"0000_0" & rdh_bc;
   SOP_format(3) <= '1' & x"0000_00" & rdh_stop & rdh_pages_counter & rdh_trg;
   SOP_format(4) <= '1' & x"0000_0000" & rdh_par & rdh_detector_field;
@@ -142,7 +144,7 @@ begin
 -- ****************************************************
 
   FSM_STATE_NEXT <= s1_sop when (FSM_STATE = s0_wait) and (CNTPFIFO_Is_Empty_I = '0') else
-                    s3_eop when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) and (rdh_nwords = 0) else
+                    s3_eop  when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) and (rdh_nwords = 0) else
                     s2_data when (FSM_STATE = s1_sop) and (word_counter = nwords_in_SOP-1) else
                     s3_eop  when (FSM_STATE = s2_data) and (word_counter = rdh_nwords + nwords_in_SOP-1) else
                     s0_wait when (FSM_STATE = s3_eop) and (word_counter = rdh_nwords + nwords_in_SOP + nwords_in_EOP-1) and (CNTPFIFO_Is_Empty_I = '1') else

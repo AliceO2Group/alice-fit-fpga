@@ -15,6 +15,9 @@ from lib.control_reg import control_reg as ctrl_rec
 from lib.control_reg import gen_mode, readout_cmd
 from lib.run_generator import run_generator as run_generator
 from lib.run_reader import run_reader
+import lib.rdh_data_packet as rdh_data_format
+import lib.pylog as pylog
+log = pylog.log
 
 def generate_sim_inputs():
 
@@ -29,6 +32,11 @@ def generate_sim_inputs():
     # read simulation outputs
     sim_run = run_reader(run_list[1])
     sim_run.print_run_info()
+
+    rdh = rdh_data_format.rdh_packet()
+    rdh.read_data(sim_run.gbt_data, 0)
+    rdh.print_struct(log)
+
 
 
 

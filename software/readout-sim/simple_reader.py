@@ -1,4 +1,4 @@
-import lib.RDH_data as rdh_data
+import lib.rdh_data_packet as rdh_data
 import lib.control_reg as cntrl_reg
 import lib.status_reg as status_reg
 

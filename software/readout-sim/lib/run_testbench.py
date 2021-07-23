@@ -1,7 +1,7 @@
 # class to work with FIT readout unit control registers
 
 import lib.control_reg as cntrl_reg
-import lib.RDH_data as rdh_data
+import lib.rdh_data_packet as rdh_data
 import lib.pylog as pylog
 import lib.constants as rdconst
 
@@ -70,7 +70,7 @@ class run_testbench_class:
     # read continuously rdh data
     def read_run_data(self):
         self.rdh_data_list = []
-        dyn_event = rdh_data.rdh_data_class()
+        dyn_event = rdh_data.rdh_packet()
         pos = self.run_data.pos_gbt_start
         while pos < self.run_data.pos_gbt_postidl:
             pos = dyn_event.read_data(self.simulation.gbt_data_list, pos)
@@ -88,7 +88,7 @@ class run_testbench_class:
         while dyn_pos < self.run_data.pos_gbt_postidl:
             dyn_rdh_header = rdh_data.rdh_header_class()
             dyn_rdh_trailer = rdh_data.rdh_trailer_class()
-            dyn_rdh_data = rdh_data.rdh_data_class()
+            dyn_rdh_data = rdh_data.rdh_packet()
 
 
             # HEADER --------------------------------------------
@@ -123,7 +123,7 @@ class run_testbench_class:
             packet_start = dyn_pos
             dyn_rdh_data.event_list = []
             while dyn_pos < packet_start + n_dw_in_packet:
-                dyn_rdh_detdata = rdh_data.detector_event_class()
+                dyn_rdh_detdata = rdh_data.detector_packet()
                 new_dyn_pos = dyn_rdh_detdata.read_data(self.simulation.gbt_data_list, dyn_pos)
 
                 if dyn_rdh_detdata.magic != 0xF:
@@ -301,7 +301,7 @@ class run_testbench_class:
                             else:
                                 n_ch_gen = isim_data[3]
 
-                            if n_ch_gen != ievent.n_words: wrong_ch_num += 1
+                            if n_ch_gen != ievent.size: wrong_ch_num += 1
                             selected_data.remove(isim_data)
                             #print("found !")
                             break

@@ -1,18 +1,14 @@
 '''
 
-Class read simulation outputs and decode run data
-take run_generato object as run metadata
+The class read simulation outputs and decode run data
+take run_generator object as run metadata
 
 Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
 import lib.pylog as pylog
-from lib.control_reg import control_reg as ctrl_reg
-from lib.control_reg import gen_mode, readout_cmd
-from lib.constants import filename_ctrlreg
 from lib.constants import filename_simout
-from lib.constants import orbit_size
 from lib.run_generator import run_generator
 from lib.status_reg import status_reg
 
@@ -46,7 +42,7 @@ class run_reader:
         if self.run_meta.run_pos_stop > len(simout_list):
             self.log.error(
                 "Simulation ountput is to short. len: %i, run_stop: %i. Check that simulation was finished" % (
-                len(simout_list), self.run_meta.run_pos_stop))
+                    len(simout_list), self.run_meta.run_pos_stop))
 
         self.gbt_data = []
         self.gen_data = []
@@ -61,8 +57,10 @@ class run_reader:
             istatus = status_reg(line_regs[1:])
 
             # collecting GBT data
-            gbt_word = int(line_regs[0], base=16)
-            if gbt_word > 0: self.gbt_data.append(gbt_word)
+            gbt_word = line_regs[0]
+            gbt_word_int = int(gbt_word, base=16)
+            if gbt_word_int != 0x10000000000000000000 and gbt_word_int != 0x20000000000000000000 and gbt_word_int > 0: self.gbt_data.append(
+                gbt_word)
 
             # collecting generated data
             if istatus.data_gen_size > 0:
