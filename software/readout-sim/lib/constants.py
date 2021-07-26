@@ -34,3 +34,5 @@ TRG_const_RT = 0x00002000  # Run Type; 1=Cont, 0=Trig
 TRG_const_RS = 0x00004000  # Running State; 1=Running
 
 orbit_size = 0xdec
+
+max_rdh_payload = 512

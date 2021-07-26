@@ -30,6 +30,7 @@ class run_generator:
 
     def print_run_meta(self):
         self.log.info("file name: %s" % (self.filename_ctrlreg))
+        self.log.info("run type: %s"%(str(self.ctrl_reg.trg_rd_command)))
         self.log.info(self.run_comment)
         self.log.info("run pos range: [%i, %i]"%(self.run_pos_start, self.run_pos_stop))
 
@@ -54,12 +55,15 @@ class run_generator:
         # generate void orbits to make RX decoder sync
         if self.run_pos_start<2*orbit_size:
             for i in range(2*orbit_size): file.write(reg_line)
-        # reset simulation generators
+
+        # reset simulation generators and errors
         self.ctrl_reg.reset_gensync = 1
+        self.ctrl_reg.reset_data_counters = 1
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(10): file.write(reg_line)
         # generate void orbits to make generators in sync
         self.ctrl_reg.reset_gensync = 0
+        self.ctrl_reg.reset_data_counters = 0
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(2*orbit_size): file.write(reg_line)
 
@@ -72,6 +76,7 @@ class run_generator:
         self.ctrl_reg.trg_rd_command = readout_cmd.idle
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(2 * orbit_size): file.write(reg_line)
+        self.ctrl_reg.trg_rd_command = run_type
 
         file.close()
         self.run_pos_stop = len(open(self.filename_ctrlreg).readlines())

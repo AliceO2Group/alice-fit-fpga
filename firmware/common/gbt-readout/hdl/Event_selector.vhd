@@ -115,7 +115,7 @@ architecture Behavioral of Event_selector is
   signal send_gear_rdh                                                        : boolean;
   -- dropping data when select fifo is full
   signal dropping_data                                                        : boolean;
-  signal is_hbtrg_lgc                                                         : std_logic;
+  signal stop_bit                                                         : std_logic;
   signal reset_drop_cnt_sc                                                    : boolean;
 
 begin
@@ -132,7 +132,6 @@ begin
   data_bc      <= func_FITDATAHD_bc(header_fifo_data_i);
 
   is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
-  is_hbtrg_lgc   <= '1' when is_hbtrg else '0';
   is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
   trg_eq_data    <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
   data_is_old    <= (header_fifo_empty_i = '0') and ((data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
@@ -315,6 +314,8 @@ begin
         if rdh_close then rdh_size_counter                <= 0; elsif slct_fifo_wren = '1' then rdh_size_counter <= rdh_size_counter + 1; end if;
         -- RDH counter in timeframe
         if rdh_close and is_hbtrg then rdh_packet_counter <= 0; elsif rdh_close then rdh_packet_counter <= rdh_packet_counter + 1; end if;
+		-- reset counter after run
+		if not send_gear_rdh then rdh_packet_counter <= 0; end if;
 
         -- dropping packets when fifos are full
         if start_reading_data then dropping_data              <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1'); end if;
@@ -370,11 +371,15 @@ begin
                true when send_gear_rdh and no_raw_data_i and trgfifo_empty = '1' else
                false;
 
-
+  -- stop bit for HB and last packet
+  stop_bit   <= '1' when is_hbtrg else 
+                '1' when send_gear_rdh and no_raw_data_i and trgfifo_empty = '1' else
+                '0';
+				
   -- if closing rdh while readind data, rdh_size is one more than counter
   rdh_size_counter_actual <= rdh_size_counter+1 when slct_fifo_wren = '1' else rdh_size_counter;
   -- pushing RDH info while closing RDH packet                     
-  cntpck_fifo_din  <= std_logic_vector(to_unsigned(0, 128-97)) & is_hbtrg_lgc & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter_actual, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
+  cntpck_fifo_din  <= std_logic_vector(to_unsigned(0, 128-97)) & stop_bit & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter_actual, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
   cntpck_fifo_wren <= '1' when rdh_close else '0';
 
 

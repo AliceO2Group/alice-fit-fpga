@@ -8,6 +8,7 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 
 '''
 from lib.control_reg import control_reg as ctrl_reg
+import lib.constants as cnst
 import lib.pylog as pylog
 log = pylog.log
 
@@ -154,6 +155,9 @@ class rdh_header:
         if self.fee_id != ctrl.RDH_FEEID: res = "wrong fee id: 0x%x [0x%x]" % (self.fee_id, ctrl.RDH_FEEID)
         if self.sys_id != ctrl.RDH_SYS_ID: res = "wrong sys id: 0x%x [0x%x]" % (self.sys_id, ctrl.RDH_SYS_ID)
         if self.priority_bit != ctrl.RDH_PRT_BIT: res = "wrong priority_bit: 0x%x [0x%x]" % (self.par_bit, ctrl.RDH_PRT_BIT)
+
+        if self.offset_new_packet > cnst.max_rdh_payload*16: res = "rdh oversize: 0x%x [0x%x]" % (self.offset_new_packet, cnst.max_rdh_payload)
+
 
         if res != 0:
             log.info("RDH check error [line %i] : %s\n%s"%(self.gbt_data_pos, res, str(self.gbt_data)))
