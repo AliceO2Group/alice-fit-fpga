@@ -67,13 +67,15 @@ class run_generator:
         self.ctrl_reg.trg_rd_command = run_type
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(norbits * orbit_size): file.write(reg_line)
-        self.run_pos_stop=self.run_pos_start+norbits*orbit_size
 
         # generate void orbits after run to finish sending data
         self.ctrl_reg.trg_rd_command = readout_cmd.idle
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(2 * orbit_size): file.write(reg_line)
-        self.run_pos_stop+=orbit_size
+
+        file.close()
+        self.run_pos_stop = len(open(self.filename_ctrlreg).readlines())
+
 
 
 

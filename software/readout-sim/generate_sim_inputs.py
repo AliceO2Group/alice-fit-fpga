@@ -86,12 +86,12 @@ def generate_sim_inputs():
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
     test_ctrl_reg.data_bunch_pattern = 0xFF010777
-    test_ctrl_reg.data_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.data_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
     test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
-    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.trg_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.generate_ctrl_pattern(5)
@@ -114,12 +114,12 @@ def generate_sim_inputs():
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
     test_ctrl_reg.data_bunch_pattern = 0xFF010777
-    test_ctrl_reg.data_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.data_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
     test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
-    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 4
+    test_ctrl_reg.trg_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.generate_ctrl_pattern(5)

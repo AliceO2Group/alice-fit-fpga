@@ -205,7 +205,7 @@ if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report;
 
   end process;
 -- ***************************************************
-  Board_data_data.data_word   <= std_logic_vector(to_unsigned(word_counter*2, tdwords_bitdepth)) & cnt_packet_counter & std_logic_vector(to_unsigned(word_counter*2+1, tdwords_bitdepth)) & cnt_packet_counter;
+  Board_data_data.data_word   <= std_logic_vector(to_unsigned((word_counter+1), tdwords_bitdepth)) & cnt_packet_counter & std_logic_vector(to_unsigned((word_counter+1), tdwords_bitdepth)) & cnt_packet_counter;
   Board_data_header.data_word <= func_FITDATAHD_get_header(std_logic_vector(to_unsigned(event_size, 8)), event_orbit_sc, event_bc_sc, event_rx_ph, event_rx_ph_err, '0');
 
   data_gen_result <= Board_data_void when (word_counter = 16) else

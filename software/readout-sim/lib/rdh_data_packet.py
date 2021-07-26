@@ -7,7 +7,9 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
-
+from lib.control_reg import control_reg as ctrl_reg
+import lib.pylog as pylog
+log = pylog.log
 
 class detector_packet:
     def __init__(self):
@@ -23,17 +25,16 @@ class detector_packet:
         self.payload = []
 
     def print_struct(self, log):
-        log.info("magic: %x" % (self.magic))
-        log.info("is_tcm: %x" % (self.is_tcm))
-        log.info("n_words: %x" % (self.size))
-        log.info("phase_err: %x" % (self.phase_err))
-        log.info("phase: %x" % (self.phase))
-        log.info("bc: %x" % (self.bc))
-        log.info("orbit: %x" % (self.orbit))
+        log.info("magic: 0x%x" % (self.magic))
+        log.info("is_tcm: 0x%x" % (self.is_tcm))
+        log.info("n_words: 0x%x" % (self.size))
+        log.info("phase_err: 0x%x" % (self.phase_err))
+        log.info("phase: 0x%x" % (self.phase))
+        log.info("bc: 0x%x" % (self.bc))
+        log.info("orbit: 0x%x" % (self.orbit))
         log.info("payload: %s" % (str(self.payload)))
-        #for idata in self.payload:
-            #log.info("[%x, %x]:" % (idata[0], idata[1]))
-
+        # for idata in self.payload:
+        # log.info("[0x%x, 0x%x]:" % (idata[0], idata[1]))
 
     def read_data(self, line_list, pos):
         # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -
@@ -59,8 +60,10 @@ class detector_packet:
                 ch2_no = int(self.gbt_data[-1][-10:  -9], base=16)
                 ch2_data = int(self.gbt_data[-1][-9:], base=16)
 
-                if ch1_no > 0: self.payload.append([ch1_no, ch1_data])
-                if ch2_no > 0: self.payload.append([ch2_no, ch2_data])
+                #if ch1_no > 0: self.payload.append([ch1_no, ch1_data])
+                #if ch2_no > 0: self.payload.append([ch2_no, ch2_data])
+                self.payload.append([ch1_no, ch1_data])
+                self.payload.append([ch2_no, ch2_data])
             else:
                 self.payload = [[0, 0]]
         # todo
@@ -68,14 +71,21 @@ class detector_packet:
         return pos + 1 + self.size
 
     def check_data(self):
-        if self.magic != 0xf: return "wrong magic: %i" % self.magic
-        if self.size > 0xf or self.size < 1: return "wrong size: %i" % self.size
-        if len(self.payload) != self.size * 2: return "wrong payload %i, size %i" % (len(self.payload), self.size)
-        return 0
+        res = 0
+        if self.magic != 0xf: res = "wrong magic: %i" % self.magic
+        if self.size > 0xf or self.size < 1: res = "wrong size: %i" % self.size
+        if len(self.payload) != self.size * 2: res = "wrong payload %i, size %i" % (len(self.payload), self.size)
+
+        if res != 0:
+            self.print_struct(log)
+            log.info("Data check error: %s\n%s"%(res, str(self.gbt_data)))
+
+        return res
 
 
 class rdh_header:
     def __init__(self):
+        self.gbt_data_pos = 0
         self.gbt_data = []
 
         self.header_version = 0
@@ -94,21 +104,22 @@ class rdh_header:
         self.offset_new_packet = 0
 
     def print_struct(self, log):
-        log.info("header_version: %x" % (self.header_version))
-        log.info("header_size: %x" % (self.header_size))
-        log.info("det_field: %x" % (self.det_field))
-        log.info("par_bit: %x" % (self.par_bit))
-        log.info("fee_id: %x" % (self.fee_id))
-        log.info("sys_id: %x" % (self.sys_id))
-        log.info("priority_bit: %x" % (self.priority_bit))
-        log.info("orbit: %x" % (self.orbit))
-        log.info("bc: %x" % (self.bc))
-        log.info("trg_type: %x" % (self.trg_type))
-        log.info("stop_bit: %x" % (self.stop_bit))
-        log.info("page_counter: %x" % (self.page_counter))
-        log.info("offset_new_packet: %x" % (self.offset_new_packet))
+        log.info("header_version: 0x%x" % (self.header_version))
+        log.info("header_size: 0x%x" % (self.header_size))
+        log.info("det_field: 0x%x" % (self.det_field))
+        log.info("par_bit: 0x%x" % (self.par_bit))
+        log.info("fee_id: 0x%x" % (self.fee_id))
+        log.info("sys_id: 0x%x" % (self.sys_id))
+        log.info("priority_bit: 0x%x" % (self.priority_bit))
+        log.info("orbit: 0x%x" % (self.orbit))
+        log.info("bc: 0x%x" % (self.bc))
+        log.info("trg_type: 0x%x" % (self.trg_type))
+        log.info("stop_bit: 0x%x" % (self.stop_bit))
+        log.info("page_counter: 0x%x" % (self.page_counter))
+        log.info("offset_new_packet: 0x%x" % (self.offset_new_packet))
 
     def read_data(self, line_list, pos):
+        self.gbt_data_pos = pos
         self.gbt_data = line_list[pos:pos + 4]
 
         self.header_version = int(self.gbt_data[0][-2:], base=16)  # [7  -  0]
@@ -133,12 +144,21 @@ class rdh_header:
             self.par_bit = int(self.gbt_data[3][-12: -8], base=16)  # [47 - 32]
         return pos + 4
 
-    def check_data(self):
-        if self.header_version != 0x6: return "wrong version: %i" % self.header_version
-        if self.header_size != 0x40: return "wrong size: %i" % self.header_size
-        if self.det_field != 0x0: return "wrong det field: %i" % self.det_field
-        if self.par_bit != 0x0: return "wrong par: %i" % self.par_bit
-        return 0
+    def check_data(self, ctrl=ctrl_reg()):
+        res = 0
+        if self.header_version != 0x6: res = "wrong version: 0x%x [0x%x]" % (self.header_version, 0x6)
+        if self.header_size != 0x40: res = "wrong size: %i [0x%x]" % (self.header_size, 0x40)
+        if self.det_field != 0x0: res = "wrong det field: 0x%x [0x%x]" % (self.det_field, 0x0)
+        if self.par_bit != 0x0: res = "wrong par: 0x%x [0x%x]" % (self.par_bit, 0x0)
+
+        if self.fee_id != ctrl.RDH_FEEID: res = "wrong fee id: 0x%x [0x%x]" % (self.fee_id, ctrl.RDH_FEEID)
+        if self.sys_id != ctrl.RDH_SYS_ID: res = "wrong sys id: 0x%x [0x%x]" % (self.sys_id, ctrl.RDH_SYS_ID)
+        if self.priority_bit != ctrl.RDH_PRT_BIT: res = "wrong priority_bit: 0x%x [0x%x]" % (self.par_bit, ctrl.RDH_PRT_BIT)
+
+        if res != 0:
+            log.info("RDH check error [line %i] : %s\n%s"%(self.gbt_data_pos, res, str(self.gbt_data)))
+
+        return res
 
 
 class rdh_packet:
@@ -152,7 +172,7 @@ class rdh_packet:
             for igbt in event.gbt_data: print(hex(igbt))
 
     def print_struct(self, log):
-        log.info("===== RDH =====")
+        log.info("######################## RDH ########################")
         self.rdh_header.print_struct(log)
         for event in self.event_list:
             log.info("=== EVENT ===")
@@ -160,7 +180,7 @@ class rdh_packet:
 
     def read_data(self, line_list, pos):
         dyn_pos = self.rdh_header.read_data(line_list, pos)
-        n_dw_in_packet = self.rdh_header.offset_new_packet / 16
+        n_dw_in_packet = (self.rdh_header.offset_new_packet / 16) - 4
 
         packet_start = dyn_pos
         while dyn_pos < packet_start + n_dw_in_packet:
@@ -169,3 +189,20 @@ class rdh_packet:
             self.event_list.append(dyn_event)
 
         return dyn_pos
+
+    def check_data(self, ctrl=ctrl_reg()):
+
+        # check correctness of header
+        res = self.rdh_header.check_data(ctrl)
+        if res != 0: return res
+
+        # check correctness of data
+        for event in self.event_list:
+            res = event.check_data()
+            if res != 0: return res
+
+        # check orbits in data
+        for event in self.event_list:
+            if event.orbit != self.rdh_header.orbit:
+                return "event orbit != rdh orbit"
+        return 0

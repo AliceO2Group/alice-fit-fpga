@@ -16,6 +16,7 @@ from lib.control_reg import gen_mode, readout_cmd
 from lib.run_generator import run_generator as run_generator
 from lib.run_reader import run_reader
 import lib.rdh_data_packet as rdh_data_format
+from lib.run_tester import run_tester
 import lib.pylog as pylog
 log = pylog.log
 
@@ -26,16 +27,22 @@ def generate_sim_inputs():
         run_list = pickle.load(f)
 
     # print generated runs
-    for irun in run_list: irun.print_run_meta()
+    #for irun in run_list: irun.print_run_meta()
 
 
     # read simulation outputs
     sim_run = run_reader(run_list[1])
     sim_run.print_run_info()
 
-    rdh = rdh_data_format.rdh_packet()
-    rdh.read_data(sim_run.gbt_data, 0)
-    rdh.print_struct(log)
+    run_test = run_tester(sim_run)
+    run_test.test_data()
+
+
+    # rdh = rdh_data_format.rdh_packet()
+    # rdh.read_data(sim_run.gbt_data, 0)
+    # rdh.print_struct(log)
+    # sim_run.run_meta.ctrl_reg.print_struct()
+    # print(rdh.check_data(sim_run.run_meta.ctrl_reg))
 
 
 

@@ -8,6 +8,7 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 
 '''
 import lib.pylog as pylog
+import lib.constants as cnst
 from lib.constants import filename_simout
 from lib.run_generator import run_generator
 from lib.status_reg import status_reg
@@ -19,6 +20,7 @@ class run_reader:
         self.filename_simout = filename_simout
 
         self.gbt_data = []
+        self.gbt_pos_iter = [] #gbt words position in simulation data flow
         self.gen_data = []
         self.trg_data = []
 
@@ -47,6 +49,7 @@ class run_reader:
         self.gbt_data = []
         self.gen_data = []
         self.trg_data = []
+        run_ongoing = False
 
         # iteration through simulation outputs
         for iline in range(self.run_meta.run_pos_start, self.run_meta.run_pos_stop):
@@ -54,13 +57,15 @@ class run_reader:
             line_regs = line.split("   ")[:-1]
 
             # readout status in cycle
-            istatus = status_reg(line_regs[1:])
+            istatus = status_reg(line_regs[2:])
 
             # collecting GBT data
-            gbt_word = line_regs[0]
+            is_gbt_word = int(line_regs[0], base=16)
+            gbt_word = line_regs[1]
             gbt_word_int = int(gbt_word, base=16)
-            if gbt_word_int != 0x10000000000000000000 and gbt_word_int != 0x20000000000000000000 and gbt_word_int > 0: self.gbt_data.append(
-                gbt_word)
+            if is_gbt_word > 0:
+                self.gbt_data.append(gbt_word)
+                self.gbt_pos_iter.append(iline)
 
             # collecting generated data
             if istatus.data_gen_size > 0:
@@ -68,8 +73,12 @@ class run_reader:
                     {'size': istatus.data_gen_size, 'bc': istatus.data_gen_bc, 'orbit': istatus.data_gen_orbit})
 
             # collecting trigger data
+
             if istatus.cru_trigger > 0:
-                self.trg_data.append({'trigger': istatus.cru_trigger, 'bc': istatus.cru_bc, 'orbit': istatus.cru_orbit})
+                if (istatus.cru_trigger & cnst.TRG_const_SOC) or (istatus.cru_trigger & cnst.TRG_const_SOT): run_ongoing = True
+                if run_ongoing: self.trg_data.append({'trigger': istatus.cru_trigger, 'bc': istatus.cru_bc, 'orbit': istatus.cru_orbit})
+                if (istatus.cru_trigger & cnst.TRG_const_EOC) or (istatus.cru_trigger & cnst.TRG_const_EOT): run_ongoing = False
+
 
             # check fsm error
             if istatus.fsm_errors > 0:

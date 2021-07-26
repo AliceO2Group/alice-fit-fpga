@@ -170,6 +170,7 @@ begin
     variable file_line    : line;
     type infile_data_type is array (integer range <>) of integer;
     variable data_from_file : infile_data_type(0 to infile_num_col-1);
+    variable is_gbt_data : std_logic_vector(3 downto 0) := x"0";
     -- -----------------------------
 
   begin
@@ -211,6 +212,8 @@ begin
 
         -- writing simulation status
         file_line := "";
+        is_gbt_data(0) := IsData_from_FITrd;
+		hwrite(file_line, is_gbt_data, left, 5);
 		hwrite(file_line, Data_from_FITrd, left, 23);
         for ireg in 0 to stat_reg_size_sim-1 loop
           hwrite(file_line, GBT_status_reg(ireg), left, 11);
