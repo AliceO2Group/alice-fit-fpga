@@ -35,9 +35,6 @@ class run_reader:
         self.read_run()
 
     def print_run_info(self):
-        self.log.info("============================================")
-        self.run_meta.print_run_meta()
-        self.log.info("============================================")
         self.log.info("RUN VALID: %s" % (str(self.run_valid)))
         self.log.info("GBT data size: %i" % (len(self.gbt_data)))
         self.log.info("GEN data size: %i" % (len(self.gen_data)))
@@ -45,6 +42,7 @@ class run_reader:
         self.log.info("ORBIT RANGE %i [%04x : %04x]" % (self.stop_ortbit - self.start_orbit+1, self.start_orbit, self.stop_ortbit))
 
     def read_run(self):
+        self.run_valid = False
         simout_list = list(open(self.filename_simout, 'r'))
         if self.run_meta.run_pos_stop > len(simout_list):
             self.log.error("Simulation ountput is to short. len: %i, run_stop: %i. Check that simulation was finished" % (len(simout_list), self.run_meta.run_pos_stop))
@@ -63,6 +61,11 @@ class run_reader:
             # readout status in cycle
             istatus = status_reg(line_regs[2:])
             istatus_2 = status_reg(line_regs_1[2:]) if line_regs_1 != 0 else status_reg()
+
+            # check fsm error
+            if istatus.fsm_errors > 0:
+                self.log.info("FSM ERROR in run found: %s" % istatus.get_fsm_err_msg())
+                return 0
 
             # collecting GBT data
             is_gbt_word = int(line_regs[0], base=16)
@@ -87,11 +90,6 @@ class run_reader:
                 if trg_run_ongoing: self.trg_data.append({'trigger': istatus.cru_trigger, 'bc': istatus.cru_bc, 'orbit': istatus.cru_orbit})
                 if (istatus.cru_trigger & cnst.TRG_const_EOC) or (istatus.cru_trigger & cnst.TRG_const_EOT): trg_run_ongoing = False; self.stop_ortbit = istatus.cru_orbit
 
-            # check fsm error
-            if istatus.fsm_errors > 0:
-                self.log.info("FSM ERROR in run found: %s" % istatus.get_fsm_err_msg())
-                return
-
         # deleting data not matched to trigger in trg run
         if self.run_meta.ctrl_reg.trg_rd_command == readout_cmd.trigger:
             for igen in self.gen_data:
@@ -105,3 +103,4 @@ class run_reader:
             if igen['orbit'] < self.start_orbit or igen['orbit'] > self.stop_ortbit: self.gen_data.remove(igen)
 
         self.run_valid = True
+        return 1

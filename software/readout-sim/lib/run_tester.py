@@ -111,10 +111,10 @@ class run_tester:
 
         if len(gen_data_list) > 0:
             self.log.info("Generated data not found in RDH packets: %i; %s" % (
-                len(gen_data_list), [("[pnum: %x; orbc %04x:%03x; sz: %i]" % (idat['pck_num'], idat['bc'], idat['orbit'], idat['size'])) for idat in gen_data_list]))
+                len(gen_data_list), [("[pnum: %x; orbc %04x:%03x; sz: %i]" % (idat['pck_num'], idat['orbit'], idat['bc'], idat['size'])) for idat in gen_data_list]))
         if len(read_data_list) > 0:
             self.log.info(pylog.c_FAIL + "RDH data not found in generated data: %i; %s" % (
-                len(read_data_list), [("[pnum: %x; orbc %04x:%03x; sz: %i]" % (iev.pck_num, iev.bc, iev.orbit, iev.size)) for iev in read_data_list]) + pylog.c_ENDC)
+                len(read_data_list), [("[pnum: %x; orbc %04x:%03x; sz: %i]" % (iev.pck_num, iev.orbit, iev.bc, iev.size)) for iev in read_data_list]) + pylog.c_ENDC)
 
         is_correct = len(self.run.gen_data) == read_data_count + self.run.last_status.sel_drop_cnt
         self.log.info((pylog.c_OKGREEN if is_correct else pylog.c_FAIL) + "Generated data: %i; Readed data: %i; missed data: %i; dropped data: %i" % (

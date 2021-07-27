@@ -23,10 +23,19 @@ def verify_sim_outputs():
         run_list = pickle.load(f)
 
     for irun in run_list:
+        log.info("============================================")
+        irun.print_run_meta()
+        log.info("============================================")
+
         sim_run = run_reader(irun)
+        if not sim_run.run_valid:
+            log.info(pylog.c_FAIL + "RUN reader failed\n\n\n\n" + pylog.c_ENDC)
+            continue
+
         sim_run.print_run_info()
         run_test = run_tester(sim_run)
         run_test.test_data
+        log.info("============================================\n\n\n\n")
 
 
 if __name__ == '__main__':
