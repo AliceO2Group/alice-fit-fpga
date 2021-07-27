@@ -7,9 +7,11 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 
 '''
 
-from aenum import Enum
-import lib.pylog as pylog
+from enum import Enum
+
 import bitstring
+
+import lib.pylog as pylog
 
 log = pylog.log
 
@@ -19,11 +21,25 @@ class gen_mode(Enum):
     main_gen = 1
     tx_gen = 2
 
+    def __str__(self):
+        return self.name
+
+    @property
+    def counter(self):
+        return self.value
+
 
 class readout_cmd(Enum):
     idle = 0
     continious = 1
     trigger = 2
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def counter(self):
+        return self.value
 
 
 class control_reg:

@@ -1,23 +1,20 @@
 # class to work with FIT readout unit control registers
 from aenum import Enum
 
-
-class gen_mode(Enum):
-    no_gen = 0
-    main_gen = 1
-    tx_gen = 2
-
-
-class readout_cmd(Enum):
-    idle = 0
-    continious = 1
-    trigger = 2
+from lib.control_reg import readout_cmd
 
 
 class bcid_smode(Enum):
     start = 0
     sync = 1
     lost = 2
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def counter(self):
+        return self.value
 
 
 class status_reg:
@@ -41,6 +38,7 @@ class status_reg:
         self.data_gen_orbit = 0x0
         self.data_gen_bc = 0x0
         self.data_gen_size = 0x0
+        self.data_gen_packnum = 0
 
         self.fsm_error_msg = {1 << 0: '[RDH builder] reading empty fifo',
                               1 << 1: '[Selector] slct fifo is not empty',
@@ -77,7 +75,7 @@ class status_reg:
     def get_fsm_err_msg(self):
         res = ""
         for key in self.fsm_error_msg:
-            if (self.fsm_errors & key)>0: res += self.fsm_error_msg[key] + " "
+            if (self.fsm_errors & key) > 0: res += self.fsm_error_msg[key] + " "
 
     def read_reg_line_hex(self, line_regs):
         # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -
@@ -100,4 +98,5 @@ class status_reg:
 
         self.data_gen_orbit = int(line_regs[11][-8:], base=16)
         self.data_gen_bc = int(line_regs[12][-3:], base=16)
-        self.data_gen_size = int(line_regs[12][-6:-4], base=16)
+        self.data_gen_size = int(line_regs[12][-5:-4], base=16)
+        self.data_gen_packnum = int(line_regs[13][-8:], base=16)

@@ -7,10 +7,12 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
-from lib.control_reg import control_reg as ctrl_reg
 import lib.constants as cnst
 import lib.pylog as pylog
+from lib.control_reg import control_reg as ctrl_reg
+
 log = pylog.log
+
 
 class detector_packet:
     def __init__(self):
@@ -24,6 +26,7 @@ class detector_packet:
         self.bc = 0
         self.orbit = 0
         self.payload = []
+        self.pck_num = 0
 
     def print_struct(self, log):
         log.info("magic: 0x%x" % (self.magic))
@@ -61,10 +64,11 @@ class detector_packet:
                 ch2_no = int(self.gbt_data[-1][-10:  -9], base=16)
                 ch2_data = int(self.gbt_data[-1][-9:], base=16)
 
-                #if ch1_no > 0: self.payload.append([ch1_no, ch1_data])
-                #if ch2_no > 0: self.payload.append([ch2_no, ch2_data])
+                # if ch1_no > 0: self.payload.append([ch1_no, ch1_data])
+                # if ch2_no > 0: self.payload.append([ch2_no, ch2_data])
                 self.payload.append([ch1_no, ch1_data])
                 self.payload.append([ch2_no, ch2_data])
+                self.pck_num = ch1_data  # same for all words
             else:
                 self.payload = [[0, 0]]
         # todo
@@ -79,7 +83,7 @@ class detector_packet:
 
         if res != 0:
             self.print_struct(log)
-            log.info("Data check error: %s\n%s"%(res, str(self.gbt_data)))
+            log.info("Data check error: %s\n%s" % (res, str(self.gbt_data)))
 
         return res
 
@@ -156,11 +160,10 @@ class rdh_header:
         if self.sys_id != ctrl.RDH_SYS_ID: res = "wrong sys id: 0x%x [0x%x]" % (self.sys_id, ctrl.RDH_SYS_ID)
         if self.priority_bit != ctrl.RDH_PRT_BIT: res = "wrong priority_bit: 0x%x [0x%x]" % (self.par_bit, ctrl.RDH_PRT_BIT)
 
-        if self.offset_new_packet > cnst.max_rdh_payload*16: res = "rdh oversize: 0x%x [0x%x]" % (self.offset_new_packet, cnst.max_rdh_payload)
-
+        if self.offset_new_packet > cnst.max_rdh_payload * 16: res = "rdh oversize: 0x%x [0x%x]" % (self.offset_new_packet, cnst.max_rdh_payload)
 
         if res != 0:
-            log.info("RDH check error [line %i] : %s\n%s"%(self.gbt_data_pos, res, str(self.gbt_data)))
+            log.info("RDH check error [line %i] : %s\n%s" % (self.gbt_data_pos, res, str(self.gbt_data)))
 
         return res
 

@@ -13,18 +13,19 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="14240000001fs"></ZoomEndTime>
-      <Cursor1Time time="394987626fs"></Cursor1Time>
+      <ZoomStartTime time="1246842130fs"></ZoomStartTime>
+      <ZoomEndTime time="1248268131fs"></ZoomEndTime>
+      <Cursor1Time time="1247299130fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="207"></NameColumnWidth>
-      <ValueColumnWidth column_width="205"></ValueColumnWidth>
+      <ValueColumnWidth column_width="201"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
    <wvobject fp_name="group395" type="group">
       <obj_property name="label">TESTBENCH</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/sim_iter_num" type="array">
          <obj_property name="ElementShortName">sim_iter_num[63:0]</obj_property>
          <obj_property name="ObjectShortName">sim_iter_num[63:0]</obj_property>
@@ -49,6 +50,10 @@
       <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
          <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/GBT_status" type="array">
+         <obj_property name="ElementShortName">GBT_status</obj_property>
+         <obj_property name="ObjectShortName">GBT_status</obj_property>
          <obj_property name="isExpanded"></obj_property>
       </wvobject>
    </wvobject>
@@ -289,6 +294,7 @@
    <wvobject fp_name="group460" type="group">
       <obj_property name="label">CONVERTER</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/Board_data_I" type="array">
          <obj_property name="ElementShortName">Board_data_I</obj_property>
          <obj_property name="ObjectShortName">Board_data_I</obj_property>
@@ -301,6 +307,10 @@
          <obj_property name="ObjectShortName">send_mode_ison_sclk</obj_property>
          <obj_property name="CustomSignalColor">#FFA500</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/sending_event" type="other">
+         <obj_property name="ElementShortName">sending_event</obj_property>
+         <obj_property name="ObjectShortName">sending_event</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/header_fifo_din" type="array">
          <obj_property name="ElementShortName">header_fifo_din[79:0]</obj_property>
@@ -597,7 +607,6 @@
    <wvobject fp_name="group452" type="group">
       <obj_property name="label">RDHGEN</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_feeid" type="array">
          <obj_property name="ElementShortName">rdh_feeid[15:0]</obj_property>
          <obj_property name="ObjectShortName">rdh_feeid[15:0]</obj_property>
@@ -689,14 +698,13 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/GBT_status_reg" type="array">
-         <obj_property name="ElementShortName">GBT_status_reg[0:12][31:0]</obj_property>
-         <obj_property name="ObjectShortName">GBT_status_reg[0:12][31:0]</obj_property>
+         <obj_property name="ElementShortName">GBT_status_reg[0:13][31:0]</obj_property>
+         <obj_property name="ObjectShortName">GBT_status_reg[0:13][31:0]</obj_property>
          <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>
          <obj_property name="ObjectShortName">GBT_status</obj_property>
-         <obj_property name="isExpanded"></obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

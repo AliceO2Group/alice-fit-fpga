@@ -167,7 +167,7 @@ package fit_gbt_common_package is
 
 -- ===== FIT GBT STATUS ========================================
   constant stat_reg_size     : integer := 8;
-  constant stat_reg_size_sim : integer := stat_reg_size+5;
+  constant stat_reg_size_sim : integer := stat_reg_size+6;
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
 
@@ -548,6 +548,7 @@ package body fit_gbt_common_package is
     status_reg_addrreg_sim(10) := status_reg.Trigger_from_CRU;
     status_reg_addrreg_sim(11) := status_reg.datagen_report.orbit;
     status_reg_addrreg_sim(12) := x"00" & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
+    status_reg_addrreg_sim(13) := status_reg.datagen_report.packet_num(31 downto 0);
     --packet_num
     return status_reg_addrreg_sim;
   end function;
