@@ -282,6 +282,7 @@ begin
       cntpck_fifo_empty_o => cntpck_fifo_empty,
       cntpck_fifo_rden_i  => cntpck_fifo_rden,
 
+      slct_fifo_cnt_o     => FIT_GBT_STATUS.datagen_report.sel_fifo_count,
       slct_fifo_cnt_max_o => FIT_GBT_STATUS.sel_fifo_max,
       packets_dropped_o   => FIT_GBT_STATUS.sel_drop_cnt,
       errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1)

@@ -221,7 +221,7 @@ begin
   data_fifo_we  <= '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
   -- all data sent in run
-  no_data_o <= header_fifo_empty='1' and data_fifo_empty='1' and not sending_event;
+  no_data_o <= header_fifo_empty='1' and data_fifo_empty='1' and not sending_event and not send_mode_ison_sclk;
   
 end Behavioral;
 

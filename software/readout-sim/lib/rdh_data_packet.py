@@ -57,6 +57,10 @@ class detector_packet:
 
         self.payload = []
         for iword in range(1, self.size + 1):
+            if pos + iword >= len(line_list):
+                log.info(pylog.c_FAIL+"Out of GBT data list while detector data reading ... "+pylog.c_ENDC)
+                return -1
+
             self.gbt_data.append(line_list[pos + iword])
             if self.is_tcm == 0:
                 ch1_no = int(self.gbt_data[-1][-20: -19], base=16)
@@ -193,6 +197,7 @@ class rdh_packet:
         while dyn_pos < packet_start + n_dw_in_packet:
             dyn_event = detector_packet()
             dyn_pos = dyn_event.read_data(line_list, dyn_pos)
+            if dyn_pos < 0: return -1
             self.event_list.append(dyn_event)
 
         return dyn_pos

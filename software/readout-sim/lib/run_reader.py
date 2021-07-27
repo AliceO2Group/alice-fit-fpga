@@ -7,6 +7,8 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
+
+import copy
 import lib.constants as cnst
 import lib.pylog as pylog
 from lib.constants import filename_simout
@@ -63,7 +65,7 @@ class run_reader:
             istatus_2 = status_reg(line_regs_1[2:]) if line_regs_1 != 0 else status_reg()
 
             # check fsm error
-            if istatus.fsm_errors > 0:
+            if istatus.fsm_errors > 0 and iline > 10:
                 self.log.info("FSM ERROR in run found: %s" % istatus.get_fsm_err_msg())
                 return 0
 
@@ -92,7 +94,7 @@ class run_reader:
 
         # deleting data not matched to trigger in trg run
         if self.run_meta.ctrl_reg.trg_rd_command == readout_cmd.trigger:
-            for igen in self.gen_data:
+            for igen in copy.copy(self.gen_data):
                 trg_found = False
                 for itrg in self.trg_data:
                     if itrg['orbit'] == igen['orbit'] and itrg['bc'] == igen['bc'] and (itrg['trigger'] & self.run_meta.ctrl_reg.trg_data_select) > 0: trg_found = True

@@ -17,6 +17,8 @@ from lib.run_generator import run_generator as run_generator
 
 
 def generate_sim_inputs():
+    run_len = 10
+
     # class instances
     test_ctrl_reg = ctrl_rec()
     run_gen = run_generator(test_ctrl_reg)
@@ -67,7 +69,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_bc_start = 0x600
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(5)
+    run_gen.generate_ctrl_pattern(run_len)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 
@@ -97,7 +99,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(5)
+    run_gen.generate_ctrl_pattern(run_len)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 
@@ -127,7 +129,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(5)
+    run_gen.generate_ctrl_pattern(run_len)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 
@@ -154,7 +156,34 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(5)
+    run_gen.generate_ctrl_pattern(run_len)
+    run_list.append(copy.copy(run_gen))
+    # =======================================================
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - TRIGGER RUN
+        - high rate 2MHz, dropping data
+           - lenght 7
+        - 48 CLB triggers with data response
+           - without gaps
+           - gap = 1
+           - 0xFFAFFAA...
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.trigger
+    test_ctrl_reg.bcid_offset = 0x0
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0x07770777
+    test_ctrl_reg.data_bunch_freq = 20
+    test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = int(cnst.orbit_size / 4)
+    test_ctrl_reg.trg_bc_start = cnst.orbit_size - 2 - cnst.orbit_size / 2
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(run_len)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 

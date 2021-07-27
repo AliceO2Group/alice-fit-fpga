@@ -75,7 +75,7 @@ class run_generator:
         # generate void orbits after run to finish sending data
         self.ctrl_reg.trg_rd_command = readout_cmd.idle
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
-        for i in range(2 * orbit_size): file.write(reg_line)
+        for i in range(6 * orbit_size): file.write(reg_line)
         self.ctrl_reg.trg_rd_command = run_type
 
         file.close()
