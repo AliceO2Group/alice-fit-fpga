@@ -1,8 +1,8 @@
 import cProfile
 import pstats
-import  generate_sim_inputs
+import verify_sim_outputs
 
-cProfile.run('generate_sim_inputs.generate_sim_inputs()', 'restats')
+cProfile.run('verify_sim_outputs.verify_sim_outputs()', 'restats')
 
 p = pstats.Stats('restats')
 p.sort_stats('time')

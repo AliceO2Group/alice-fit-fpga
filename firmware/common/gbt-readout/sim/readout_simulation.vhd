@@ -79,7 +79,6 @@ begin
   FSM_Clocks_signal.Data_Clk       <= DATA_CLK;
   FSM_Clocks_signal.System_Clk     <= SYS_CLK;
   FSM_Clocks_signal.System_Counter <= x"0";
-  FSM_Clocks_signal.IPBUS_Data_Clk <= IPBUS_CLK;
 
 
 -- FIT GBT project =====================================

@@ -220,6 +220,8 @@ begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
       readout_control <= func_CNTRREG_getcntrreg(ctrl_reg);
       stat_reg        <= func_STATREG_getaddrreg(readout_status);
+	  -- latching status by data clock for ila
+	  readout_status_db <= readout_status;
     end if;
   end process;
 
