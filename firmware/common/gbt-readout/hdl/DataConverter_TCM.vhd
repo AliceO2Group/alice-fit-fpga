@@ -4,6 +4,7 @@
 -- 
 -- Create Date:    2017 
 -- Description: convert data from FEE to RDH format
+-- Comparison to PM converter, additional FIFO 160 to 80 to convert TCM packages to PM format
 --
 -- Revision: 07/2021
 ----------------------------------------------------------------------------------
@@ -26,13 +27,20 @@ entity DataConverter is
 
     Board_data_I : in board_data_type;
 
-    FIFO_is_space_for_packet_I : in std_logic;
+    header_fifo_data_o  : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    data_fifo_data_o    : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    header_fifo_rden_i  : in  std_logic;
+    data_fifo_rden_i    : in  std_logic;
+    header_fifo_empty_o : out std_logic;
+    no_data_o           : out boolean;
 
-    FIFO_WE_O        : out std_logic;
-    FIFO_data_word_O : out std_logic_vector(fifo_data_bitdepth-1 downto 0);
---              FIFO_data_word_O : out std_logic_vector(160-1 downto 0);
+    drop_ounter_o  : out std_logic_vector(15 downto 0);
+    fifo_cnt_max_o : out std_logic_vector(15 downto 0);
 
-    hits_rd_counter_converter_O : out hit_rd_counter_type
+    -- errors indicate unexpected FSM state, should be reset and debugged
+    -- 0 - data_fifo is not empty while start of run
+    -- 1 - header_fifo is not empty while start of run
+    errors_o : out std_logic_vector(1 downto 0)
     );
 end DataConverter;
 
@@ -45,76 +53,56 @@ architecture Behavioral of DataConverter is
       data_word => (others => '0')
       );
 
-  -- type FSM_STATE_T is (s0_wait_header, s1_sending_data);
-  -- signal FSM_STATE, FSM_STATE_NEXT  : FSM_STATE_T;
+  signal header_pcklen, header_pcklen_ff, header_pcklen_latch : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+  signal header_orbit                                         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal header_bc                                            : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal is_header, is_data                                   : std_logic;
 
-  signal data_fromfifo         : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-  signal is_header_from_fifo   : std_logic;
-  signal is_data_from_fifo     : std_logic;
-  signal raw_data_fifo_isempty : std_logic;
+  signal send_mode_ison, send_mode_ison_sclk, send_mode_ison_sclk_ff : boolean;
+  signal reset_drop_counters                                         : std_logic;
+  signal drop_counter                                                : std_logic_vector(15 downto 0);
 
-
-
-  signal Board_data_sysclkff, Board_data_sysclkff_next                 : Board_data_type;
-  signal FIFO_is_space_for_packet_ff, FIFO_is_space_for_packet_ff_next : std_logic;
-
---      signal word_counter_ff, word_counter_ff_next :  std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  constant counter_zero           : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0) := (others => '0');
-  signal packet_lenght_fromheader : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-  --packet_lenght_ff, packet_lenght_ff_next :  std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-
-  signal header_orbit           : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal header_bc              : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal header_word, data_word : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-
-  signal sending_event, sending_event_next         : std_logic;
-  signal FIFO_WE_ff, FIFO_WE_ff_next               : std_logic;
-  signal FIFO_data_word_ff, FIFO_data_word_ff_next : std_logic_vector(fifo_data_bitdepth-1 downto 0);
-
-  signal reset_drop_counters                           : std_logic;
-  signal is_dropping_event                             : std_logic;  --, is_dropping_event_next : std_logic;
-  signal dropped_events, dropped_events_next           : std_logic_vector(31 downto 0);
-  signal first_dropped_orbit, first_dropped_orbit_next : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal first_dropped_bc, first_dropped_bc_next       : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal last_dropped_orbit, last_dropped_orbit_next   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-  signal last_dropped_bc, last_dropped_bc_next         : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal data_rawfifo_cnt, rawfifo_cnt_max                    : std_logic_vector(12 downto 0);
+  signal header_rawfifo_full, data_rawfifo_full, rawfifo_full : std_logic;
 
 
+  signal sending_event : boolean;
+  signal word_counter  : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
-  attribute keep                        : string;
-  attribute keep of Board_data_sysclkff : signal is "true";
-  attribute keep of reset_drop_counters : signal is "true";
-  attribute keep of dropped_events      : signal is "true";
-  attribute keep of first_dropped_orbit : signal is "true";
-  attribute keep of first_dropped_bc    : signal is "true";
-  attribute keep of last_dropped_orbit  : signal is "true";
-  attribute keep of last_dropped_bc     : signal is "true";
+  signal tcm_data_fifo_empty : std_logic;
+  signal tcm_data_fifo_dout  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
+  signal header_fifo_din, data_fifo_din     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal header_fifo_we, data_fifo_we       : std_logic;
+  signal header_fifo_empty, data_fifo_empty : std_logic;
+
+  signal errors : std_logic_vector(1 downto 0);
+
+
+  attribute mark_debug                        : string;
+  attribute mark_debug of reset_drop_counters : signal is "true";
+  attribute mark_debug of header_fifo_din     : signal is "true";
+  attribute mark_debug of data_fifo_din       : signal is "true";
+  attribute mark_debug of header_fifo_we      : signal is "true";
+  attribute mark_debug of data_fifo_we        : signal is "true";
+  attribute mark_debug of word_counter        : signal is "true";
+  attribute mark_debug of sending_event       : signal is "true";
+  attribute mark_debug of header_word         : signal is "true";
+  attribute mark_debug of data_word           : signal is "true";
+  attribute mark_debug of is_data             : signal is "true";
+  attribute mark_debug of is_header           : signal is "true";
+  attribute mark_debug of header_pcklen_ff    : signal is "true";
+  attribute mark_debug of header_word_latch   : signal is "true";
+  attribute mark_debug of header_pcklen_latch : signal is "true";
 
 begin
 
+  header_fifo_empty_o <= header_fifo_empty;
 
-
-
--- Wiring ********************************************
-  FIFO_WE_O        <= FIFO_WE_ff;
-  FIFO_data_word_O <= FIFO_data_word_ff;
-
---      FIFO_WE_O <= Board_data_sysclkff.is_data;
---      FIFO_data_word_O <= Board_data_sysclkff.data_word;
-
-
-  hits_rd_counter_converter_O.hits_send_porbit  <= (others => '0');
-  hits_rd_counter_converter_O.hits_skipped      <= dropped_events;
-  hits_rd_counter_converter_O.first_orbit_hdrop <= first_dropped_orbit;
-  hits_rd_counter_converter_O.first_bc_hdrop    <= first_dropped_bc;
-  hits_rd_counter_converter_O.last_orbit_hdrop  <= last_dropped_orbit;
-  hits_rd_counter_converter_O.last_bc_hdrop     <= last_dropped_bc;
-
--- ***************************************************
-
-
-
+  header_pcklen <= func_PMHEADER_n_dwords(tcm_data_fifo_dout);
+  header_orbit  <= func_PMHEADER_getORBIT(tcm_data_fifo_dout);
+  header_bc     <= func_PMHEADER_getBC(tcm_data_fifo_dout);
 
 -- tcm_data_160to80bit_fifo =============================================
   tcm_data_160to80bit_fifo_comp : entity work.tcm_data_160to80bit_fifo
@@ -122,132 +110,137 @@ begin
       clk           => FSM_Clocks_I.System_Clk,
       srst          => FSM_Clocks_I.Reset_sclk,
       WR_EN         => Board_data_I.is_data,
-      RD_EN         => not raw_data_fifo_isempty,
+      RD_EN         => not tcm_data_fifo_empty,
       DIN           => Board_data_I.data_word,
-      DOUT          => data_fromfifo,
+      DOUT          => tcm_data_fifo_dout,
       FULL          => open,
-      EMPTY         => raw_data_fifo_isempty,
+      EMPTY         => tcm_data_fifo_empty,
       rd_data_count => open
       );
-
-  is_header_from_fifo <= '1' when (data_fromfifo(79 downto 76) = "1111") else '0';
-  is_data_from_fifo   <= not raw_data_fifo_isempty;
-
 -- ===========================================================
 
--- Header format *************************************
-  packet_lenght_fromheader <= func_PMHEADER_n_dwords(data_fromfifo);
-  header_orbit             <= func_PMHEADER_getORBIT(data_fromfifo);
-  header_bc                <= func_PMHEADER_getBC(data_fromfifo);
-  header_word              <= func_FITDATAHD_get_header(packet_lenght_fromheader, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
-  data_word                <= data_fromfifo;
--- ***************************************************
+
+---- Raw_header_fifo =============================================
+  raw_header_fifo_comp : entity work.raw_data_fifo
+    port map(
+      clk        => FSM_Clocks_I.System_Clk,
+      srst       => FSM_Clocks_I.Reset_sclk,
+      WR_EN      => header_fifo_we,
+      RD_EN      => header_fifo_rden_i,
+      DIN        => header_fifo_din,
+      DOUT       => header_fifo_data_o,
+      data_count => open,
+      prog_full  => header_rawfifo_full,
+      FULL       => open,
+      EMPTY      => header_fifo_empty
+      );
+---- ===========================================================
 
 
+---- Raw_data_fifo =============================================
+  raw_data_fifo_comp : entity work.raw_data_fifo
+    port map(
+      clk        => FSM_Clocks_I.System_Clk,
+      srst       => FSM_Clocks_I.Reset_sclk,
+      WR_EN      => data_fifo_we,
+      RD_EN      => data_fifo_rden_i,
+      DIN        => data_fifo_din,
+      DOUT       => data_fifo_data_o,
+      data_count => data_rawfifo_cnt,
+      prog_full  => data_rawfifo_full,
+      FULL       => open,
+      EMPTY      => data_fifo_empty
+      );
+---- ===========================================================
+
+  rawfifo_full <= header_rawfifo_full or data_rawfifo_full;
+
+  process (FSM_Clocks_I.Data_Clk)
+  begin
+    if(rising_edge(FSM_Clocks_I.Data_Clk))then
+      send_mode_ison <= (Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
+      drop_ounter_o  <= drop_counter;
+      fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
+      errors_o       <= errors;
+    end if;
+  end process;
 
 
--- Data ff data clk ***********************************
+-- sys ff data clk ***********************************
   process (FSM_Clocks_I.System_Clk)
   begin
-    if(FSM_Clocks_I.System_Clk'event and FSM_Clocks_I.System_Clk = '1') then
+    if(rising_edge(FSM_Clocks_I.System_Clk)) then
+
+      reset_drop_counters <= Control_register_I.reset_data_counters;
+
+      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
+      data_word                                                 <= tcm_data_fifo_dout;
+      is_data                                                   <= not tcm_data_fifo_empty;
+      if tcm_data_fifo_dout(79 downto 76) = x"f" then is_header <= '1'; else is_header <= '0'; end if;
+      header_pcklen_ff                                          <= header_pcklen;
+
+      send_mode_ison_sclk    <= send_mode_ison;
+      send_mode_ison_sclk_ff <= send_mode_ison_sclk;
+
       if(FSM_Clocks_I.Reset_sclk = '1') then
-        Board_data_sysclkff         <= board_data_void_const;
-        sending_event               <= '0';
-        FIFO_is_space_for_packet_ff <= '0';
 
-        dropped_events      <= (others => '0');
-        first_dropped_orbit <= (others => '0');
-        first_dropped_bc    <= (others => '0');
-        last_dropped_orbit  <= (others => '0');
-        last_dropped_bc     <= (others => '0');
-        FIFO_WE_ff          <= '0';
-        FIFO_data_word_ff   <= (others => '0');
-
-        --is_data_from_fifo <= '0';
+        sending_event   <= false;
+        drop_counter    <= (others => '0');
+        rawfifo_cnt_max <= (others => '0');
+        word_counter    <= (others => '1');
+        errors          <= (others => '0');
 
       else
-        Board_data_sysclkff         <= Board_data_sysclkff_next;
-        sending_event               <= sending_event_next;
-        FIFO_is_space_for_packet_ff <= FIFO_is_space_for_packet_ff_next;
-        FIFO_WE_ff                  <= FIFO_WE_ff_next;
-        --if (is_data_from_fifo = '1') and (sending_event = '1') then FIFO_WE_ff <= '1'; else FIFO_WE_ff <= '0'; end if;
-        FIFO_data_word_ff           <= FIFO_data_word_ff_next;
 
-        dropped_events      <= dropped_events_next;
-        first_dropped_orbit <= first_dropped_orbit_next;
-        first_dropped_bc    <= first_dropped_bc_next;
-        last_dropped_orbit  <= last_dropped_orbit_next;
-        last_dropped_bc     <= last_dropped_bc_next;
+        if is_header = '1' then
 
-      --is_data_from_fifo <= not raw_data_fifo_isempty;
+          header_word_latch   <= header_word;
+          header_pcklen_latch <= header_pcklen_ff;
+          word_counter        <= (others => '0');
+
+          sending_event <= (rawfifo_full = '0') and send_mode_ison_sclk;
+
+          if (rawfifo_full = '1') and send_mode_ison_sclk then
+            drop_counter <= drop_counter + 1;
+          end if;
+
+        elsif is_data = '1' then
+
+          word_counter <= word_counter + 1;
+
+        else
+
+          word_counter <= (others => '1');
+
+        end if;
+
+
+
+        if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
+
+        if reset_drop_counters = '1' then
+          drop_counter    <= (others => '0');
+          rawfifo_cnt_max <= (others => '0');
+        end if;
+
+        if not send_mode_ison_sclk_ff and send_mode_ison_sclk then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+
+
       end if;
-
 
     end if;
 
 
   end process;
 -- ****************************************************
+  header_fifo_din <= header_word_latch;
+  header_fifo_we  <= '1' when word_counter = header_pcklen_latch-1 and sending_event else '0';
 
+  data_fifo_din <= data_word;
+  data_fifo_we  <= '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
--- FSM ************************************************
---Board_data_sysclkff_next <= Board_data_I;
-  FIFO_is_space_for_packet_ff_next <= FIFO_is_space_for_packet_I;
-
-  reset_drop_counters <= Control_register_I.reset_data_counters;
-
-
-  sending_event_next <= '0' when (FSM_Clocks_I.Reset_sclk = '1') else
-                        '0' when (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') else
---                                              '1'     WHEN (is_header_from_fifo = '1') and (Status_register_I.Readout_Mode = mode_IDLE) and (Control_register_I.readout_bypass='1') ELSE
-                        '1' when (is_header_from_fifo = '1') and (Control_register_I.readout_bypass = '1') else
-                        '0' when (is_header_from_fifo = '1') and (Status_register_I.Readout_Mode = mode_IDLE) else
-                        '1' when (is_header_from_fifo = '1') else
-                        sending_event;
-
-  FIFO_data_word_ff_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                            header_word when ((sending_event = '1')or(sending_event_next = '1')) and (is_header_from_fifo = '1') else
-                            data_word   when ((sending_event = '1')or(sending_event_next = '1')) and (is_data_from_fifo = '1') else
-                            (others => '0');
-
-  FIFO_WE_ff_next <= '0' when (FSM_Clocks_I.Reset_sclk = '1') else
---                                                      '1'             WHEN (is_data_from_fifo = '1') and ((sending_event = '1')or(sending_event_next = '1')) ELSE
-                     '1' when (is_data_from_fifo = '1') and (sending_event_next = '1') else
-                     '0';
-
--- Event counter ------------------------------------
-
-  is_dropping_event <= '0' when (FSM_Clocks_I.Reset_sclk = '1') else
-                       '0' when (Status_register_I.Readout_Mode = mode_IDLE) else
-                       '1' when (is_header_from_fifo = '1') and (FIFO_is_space_for_packet_ff = '0') else
-                       '0';
-
-  dropped_events_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                         (others => '0')    when (reset_drop_counters = '1') else
-                         dropped_events + 1 when (is_dropping_event = '1') else
-                         dropped_events;
-
-  last_dropped_orbit_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                             (others => '0') when (reset_drop_counters = '1') else
-                             header_orbit    when (is_dropping_event = '1') else
-                             last_dropped_orbit;
-
-  last_dropped_bc_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                          (others => '0') when (reset_drop_counters = '1') else
-                          header_bc       when (is_dropping_event = '1') else
-                          last_dropped_bc;
-
-  first_dropped_orbit_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                              (others => '0') when (reset_drop_counters = '1') else
-                              header_orbit    when (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) else
-                              first_dropped_orbit;
-
-  first_dropped_bc_next <= (others => '0') when (FSM_Clocks_I.Reset_sclk = '1') else
-                           (others => '0') when (reset_drop_counters = '1') else
-                           header_bc       when (is_dropping_event = '1') and (last_dropped_orbit = ORBIT_const_void) else
-                           first_dropped_bc;
--- ****************************************************
-
+  -- all data sent in run
+  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not send_mode_ison_sclk;
 
 end Behavioral;
 
