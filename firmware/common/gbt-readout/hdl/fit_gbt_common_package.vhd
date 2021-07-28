@@ -60,8 +60,8 @@ package fit_gbt_common_package is
 
 -- ===== FIT GBT Readout types =================================
   type FSM_Clocks_type is record
-    Reset_dclk     : std_logic;
-    Reset_sclk     : std_logic;
+    Reset_dclk     : std_logic;         -- reset by gbt TX clock
+    Reset_sclk     : std_logic;         -- reset system clock 320 MHz
     Data_Clk       : std_logic;
     System_Clk     : std_logic;
     System_Counter : std_logic_vector(3 downto 0);
@@ -166,8 +166,9 @@ package fit_gbt_common_package is
 -- =============================================================
 
 -- ===== FIT GBT STATUS ========================================
-  constant stat_reg_size     : integer := 8;
-  constant stat_reg_size_sim : integer := stat_reg_size+6;
+  constant stat_reg_size         : integer := 9;
+  constant stat_reg_size_sim     : integer := stat_reg_size+6;
+  constant ipbusrd_fifo_out_addr : integer := 8;
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
 
@@ -189,18 +190,18 @@ package fit_gbt_common_package is
   end record;
 
   type Type_datagen_report is record
-    orbit      : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-    bc         : std_logic_vector(BC_id_bitdepth-1 downto 0);
-    size       : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-    packet_num : std_logic_vector(35 downto 0);
-	sel_fifo_count : std_logic_vector(15 downto 0);
+    orbit          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+    bc             : std_logic_vector(BC_id_bitdepth-1 downto 0);
+    size           : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+    packet_num     : std_logic_vector(35 downto 0);
+    sel_fifo_count : std_logic_vector(15 downto 0);
   end record;
 
 
   type FIT_GBT_status_type is record
-    GBT_status       : Type_GBT_status;
-    datagen_report   : Type_datagen_report;  -- header of generated data; used only in simulation
-	
+    GBT_status     : Type_GBT_status;
+    datagen_report : Type_datagen_report;  -- header of generated data; used only in simulation
+
     Readout_Mode     : Type_Readout_Mode;
     CRU_Readout_Mode : Type_Readout_Mode;
     BCIDsync_Mode    : Type_BCIDsync_Mode;
@@ -220,7 +221,9 @@ package fit_gbt_common_package is
     sel_drop_cnt : std_logic_vector(15 downto 0);
     gbt_data_cnt : std_logic_vector(31 downto 0);
 
-
+    -- readout via IPbus, used in FTM only
+    ipbusrd_fifo_cnt : std_logic_vector(15 downto 0);
+    ipbusrd_fifo_out : std_logic_vector(31 downto 0);
 
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data
@@ -273,7 +276,6 @@ package fit_gbt_common_package is
 
 
 -- Control Register addres reg ------------------------------------
-  function func_CNTRREG_getaddrreg (cntrl_reg         : CONTROL_REGISTER_type) return ctrl_reg_t;
   function func_CNTRREG_getcntrreg (cntrl_reg_addrreg : ctrl_reg_t) return CONTROL_REGISTER_type;
   function func_STATREG_getaddrreg (status_reg        : FIT_GBT_status_type) return stat_reg_t;
   function func_STATREG_getaddrreg_sim (status_reg    : FIT_GBT_status_type) return stat_reg_sim_t;
@@ -313,76 +315,6 @@ package body fit_gbt_common_package is
   function func_FITDATAHD_bc (header_w : std_logic_vector(GBT_data_word_bitdepth-1 downto 0)) return std_logic_vector is
   begin return header_w(BC_id_bitdepth-1 downto 0); end function;
 -- ----------------------------------------------------------------
-
--- Control Register addres reg ------------------------------------
-  function func_CNTRREG_getaddrreg (cntrl_reg : CONTROL_REGISTER_type) return ctrl_reg_t is
-
-    variable cntr_reg_addrreg : ctrl_reg_t;
-    variable data_gen_cntr    : std_logic_vector(3 downto 0);
-    variable trg_gen_cntr     : std_logic_vector(3 downto 0);
-    variable start_rd_command : std_logic_vector(3 downto 0);
-    variable reset_contr      : std_logic_vector(7 downto 0);
-
-
-  begin
-
-    if cntrl_reg.Data_Gen.usage_generator = use_NO_generator then
-      data_gen_cntr := x"0";
-    elsif cntrl_reg.Data_Gen.usage_generator = use_MAIN_generator then
-      data_gen_cntr := x"1";
-    elsif cntrl_reg.Data_Gen.usage_generator = use_TX_generator then
-      data_gen_cntr := x"2";
-    else
-      data_gen_cntr := x"f";
-    end if;
-
-    if cntrl_reg.Trigger_Gen.Readout_command = idle then
-      start_rd_command := x"0";
-    elsif cntrl_reg.Trigger_Gen.Readout_command = continious then
-      start_rd_command := x"1";
-    elsif cntrl_reg.Trigger_Gen.Readout_command = trigger then
-      start_rd_command := x"2";
-    else
-      start_rd_command := x"f";
-    end if;
-
-    if cntrl_reg.Trigger_Gen.usage_generator = use_NO_generator then
-      trg_gen_cntr := x"0";
-    elsif cntrl_reg.Trigger_Gen.usage_generator = use_CONT_generator then
-      trg_gen_cntr := x"1";
-    elsif cntrl_reg.Trigger_Gen.usage_generator = use_TX_generator then
-      trg_gen_cntr := x"2";
-    else
-      trg_gen_cntr := x"f";
-    end if;
-
-
-    reset_contr := "0" & cntrl_reg.reset_readout & cntrl_reg.reset_rxph_error & cntrl_reg.reset_gbt & cntrl_reg.reset_gbt_rxerror & cntrl_reg.reset_gensync & cntrl_reg.reset_data_counters & cntrl_reg.reset_orbc_sync;
-
-
-
-    cntr_reg_addrreg(0) := x"00" & "0"&cntrl_reg.force_idle&cntrl_reg.readout_bypass&cntrl_reg.is_hb_response & start_rd_command & reset_contr & trg_gen_cntr & data_gen_cntr;
-
-    cntr_reg_addrreg(1) := cntrl_reg.Data_Gen.trigger_resp_mask;
-    cntr_reg_addrreg(2) := cntrl_reg.Data_Gen.bunch_pattern;
-    -- reg3 is empty
-    cntr_reg_addrreg(4) := cntrl_reg.Trigger_Gen.trigger_pattern(63 downto 32);
-    cntr_reg_addrreg(5) := cntrl_reg.Trigger_Gen.trigger_pattern(31 downto 0);
-    cntr_reg_addrreg(6) := cntrl_reg.Trigger_Gen.trigger_cont_value;
-    cntr_reg_addrreg(7) := cntrl_reg.Trigger_Gen.bunch_freq & cntrl_reg.Data_Gen.bunch_freq;
-    cntr_reg_addrreg(8) := x"0"&cntrl_reg.Trigger_Gen.bc_start & x"0"&cntrl_reg.Data_Gen.bc_start;
-
-    cntr_reg_addrreg(9)  := cntrl_reg.RDH_data.PRT_BIT & cntrl_reg.RDH_data.SYS_ID & cntrl_reg.RDH_data.FEE_ID;
-    cntr_reg_addrreg(10) := x"0000_0000";
-
-    cntr_reg_addrreg(11) := x"0000_0" & cntrl_reg.BCID_offset;
-    cntr_reg_addrreg(12) := cntrl_reg.trg_data_select;
-
-    return cntr_reg_addrreg;
-
-  end function;
-
-
 
 
 
@@ -521,14 +453,15 @@ package body fit_gbt_common_package is
 
 
 
-    status_reg_addrreg(0) := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
-    status_reg_addrreg(1) := status_reg.ORBIT_from_CRU;
-    status_reg_addrreg(2) := status_reg.fsm_errors & x"0" & status_reg.BCID_from_CRU;
-    status_reg_addrreg(3) := status_reg.cnv_fifo_max & status_reg.cnv_drop_cnt;
-    status_reg_addrreg(4) := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
-    status_reg_addrreg(5) := status_reg.gbt_data_cnt;
-    status_reg_addrreg(6) := x"00000000";
-    status_reg_addrreg(7) := x"00000000";
+    status_reg_addrreg(0)                     := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
+    status_reg_addrreg(1)                     := status_reg.ORBIT_from_CRU;
+    status_reg_addrreg(2)                     := status_reg.fsm_errors & x"0" & status_reg.BCID_from_CRU;
+    status_reg_addrreg(3)                     := status_reg.cnv_fifo_max & status_reg.cnv_drop_cnt;
+    status_reg_addrreg(4)                     := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
+    status_reg_addrreg(5)                     := status_reg.gbt_data_cnt;
+    status_reg_addrreg(6)                     := x"00000000";
+    status_reg_addrreg(7)                     := ipbusrd_fifo_cnt & x"0000";
+    status_reg_addrreg(ipbusrd_fifo_out_addr) := ipbusrd_fifo_out;  --8
 
 
     return status_reg_addrreg;
@@ -544,12 +477,12 @@ package body fit_gbt_common_package is
       status_reg_addrreg_sim(i) := status_reg_addrreg(i);
     end loop;
 
-    status_reg_addrreg_sim(8)  := status_reg.ORBIT_from_CRU_corrected;
-    status_reg_addrreg_sim(9)  := x"00000" & status_reg.BCID_from_CRU_corrected;
-    status_reg_addrreg_sim(10) := status_reg.Trigger_from_CRU;
-    status_reg_addrreg_sim(11) := status_reg.datagen_report.orbit;
-    status_reg_addrreg_sim(12) := x"00" & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
-    status_reg_addrreg_sim(13) := status_reg.datagen_report.packet_num(31 downto 0);
+    status_reg_addrreg_sim(9)  := status_reg.ORBIT_from_CRU_corrected;
+    status_reg_addrreg_sim(10) := x"00000" & status_reg.BCID_from_CRU_corrected;
+    status_reg_addrreg_sim(11) := status_reg.Trigger_from_CRU;
+    status_reg_addrreg_sim(12) := status_reg.datagen_report.orbit;
+    status_reg_addrreg_sim(13) := x"00" & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
+    status_reg_addrreg_sim(14) := status_reg.datagen_report.packet_num(31 downto 0);
     --packet_num
     return status_reg_addrreg_sim;
   end function;

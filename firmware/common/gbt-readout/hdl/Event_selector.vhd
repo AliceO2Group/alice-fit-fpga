@@ -1,23 +1,13 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company: INR RAS
+-- Engineer: Finogeev D. A. dmitry-finogeev@yandex.ru
 -- 
--- Create Date:    15:42:21 04/12/2017 
--- Design Name: 
--- Module Name:    Test_Generator - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Create Date:    2017 
+-- Description: Select detector data and collect it for RDH
 --
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-
+-- Revision: 07/2021
 ----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use ieee.numeric_std.all;

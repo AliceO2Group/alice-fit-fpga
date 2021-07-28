@@ -92,11 +92,12 @@ class status_reg:
 
         self.cru_orbit = int(line_regs[1][-8:], base=16)
         self.cru_bc = int(line_regs[2][-3:], base=16)
-        self.cru_trigger = int(line_regs[10][-3:], base=16)
-        self.cru_orbit_corr = int(line_regs[8][-8:], base=16)
-        self.cru_bc_corr = int(line_regs[9][-3:], base=16)
 
-        self.data_gen_orbit = int(line_regs[11][-8:], base=16)
-        self.data_gen_bc = int(line_regs[12][-3:], base=16)
-        self.data_gen_size = int(line_regs[12][-5:-4], base=16)
-        self.data_gen_packnum = int(line_regs[13][-8:], base=16)
+        self.cru_orbit_corr = int(line_regs[9][-8:], base=16)
+        self.cru_bc_corr = int(line_regs[10][-3:], base=16)
+        self.cru_trigger = int(line_regs[11][-3:], base=16)
+
+        self.data_gen_orbit = int(line_regs[12][-8:], base=16)
+        self.data_gen_bc = int(line_regs[13][-3:], base=16)
+        self.data_gen_size = int(line_regs[13][-5:-4], base=16)
+        self.data_gen_packnum = int(line_regs[14][-8:], base=16)

@@ -14,8 +14,8 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="14260000001fs"></ZoomEndTime>
-      <Cursor1Time time="8195940522fs"></Cursor1Time>
+      <ZoomEndTime time="28520000001fs"></ZoomEndTime>
+      <Cursor1Time time="6500000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="207"></NameColumnWidth>
@@ -53,7 +53,6 @@
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>
          <obj_property name="ObjectShortName">GBT_status</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/testbench_readout/GBT_status.GBT_status" type="array">
             <obj_property name="ElementShortName">.GBT_status</obj_property>
             <obj_property name="ObjectShortName">.GBT_status</obj_property>
@@ -136,6 +135,7 @@
    <wvobject fp_name="group235" type="group">
       <obj_property name="label">RXGENERATOR</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_pattern" type="array">
          <obj_property name="ElementShortName">.trigger_pattern[63:0]</obj_property>
          <obj_property name="ObjectShortName">.trigger_pattern[63:0]</obj_property>
@@ -176,7 +176,7 @@
          <obj_property name="ObjectShortName">bc_gen[11:0]</obj_property>
          <obj_property name="CustomSignalColor">#FFD700</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_command" type="other">
          <obj_property name="ElementShortName">run_command</obj_property>
@@ -370,6 +370,7 @@
    <wvobject fp_name="group460" type="group">
       <obj_property name="label">CONVERTER</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/Board_data_I" type="array">
          <obj_property name="ElementShortName">Board_data_I</obj_property>
          <obj_property name="ObjectShortName">Board_data_I</obj_property>
@@ -415,6 +416,7 @@
    <wvobject fp_name="group400" type="group">
       <obj_property name="label">SELECTOR</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/send_mode_sc" type="other">
          <obj_property name="ElementShortName">send_mode_sc</obj_property>
          <obj_property name="ObjectShortName">send_mode_sc</obj_property>
@@ -774,7 +776,6 @@
    <wvobject fp_name="group455" type="group">
       <obj_property name="label">OUTPUTS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/FIT_GBT_status_O.fsm_errors" type="array">
          <obj_property name="ElementShortName">.fsm_errors[15:0]</obj_property>
          <obj_property name="ObjectShortName">.fsm_errors[15:0]</obj_property>
@@ -788,6 +789,7 @@
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>
          <obj_property name="ObjectShortName">GBT_status</obj_property>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_from_FITrd_O" type="array">
          <obj_property name="ElementShortName">Data_from_FITrd_O[79:0]</obj_property>

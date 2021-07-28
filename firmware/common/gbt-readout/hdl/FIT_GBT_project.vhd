@@ -1,21 +1,11 @@
 ----------------------------------------------------------------------------------
 -- Company: INR RAS
--- Engineer: Finogeev D.A. dmitry-finogeev@yandex.ru
+-- Engineer: Finogeev D. A. dmitry-finogeev@yandex.ru
 -- 
--- Create Date:    10:29:21 01/09/2017 
--- Design Name:         FIT GBT
--- Module Name:    FIT_GBT_project - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Create Date:    2017 
+-- Description: TOP FIT GBT readout module
 --
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Revision: 07/2021
 ----------------------------------------------------------------------------------
 
 library IEEE;
@@ -37,6 +27,7 @@ entity FIT_GBT_project is
     MgtRefClk_I      : in  std_logic;   -- 200MHz ref clock
     RxDataClk_I      : in  std_logic;   -- 40MHz data clock in RX domain
     GBT_RxFrameClk_O : out std_logic;   --Rx GBT frame clk 40MHz
+    FSM_Clocks_O     : out FSM_Clocks_type;
 
     Board_data_I       : in board_data_type;        --PM or TCM data @320MHz
     Control_register_I : in CONTROL_REGISTER_type;  -- control registers @DataClk
@@ -116,8 +107,10 @@ architecture Behavioral of FIT_GBT_project is
 
 begin
 -- WIRING ======================================================
+  FSM_Clocks_O          <= FSM_Clocks;
   FSM_Clocks.System_Clk <= SysClk_I;
   FSM_Clocks.Data_Clk   <= DataClk_I;
+  FSM_Clocks.GBT_RX_Clk <= RxDataClk_I;
 
   -- SFP turned ON
   MGT_TX_dsbl_O <= '0';
@@ -135,9 +128,9 @@ begin
 
 
 
-  RX_Data_DataClk <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
-  Data_from_FITrd_O   <= TX_Data_from_txgen   when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_Data_from_orbcgen;
-  IsData_from_FITrd_O <= TX_IsData_from_txgen when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_IsData_from_orbcgen;
+  RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
+  Data_from_FITrd_O         <= TX_Data_from_txgen   when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_Data_from_orbcgen;
+  IsData_from_FITrd_O       <= TX_IsData_from_txgen when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_IsData_from_orbcgen;
   RxData_rxclk_from_GBT_O   <= RX_Data_rxclk_from_GBT;
   IsRxData_rxclk_from_GBT_O <= RX_IsData_rxclk_from_GBT;
 
@@ -327,8 +320,8 @@ begin
 
       TX_IsData_O => TX_IsData_from_txgen,
       TX_Data_O   => TX_Data_from_txgen,
-	  
-	  gbt_data_counter_o => FIT_GBT_STATUS.gbt_data_cnt
+
+      gbt_data_counter_o => FIT_GBT_STATUS.gbt_data_cnt
       );
 -- ===========================================================
 
