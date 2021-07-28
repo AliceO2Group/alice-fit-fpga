@@ -19,10 +19,10 @@ use work.fit_gbt_board_package.all;
 
 entity DataConverter is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Status_register_I  : in FIT_GBT_status_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    Status_register_I  : in readout_status_t;
+    Control_register_I : in readout_control_t;
 
     Board_data_I : in board_data_type;
 

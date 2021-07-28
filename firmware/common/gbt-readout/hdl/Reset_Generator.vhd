@@ -19,7 +19,7 @@ entity Reset_Generator is
     SysClk_I  : in std_logic;
     DataClk_I : in std_logic;
 
-    Control_register_I : in CONTROL_REGISTER_type;
+    Control_register_I : in readout_control_t;
 
     SysClk_count_O : out std_logic_vector(3 downto 0);
 

@@ -426,8 +426,8 @@ component TDCCHAN is
    -- ###############################################
    -- #########  GBT Readout ########################
    -- ###############################################
-   signal FIT_GBT_status : FIT_GBT_status_type;
-   signal FIT_GBT_control : CONTROL_REGISTER_type;
+   signal FIT_GBT_status : readout_status_t;
+   signal FIT_GBT_control : readout_control_t;
          
            
    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -457,7 +457,7 @@ component TDCCHAN is
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
            
            Board_data_I        : in board_data_type; --PM or TCM data
-           Control_register_I    : in CONTROL_REGISTER_type;
+           Control_register_I    : in readout_control_t;
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -479,7 +479,7 @@ component TDCCHAN is
            rx_ph320 : out std_logic_vector(2 downto 0);
 		   ph_error320 : out std_logic; 
               -- FIT readour status, including BCOR_ID to PM/TCM
-           FIT_GBT_status_O : out FIT_GBT_status_type
+           FIT_GBT_status_O : out readout_status_t
                       
        );
    end component;

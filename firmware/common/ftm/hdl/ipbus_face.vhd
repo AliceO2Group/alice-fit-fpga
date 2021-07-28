@@ -18,12 +18,13 @@ use IEEE.NUMERIC_STD.all;
 library work;
 use work.fit_gbt_common_package.all;
 
-entity FIT_TESTMODULE_IPBUS_sender is
+entity ipbus_face is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I  : in rdclocks_t;
+    ipbus_clock_i : in std_logic;
 
-    FIT_GBT_status_I   : in  FIT_GBT_status_type;
-    Control_register_O : out CONTROL_REGISTER_type;
+    FIT_GBT_status_I   : in  readout_status_t;
+    Control_register_O : out readout_control_t;
 
     GBTRX_IsData_rxclk_I : in std_logic;
     GBTRX_Data_rxclk_I   : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -43,9 +44,9 @@ entity FIT_TESTMODULE_IPBUS_sender is
     IPBUS_err_O       : out std_logic;
     IPBUS_base_addr_I : in  std_logic_vector(11 downto 0)
     );
-end FIT_TESTMODULE_IPBUS_sender;
+end ipbus_face;
 
-architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
+architecture Behavioral of ipbus_face is
 
   signal rx_reset, ipb_reset : std_logic;
 
@@ -54,7 +55,7 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
 
   signal data_fifo_din                                                   : std_logic_vector(95 downto 0);
   signal data_fifo_dout                                                  : std_logic_vector(191 downto 0);
-  signal data_fifo_count                                                 : std_logic_vector(14 downto 0);
+  signal data_fifo_count                                                 : std_logic_vector(13 downto 0);
   signal data_fifo_wren, data_fifo_rden, data_fifo_full, data_fifo_empty : std_logic;
 
   type array32_type is array (natural range <>) of std_logic_vector(31 downto 0);
@@ -64,10 +65,10 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
   signal gbt_word_counter                       : std_logic_vector(15 downto 0) := x"0000";
   signal read_from_fifo_sgn, read_from_fifo_cmd : std_logic;
 
-  signal ctrl_reg                  : ctrl_reg_t;
-  signal stat_reg, stat_reg_ipbclk : stat_reg_t;
-  signal readout_control           : CONTROL_REGISTER_type;
-  signal readout_status            : FIT_GBT_status_type;
+  signal ctrl_reg                          : ctrl_reg_t;
+  signal stat_reg, stat_reg_ipbclk         : stat_reg_t;
+  signal readout_control                   : readout_control_t;
+  signal readout_status, readout_status_db : readout_status_t;
 
   signal ipbus_addr_int, ipbus_base_addr_int : integer range 0 to 512;
   signal gbt_readout_addr_int                : integer range 0 to 512;
@@ -95,7 +96,7 @@ architecture Behavioral of FIT_TESTMODULE_IPBUS_sender is
   attribute MARK_DEBUG of debug_ipb_data_I       : signal is "true";
   attribute MARK_DEBUG of debug_ipb_addr         : signal is "true";
   attribute MARK_DEBUG of readout_control        : signal is "true";
-  attribute MARK_DEBUG of readout_status         : signal is "true";
+  attribute MARK_DEBUG of readout_status_db      : signal is "true";
   attribute MARK_DEBUG of data_fifo_dout         : signal is "true";
   attribute MARK_DEBUG of data_fifo_rden         : signal is "true";
   attribute MARK_DEBUG of data_map_counter       : signal is "true";
@@ -134,12 +135,26 @@ begin
   ipbus_addr_int      <= to_integer(unsigned(IPBUS_addr_I)) - ipbus_base_addr_int;
 
 -- ctrl / stat registers
-  Control_register_O              <= readout_control;
-  readout_control                 <= func_CNTRREG_getcntrreg(ctrl_reg);
-  readout_status                  <= FIT_GBT_status_I;
-  readout_status.ipbusrd_fifo_cnt <= data_fifo_count;
+  Control_register_O <= readout_control;
+
+  -- reassign status to add ipbus count and data
+  readout_status.GBT_status       <= FIT_GBT_status_I.GBT_status;
+  readout_status.Readout_Mode     <= FIT_GBT_status_I.Readout_Mode;
+  readout_status.CRU_Readout_Mode <= FIT_GBT_status_I.CRU_Readout_Mode;
+  readout_status.BCIDsync_Mode    <= FIT_GBT_status_I.BCIDsync_Mode;
+  readout_status.BCID_from_CRU    <= FIT_GBT_status_I.BCID_from_CRU;
+  readout_status.ORBIT_from_CRU   <= FIT_GBT_status_I.ORBIT_from_CRU;
+  readout_status.rx_phase         <= FIT_GBT_status_I.rx_phase;
+  readout_status.cnv_fifo_max     <= FIT_GBT_status_I.cnv_fifo_max;
+  readout_status.cnv_drop_cnt     <= FIT_GBT_status_I.cnv_drop_cnt;
+  readout_status.sel_fifo_max     <= FIT_GBT_status_I.sel_fifo_max;
+  readout_status.sel_drop_cnt     <= FIT_GBT_status_I.sel_drop_cnt;
+  readout_status.gbt_data_cnt     <= FIT_GBT_status_I.gbt_data_cnt;
+  readout_status.fsm_errors       <= FIT_GBT_status_I.fsm_errors;
+  readout_status.ipbusrd_fifo_cnt <= "00"&data_fifo_count;
   readout_status.ipbusrd_fifo_out <= fifo_to_ipbus_data_out;
-  stat_reg                        <= func_STATREG_getaddrreg(readout_status);
+
+
 
 
 -- HDMI FIFO ===========================================
@@ -169,7 +184,7 @@ begin
     port map (
       rst           => FSM_Clocks_I.Reset_dclk,
       wr_clk        => FSM_Clocks_I.GBT_RX_Clk,
-      rd_clk        => FSM_Clocks_I.IPBUS_Data_Clk,
+      rd_clk        => ipbus_clock_i,
       din           => data_fifo_din,
       wr_en         => data_fifo_wren,
       rd_en         => data_fifo_rden,
@@ -199,12 +214,20 @@ begin
   end process;
 -- =====================================================
 
+  -- status and control by data clock
+  process (FSM_Clocks_I.Data_Clk)
+  begin
+    if(rising_edge(FSM_Clocks_I.Data_Clk))then
+      readout_control <= func_CNTRREG_getcntrreg(ctrl_reg);
+      stat_reg        <= func_STATREG_getaddrreg(readout_status);
+    end if;
+  end process;
 
 
 -- IPbus clock *****************************************
-  process (FSM_Clocks_I.IPBUS_Data_Clk)
+  process (ipbus_clock_i)
   begin
-    if(rising_edge(FSM_Clocks_I.IPBUS_Data_Clk))then
+    if(rising_edge(ipbus_clock_i))then
       ipb_reset       <= FSM_Clocks_I.Reset_dclk;
       stat_reg_ipbclk <= stat_reg;
 

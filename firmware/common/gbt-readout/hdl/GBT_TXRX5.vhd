@@ -43,7 +43,7 @@ entity GBT_TX_RX is
         RXData_SC       : out std_logic_vector (3 downto 0);
         IsRXData        : out std_logic;
         reset_rx_errors : in  std_logic;
-        GBT_Status_O    : out Type_GBT_status
+        GBT_Status_O    : out gbt_status_t
         );
 end GBT_TX_RX;
 

@@ -59,14 +59,13 @@ package fit_gbt_common_package is
 -- -------------------------------------------------------------
 
 -- ===== FIT GBT Readout types =================================
-  type FSM_Clocks_type is record
+  type rdclocks_t is record
     Reset_dclk     : std_logic;         -- reset by gbt TX clock
     Reset_sclk     : std_logic;         -- reset system clock 320 MHz
     Data_Clk       : std_logic;
     System_Clk     : std_logic;
     System_Counter : std_logic_vector(3 downto 0);
     GBT_RX_Clk     : std_logic;         --used in TESTB
-    IPBUS_Data_Clk : std_logic;         --used in TESTB
   end record;
 -- =============================================================
 
@@ -74,37 +73,37 @@ package fit_gbt_common_package is
   constant ctrl_reg_size : integer := 13;
   type ctrl_reg_t is array (0 to ctrl_reg_size-1) of std_logic_vector(31 downto 0);
 
-  type Type_Gen_use_type is (use_NO_generator, use_MAIN_generator, use_TX_generator);
-  type Type_trgGen_use_type is (use_NO_generator, use_CONT_generator, use_TX_generator);
-  type Readout_command_type is (idle, continious, trigger);
+  type gen_mode_t is (use_NO_generator, use_MAIN_generator, use_TX_generator);
+  type trggen_mode_t is (use_NO_generator, use_CONT_generator, use_TX_generator);
+  type rdcmd_t is (idle, continious, trigger);
 
-  type Data_Gen_CONTROL_type is record
-    usage_generator   : Type_Gen_use_type;
+  type ctrl_gen_t is record
+    usage_generator   : gen_mode_t;
     trigger_resp_mask : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- data generated for this trigger
     bunch_pattern     : std_logic_vector(31 downto 0);  -- pattern lenghts of packet 
     bunch_freq        : std_logic_vector(15 downto 0);  -- pattern frequency
     bc_start          : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
   end record;
 
-  type Trigger_Gen_CONTROL_type is record
-    usage_generator    : Type_trgGen_use_type;
-    Readout_command    : Readout_command_type;
+  type ctrl_trggen_t is record
+    usage_generator    : trggen_mode_t;
+    Readout_command    : rdcmd_t;
     trigger_pattern    : std_logic_vector(63 downto 0);  -- trigger pattern 32 BC lenght
     trigger_cont_value : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- trigger that sendign continious
     bunch_freq         : std_logic_vector(15 downto 0);  -- trigger frequency
     bc_start           : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
   end record;
 
-  type RDH_data_type is record
+  type rdh_ctrl_t is record
     FEE_ID  : std_logic_vector(15 downto 0);
     SYS_ID  : std_logic_vector(7 downto 0);
     PRT_BIT : std_logic_vector(7 downto 0);
   end record;
 
-  type CONTROL_REGISTER_type is record
-    Data_Gen    : Data_Gen_CONTROL_type;
-    Trigger_Gen : Trigger_Gen_CONTROL_type;
-    RDH_data    : RDH_data_type;
+  type readout_control_t is record
+    Data_Gen    : ctrl_gen_t;
+    Trigger_Gen : ctrl_trggen_t;
+    RDH_data    : rdh_ctrl_t;
 
     readout_bypass  : std_logic;
     is_hb_response  : std_logic;
@@ -123,7 +122,7 @@ package fit_gbt_common_package is
 
   end record;
 
-  constant test_CONTROL_REG : CONTROL_REGISTER_type :=
+  constant test_CONTROL_REG : readout_control_t :=
     (
       Data_Gen            => (
         usage_generator   => use_TX_generator,
@@ -172,10 +171,10 @@ package fit_gbt_common_package is
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
 
-  type Type_Readout_Mode is (mode_IDLE, mode_CNT, mode_TRG);
-  type Type_BCIDsync_Mode is (mode_STR, mode_SYNC, mode_LOST);
+  type rdmode_t is (mode_IDLE, mode_CNT, mode_TRG);
+  type bcid_sync_t is (mode_STR, mode_SYNC, mode_LOST);
 
-  type Type_GBT_status is record
+  type gbt_status_t is record
     mgt_phalin_cplllock : std_logic;    --reg bit 0
     rxWordClkReady      : std_logic;    --reg bit 1
     rxFrameClkReady     : std_logic;    --reg bit 2
@@ -189,7 +188,7 @@ package fit_gbt_common_package is
     Rx_Phase_error : std_logic;         --reg bit 9
   end record;
 
-  type Type_datagen_report is record
+  type datagen_report_t is record
     orbit          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
     bc             : std_logic_vector(BC_id_bitdepth-1 downto 0);
     size           : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
@@ -198,13 +197,13 @@ package fit_gbt_common_package is
   end record;
 
 
-  type FIT_GBT_status_type is record
-    GBT_status     : Type_GBT_status;
-    datagen_report : Type_datagen_report;  -- header of generated data; used only in simulation
+  type readout_status_t is record
+    GBT_status     : gbt_status_t;
+    datagen_report : datagen_report_t;  -- header of generated data; used only in simulation
 
-    Readout_Mode     : Type_Readout_Mode;
-    CRU_Readout_Mode : Type_Readout_Mode;
-    BCIDsync_Mode    : Type_BCIDsync_Mode;
+    Readout_Mode     : rdmode_t;
+    CRU_Readout_Mode : rdmode_t;
+    BCIDsync_Mode    : bcid_sync_t;
     Start_run        : std_logic;
     Stop_run         : std_logic;
 
@@ -236,7 +235,7 @@ package fit_gbt_common_package is
     fsm_errors : std_logic_vector(15 downto 0);
   end record;
 
-  constant test_gbt_status_void : Type_GBT_status :=
+  constant test_gbt_status_void : gbt_status_t :=
     (
       mgt_phalin_cplllock => '0',
 
@@ -276,9 +275,9 @@ package fit_gbt_common_package is
 
 
 -- Control Register addres reg ------------------------------------
-  function func_CNTRREG_getcntrreg (cntrl_reg_addrreg : ctrl_reg_t) return CONTROL_REGISTER_type;
-  function func_STATREG_getaddrreg (status_reg        : FIT_GBT_status_type) return stat_reg_t;
-  function func_STATREG_getaddrreg_sim (status_reg    : FIT_GBT_status_type) return stat_reg_sim_t;
+  function func_CNTRREG_getcntrreg (cntrl_reg_addrreg : ctrl_reg_t) return readout_control_t;
+  function func_STATREG_getaddrreg (status_reg        : readout_status_t) return stat_reg_t;
+  function func_STATREG_getaddrreg_sim (status_reg    : readout_status_t) return stat_reg_sim_t;
 -- ----------------------------------------------------------------
 
 end fit_gbt_common_package;
@@ -318,9 +317,9 @@ package body fit_gbt_common_package is
 
 
 
-  function func_CNTRREG_getcntrreg (cntrl_reg_addrreg : ctrl_reg_t) return CONTROL_REGISTER_type is
+  function func_CNTRREG_getcntrreg (cntrl_reg_addrreg : ctrl_reg_t) return readout_control_t is
 
-    variable cntr_reg : CONTROL_REGISTER_type;
+    variable cntr_reg : readout_control_t;
 
   begin
 
@@ -398,7 +397,7 @@ package body fit_gbt_common_package is
 
 
 
-  function func_STATREG_getaddrreg (status_reg : FIT_GBT_status_type) return stat_reg_t is
+  function func_STATREG_getaddrreg (status_reg : readout_status_t) return stat_reg_t is
     variable status_reg_addrreg : stat_reg_t;
     variable gbt_status         : std_logic_vector(15 downto 0);
     variable bcid_sync_mode     : std_logic_vector(3 downto 0);
@@ -460,14 +459,14 @@ package body fit_gbt_common_package is
     status_reg_addrreg(4)                     := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
     status_reg_addrreg(5)                     := status_reg.gbt_data_cnt;
     status_reg_addrreg(6)                     := x"00000000";
-    status_reg_addrreg(7)                     := ipbusrd_fifo_cnt & x"0000";
-    status_reg_addrreg(ipbusrd_fifo_out_addr) := ipbusrd_fifo_out;  --8
+    status_reg_addrreg(7)                     := status_reg.ipbusrd_fifo_cnt & x"0000";
+    status_reg_addrreg(ipbusrd_fifo_out_addr) := status_reg.ipbusrd_fifo_out;  --8
 
 
     return status_reg_addrreg;
   end function;
 
-  function func_STATREG_getaddrreg_sim (status_reg : FIT_GBT_status_type) return stat_reg_sim_t is
+  function func_STATREG_getaddrreg_sim (status_reg : readout_status_t) return stat_reg_sim_t is
     variable status_reg_addrreg     : stat_reg_t;
     variable status_reg_addrreg_sim : stat_reg_sim_t;
 

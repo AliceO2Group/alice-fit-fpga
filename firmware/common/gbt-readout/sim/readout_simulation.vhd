@@ -57,13 +57,13 @@ architecture behavior of testbench_readout is
   signal DATA_CLK              : std_logic := '0';
   signal IPBUS_CLK             : std_logic := '0';
   signal GBT_RxFrameClk        : std_logic := '0';
-  signal FSM_Clocks_signal     : FSM_Clocks_type;
+  signal FSM_Clocks_signal     : rdclocks_t;
 
   -- Inputs
-  signal testbench_CONTROL_REG_dynamic : CONTROL_REGISTER_type := test_CONTROL_REG;
+  signal testbench_CONTROL_REG_dynamic : readout_control_t := test_CONTROL_REG;
 
   --Outputs
-  signal GBT_status              : FIT_GBT_status_type;
+  signal GBT_status              : readout_status_t;
   signal GBT_status_reg          : stat_reg_sim_t;
   signal Data_from_FITrd         : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal IsData_from_FITrd       : std_logic;

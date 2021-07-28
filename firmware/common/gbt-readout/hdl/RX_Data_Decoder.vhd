@@ -18,10 +18,10 @@ use work.fit_gbt_common_package.all;
 
 entity RX_Data_Decoder is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Status_register_I   : in FIT_GBT_status_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    Status_register_I   : in readout_status_t;
+    Control_register_I : in readout_control_t;
 
     -- RX data @ DataClk, ff in RX sync
     RX_Data_I   : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -31,9 +31,9 @@ entity RX_Data_Decoder is
     ORBC_ID_from_CRU_corrected_O : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
     Trigger_O                    : out std_logic_vector(Trigger_bitdepth-1 downto 0);
 
-    BCIDsync_Mode_O    : out Type_BCIDsync_Mode;
-    Readout_Mode_O     : out Type_Readout_Mode;
-    CRU_Readout_Mode_O : out Type_Readout_Mode;
+    BCIDsync_Mode_O    : out bcid_sync_t;
+    Readout_Mode_O     : out rdmode_t;
+    CRU_Readout_Mode_O : out rdmode_t;
     Start_run_O        : out std_logic;
     Stop_run_O         : out std_logic
     );
@@ -43,8 +43,8 @@ architecture Behavioral of RX_Data_Decoder is
 
   attribute keep : string;
 
-  signal STATE_SYNC, STATE_SYNC_NEXT     : Type_BCIDsync_Mode;
-  signal STATE_RDMODE, STATE_RDMODE_NEXT : Type_Readout_Mode;
+  signal STATE_SYNC, STATE_SYNC_NEXT     : bcid_sync_t;
+  signal STATE_RDMODE, STATE_RDMODE_NEXT : rdmode_t;
   signal Start_run_ff, Start_run_ff_next : std_logic;
   signal Stop_run_ff, Stop_run_ff_next   : std_logic;
 
@@ -67,7 +67,7 @@ architecture Behavioral of RX_Data_Decoder is
   signal ORBC_ID_from_CRU_corrected_ff, ORBC_ID_from_CRU_corrected_ff_next : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
   signal Trigger_ff, Trigger_ff_next                                       : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal Trigger_valid_bit                                                 : std_logic;
-  signal CRU_readout_mode, CRU_readout_mode_next                           : Type_Readout_Mode;
+  signal CRU_readout_mode, CRU_readout_mode_next                           : rdmode_t;
 
 
 
@@ -132,8 +132,8 @@ begin
       );
 -- =============================================================
 
---      type Type_Readout_Mode is (mode_CNT, mode_TRG, mode_IDLE);
---      type Type_BCIDsync_Mode is (mode_STR, mode_SYNC, mode_LOST);
+--      type rdmode_t is (mode_CNT, mode_TRG, mode_IDLE);
+--      type bcid_sync_t is (mode_STR, mode_SYNC, mode_LOST);
 
 -- Data ff data clk **********************************
   process (FSM_Clocks_I.Data_Clk)

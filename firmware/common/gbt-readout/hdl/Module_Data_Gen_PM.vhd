@@ -19,14 +19,14 @@ use work.fit_gbt_board_package.all;
 
 entity Module_Data_Gen is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Status_register_I  : in FIT_GBT_status_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    Status_register_I  : in readout_status_t;
+    Control_register_I : in readout_control_t;
 
     Board_data_I      : in  board_data_type;
     Board_data_O      : out board_data_type;
-    datagen_report_o    : out Type_datagen_report
+    datagen_report_o    : out datagen_report_t
     );
 end Module_Data_Gen;
 
@@ -54,7 +54,7 @@ architecture Behavioral of Module_Data_Gen is
   signal word_counter                                                         : natural range 0 to 16;
   signal cnt_packet_counter                                                   : std_logic_vector(data_word_bitdepth-tdwords_bitdepth-1 downto 0);  -- continious packet counter
   signal Board_data_header, Board_data_data, Board_data_void, data_gen_result : board_data_type;
-  signal datagen_report    : Type_datagen_report;
+  signal datagen_report    : datagen_report_t;
 
 
   -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector

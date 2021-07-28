@@ -27,10 +27,10 @@ entity FIT_GBT_project is
     MgtRefClk_I      : in  std_logic;   -- 200MHz ref clock
     RxDataClk_I      : in  std_logic;   -- 40MHz data clock in RX domain
     GBT_RxFrameClk_O : out std_logic;   --Rx GBT frame clk 40MHz
-    FSM_Clocks_O     : out FSM_Clocks_type;
+    FSM_Clocks_O     : out rdclocks_t;
 
     Board_data_I       : in board_data_type;        --PM or TCM data @320MHz
-    Control_register_I : in CONTROL_REGISTER_type;  -- control registers @DataClk
+    Control_register_I : in readout_control_t;  -- control registers @DataClk
 
     MGT_RX_P_I    : in  std_logic;
     MGT_RX_N_I    : in  std_logic;
@@ -51,14 +51,14 @@ entity FIT_GBT_project is
     IsRxData_rxclk_from_GBT_O : out std_logic;
 
     -- FIT readour status, including BCOR_ID to PM/TCM
-    FIT_GBT_status_O : out FIT_GBT_status_type
+    FIT_GBT_status_O : out readout_status_t
     );
 end FIT_GBT_project;
 
 architecture Behavioral of FIT_GBT_project is
 
 -- reset signals
-  signal FSM_Clocks : FSM_Clocks_type;
+  signal FSM_Clocks : rdclocks_t;
   signal gbt_reset  : std_logic;
 
 -- GBT data
@@ -75,8 +75,8 @@ architecture Behavioral of FIT_GBT_project is
   signal is_data_from_cru_constructor : std_logic;
 
 -- status
-  signal from_gbt_bank_prj_GBT_status     : Type_GBT_status;
-  signal FIT_GBT_STATUS                   : FIT_GBT_status_type;
+  signal from_gbt_bank_prj_GBT_status     : gbt_status_t;
+  signal FIT_GBT_STATUS                   : readout_status_t;
   signal ORBC_ID_from_RXdecoder           : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRUS
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
 

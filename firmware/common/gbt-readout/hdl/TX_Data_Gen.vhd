@@ -18,10 +18,10 @@ use work.fit_gbt_board_package.all;
 
 entity TX_Data_Gen is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Control_register_I : in CONTROL_REGISTER_type;
-    Status_register_I : in FIT_GBT_status_type;
+    Control_register_I : in readout_control_t;
+    Status_register_I : in readout_status_t;
 	
     TX_IsData_I       : in std_logic;
     TX_Data_I         : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);

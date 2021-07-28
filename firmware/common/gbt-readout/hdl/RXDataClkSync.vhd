@@ -19,8 +19,8 @@ use work.fit_gbt_common_package.all;
 
 entity RXDATA_CLKSync is
   port (
-    FSM_Clocks_I       : in FSM_Clocks_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    FSM_Clocks_I       : in rdclocks_t;
+    Control_register_I : in readout_control_t;
 
     RX_CLK_I : in std_logic;            -- 40MHz RX word clock
 

@@ -19,10 +19,10 @@ use work.fit_gbt_board_package.all;
 
 entity Module_Data_Gen is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Status_register_I  : in FIT_GBT_status_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    Status_register_I  : in readout_status_t;
+    Control_register_I : in readout_control_t;
 
     Board_data_I      : in  board_data_type;
     Board_data_O      : out board_data_type;
@@ -47,7 +47,7 @@ architecture Behavioral of Module_Data_Gen is
   signal bunch_freq, bunch_freq_ff01 : std_logic_vector(15 downto 0);
   signal bc_start                    : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal reset_offset                : std_logic;
-  signal use_gen_sclk                : Type_Gen_use_type;
+  signal use_gen_sclk                : gen_mode_t;
 
   type n_words_in_packet_arr_type is array (0 to 8) of std_logic_vector(3 downto 0);
   signal n_words_in_packet_mask, n_words_in_packet_mask_sclk : n_words_in_packet_arr_type;

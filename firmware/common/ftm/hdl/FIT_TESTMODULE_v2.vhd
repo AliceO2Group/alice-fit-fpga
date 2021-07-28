@@ -144,7 +144,7 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
   signal DataClk_to_FIT_GBT   : std_logic;
   signal MgtRefClk_to_FIT_GBT : std_logic;
   signal GBT_RxFrameClk       : std_logic;
-  signal fsm_clocks           : FSM_Clocks_type;
+  signal fsm_clocks           : rdclocks_t;
 
 
 -- GBT signals
@@ -152,8 +152,8 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
   signal IsData_from_FITrd       : std_logic;
   signal RxData_rxclk_from_GBT   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal IsRxData_rxclk_from_GBT : std_logic;
-  signal readout_status          : FIT_GBT_status_type;
-  signal readout_control         : CONTROL_REGISTER_type;
+  signal readout_status          : readout_status_t;
+  signal readout_control         : readout_control_t;
   signal Laser_Signal_out        : std_logic;
 
   attribute mark_debug                            : string;
@@ -525,9 +525,10 @@ begin
 
 
 -- IP-BUS data sender ==================================
-  FIT_TESTMODULE_IPBUS_sender_comp : entity work.FIT_TESTMODULE_IPBUS_sender
+  ipbus_face_comp : entity work.ipbus_face
     port map(
       FSM_Clocks_I => fsm_clocks,
+	  ipbus_clock_i => ipb_clk,
 
       FIT_GBT_status_I   => readout_status,
       Control_register_O => readout_control,
@@ -550,7 +551,6 @@ begin
       IPBUS_err_O       => ipb_err_tm,
       IPBUS_base_addr_I => (others => '0')
       );
-  fsm_clocks.IPBUS_Data_Clk <= ipb_clk;
 -- =====================================================
 
 

@@ -30,10 +30,10 @@ use work.fit_gbt_board_package.all;
 
 entity CRU_packet_Builder is
   port (
-    FSM_Clocks_I : in FSM_Clocks_type;
+    FSM_Clocks_I : in rdclocks_t;
 
-    Status_register_I  : in FIT_GBT_status_type;
-    Control_register_I : in CONTROL_REGISTER_type;
+    Status_register_I  : in readout_status_t;
+    Control_register_I : in readout_control_t;
 
     SLCTFIFO_data_word_I : in  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     SLCTFIFO_Is_Empty_I  : in  std_logic;
@@ -66,7 +66,7 @@ architecture Behavioral of CRU_packet_Builder is
   constant rdh_header_version : std_logic_vector(7 downto 0)  := x"06";
   constant rdh_header_size    : std_logic_vector(7 downto 0)  := x"40";
   constant rdh_detector_field : std_logic_vector(31 downto 0) := x"00000000";
-  constant rdh_par            : std_logic_vector(31 downto 0) := x"00000000";
+  constant rdh_par            : std_logic_vector(15 downto 0) := x"0000";
 
   signal rdh_feeid             : std_logic_vector(15 downto 0);
   signal rdh_sysid             : std_logic_vector(7 downto 0);
