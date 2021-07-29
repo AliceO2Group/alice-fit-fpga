@@ -247,7 +247,7 @@ begin
 
       drop_ounter_o  => FIT_GBT_STATUS.cnv_drop_cnt,
       fifo_cnt_max_o => FIT_GBT_STATUS.cnv_fifo_max,
-      errors_o       => FIT_GBT_STATUS.fsm_errors(6 downto 5)
+      errors_o       => FIT_GBT_STATUS.fsm_errors(7 downto 5)
       );
 -- ===========================================================
 

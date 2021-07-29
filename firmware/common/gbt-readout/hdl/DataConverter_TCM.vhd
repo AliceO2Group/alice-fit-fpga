@@ -40,7 +40,8 @@ entity DataConverter is
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
-    errors_o : out std_logic_vector(1 downto 0)
+    -- 2 - tcm_data_fifo is full
+    errors_o : out std_logic_vector(2 downto 0)
     );
 end DataConverter;
 
@@ -70,14 +71,14 @@ architecture Behavioral of DataConverter is
   signal sending_event : boolean;
   signal word_counter  : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
-  signal tcm_data_fifo_empty : std_logic;
+  signal tcm_data_fifo_empty, tcm_data_fifo_full : std_logic;
   signal tcm_data_fifo_dout  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
   signal header_fifo_din, data_fifo_din     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_we, data_fifo_we       : std_logic;
   signal header_fifo_empty, data_fifo_empty : std_logic;
 
-  signal errors : std_logic_vector(1 downto 0);
+  signal errors : std_logic_vector(2 downto 0);
 
 
   attribute mark_debug                        : string;
@@ -113,7 +114,7 @@ begin
       RD_EN         => not tcm_data_fifo_empty,
       DIN           => Board_data_I.data_word,
       DOUT          => tcm_data_fifo_dout,
-      FULL          => open,
+      FULL          => tcm_data_fifo_full,
       EMPTY         => tcm_data_fifo_empty,
       rd_data_count => open
       );
@@ -173,7 +174,7 @@ begin
 
       reset_drop_counters <= Control_register_I.reset_data_counters;
 
-      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
+      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
       data_word                                                 <= tcm_data_fifo_dout;
       is_data                                                   <= not tcm_data_fifo_empty;
       if tcm_data_fifo_dout(79 downto 76) = x"f" then is_header <= '1'; else is_header <= '0'; end if;
@@ -203,16 +204,12 @@ begin
           if (rawfifo_full = '1') and send_mode_ison_sclk then
             drop_counter <= drop_counter + 1;
           end if;
-
-        elsif is_data = '1' then
-
-          word_counter <= word_counter + 1;
-
-        else
-
-          word_counter <= (others => '1');
-
-        end if;
+		  
+		elsif is_data = '1' then
+		
+		  word_counter <= word_counter + 1;
+		  
+		end if;
 
 
 
@@ -223,7 +220,8 @@ begin
           rawfifo_cnt_max <= (others => '0');
         end if;
 
-        if not send_mode_ison_sclk_ff and send_mode_ison_sclk then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+        if not send_mode_ison_sclk_ff and send_mode_ison_sclk then errors(1 downto 0) <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+		if tcm_data_fifo_full = '1' then errors(2) <= '1'; end if;
 
 
       end if;

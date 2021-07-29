@@ -46,7 +46,8 @@ class status_reg:
                               1 << 3: '[Selector] trg fifo is not empty',
                               1 << 4: '[Selector] trg fifo is full',
                               1 << 5: '[Converter] data fifo is not empty',
-                              1 << 6: '[Converter] header fifo is not empty'}
+                              1 << 6: '[Converter] header fifo is not empty',
+                              1 << 7: '[Converter] tcm_data_fifo is full'}
 
         if reg_line != 0: self.read_reg_line_hex(reg_line)
 
@@ -76,6 +77,7 @@ class status_reg:
         res = ""
         for key in self.fsm_error_msg:
             if (self.fsm_errors & key) > 0: res += self.fsm_error_msg[key] + " "
+        return res
 
     def read_reg_line_hex(self, line_regs):
         # - 20-19 19-18 18-17 17-16 16-15 15-14 14-13 13-12 12-11 11-10 10- 9 9 - 8 8 - 7 7 - 6 6 - 5 5 - 4 4 - 3 3 - 2 2 - 1 1 -

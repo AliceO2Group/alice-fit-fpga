@@ -194,8 +194,8 @@ if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report;
 		  
 		  datagen_report.orbit <= event_orbit;
 		  datagen_report.bc <= event_bc;
-		  datagen_report.size <= std_logic_vector(to_unsigned(packet_size_select_sc, n_pckt_wrds_bitdepth))*2+1;
-		  datagen_report.packet_num <= cnt_packet_counter + 1;
+		  datagen_report.size <= std_logic_vector(to_unsigned(packet_size_select_sc*2+1, n_pckt_wrds_bitdepth));
+		  datagen_report.packet_num <= cnt_packet_counter(35 downto 0) + 1;
 		  
         -- not sending
         elsif word_counter = 16 then word_counter         <= 16;

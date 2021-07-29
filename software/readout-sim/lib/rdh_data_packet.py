@@ -48,7 +48,7 @@ class detector_packet:
         self.gbt_data.append(line_list[pos])
         self.magic = int(self.gbt_data[0][-20: -19], base=16)  # [79 - 76]
         self.size = int(self.gbt_data[0][-19: -18], base=16)  # [75 - 72]
-        self.is_tcm = int(self.gbt_data[0][-13: -12], base=16)  # [75 - 72]
+        self.is_tcm = int(self.gbt_data[0][-13: -12], base=16)  # [51 - 48]
         pherr_ = int(self.gbt_data[0][-12: -11], base=16)  # [47 - 44]
         self.phase = pherr_ & 0x7
         self.phase_err = (pherr_ & 0x8 > 0)
@@ -67,15 +67,12 @@ class detector_packet:
                 ch1_data = int(self.gbt_data[-1][-19: -10], base=16)
                 ch2_no = int(self.gbt_data[-1][-10:  -9], base=16)
                 ch2_data = int(self.gbt_data[-1][-9:], base=16)
-
-                # if ch1_no > 0: self.payload.append([ch1_no, ch1_data])
-                # if ch2_no > 0: self.payload.append([ch2_no, ch2_data])
-                self.payload.append([ch1_no, ch1_data])
-                self.payload.append([ch2_no, ch2_data])
+                self.payload.append(ch1_data)
+                self.payload.append(ch2_data)
                 self.pck_num = ch1_data  # same for all words
             else:
-                self.payload = [[0, 0]]
-        # todo
+                self.pck_num = int(self.gbt_data[-1][-20:], base=16)
+                self.payload.append(self.pck_num)
 
         return pos + 1 + self.size
 
@@ -83,7 +80,7 @@ class detector_packet:
         res = 0
         if self.magic != 0xf: res = "wrong magic: %i" % self.magic
         if self.size > 0xf or self.size < 1: res = "wrong size: %i" % self.size
-        if len(self.payload) != self.size * 2: res = "wrong payload %i, size %i" % (len(self.payload), self.size)
+        if len(self.payload) != self.size * (1 if self.is_tcm else 2): res = "wrong payload %i, size %i" % (len(self.payload), self.size)
 
         if res != 0:
             self.print_struct(log)

@@ -265,7 +265,9 @@ begin
           data_ndwords_cmd  <= data_ndwords;
           dropping_data_cmd <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1');
 
-        elsif FSM_STATE = s1_select then
+        end if;
+
+        if FSM_STATE = s1_select then
 
           word_counter <= (others => '0');
 

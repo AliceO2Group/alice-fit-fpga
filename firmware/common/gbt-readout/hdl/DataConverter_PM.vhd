@@ -39,7 +39,8 @@ entity DataConverter is
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
-    errors_o : out std_logic_vector(1 downto 0)
+	-- 2 - tcm_data_fifo is full (for tcm only)
+    errors_o : out std_logic_vector(2 downto 0)
     );
 end DataConverter;
 
@@ -142,7 +143,7 @@ begin
       send_mode_ison <= (Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
-	  errors_o <= errors;
+	  errors_o <= '0'&errors;
     end if;
   end process;
 
@@ -184,18 +185,12 @@ begin
           if (rawfifo_full = '1') and send_mode_ison_sclk then
             drop_counter <= drop_counter + 1;
           end if;
-
-        elsif is_data = '1' then
-
-          word_counter <= word_counter + 1;
-
-        else
-
-          word_counter <= (others => '1');
-
-        end if;
-
-
+		  
+		elsif is_data = '1' then
+		
+		  word_counter <= word_counter + 1;
+		  
+		end if;
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
 
