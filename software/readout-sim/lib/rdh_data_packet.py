@@ -216,5 +216,5 @@ class rdh_packet:
         # check orbits in data
         for event in self.event_list:
             if event.orbit != self.rdh_header.orbit:
-                return "event orbit != rdh orbit"
+                return "event orbit 0x%04x != rdh orbit 0x%04x"%(event.orbit, self.rdh_header.orbit)
         return 0

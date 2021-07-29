@@ -57,6 +57,10 @@ class run_reader:
 
         # iteration through simulation outputs
         for iline in range(self.run_meta.run_pos_start, self.run_meta.run_pos_stop):
+            if iline >= len (simout_list):
+                self.log.info(pylog.c_FAIL + "End of simulation output file reached, check that vivado simulation finished" + pylog.c_ENDC)
+                return 0
+
             line_regs = simout_list[iline].replace('X', '0').split("   ")[:-1]
             line_regs_1 = simout_list[iline - 1].replace('X', '0').split("   ")[:-1] if iline - 1 >= self.run_meta.run_pos_start else 0
 
