@@ -153,8 +153,8 @@ begin
       wr_clk => FSM_Clocks_I.System_Clk,
       rd_clk => FSM_Clocks_I.Data_Clk,
       rst    => FSM_Clocks_I.Reset_sclk,
-      DIN    => cntpck_fifo_din,
-      WR_EN  => cntpck_fifo_wren,
+      DIN    => cntpck_fifo_din_ff,
+      WR_EN  => cntpck_fifo_wren_ff,
       RD_EN  => cntpck_fifo_rden_i,
 
       DOUT  => cntpck_fifo_dout_o,
@@ -171,9 +171,9 @@ begin
       rd_data_count => open,
       wr_data_count => slct_fifo_count_wr,
       rst           => FSM_Clocks_I.Reset_sclk,
-      WR_EN         => slct_fifo_wren,
+      WR_EN         => slct_fifo_wren_ff,
       RD_EN         => slct_fifo_rden_i,
-      DIN           => slct_fifo_din,
+      DIN           => slct_fifo_din_ff,
       DOUT          => slct_fifo_dout_o,
       prog_full     => slct_fifo_full,
       EMPTY         => slct_fifo_empty,
@@ -285,8 +285,12 @@ begin
 
           if not send_gear_rdh and is_hbtrg_cmd then send_gear_rdh <= true; elsif send_gear_rdh and no_more_data then send_gear_rdh <= false; end if;
 
+          if FSM_STATE_NEXT = s2_dread then reading_header <= true; end if;
+		  
         elsif FSM_STATE = s2_dread then
 
+          reading_header <= false;
+		  
           -- iterating words while reading data
           word_counter <= word_counter + 1;
 
@@ -365,7 +369,7 @@ begin
 
 
 -- reading data FSM
-  reading_header    <= word_counter = 0 and FSM_STATE = s2_dread;
+  --reading_header    <= word_counter = 0 and FSM_STATE = s2_dread;
   reading_last_word <= FSM_STATE = s2_dread and word_counter = data_ndwords_cmd;
 
 -- stop bit for HB and last packet
@@ -383,7 +387,7 @@ begin
 -- reading header when counter 0 and fsm state is reading data 
   header_fifo_rd <= '1' when reading_header                             else '0';
 -- reading data when counter /= 0 and fsm state is reading data 
-  data_fifo_rd   <= '1' when word_counter /= 0 and FSM_STATE = s2_dread else '0';
+  data_fifo_rd   <= '1' when not reading_header and FSM_STATE = s2_dread else '0';
 
 -- pushing data from raw to slct fifo
   slct_fifo_din  <= header_fifo_data_i               when reading_header                                else data_fifo_data_i;
