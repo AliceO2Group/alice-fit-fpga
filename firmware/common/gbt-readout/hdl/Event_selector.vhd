@@ -96,7 +96,7 @@ architecture Behavioral of Event_selector is
   -- cru readout states
   signal send_mode_sc, send_mode_sc_ff, send_trg_mode_sc                                                             : boolean;
   -- data-trg comparison
-  signal is_hbtrg, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd : boolean;
+  signal is_hbtrg, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd, start_select : boolean;
   signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                        : boolean;
   -- packet reading states
   signal reading_header, reading_last_word                                                                           : boolean;
@@ -237,6 +237,7 @@ begin
       slct_fifo_wren_ff   <= slct_fifo_wren;
       cntpck_fifo_din_ff  <= cntpck_fifo_din;
       cntpck_fifo_wren_ff <= cntpck_fifo_wren;
+	  start_select <= read_data or read_trigger;
 
       -- readout mode is latched at the start of run, to select last data
       if not send_mode_sc_ff and send_mode_sc then send_trg_mode_sc <= Status_register_I.Readout_Mode = mode_TRG; end if;
@@ -348,9 +349,9 @@ begin
     s0_idle  when (FSM_STATE = s1_select) and not read_data_cmd else
 
     -- SELECT from IDLE
-    s1_select when (FSM_STATE = s0_idle) and (read_data or read_trigger) else
+    s1_select when (FSM_STATE = s0_idle) and start_select else
     -- SELECT from DREAD
-    s1_select when (FSM_STATE = s2_dread) and reading_last_word and (read_data or read_trigger) else
+    s1_select when (FSM_STATE = s2_dread) and reading_last_word and start_select else
     -- SELECT last rdh
     s1_select when no_more_data and send_gear_rdh else
 

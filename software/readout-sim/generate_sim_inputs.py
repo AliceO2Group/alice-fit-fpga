@@ -17,7 +17,7 @@ from lib.run_generator import run_generator as run_generator
 
 
 def generate_sim_inputs():
-    run_len = 10
+    run_len = 5
 
     # class instances
     test_ctrl_reg = ctrl_rec()
