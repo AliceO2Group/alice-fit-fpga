@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="28520000001fs"></ZoomEndTime>
-      <Cursor1Time time="6500000000fs"></Cursor1Time>
+      <ZoomStartTime time="5347967418fs"></ZoomStartTime>
+      <ZoomEndTime time="5348578919fs"></ZoomEndTime>
+      <Cursor1Time time="5348477002fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="207"></NameColumnWidth>
-      <ValueColumnWidth column_width="201"></ValueColumnWidth>
+      <NameColumnWidth column_width="199"></NameColumnWidth>
+      <ValueColumnWidth column_width="185"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
    <wvobject fp_name="group395" type="group">
@@ -53,89 +53,11 @@
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>
          <obj_property name="ObjectShortName">GBT_status</obj_property>
-         <wvobject fp_name="/testbench_readout/GBT_status.GBT_status" type="array">
-            <obj_property name="ElementShortName">.GBT_status</obj_property>
-            <obj_property name="ObjectShortName">.GBT_status</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.datagen_report" type="array">
-            <obj_property name="ElementShortName">.datagen_report</obj_property>
-            <obj_property name="ObjectShortName">.datagen_report</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.Readout_Mode" type="other">
-            <obj_property name="ElementShortName">.Readout_Mode</obj_property>
-            <obj_property name="ObjectShortName">.Readout_Mode</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.CRU_Readout_Mode" type="other">
-            <obj_property name="ElementShortName">.CRU_Readout_Mode</obj_property>
-            <obj_property name="ObjectShortName">.CRU_Readout_Mode</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.BCIDsync_Mode" type="other">
-            <obj_property name="ElementShortName">.BCIDsync_Mode</obj_property>
-            <obj_property name="ObjectShortName">.BCIDsync_Mode</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.Start_run" type="logic">
-            <obj_property name="ElementShortName">.Start_run</obj_property>
-            <obj_property name="ObjectShortName">.Start_run</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.Stop_run" type="logic">
-            <obj_property name="ElementShortName">.Stop_run</obj_property>
-            <obj_property name="ObjectShortName">.Stop_run</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.Trigger_from_CRU" type="array">
-            <obj_property name="ElementShortName">.Trigger_from_CRU[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.Trigger_from_CRU[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.BCID_from_CRU" type="array">
-            <obj_property name="ElementShortName">.BCID_from_CRU[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.BCID_from_CRU[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.ORBIT_from_CRU" type="array">
-            <obj_property name="ElementShortName">.ORBIT_from_CRU[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.ORBIT_from_CRU[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.BCID_from_CRU_corrected" type="array">
-            <obj_property name="ElementShortName">.BCID_from_CRU_corrected[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.BCID_from_CRU_corrected[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.ORBIT_from_CRU_corrected" type="array">
-            <obj_property name="ElementShortName">.ORBIT_from_CRU_corrected[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.ORBIT_from_CRU_corrected[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.rx_phase" type="array">
-            <obj_property name="ElementShortName">.rx_phase[2:0]</obj_property>
-            <obj_property name="ObjectShortName">.rx_phase[2:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.cnv_fifo_max" type="array">
-            <obj_property name="ElementShortName">.cnv_fifo_max[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.cnv_fifo_max[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.cnv_drop_cnt" type="array">
-            <obj_property name="ElementShortName">.cnv_drop_cnt[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.cnv_drop_cnt[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.sel_fifo_max" type="array">
-            <obj_property name="ElementShortName">.sel_fifo_max[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.sel_fifo_max[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.sel_drop_cnt" type="array">
-            <obj_property name="ElementShortName">.sel_drop_cnt[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.sel_drop_cnt[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.gbt_data_cnt" type="array">
-            <obj_property name="ElementShortName">.gbt_data_cnt[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.gbt_data_cnt[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/GBT_status.fsm_errors" type="array">
-            <obj_property name="ElementShortName">.fsm_errors[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.fsm_errors[15:0]</obj_property>
-         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group235" type="group">
       <obj_property name="label">RXGENERATOR</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_pattern" type="array">
          <obj_property name="ElementShortName">.trigger_pattern[63:0]</obj_property>
          <obj_property name="ObjectShortName">.trigger_pattern[63:0]</obj_property>
@@ -370,7 +292,6 @@
    <wvobject fp_name="group460" type="group">
       <obj_property name="label">CONVERTER</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/Board_data_I" type="array">
          <obj_property name="ElementShortName">Board_data_I</obj_property>
          <obj_property name="ObjectShortName">Board_data_I</obj_property>
@@ -710,6 +631,18 @@
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_header_version" type="array">
+         <obj_property name="ElementShortName">rdh_header_version[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_header_version[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_par" type="array">
+         <obj_property name="ElementShortName">rdh_par[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_par[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_orbit" type="array">
          <obj_property name="ElementShortName">rdh_orbit[31:0]</obj_property>
          <obj_property name="ObjectShortName">rdh_orbit[31:0]</obj_property>
@@ -740,9 +673,9 @@
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_header_version" type="array">
-         <obj_property name="ElementShortName">rdh_header_version[7:0]</obj_property>
-         <obj_property name="ObjectShortName">rdh_header_version[7:0]</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_detector_field" type="array">
+         <obj_property name="ElementShortName">rdh_detector_field[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_detector_field[31:0]</obj_property>
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
@@ -752,15 +685,15 @@
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_detector_field" type="array">
-         <obj_property name="ElementShortName">rdh_detector_field[31:0]</obj_property>
-         <obj_property name="ObjectShortName">rdh_detector_field[31:0]</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_offset_new_packet" type="array">
+         <obj_property name="ElementShortName">rdh_offset_new_packet[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_offset_new_packet[15:0]</obj_property>
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_par" type="array">
-         <obj_property name="ElementShortName">rdh_par[31:0]</obj_property>
-         <obj_property name="ObjectShortName">rdh_par[31:0]</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_nwords" type="other">
+         <obj_property name="ElementShortName">rdh_nwords</obj_property>
+         <obj_property name="ObjectShortName">rdh_nwords</obj_property>
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
@@ -783,8 +716,8 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/GBT_status_reg" type="array">
-         <obj_property name="ElementShortName">GBT_status_reg[0:13][31:0]</obj_property>
-         <obj_property name="ObjectShortName">GBT_status_reg[0:13][31:0]</obj_property>
+         <obj_property name="ElementShortName">GBT_status_reg[0:14][31:0]</obj_property>
+         <obj_property name="ObjectShortName">GBT_status_reg[0:14][31:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>

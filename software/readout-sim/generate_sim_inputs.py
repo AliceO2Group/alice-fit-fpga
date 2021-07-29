@@ -59,7 +59,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_rd_command = readout_cmd.continious
     test_ctrl_reg.bcid_offset = 0x50
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0xFF010777
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
     test_ctrl_reg.data_bunch_freq = cnst.orbit_size
     test_ctrl_reg.data_bc_start = 0x100
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
@@ -89,7 +89,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_rd_command = readout_cmd.continious
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0xFF010777
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
     test_ctrl_reg.data_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
@@ -119,7 +119,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_rd_command = readout_cmd.trigger
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0xFF010777
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
     test_ctrl_reg.data_bunch_freq = int(cnst.orbit_size / 4)
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
@@ -146,7 +146,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_rd_command = readout_cmd.continious
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0x07770777
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
     test_ctrl_reg.data_bunch_freq = 20
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA
@@ -173,7 +173,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_rd_command = readout_cmd.trigger
     test_ctrl_reg.bcid_offset = 0x0
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0x07770777
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
     test_ctrl_reg.data_bunch_freq = 20
     test_ctrl_reg.data_bc_start = cnst.orbit_size - 2 - test_ctrl_reg.bcid_offset
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAA

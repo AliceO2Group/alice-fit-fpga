@@ -56,7 +56,7 @@ architecture Behavioral of Event_selector is
 
   -- actual bcid is dalayed to take a chance to trigger go throught fifo
   constant bcid_delay   : natural := 32;
-  constant max_rdh_size : natural := 512 - (4+10);
+  constant max_rdh_size : natural := 512 - (4+16);
 
   signal data_ndwords, data_ndwords_reading : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
   signal data_orbit                         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
@@ -71,14 +71,14 @@ architecture Behavioral of Event_selector is
   signal trgfifo_out_orbit                                                       : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal trgfifo_out_bc                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
-  signal slct_fifo_din                    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal slct_fifo_din, slct_fifo_din_ff                    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
   signal drop_counter                     : std_logic_vector(15 downto 0);
 
-  signal slct_fifo_wren, slct_fifo_busy, slct_fifo_full, slct_fifo_empty : std_logic;
+  signal slct_fifo_wren, slct_fifo_wren_ff, slct_fifo_busy, slct_fifo_full, slct_fifo_empty : std_logic;
 
-  signal cntpck_fifo_din                                       : std_logic_vector(127 downto 0);
-  signal cntpck_fifo_wren, cntpck_fifo_full, cntpck_fifo_empty : std_logic;
+  signal cntpck_fifo_din, cntpck_fifo_din_ff                                       : std_logic_vector(127 downto 0);
+  signal cntpck_fifo_wren, cntpck_fifo_wren_ff, cntpck_fifo_full, cntpck_fifo_empty : std_logic;
 
   signal fifo_notempty_while_start : std_logic_vector(2 downto 0);
 
@@ -96,7 +96,7 @@ architecture Behavioral of Event_selector is
   -- cru readout states
   signal send_mode_sc, send_mode_sc_ff, send_trg_mode_sc                      : boolean;
   -- data-trg comparison
-  signal is_hbtrg, is_sel_trg, read_data, read_trigger, rdh_close             : boolean;
+  signal is_hbtrg, is_sel_trg, read_data, read_data_ff, read_trigger, read_trigger_ff, rdh_close             : boolean;
   signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg : boolean;
   -- packet reading states
   signal start_reading_data, reading_header, reading_last_word                : boolean;
@@ -122,42 +122,6 @@ begin
   data_ndwords <= func_FITDATAHD_ndwords(header_fifo_data_i);
   data_orbit   <= func_FITDATAHD_orbit(header_fifo_data_i);
   data_bc      <= func_FITDATAHD_bc(header_fifo_data_i);
-
-  is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
-  is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
-  trg_eq_data    <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
-  data_is_old    <= (header_fifo_empty_i = '0') and ((data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
-  trg_is_old     <= (trgfifo_empty = '0') and ((trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
-  trg_later_data <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
-  data_later_trg <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
-
-
---    | TRG = 0    | DATA < CURR | read data             | no trigger for data
---    | TRG > DATA |             | read data             | no trigger for data
---    | TRG < DATA |             | read trigger          | no data for trigger
---    | DATA = 0   | TRG /= 0    | read trigger          | no data for trigger
---    | TRG = DATA |             | read trigger and data | data match trigger
-
-
-  -- no data in fifo
-  read_data <= false when header_fifo_empty_i = '1' else
-               -- no trigger for data
-               true when (trgfifo_empty = '1') and data_is_old else
-               -- trigger equal data                                            
-               true when trg_eq_data else
-               -- no trigger for data
-               true when (trgfifo_empty = '0') and trg_later_data else
-               false;
-
-  -- no trigger in fifo
-  read_trigger <= false when trgfifo_empty = '1' else
-                  -- no data for trigger
-                  true when header_fifo_empty_i = '1' and trg_is_old else
-                  true when data_later_trg else
-                  -- trigger equal data 
-                  true when trg_eq_data else
-                  false;
-
 
 -- TRG FIFO =============================================
   trg_fifo_comp_c : entity work.trg_fifo_comp
@@ -266,6 +230,13 @@ begin
       send_mode_sc_ff       <= send_mode_sc;
       trigger_select_val_sc <= Control_register_I.trg_data_select;
       reset_drop_cnt_sc     <= Control_register_I.reset_data_counters = '1';
+	  
+	  slct_fifo_din_ff <= slct_fifo_din;
+	  slct_fifo_wren_ff <= slct_fifo_wren;
+	  cntpck_fifo_din_ff <= cntpck_fifo_din;
+	  cntpck_fifo_wren_ff <= cntpck_fifo_wren;
+	  read_data_ff <= read_data;
+	  read_trigger_ff <= read_trigger;
 
       -- readout mode is latched at the start of run, to select last data
       if not send_mode_sc_ff and send_mode_sc then send_trg_mode_sc <= Status_register_I.Readout_Mode = mode_TRG; end if;
@@ -279,6 +250,8 @@ begin
 
       else
 
+        -- reading data FSM
+		
         -- latching packet size while reading header
         if word_counter = 0 then data_ndwords_reading <= data_ndwords; end if;
 
@@ -288,8 +261,13 @@ begin
         elsif FSM_STATE = s1_dread and FSM_STATE_NEXT /= s1_dread then word_counter <= (others => '0');
         -- iterating words while reading data
         elsif FSM_STATE = s1_dread and FSM_STATE_NEXT = s1_dread then word_counter  <= word_counter + 1; end if;
+		
+        FSM_STATE <= FSM_STATE_NEXT;
 
 
+
+        -- start / stop RUN 
+		
         -- start sending data after first rdh to not close it
         if not send_gear_rdh and is_hbtrg and trgfifo_re = '1' then send_gear_rdh                   <= true; end if;
         -- stop sending data after last rdh was closed to not close it continiosly
@@ -297,7 +275,12 @@ begin
 
         -- selectind data by trigger in TRG mode
         if start_reading_data then data_trg_reject <= send_trg_mode_sc and not (trg_eq_data and is_sel_trg); end if;
+		
+		
+		
+		-- RDH FSM
 
+        -- latching rdh info, while reading hb trigger
         if is_hbtrg and trgfifo_re = '1' then
           rdh_trigger <= trgfifo_out_trigger;
           rdh_orbit   <= trgfifo_out_orbit;
@@ -310,6 +293,10 @@ begin
         if rdh_close and is_hbtrg then rdh_packet_counter <= 0; elsif rdh_close then rdh_packet_counter <= rdh_packet_counter + 1; end if;
         -- reset counter after run
         if not send_gear_rdh then rdh_packet_counter      <= 0; end if;
+		
+		
+		
+		-- dripping counter / errors
 
         -- dropping packets when fifos are full
         if start_reading_data then dropping_data              <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1'); end if;
@@ -319,20 +306,50 @@ begin
         -- errors if fifos are not empty while run starts
         if not send_mode_sc_ff and send_mode_sc then fifo_notempty_while_start <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
 
-        FSM_STATE <= FSM_STATE_NEXT;
 
       end if;
     end if;
   end process;
 -- ****************************************************
 
-  start_reading_data <= true when FSM_STATE /= s1_dread and FSM_STATE_NEXT = s1_dread else
-                        true when reading_last_word and FSM_STATE_NEXT = s1_dread else
-                        false;
-  reading_header    <= word_counter = 0 and FSM_STATE = s1_dread;
-  reading_last_word <= FSM_STATE = s1_dread and word_counter = data_ndwords_reading;
+  -- SELECTOR decision
+--    | TRG = 0    | DATA < CURR | read data             | no trigger for data
+--    | TRG > DATA |             | read data             | no trigger for data
+--    | TRG < DATA |             | read trigger          | no data for trigger
+--    | DATA = 0   | TRG /= 0    | read trigger          | no data for trigger
+--    | TRG = DATA |             | read trigger and data | data match trigger
+  
+  is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
+  is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
+  trg_eq_data    <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
+  data_is_old    <= (header_fifo_empty_i = '0') and ((data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
+  trg_is_old     <= (trgfifo_empty = '0') and ((trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
+  trg_later_data <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
+  data_later_trg <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
+
+  -- no data in fifo
+  read_data <= false when header_fifo_empty_i = '1' else
+               -- no trigger for data
+               true when (trgfifo_empty = '1') and data_is_old else
+               -- trigger equal data                                            
+               true when trg_eq_data else
+               -- no trigger for data
+               true when (trgfifo_empty = '0') and trg_later_data else
+               false;
+
+  -- no trigger in fifo
+  read_trigger <= false when trgfifo_empty = '1' else
+                  -- no data for trigger
+                  true when header_fifo_empty_i = '1' and trg_is_old else
+                  true when data_later_trg else
+                  -- trigger equal data 
+                  true when trg_eq_data else
+                  false;
 
 
+
+
+  -- reading data FSM
 
   FSM_STATE_NEXT <=
     -- READING from IDLE
@@ -347,22 +364,26 @@ begin
     -- FSM state the same
     FSM_STATE;
 
-  -- not reading trigger
-  trgfifo_re <= '0' when not read_trigger else
-                -- reading trigger when not reading data
-                '1' when (FSM_STATE = s0_idle) and not read_data else
-                -- reading trigger wiht data together while header
-                '1' when (FSM_STATE = s1_dread) and reading_header else
-                '0';
+  reading_header    <= word_counter = 0 and FSM_STATE = s1_dread;
+  reading_last_word <= FSM_STATE = s1_dread and word_counter = data_ndwords_reading;
+  start_reading_data <= true when FSM_STATE /= s1_dread and FSM_STATE_NEXT = s1_dread else
+                        true when reading_last_word and FSM_STATE_NEXT = s1_dread else
+                        false;
 
-  -- closing rdh by HB while void
-  rdh_close <= true when send_gear_rdh and (trgfifo_re = '1') and (FSM_STATE = s0_idle) and is_hbtrg else
+
+
+
+  -- RDH FSM
+  
+  rdh_close <= false when not send_gear_rdh else
+               -- closing rdh by HB while void
+			   true when (trgfifo_re = '1') and (FSM_STATE = s0_idle) and is_hbtrg else
                -- closing rdh by HB while reading data
-               true when send_gear_rdh and start_reading_data and read_trigger and is_hbtrg else
+               true when start_reading_data and read_trigger and is_hbtrg else
                -- closing rdh by size limit
-               true when send_gear_rdh and start_reading_data and rdh_size_counter >= max_rdh_size else
+               true when start_reading_data and rdh_size_counter >= max_rdh_size else
                -- closing rdh with last punch of data in run
-               true when send_gear_rdh and no_raw_data_i and trgfifo_empty = '1' else
+               true when no_raw_data_i and trgfifo_empty = '1' else
                false;
 
   -- stop bit for HB and last packet
@@ -372,24 +393,33 @@ begin
 
   -- if closing rdh while readind data, rdh_size is one more than counter
   rdh_size_counter_actual <= rdh_size_counter+1 when slct_fifo_wren = '1' else rdh_size_counter;
+  
+  
+  
+  
+  -- FIFO reading FSM
+  
+  -- not reading trigger
+  trgfifo_re <= '0' when not read_trigger else
+                -- reading trigger when not reading data
+                '1' when (FSM_STATE = s0_idle) and not read_data else
+                -- reading trigger wiht data together while header
+                '1' when (FSM_STATE = s1_dread) and reading_header else
+                '0';
+
   -- pushing RDH info while closing RDH packet                     
   cntpck_fifo_din         <= std_logic_vector(to_unsigned(0, 128-97)) & stop_bit & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter_actual, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
   cntpck_fifo_wren        <= '1'                when rdh_close            else '0';
-
-
 
   -- reading header when counter 0 and fsm state is reading data 
   header_fifo_rd <= '1' when reading_header                             else '0';
   -- reading data when counter /= 0 and fsm state is reading data 
   data_fifo_rd   <= '1' when word_counter /= 0 and FSM_STATE = s1_dread else '0';
 
-
-
-
-
 -- pushing data from raw to slct fifo
   slct_fifo_din  <= header_fifo_data_i               when header_fifo_rd = '1'                                                                             else data_fifo_data_i;
   slct_fifo_wren <= (header_fifo_rd or data_fifo_rd) when not data_trg_reject and (send_gear_rdh or (is_hbtrg and trgfifo_re = '1')) and not dropping_data else '0';
+  
 end Behavioral;
 
 

@@ -164,10 +164,10 @@ class rdh_header:
         if self.sys_id != ctrl.RDH_SYS_ID: res = "wrong sys id: 0x%x [0x%x]" % (self.sys_id, ctrl.RDH_SYS_ID)
         if self.priority_bit != ctrl.RDH_PRT_BIT: res = "wrong priority_bit: 0x%x [0x%x]" % (self.par_bit, ctrl.RDH_PRT_BIT)
 
-        if self.offset_new_packet > cnst.max_rdh_payload * 16: res = "rdh oversize: 0x%x [0x%x]" % (self.offset_new_packet, cnst.max_rdh_payload)
+        if self.offset_new_packet > cnst.max_rdh_payload * 16: res = "rdh oversize: 0x%x [0x%x]" % (self.offset_new_packet, cnst.max_rdh_payload*16)
 
         if res != 0:
-            log.info("RDH check error [line %i] : %s\n%s" % (self.gbt_data_pos, res, str(self.gbt_data)))
+            log.info("RDH %i, orbit %04x check error [line %i] : %s\n%s" % (self.page_counter, self.orbit, self.gbt_data_pos, res, str(self.gbt_data)))
 
         return res
 

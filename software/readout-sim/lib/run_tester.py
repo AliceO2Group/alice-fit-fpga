@@ -36,8 +36,8 @@ class run_tester:
             # check RDH after reading
             check_res = rdh.check_data(self.run.run_meta.ctrl_reg)
             if check_res != 0:
-                rdh.print_struct(self.log)
-                self.log.info(pylog.c_FAIL + "data reading error [pos: %i] : %s" % (self.run.gbt_pos_iter[pos], check_res) + pylog.c_ENDC)
+                # rdh.print_struct(self.log)
+                self.log.info(pylog.c_FAIL + "data reading error in rdh %i [pos: %i] : %s" % (len(self.rdh_packet_list), self.run.gbt_pos_iter[pos], check_res) + pylog.c_ENDC)
                 return check_res
 
             self.rdh_packet_list.append(rdh)
@@ -107,8 +107,8 @@ class run_tester:
         for igen in copy.copy(gen_data_list):
             for ievent in copy.copy(read_data_list):
                 if ievent.pck_num == igen['pck_num'] and ievent.orbit == igen['orbit'] and ievent.bc == igen['bc'] and ievent.size == igen['size']:
-                    gen_data_list.remove(igen)
-                    read_data_list.remove(ievent)
+                    if igen in gen_data_list: gen_data_list.remove(igen)
+                    if ievent in read_data_list: read_data_list.remove(ievent)
 
         if len(gen_data_list) > 0:
             self.log.info("Generated data not found in RDH packets: %i; %s" % (
