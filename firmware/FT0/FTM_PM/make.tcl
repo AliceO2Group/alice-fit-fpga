@@ -159,7 +159,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_slaves/spi_shift.v" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_slaves/spi_top.v" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_slaves/ipbus_spi.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/phaligner_mmcm_controller.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/xlx_k7v7_phalgnr_std_mmcm.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/phaligner_phase_computing.vhd" ]\
