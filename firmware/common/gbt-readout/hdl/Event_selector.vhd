@@ -94,7 +94,7 @@ architecture Behavioral of Event_selector is
   signal rdh_bc      : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- cru readout states
-  signal send_mode_sc, send_mode_sc_ff, send_trg_mode_sc                                                             : boolean;
+  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                             : boolean;
   -- data-trg comparison
   signal is_hbtrg, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd, start_select : boolean;
   signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                        : boolean;
@@ -229,7 +229,7 @@ begin
       curr_orbit_sc         <= curr_orbit;
       curr_bc_sc            <= curr_bc;
       send_mode_sc          <= Status_register_I.Readout_Mode /= mode_IDLE;
-      send_mode_sc_ff       <= send_mode_sc;
+	  start_of_run <= Status_register_I.Start_run = '1';
       trigger_select_val_sc <= Control_register_I.trg_data_select;
       reset_drop_cnt_sc     <= Control_register_I.reset_data_counters = '1';
 
@@ -240,7 +240,7 @@ begin
 	  start_select <= read_data or read_trigger;
 
       -- readout mode is latched at the start of run, to select last data
-      if not send_mode_sc_ff and send_mode_sc then send_trg_mode_sc <= Status_register_I.Readout_Mode = mode_TRG; end if;
+      if start_of_run then send_trg_mode_sc <= Status_register_I.Readout_Mode = mode_TRG; end if;
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
         FSM_STATE                 <= s0_idle;
@@ -303,7 +303,7 @@ begin
         if reading_header and dropping_data_cmd then drop_counter              <= drop_counter + 1; end if;
         if reset_drop_cnt_sc then drop_counter                                 <= (others => '0'); end if;
         -- errors if fifos are not empty while run starts
-        if not send_mode_sc_ff and send_mode_sc then fifo_notempty_while_start <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
+        if start_of_run then fifo_notempty_while_start <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
 
 
       end if;

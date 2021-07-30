@@ -60,7 +60,7 @@ architecture Behavioral of DataConverter is
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
 
-  signal send_mode_ison, send_mode_ison_sclk, send_mode_ison_sclk_ff : boolean;
+  signal send_mode_ison, send_mode_ison_sclk, start_of_run : boolean;
   signal reset_drop_counters                                         : std_logic;
   signal drop_counter                                                : std_logic_vector(15 downto 0);
 
@@ -159,7 +159,7 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-      send_mode_ison <= (Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1');
+      send_mode_ison <= ((Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1')) and (Status_register_I.BCIDsync_Mode = mode_SYNC);
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= errors;
@@ -181,7 +181,7 @@ begin
       header_pcklen_ff                                          <= header_pcklen;
 
       send_mode_ison_sclk    <= send_mode_ison;
-      send_mode_ison_sclk_ff <= send_mode_ison_sclk;
+	  start_of_run <= Status_register_I.Start_run = '1';
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
@@ -220,7 +220,7 @@ begin
           rawfifo_cnt_max <= (others => '0');
         end if;
 
-        if not send_mode_ison_sclk_ff and send_mode_ison_sclk then errors(1 downto 0) <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+        if start_of_run then errors(1 downto 0) <= (not header_fifo_empty) & (not data_fifo_empty); end if;
 		if tcm_data_fifo_full = '1' then errors(2) <= '1'; end if;
 
 

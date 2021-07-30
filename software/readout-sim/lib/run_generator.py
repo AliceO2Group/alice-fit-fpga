@@ -51,9 +51,15 @@ class run_generator:
         # generate void orbits before run
         run_type = self.ctrl_reg.trg_rd_command
         self.ctrl_reg.trg_rd_command = readout_cmd.idle
-        reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
-        # generate void orbits to make RX decoder sync
+        # start of simulation
         if self.run_pos_start<2*orbit_size:
+            # reset orbc sync
+            self.ctrl_reg.reset_orbc_sync = 1
+            reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
+            for i in range(20): file.write(reg_line)
+            # generate void orbits to make RX decoder sync
+            self.ctrl_reg.reset_orbc_sync = 0
+            reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
             for i in range(2*orbit_size): file.write(reg_line)
 
         # reset simulation generators and errors

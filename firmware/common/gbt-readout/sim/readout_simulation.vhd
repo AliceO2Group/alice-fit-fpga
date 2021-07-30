@@ -168,7 +168,7 @@ begin
     constant infile_num_col : integer := ctrl_reg_size*2;
     variable file_line    : line;
     type infile_data_type is array (integer range <>) of integer;
-    variable data_from_file : infile_data_type(0 to infile_num_col-1);
+    variable data_from_file : infile_data_type(0 to infile_num_col-1):= (others => 0);
     variable is_gbt_data : std_logic_vector(3 downto 0) := x"0";
     -- -----------------------------
 
@@ -182,6 +182,7 @@ begin
 
         data_from_file             := (others => 0);
         Control_register_from_file <= (others => (others => '0'));
+        testbench_CONTROL_REG_dynamic <= test_CONTROL_REG;
 
       else
 

@@ -187,8 +187,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_PM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\

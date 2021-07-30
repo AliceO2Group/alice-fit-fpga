@@ -9,6 +9,7 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 '''
 
 import copy
+
 import lib.constants as cnst
 import lib.pylog as pylog
 from lib.constants import filename_simout
@@ -41,7 +42,7 @@ class run_reader:
         self.log.info("GBT data size: %i" % (len(self.gbt_data)))
         self.log.info("GEN data size: %i" % (len(self.gen_data)))
         self.log.info("TRG data size: %i" % (len(self.trg_data)))
-        self.log.info("ORBIT RANGE %i [%04x : %04x]" % (self.stop_ortbit - self.start_orbit+1, self.start_orbit, self.stop_ortbit))
+        self.log.info("ORBIT RANGE %i [%04x : %04x]" % (self.stop_ortbit - self.start_orbit + 1, self.start_orbit, self.stop_ortbit))
 
     def read_run(self):
         self.run_valid = False
@@ -57,16 +58,16 @@ class run_reader:
 
         # iteration through simulation outputs
         for iline in range(self.run_meta.run_pos_start, self.run_meta.run_pos_stop):
-            if iline >= len (simout_list):
+            if iline >= len(simout_list):
                 self.log.info(pylog.c_FAIL + "End of simulation output file reached, check that vivado simulation finished" + pylog.c_ENDC)
                 return 0
 
             line_regs = simout_list[iline].replace('X', '0').split("   ")[:-1]
-            line_regs_1 = simout_list[iline - 1].replace('X', '0').split("   ")[:-1] if iline - 1 >= self.run_meta.run_pos_start else 0
+            line_regs_p1 = simout_list[iline + 1].replace('X', '0').split("   ")[:-1] if iline + 1 < self.run_meta.run_pos_stop else 0
 
             # readout status in cycle
             istatus = status_reg(line_regs[2:])
-            istatus_2 = status_reg(line_regs_1[2:]) if line_regs_1 != 0 else status_reg()
+            istatus_p1 = status_reg(line_regs_p1[2:]) if line_regs_p1 != 0 else status_reg()
 
             # check fsm error
             if istatus.fsm_errors > 0 and iline > 10:
@@ -83,9 +84,9 @@ class run_reader:
             if istatus.data_gen_size > 0:
                 # select data by readout mode
                 # while start of run mode switch and start sending at same time
-                if (not sending_mode) and (istatus.cru_readout_mode != readout_cmd.idle): sending_mode = True
+                if (not sending_mode) and (istatus.readout_mode != readout_cmd.idle): sending_mode = True
                 # while end of run mode switch 2 cicles before end sending
-                if sending_mode and istatus_2.cru_readout_mode == readout_cmd.idle: sending_mode = False
+                if sending_mode and istatus_p1.readout_mode == readout_cmd.idle: sending_mode = False
                 # print("[%i] sm: %s, sm_2: %s, cnt: %x, size : %i, %s" % (iline, str(istatus.cru_readout_mode), str(istatus_2.cru_readout_mode), istatus.data_gen_packnum, istatus.data_gen_size, str(sending_mode)))
                 if sending_mode: self.gen_data.append(
                     {'size': istatus.data_gen_size, 'pck_num': istatus.data_gen_packnum, 'bc': istatus.data_gen_bc, 'orbit': istatus.data_gen_orbit})

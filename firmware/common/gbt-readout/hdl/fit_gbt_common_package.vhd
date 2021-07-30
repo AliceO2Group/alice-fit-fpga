@@ -125,42 +125,42 @@ package fit_gbt_common_package is
   constant test_CONTROL_REG : readout_control_t :=
     (
       Data_Gen            => (
-        usage_generator   => use_TX_generator,
+        usage_generator   => use_NO_generator,
         trigger_resp_mask => TRG_const_void,
-        bunch_pattern     => x"10e0766f",
-        bunch_freq        => x"0deb",
-        bc_start          => x"ddc"
+        bunch_pattern     => x"00000000",
+        bunch_freq        => x"0000",
+        bc_start          => x"000"
         ),
 
       Trigger_Gen          => (
-        usage_generator    => use_CONT_generator,
+        usage_generator    => use_NO_generator,
         Readout_command    => idle,
-        trigger_pattern    => x"0000000080000000",
-        trigger_cont_value => TRG_const_Ph,
-        bunch_freq         => x"0deb",
-        bc_start           => x"ddc"
+        trigger_pattern    => x"0000000000000000",
+        trigger_cont_value => TRG_const_void,
+        bunch_freq         => x"0000",
+        bc_start           => x"000"
         ),
 
       RDH_data  => (
-        FEE_ID  => x"0001",
-        SYS_ID  => x"ff",
+        FEE_ID  => x"0000",
+        SYS_ID  => x"00",
         PRT_BIT => x"00"
         ),
 
       readout_bypass  => '0',
       is_hb_response  => '1',
-      trg_data_select => x"00000010",
+      trg_data_select => x"00000000",
 
-      BCID_offset => x"01f",
+      BCID_offset => x"000",
 
-      reset_orbc_sync     => '0',
-      reset_data_counters => '0',
-      reset_gensync       => '0',
-      reset_gbt_rxerror   => '0',
-      reset_readout       => '0',
-      reset_gbt           => '0',
-      reset_rxph_error    => '0',
-      force_idle          => '0'
+      reset_orbc_sync     => '1',
+      reset_data_counters => '1',
+      reset_gensync       => '1',
+      reset_gbt_rxerror   => '1',
+      reset_readout       => '1',
+      reset_gbt           => '1',
+      reset_rxph_error    => '1',
+      force_idle          => '1'
       );
 -- =============================================================
 

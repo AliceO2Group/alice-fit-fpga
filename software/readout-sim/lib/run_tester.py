@@ -101,6 +101,7 @@ class run_tester:
         self.log.info([("trg: %x; orbc %04x:%03x" % (itrg['trigger'], itrg['orbit'], itrg['bc'])) for itrg in trg_check_list])
 
         # counting generated data including to RDH
+        # self.log.info(str([("[pnum: %x; orbc %04x:%03x; sz: %i]" % (idat['pck_num'], idat['orbit'], idat['bc'], idat['size'])) for idat in self.run.gen_data[-10:]]))
         gen_data_list = copy.copy(self.run.gen_data)
         read_data_list = [ievent for irdh in self.rdh_packet_list for ievent in irdh.event_list]
         read_data_count = len(read_data_list)
@@ -109,7 +110,6 @@ class run_tester:
                 if ievent.pck_num == igen['pck_num'] and ievent.orbit == igen['orbit'] and ievent.bc == igen['bc'] and ievent.size == igen['size']:
                     if igen in gen_data_list: gen_data_list.remove(igen)
                     if ievent in read_data_list: read_data_list.remove(ievent)
-
         if len(gen_data_list) > 0:
             self.log.info("Generated data not found in RDH packets: %i; %s" % (
                 len(gen_data_list), [("[pnum: %x; orbc %04x:%03x; sz: %i]" % (idat['pck_num'], idat['orbit'], idat['bc'], idat['size'])) for idat in gen_data_list[:50]]))

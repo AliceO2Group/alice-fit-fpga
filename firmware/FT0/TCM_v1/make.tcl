@@ -220,8 +220,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
