@@ -63,7 +63,6 @@ architecture structural of GBT_TX_RX is
   -- GBT Bank 1:
   --------------
 
-
   signal to_gbtBank_clks             : gbtBankClks_i_R;
   signal from_gbtBank_clks           : gbtBankClks_o_R;
   --------------------------------------------------------        
@@ -100,6 +99,8 @@ architecture structural of GBT_TX_RX is
   signal mgt_cpllLock     : std_logic_vector(1 to GBT_BANKS_USER_SETUP(1).NUM_LINKS);
   signal mgt_outclkfabric : std_logic_vector(1 to GBT_BANKS_USER_SETUP(1).NUM_LINKS);
   signal header_flag      : std_logic_vector(1 to GBT_BANKS_USER_SETUP(1).NUM_LINKS);
+  
+  signal gbtRx_ErrorDet_ff : std_logic;
 
 --=================================================================================================--
 begin  --========####   Architecture Body   ####========-- 
@@ -296,8 +297,9 @@ begin  --========####   Architecture Body   ####========--
   begin
 
     if TXDataClk'event and (TXDataClk = '1') then
+      gbtRx_ErrorDet_ff <=  from_gbtBank_gbtRx(1).rxErrorDetected;
+      GBT_Status_O.gbtRx_ErrorDet <= gbtRx_ErrorDet_ff;
       GBT_Status_O.gbtRx_Ready    <= from_gbtBank_gbtRx(1).ready;
-      GBT_Status_O.gbtRx_ErrorDet <= from_gbtBank_gbtRx(1).rxErrorDetected;
 
       GBT_Status_O.mgt_phalin_cplllock <= pllLocked_from_gbtBank_rxFrmClkPhAlgnr(1);
 
@@ -308,9 +310,8 @@ begin  --========####   Architecture Body   ####========--
       GBT_Status_O.tx_resetDone    <= from_gbtBank_mgt.mgtLink(1).tx_resetDone;
       GBT_Status_O.tx_fsmResetDone <= from_gbtBank_mgt.mgtLink(1).tx_fsmResetDone;
 
-      if reset_rx_errors = '1' then GBT_Status_O.gbtRx_ErrorLatch                          <= '0';
-      elsif from_gbtBank_gbtRx(1).rxErrorDetected = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '1';
-      end if;
+      if reset_rx_errors = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '0';
+      elsif gbtRx_ErrorDet_ff = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '1'; end if;
 
     end if;
   end process;

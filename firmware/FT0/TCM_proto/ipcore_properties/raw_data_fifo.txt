@@ -4,7 +4,7 @@ CONFIG.ARUSER_Width                                 string  false      0
 CONFIG.AWUSER_Width                                 string  false      0
 CONFIG.Add_NGC_Constraint_AXI                       string  false      false
 CONFIG.Almost_Empty_Flag                            string  false      false
-CONFIG.Almost_Full_Flag                             string  false      false
+CONFIG.Almost_Full_Flag                             string  false      true
 CONFIG.BUSER_Width                                  string  false      0
 CONFIG.CORE_CLK.FREQ_HZ                             string  false      100000000
 CONFIG.CORE_CLK.INSERT_VIP                          string  false      0
@@ -60,14 +60,14 @@ CONFIG.FIFO_Implementation_wdch                     string  false      Common_Cl
 CONFIG.FIFO_Implementation_wrch                     string  false      Common_Clock_Block_RAM
 CONFIG.Fifo_Implementation                          string  false      Common_Clock_Block_RAM
 CONFIG.Full_Flags_Reset_Value                       string  false      0
-CONFIG.Full_Threshold_Assert_Value                  string  false      4095
+CONFIG.Full_Threshold_Assert_Value                  string  false      4000
 CONFIG.Full_Threshold_Assert_Value_axis             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_rdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wach             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wdch             string  false      1023
 CONFIG.Full_Threshold_Assert_Value_wrch             string  false      1023
-CONFIG.Full_Threshold_Negate_Value                  string  false      4094
+CONFIG.Full_Threshold_Negate_Value                  string  false      3999
 CONFIG.HAS_ACLKEN                                   string  false      false
 CONFIG.HAS_TKEEP                                    string  false      false
 CONFIG.HAS_TSTRB                                    string  false      false
@@ -116,7 +116,7 @@ CONFIG.Programmable_Empty_Type_rdch                 string  false      No_Progra
 CONFIG.Programmable_Empty_Type_wach                 string  false      No_Programmable_Empty_Threshold
 CONFIG.Programmable_Empty_Type_wdch                 string  false      No_Programmable_Empty_Threshold
 CONFIG.Programmable_Empty_Type_wrch                 string  false      No_Programmable_Empty_Threshold
-CONFIG.Programmable_Full_Type                       string  false      No_Programmable_Full_Threshold
+CONFIG.Programmable_Full_Type                       string  false      Single_Programmable_Full_Threshold_Constant
 CONFIG.Programmable_Full_Type_axis                  string  false      No_Programmable_Full_Threshold
 CONFIG.Programmable_Full_Type_rach                  string  false      No_Programmable_Full_Threshold
 CONFIG.Programmable_Full_Type_rdch                  string  false      No_Programmable_Full_Threshold

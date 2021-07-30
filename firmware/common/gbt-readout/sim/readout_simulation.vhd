@@ -114,7 +114,7 @@ begin
       RxData_rxclk_from_GBT_O   => RxData_rxclk_from_GBT,
       IsRxData_rxclk_from_GBT_O => IsRxData_rxclk_from_GBT,
 
-      FIT_GBT_status_O => GBT_status
+      readout_status_o => GBT_status
       );
 -- =====================================================
 

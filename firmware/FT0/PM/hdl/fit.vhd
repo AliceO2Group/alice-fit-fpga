@@ -477,7 +477,7 @@ component TDCCHAN is
            RxData_rxclk_from_GBT_O     : out  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
            IsRxData_rxclk_from_GBT_O    : out  STD_LOGIC;
               -- FIT readour status, including BCOR_ID to PM/TCM
-           FIT_GBT_status_O : out readout_status_t
+           readout_status_o : out readout_status_t
                       
        );
    end component;
@@ -941,7 +941,7 @@ FitGbtPrg: FIT_GBT_project
 		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
 		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
 
-		FIT_GBT_status_O 	=> readout_status
+		readout_status_o 	=> readout_status
 		);		
 -- =====================================================
 

@@ -51,7 +51,7 @@ entity FIT_GBT_project is
     IsRxData_rxclk_from_GBT_O : out std_logic;
 
     -- FIT readour status, including BCOR_ID to PM/TCM
-    FIT_GBT_status_O : out readout_status_t
+    readout_status_o : out readout_status_t
     );
 end FIT_GBT_project;
 
@@ -116,7 +116,7 @@ begin
   MGT_TX_dsbl_O <= '0';
 
   -- Status
-  FIT_GBT_status_O                        <= FIT_GBT_STATUS;
+  readout_status_o                        <= FIT_GBT_STATUS;
   FIT_GBT_STATUS.GBT_status               <= from_gbt_bank_prj_GBT_status;
   FIT_GBT_STATUS.BCID_from_CRU            <= ORBC_ID_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
