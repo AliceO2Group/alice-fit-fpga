@@ -124,7 +124,7 @@ end FIT_TESTMODULE_v2;
 architecture Behavioral of FIT_TESTMODULE_v2 is
 
 -- Reset signals
-  signal reset_aft_pllready             : std_logic;
+  signal reset_logic, reset_pll             : std_logic;
   signal SDclk_pll_ready, clk200_rdy    : std_logic;
   signal gbt_reset, reset_to_syscount40 : std_logic;
 
@@ -327,16 +327,16 @@ begin
 
 
 -- USER OUTPUTS
--- GPIO_LED_0 <= readout_status.GBT_status.rxWordClkReady; -- from rxPgaseAlign_gen.rxBitSlipControl
--- GPIO_LED_1 <= readout_status.GBT_status.rxFrameClkReady; -- from latOpt_phalgnr_gen.phase_conm_inst
-  GPIO_LED_2   <= readout_status.GBT_status.mgtLinkReady;  -- from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_txresetfsm_i
-  GPIO_LED_3   <= readout_status.GBT_status.gbtRx_Ready;  -- FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/status/statusLatOpt_gen.RX_READY_O_reg
--- GPIO_LED_4 <= readout_status.GBT_status.mgt_phalin_cplllock; -- CPLLLOCK from FitGbtPrg/gbtBankDsgn/gbtExmplDsgn_inst/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i 
--- GPIO_LED_5 <= readout_status.GBT_status.tx_resetDone; -- TXRESETDONE from gtxe2_i
--- GPIO_LED_6 <= readout_status.GBT_status.tx_fsmResetDone; -- gt0_txresetfsm_i
-  GPIO_LED_4   <= ipb_leds(0);
-  GPIO_LED_7   <= ipb_leds(1);
-  SCOPE_I      <= DataClk_to_FIT_GBT;
+  GPIO_LED_0 <= SDclk_pll_ready; 
+  GPIO_LED_1 <= reset_logic;
+  GPIO_LED_2   <= clk200;
+  GPIO_LED_3   <= GBT_RxFrameClk;
+  GPIO_LED_4 <= '0';
+  GPIO_LED_5   <= ipb_leds(0);
+  GPIO_LED_6   <= ipb_leds(1);
+  GPIO_LED_7 <= '0';
+  
+  SCOPE_I      <= GBT_RxFrameClk;
   GPIO_SMA_J13 <= DataClk_to_FIT_GBT;
   GPIO_SMA_J14 <= GBT_RxFrameClk;
   -- ##################################################################################
@@ -459,7 +459,7 @@ begin
 --  PLL by CDM clock A
   CDMClkpllcomp : CDM_Clk_pll
     port map(
-      RESET        => RESET,
+      RESET        => reset_pll,
       locked       => SDclk_pll_ready,
       CLK_IN1_40   => CDM_clk_A,
       CLK_OUT1_40  => CDM_pll_clk_A,
@@ -495,7 +495,7 @@ begin
       clk_ipb_o => ipb_clk,
       rst_ipb_o => ipb_rst,
 
-      RESET => reset_aft_pllready,
+      RESET => reset_logic,
 
       leds     => ipb_leds,             -- status LEDs
       mac_addr => mac_addr,
@@ -519,7 +519,9 @@ begin
       GDataClk_I  => CDM_clk_A,
       PLL_ready_I => SDclk_pll_ready,
 
-      RESET_O => reset_aft_pllready
+      reset_lgc_o => reset_logic,
+      reset_pll_o => reset_pll
+      
       );
 -- =============================================================
 
@@ -561,7 +563,7 @@ begin
       )
 
     port map(
-      RESET_I          => reset_aft_pllready,
+      RESET_I          => reset_logic,
       SysClk_I         => SysClk_to_FIT_GBT,
       DataClk_I        => DataClk_to_FIT_GBT,
       MgtRefClk_I      => MgtRefClk_to_FIT_GBT,
@@ -868,7 +870,7 @@ begin
   LAI(5) <= tcm_mosi;
   LAI(4) <= not tcm_miso;
 
-  LAI(8) <= reset_aft_pllready;
+  LAI(8) <= reset_logic;
   LAI(9) <= '0';
 
 

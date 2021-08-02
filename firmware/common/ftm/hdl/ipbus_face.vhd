@@ -68,11 +68,9 @@ architecture Behavioral of ipbus_face is
   signal ctrl_reg                          : ctrl_reg_t;
   signal stat_reg, stat_reg_ipbclk         : stat_reg_t;
   signal readout_control                   : readout_control_t;
-  signal readout_status, readout_status_db : readout_status_t;
+  signal readout_status, readout_status_ff : readout_status_t;
 
-  signal ipbus_addr_int, ipbus_base_addr_int : integer range 0 to 512;
-  signal gbt_readout_addr_int                : integer range 0 to 512;
-  signal fifo_count_addr_int                 : integer range 0 to 512;
+  signal ipbus_addr_int, ipbus_base_addr_int : natural range 0 to 4095;
 
   -- ipbus fsm
   signal ipbus_di, ipbus_do   : std_logic_vector (31 downto 0);
@@ -96,12 +94,15 @@ architecture Behavioral of ipbus_face is
   attribute MARK_DEBUG of debug_ipb_data_I       : signal is "true";
   attribute MARK_DEBUG of debug_ipb_addr         : signal is "true";
   attribute MARK_DEBUG of readout_control        : signal is "true";
-  attribute MARK_DEBUG of readout_status_db      : signal is "true";
+  attribute MARK_DEBUG of readout_status_ff      : signal is "true";
   attribute MARK_DEBUG of data_fifo_dout         : signal is "true";
   attribute MARK_DEBUG of data_fifo_rden         : signal is "true";
   attribute MARK_DEBUG of data_map_counter       : signal is "true";
   attribute MARK_DEBUG of fifo_to_ipbus_data_out : signal is "true";
   attribute MARK_DEBUG of data_fifo_count        : signal is "true";
+  attribute MARK_DEBUG of ipbus_addr_int         : signal is "true";
+  attribute MARK_DEBUG of stat_reg_ipbclk        : signal is "true";
+  attribute MARK_DEBUG of ctrl_reg               : signal is "true";
 
 
 begin
@@ -182,7 +183,7 @@ begin
 -- DATA FIFO ===========================================
   ipbus_data_fifo_comp : entity work.ipbus_data_fifo
     port map (
-      rst           => FSM_Clocks_I.Reset_dclk,
+      rst           => ipb_reset,
       wr_clk        => FSM_Clocks_I.GBT_RX_Clk,
       rd_clk        => ipbus_clock_i,
       din           => data_fifo_din,
@@ -219,9 +220,10 @@ begin
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
       readout_control <= func_CNTRREG_getcntrreg(ctrl_reg);
-      stat_reg        <= func_STATREG_getaddrreg(readout_status);
-	  -- latching status by data clock for ila
-	  readout_status_db <= readout_status;
+      --readout_control <= test_CONTROL_REG;
+	  -- extra latch for ila
+	  readout_status_ff <= readout_status;	  
+      stat_reg        <= func_STATREG_getaddrreg(readout_status_ff);
     end if;
   end process;
 
@@ -230,7 +232,7 @@ begin
   process (ipbus_clock_i)
   begin
     if(rising_edge(ipbus_clock_i))then
-      ipb_reset       <= FSM_Clocks_I.Reset_dclk;
+      ipb_reset       <= IPBUS_rst_I;
       stat_reg_ipbclk <= stat_reg;
 
       if (ipb_reset = '1') then
@@ -244,7 +246,7 @@ begin
           if data_map_counter < 5 then data_map_counter <= data_map_counter+1; else data_map_counter <= 0; end if;
         end if;
 
-        if(ipbus_ack = '1') and (ipbus_addr_int < ctrl_reg_size) then ctrl_reg(ipbus_addr_int) <= ipbus_di; end if;
+        if(IPBUS_iswr_I = '1') and (ipbus_addr_int < ctrl_reg_size) then ctrl_reg(ipbus_addr_int) <= ipbus_di; end if;
 
 
       end if;
@@ -259,7 +261,7 @@ begin
 
   ipbus_do <= (others => '0') when (ipbus_ack = '0') or (IPBUS_isrd_I = '0') else
               ctrl_reg(ipbus_addr_int)        when (ipbus_addr_int < ctrl_reg_size) else
-              stat_reg_ipbclk(ipbus_addr_int) when (ipbus_addr_int >= ctrl_reg_size)and(ipbus_addr_int < stat_reg_size) else
+              stat_reg_ipbclk(ipbus_addr_int-ctrl_reg_size) when (ipbus_addr_int < stat_reg_size+ctrl_reg_size) else
               x"00000000";
 
 end Behavioral;

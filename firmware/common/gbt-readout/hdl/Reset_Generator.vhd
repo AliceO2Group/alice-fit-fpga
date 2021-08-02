@@ -32,7 +32,7 @@ end Reset_Generator;
 architecture Behavioral of Reset_Generator is
 
 
-  signal reset_sclk, reset_fsm, reset_gbt : std_logic;
+  signal reset_in, reset_sclk, reset_fsm, reset_gbt : std_logic;
   signal DataClk_q_dataclk                : std_logic := '0';
   signal DataClk_qff00_sysclk             : std_logic;
   signal DataClk_front_sysclk             : std_logic;
@@ -40,8 +40,14 @@ architecture Behavioral of Reset_Generator is
   signal count_ready, count_ready_clk40 : std_logic;
   signal sysclk_count_ff                : std_logic_vector(2 downto 0);
 
-  --attribute keep : string;
-  --attribute keep of  : signal is "true";
+  attribute mark_debug : string;
+  attribute mark_debug of reset_in : signal is "true";
+  attribute mark_debug of reset_gbt : signal is "true";
+  attribute mark_debug of reset_fsm : signal is "true";
+  attribute mark_debug of reset_sclk : signal is "true";
+  attribute mark_debug of sysclk_count_ff : signal is "true";
+  attribute mark_debug of count_ready : signal is "true";
+  -- attribute mark_debug of  : signal is "true";
 
 begin
 
@@ -53,16 +59,12 @@ begin
   process(DataClk_I)
   begin
     if rising_edge(DataClk_I)then
+      reset_in <= RESET40_I;
 
       count_ready_clk40 <= count_ready;
       DataClk_q_dataclk <= not DataClk_q_dataclk;
-      reset_gbt         <= RESET40_I or Control_register_I.reset_gbt;
+      reset_gbt         <= reset_in or Control_register_I.reset_gbt;
       reset_fsm         <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40;
-
-      if(RESET40_I = '1')then
-      else
-
-      end if;
 
     end if;
   end process;
@@ -74,7 +76,7 @@ begin
   begin
     if rising_edge(SysClk_I)then
 
-      reset_sclk   <= RESET40_I;
+      reset_sclk   <= reset_in;
       Reset_SClk_O <= reset_fsm;
 
       if(reset_sclk = '1')then

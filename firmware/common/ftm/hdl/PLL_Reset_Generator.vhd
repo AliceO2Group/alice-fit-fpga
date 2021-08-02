@@ -3,9 +3,9 @@
 -- Engineer: Finogeev D. A. dmitry-finogeev@yandex.ru
 -- 
 -- Create Date:    2017 
--- Description: generate reset after PLL ready
+-- Description: reset logic after PLL ready
 --
--- Revision: 07/2021
+-- Revision: 08/2021
 ----------------------------------------------------------------------------------
 
 library IEEE;
@@ -19,63 +19,55 @@ entity PLL_Reset_Generator is
     GDataClk_I  : in std_logic;
     PLL_ready_I : in std_logic;
 
-    RESET_O : out std_logic
+    reset_pll_o : out std_logic;
+    reset_lgc_o : out std_logic
     );
 end PLL_Reset_Generator;
 
 architecture Behavioral of PLL_Reset_Generator is
 
-  signal delay_cntr, delay_cntr_next : std_logic_vector(3 downto 0);
+  signal reset_in, reset_lgc, reset_pll : std_logic;
 
-  signal pll_ready_ff0, pll_ready_ff1            : std_logic;
-  signal out_reset, out_reset_ff, out_reset_next : std_logic;
+  type FSM_STATE_T is (s0_reset, s1_waitpll, s2_ready);
+  signal FSM_STATE : FSM_STATE_T;
+  signal reset_cnt : natural range 0 to 15 := 0;
+  signal pll_ready : std_logic;
 
-  attribute keep                  : string;
-  attribute keep of delay_cntr    : signal is "true";
-  attribute keep of pll_ready_ff0 : signal is "true";
-  attribute keep of pll_ready_ff1 : signal is "true";
-  attribute keep of out_reset_ff  : signal is "true";
+  attribute mark_debug              : string;
+  attribute mark_debug of reset_in  : signal is "true";
+  attribute mark_debug of reset_cnt : signal is "true";
+  attribute mark_debug of fsm_state : signal is "true";
+  attribute mark_debug of reset_pll : signal is "true";
+  attribute mark_debug of reset_lgc : signal is "true";
+  attribute mark_debug of pll_ready : signal is "true";
 
 begin
 
-  RESET_O <= out_reset_ff;
-
-
--- Data clk ***********************************
-  process (GDataClk_I, GRESET_I)
+  process (GDataClk_I)
   begin
-    if(GRESET_I = '1') then
+    if rising_edge(GDataClk_I)then
 
-      delay_cntr    <= (others => '0');
-      pll_ready_ff0 <= '0';
-      pll_ready_ff1 <= '0';
+      reset_in    <= GRESET_I;
+      pll_ready   <= PLL_ready_I;
+      reset_lgc_o <= reset_lgc;
+      reset_pll_o <= reset_pll;
 
-      out_reset    <= '1';
-      out_reset_ff <= '1';
-    else
-
-      if rising_edge(GDataClk_I)then
-
-        delay_cntr    <= delay_cntr_next;
-        pll_ready_ff0 <= PLL_ready_I;
-        pll_ready_ff1 <= pll_ready_ff0;
-
-        out_reset    <= out_reset_next;
-        out_reset_ff <= out_reset;
-
+      if(reset_in = '1') then
+        fsm_state <= s0_reset;
+      elsif fsm_state = s0_reset then
+        fsm_state <= s1_waitpll;
+        reset_cnt <= 0;
+        reset_pll <= '1';
+        reset_lgc <= '1';
+      elsif fsm_state = s1_waitpll then
+        if reset_cnt < 15 then reset_cnt                     <= reset_cnt+1; else reset_pll <= '0'; end if;
+        if reset_cnt = 15 and pll_ready = '1' then fsm_state <= s2_ready; end if;
+      elsif fsm_state = s2_ready then
+        reset_lgc <= '0';
       end if;
+
     end if;
   end process;
--- ********************************************
 
-
-
--- FSM ***********************************************
-  delay_cntr_next <= x"0" when (pll_ready_ff0 = '0') or (pll_ready_ff1 = '0') else
-                     x"f" when (delay_cntr = x"f") else
-                     delay_cntr+1;
-
-  out_reset_next <= '0' when delay_cntr = x"f" else
-                    out_reset;
 end Behavioral;
 

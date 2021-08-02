@@ -153,14 +153,14 @@ package fit_gbt_common_package is
 
       BCID_offset => x"000",
 
-      reset_orbc_sync     => '1',
-      reset_data_counters => '1',
-      reset_gensync       => '1',
-      reset_gbt_rxerror   => '1',
-      reset_readout       => '1',
-      reset_gbt           => '1',
-      reset_rxph_error    => '1',
-      force_idle          => '1'
+      reset_orbc_sync     => '0',
+      reset_data_counters => '0',
+      reset_gensync       => '0',
+      reset_gbt_rxerror   => '0',
+      reset_readout       => '0',
+      reset_gbt           => '0',
+      reset_rxph_error    => '0',
+      force_idle          => '0'
       );
 -- =============================================================
 
