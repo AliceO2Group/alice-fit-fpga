@@ -355,6 +355,7 @@ end component;
            
    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
    signal IsData_from_FITrd        : STD_LOGIC;
+
    
    signal RxData_rxclk_from_GBT     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
    signal IsRxData_rxclk_from_GBT    : STD_LOGIC;
@@ -528,6 +529,10 @@ END COMPONENT;
 
 attribute IODELAY_GROUP : STRING;
 attribute IODELAY_GROUP of IDL1: label is "TCM_DLY";
+
+   attribute mark_debug                        : string;
+  attribute mark_debug of Data_from_FITrd : signal is "true";
+  attribute mark_debug of IsData_from_FITrd     : signal is "true";
 
 begin
 

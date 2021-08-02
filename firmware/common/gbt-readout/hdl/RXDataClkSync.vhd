@@ -56,13 +56,11 @@ architecture Behavioral of RXDATA_CLKSync is
   signal rx_error_reset, rx_error_reset_sclk: std_logic;
 
 
---      attribute keep : string;        
---      attribute keep of CLK_PH_counter_ff_sc : signal is "true";
---      attribute keep of CLK_PH_counter_stop_ff_sc : signal is "true";
---      attribute keep of RX_CLK_from_ff01 : signal is "true";
---      attribute keep of RX_CLK_from_ff02 : signal is "true";
---      attribute keep of RX_DATA_RXCLK_ffrxc : signal is "true";
---      attribute keep of RX_DATA_DATACLK_ffsc : signal is "true";
+  attribute keep : string;        
+  attribute keep of RX_IS_DATA_DATACLK : signal is "true";
+  attribute keep of RX_DATA_DATACLK : signal is "true";
+  attribute keep of RX_CLK_from00 : signal is "true";
+  attribute keep of RX_CLK_from01 : signal is "true";
 
 begin
 

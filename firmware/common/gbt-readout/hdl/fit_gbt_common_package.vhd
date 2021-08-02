@@ -193,7 +193,6 @@ package fit_gbt_common_package is
     bc             : std_logic_vector(BC_id_bitdepth-1 downto 0);
     size           : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
     packet_num     : std_logic_vector(35 downto 0);
-    sel_fifo_count : std_logic_vector(15 downto 0);
   end record;
 
 
