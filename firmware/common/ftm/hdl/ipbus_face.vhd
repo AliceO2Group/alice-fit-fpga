@@ -145,6 +145,9 @@ begin
   readout_status.BCIDsync_Mode    <= FIT_GBT_status_I.BCIDsync_Mode;
   readout_status.BCID_from_CRU    <= FIT_GBT_status_I.BCID_from_CRU;
   readout_status.ORBIT_from_CRU   <= FIT_GBT_status_I.ORBIT_from_CRU;
+  readout_status.Trigger_from_CRU <= FIT_GBT_status_I.Trigger_from_CRU;
+  readout_status.Stop_run         <= FIT_GBT_status_I.Stop_run;
+  readout_status.Start_run        <= FIT_GBT_status_I.Start_run;
   readout_status.rx_phase         <= FIT_GBT_status_I.rx_phase;
   readout_status.cnv_fifo_max     <= FIT_GBT_status_I.cnv_fifo_max;
   readout_status.cnv_drop_cnt     <= FIT_GBT_status_I.cnv_drop_cnt;
@@ -219,11 +222,11 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-      readout_control <= func_CNTRREG_getcntrreg(ctrl_reg);
+      readout_control   <= func_CNTRREG_getcntrreg(ctrl_reg);
       --readout_control <= test_CONTROL_REG;
-	  -- extra latch for ila
-	  readout_status_ff <= readout_status;	  
-      stat_reg        <= func_STATREG_getaddrreg(readout_status_ff);
+      -- extra latch for ila
+      readout_status_ff <= readout_status;
+      stat_reg          <= func_STATREG_getaddrreg(readout_status_ff);
     end if;
   end process;
 
@@ -260,7 +263,7 @@ begin
 
 
   ipbus_do <= (others => '0') when (ipbus_ack = '0') or (IPBUS_isrd_I = '0') else
-              ctrl_reg(ipbus_addr_int)        when (ipbus_addr_int < ctrl_reg_size) else
+              ctrl_reg(ipbus_addr_int)                      when (ipbus_addr_int < ctrl_reg_size) else
               stat_reg_ipbclk(ipbus_addr_int-ctrl_reg_size) when (ipbus_addr_int < stat_reg_size+ctrl_reg_size) else
               x"00000000";
 

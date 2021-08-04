@@ -43,7 +43,7 @@ architecture Behavioral of cru_ltu_emu is
   signal bc_gen    : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- fsm signals
-  signal run_state, run_command                              : rdcmd_t := idle;
+  signal run_state, run_state_ff, run_command                              : rdcmd_t := idle;
   signal bunch_counter                                       : natural range 0 to 65535;
   signal bunch_in_sync                                       : boolean;
   signal send_trgcnt, send_soc, send_eoc, send_sot, send_eot : boolean;
@@ -80,6 +80,8 @@ begin
         bunch_in_sync <= false;
 
       else
+	    -- last cycle with EOR trigger is also with RS/RT
+	    run_state_ff <= run_state;
 
         -- Event ID generator
         if bc_gen < LHC_BCID_max then bc_gen <= bc_gen + 1;
@@ -139,10 +141,10 @@ begin
                 TRG_const_EOT when send_eot else
                 (others => '0');
 
-  trggen_hb <= TRG_const_Orbit or TRG_const_HB when bc_gen = x"000" else (others => '0');
+  trggen_hb <= TRG_const_Orbit or TRG_const_HB or TRG_const_TF when bc_gen = x"000" else (others => '0');
 
-  trggen_rdstate <= TRG_const_RS when run_state = trigger else
-                    TRG_const_RS or TRG_const_RT when run_state = continious else
+  trggen_rdstate <= TRG_const_RS when (run_state = trigger) or (run_state_ff = trigger) else
+                    TRG_const_RS or TRG_const_RT when (run_state = continious) or (run_state_ff = continious) else
                     (others => '0');
 
   rx_data_gen   <= orbit_gen & x"0"&bc_gen & (trggen_hb or trggen_sox or trggen_rdstate or trggen_cnt);

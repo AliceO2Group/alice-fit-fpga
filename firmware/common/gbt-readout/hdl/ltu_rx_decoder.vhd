@@ -48,7 +48,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal orbc_sync_mode                 : bcid_sync_t;
   signal readout_mode, cru_readout_mode : rdmode_t;
 
-  signal is_SOC, is_SOT, is_EOC, is_EOT, is_SOR_ff, is_cru_run, is_cru_run_ff, is_cru_cnt, is_cru_cnt_ff : boolean;
+  signal is_SOC, is_SOT, is_EOC, is_EOT, is_SOR_ff, is_cru_run, is_cru_cnt : boolean;
   signal bc_delay                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
 
@@ -66,7 +66,7 @@ begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
       bc_delay <= Control_register_I.BCID_offset;
-	  
+
       ORBC_ID_from_CRU_O <= sync_orbit & sync_bc;
       BCIDsync_Mode_O    <= orbc_sync_mode;
       Readout_Mode_O     <= readout_mode;
@@ -82,23 +82,20 @@ begin
       cru_trigger_ff <= cru_trigger;
       cru_is_trg_ff  <= cru_is_trg;
       is_SOR_ff      <= is_SOC or is_SOT;
-	  
-	  is_cru_run_ff <= is_cru_run;
-	  is_cru_cnt_ff <= is_cru_cnt;
 
       if (FSM_Clocks_I.Reset_dclk = '1') then
 
-        orbc_sync_mode <= mode_STR;
-        readout_mode   <= mode_IDLE;
-		cru_readout_mode <= mode_IDLE;
+        orbc_sync_mode   <= mode_STR;
+        readout_mode     <= mode_IDLE;
+        cru_readout_mode <= mode_IDLE;
 
         sync_orbit_corr <= (others => '0');
         sync_bc_corr    <= (others => '0');
 
       else
 
-        if cru_is_trg_ff then Trigger_O      <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
-        if is_SOR_ff then Start_run_O         <= '1';            else Start_run_O <= '0'; end if;
+        if cru_is_trg_ff then Trigger_O     <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
+        if is_SOR_ff then Start_run_O       <= '1';            else Start_run_O <= '0'; end if;
         if is_EOC or is_EOT then Stop_run_O <= '1';            else Stop_run_O <= '0'; end if;
 
         -- syncronize orbc from cru to detector with first trigger
@@ -121,9 +118,9 @@ begin
         elsif (Control_register_I.reset_orbc_sync = '1') then orbc_sync_mode               <= mode_STR; end if;
 
         -- CRU readout mode
-        if (not is_cru_run) and (not is_cru_run_ff) then cru_readout_mode <= mode_IDLE;
-        elsif is_cru_cnt or is_cru_cnt_ff then cru_readout_mode  <= mode_CNT;
-        else cru_readout_mode                   <= mode_TRG; end if;
+        if (not is_cru_run) then cru_readout_mode <= mode_IDLE;
+        elsif is_cru_cnt then cru_readout_mode    <= mode_CNT;
+        else cru_readout_mode                     <= mode_TRG; end if;
 
         -- XOR FSM
         if (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) then readout_mode <= mode_IDLE;

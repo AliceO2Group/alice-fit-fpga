@@ -13,3 +13,6 @@ sim_data
 .idea
 venv
 *.pyc
+
+#notepad++ backup
+nppBackup
