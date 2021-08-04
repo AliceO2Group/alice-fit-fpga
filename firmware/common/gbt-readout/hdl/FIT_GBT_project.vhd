@@ -177,6 +177,7 @@ begin
   ltu_rx_decoder_comp : entity work.ltu_rx_decoder
     port map (
       FSM_Clocks_I => FSM_Clocks,
+      Status_register_I  => FIT_GBT_STATUS,
       Control_register_I => Control_register_I,
 
       RX_IsData_I => RX_IsData_from_orbcgen,

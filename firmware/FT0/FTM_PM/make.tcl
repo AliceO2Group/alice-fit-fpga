@@ -69,7 +69,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/FIT_TESTMODULE.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/FIT_TESTMODULE_PM.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
