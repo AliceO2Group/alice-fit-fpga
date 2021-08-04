@@ -20,6 +20,7 @@ entity ltu_rx_decoder is
   port (
     FSM_Clocks_I : in rdclocks_t;
 
+    Status_register_I  : in readout_status_t;
     Control_register_I : in readout_control_t;
 
     -- RX data @ DataClk, ff in RX sync
@@ -123,7 +124,7 @@ begin
         else cru_readout_mode                     <= mode_TRG; end if;
 
         -- XOR FSM
-        if (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) then readout_mode <= mode_IDLE;
+        if (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors > 0) then readout_mode <= mode_IDLE;
         elsif (readout_mode = mode_IDLE) and is_SOC then readout_mode                                                             <= mode_CNT;
         elsif (readout_mode = mode_CNT) and is_EOC then readout_mode                                                              <= mode_IDLE;
         elsif (readout_mode = mode_IDLE) and is_SOT then readout_mode                                                             <= mode_TRG;
