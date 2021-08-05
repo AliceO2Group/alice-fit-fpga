@@ -11,7 +11,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "FIT_TESTMODULE_PM"
+set project_name "FTM_PM"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -69,7 +69,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/FIT_TESTMODULE_PM.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/FTM_PM.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -250,7 +250,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top" "tcm"] \
+		   "top" "FIT_TESTMODULE_v2"] \
 	[get_filesets sources_1]
 
     # Create 'constrs_1' fileset (if not found)
