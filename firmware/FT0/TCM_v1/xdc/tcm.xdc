@@ -16,6 +16,7 @@ create_generated_clock -name dly_clk -source [get_pins ipbus_module/clocks/pll/i
 create_clock -period 5.000 -name MGTCLK [get_ports MGTCLK_P]
 create_clock -period 8.333 -name RxWordCLK [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/RXOUTCLK}]
 create_clock -period 8.333 -name TxWordCLK [get_pins {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/xlx_k7v7_mgt_ip_i/gt0_xlx_k7v7_mgt_ip_i/gtxe2_i/TXOUTCLK}]
+
 create_generated_clock -name RXDataCLK [get_pins FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/mmcm_adv_inst/CLKOUT0]
 
 create_clock -period 25.000 -name MCLKA -waveform {0.000 12.500} [get_ports CLKA_P]
@@ -69,8 +70,9 @@ set_property ASYNC_REG true [get_cells readout_laser_out_ff?_reg]
 
 set_property IOB TRUE [get_cells -hierarchical T_o_reg]
 set_property IOB TRUE [get_cells lasi_reg]
-set_property ASYNC_REG true [get_cells {l_on0_reg l_on_reg}]
+#set_property ASYNC_REG true [get_cells {l_on0_reg l_on1_reg}]
 set_property ASYNC_REG true [get_cells {laser_t0_reg laser_t_reg}]
+set_property ASYNC_REG true [get_cells {tblock1_reg tblock2_reg}]
 
 set_property ASYNC_REG true [get_cells B_rdy0_reg]
 set_property ASYNC_REG true [get_cells B_rdy1_reg]
@@ -94,7 +96,6 @@ set_property LOC MMCME2_ADV_X1Y1 [get_cells tcma/PLL1/inst/mmcm_adv_inst]
 
 set_property BEL PLLE2_ADV [get_cells Lclk0/inst/plle2_adv_inst]
 set_property LOC PLLE2_ADV_X1Y1 [get_cells Lclk0/inst/plle2_adv_inst]
-
 
 set_property IOB TRUE [get_cells -hierarchical {TDi_reg[?]}]
 set_property ASYNC_REG true [get_cells -hierarchical {rd_lock0_reg rd_lock1_reg}]

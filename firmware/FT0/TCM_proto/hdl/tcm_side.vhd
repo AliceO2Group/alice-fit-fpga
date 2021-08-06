@@ -68,7 +68,9 @@ entity tcm_side is
         Avg_o : out STD_LOGIC_VECTOR (13 downto 0);
         Nchan : out STD_LOGIC_VECTOR (6 downto 0);
         req : out STD_LOGIC_VECTOR (9 downto 0);
-        bkgnd : out STD_LOGIC 
+        bkgnd : out STD_LOGIC; 
+        AmplI_o : out STD_LOGIC_VECTOR (15 downto 0);
+        AmplO_o : out STD_LOGIC_VECTOR (15 downto 0)
         );
 end tcm_side;
 
@@ -87,7 +89,7 @@ signal TsumA_F : STD_LOGIC_VECTOR (3 downto 0);
 signal TcarryA_out,TcarryA, McarryA, T0sumA, T1sumA, Nchan0A, Nchan1A, Nchan2A, Nchan3A : STD_LOGIC_VECTOR (3 downto 0);
 signal TtimeA, MamplA : STD_LOGIC_VECTOR (17 downto 0);
 signal TSsumA, MSsumA : STD_LOGIC_VECTOR (1 downto 0);
-signal Avg, Avg_0 : STD_LOGIC_VECTOR (13 downto 0);
+signal Avg, Avg_i : STD_LOGIC_VECTOR (13 downto 0);
 signal TresA : STD_LOGIC_VECTOR (9 downto 0);
 
 signal Nchan00A, Nchan01A, Nchan02A, Nchan03A, Nchan10A, Nchan11A, Nchan12A, Nchan13A, T00sumA, T01sumA,T10sumA, T11sumA : STD_LOGIC_VECTOR (2 downto 0);
@@ -106,6 +108,10 @@ signal bitpos : vect3_arr;
 signal master_n, N_empty0 : STD_LOGIC_VECTOR (3 downto 0);
 signal adj_count : STD_LOGIC_VECTOR (7 downto 0);
 signal mast_delay: STD_LOGIC_VECTOR (17 downto 0);
+
+signal MsumAI_0, MsumAO_0  : STD_LOGIC_VECTOR (4 downto 0);
+signal MsumAI_F, MsumAO_F  : STD_LOGIC_VECTOR (3 downto 0);
+signal MamplAI, MamplAO : STD_LOGIC_VECTOR (16 downto 0);
 
 component hdmirx is
     Port ( TD_P : in STD_LOGIC_VECTOR (3 downto 0);
@@ -183,7 +189,7 @@ HDMI_RX: hdmirx  port map(TD_P=>TD_P(i), TD_N=>TD_N(i), RST=>SRST, ena=>link_ena
             dl_low=> dl_low(i), dl_high=> dl_high(i), mast_dl_low=>mast_dl_low(i), mast_dl_high=>mast_dl_high(i), mast_stable=>mast_stable(i), dly_ctrl_ena=>dly_ctrl_ena, syn_err=>sync_err(i), PM_req=>req(i));
 end generate;
 
-ROM1 : ROM7x15  PORT MAP (clka => CLK320, addra => Nchan_A, douta => Avg_0); 
+ROM1 : ROM7x15  PORT MAP (clka => CLK320, addra => Nchan_A, douta => Avg_i); 
 
 
 master_n<=x"0" when config(0)='1'
@@ -296,7 +302,7 @@ process (CLK320)
 begin
 if (CLK320'event and CLK320='1') then
 
-Avg<=Avg_0;
+Avg<=Avg_i;
 
 if (mt_cou="001") then 
 
@@ -306,10 +312,10 @@ if HDMI_in(i)>x"C" then NC(i)<="0000"; else NC(i)<=HDMI_in(i); end if;
  
  end loop;
 
- TtimeA(17 downto 14) <="0000"; MamplA(17 downto 14) <="0000";
+ TtimeA(17 downto 14) <="0000"; MamplA(17 downto 14) <="0000"; MamplAI(16 downto 14) <="000"; MamplAO(16 downto 14) <="000";
 else
-  TtimeA<=TsumA_0 & TtimeA(13 downto 2) ;
-  MamplA<=MsumA_0 & MamplA(13 downto 2) ;
+  TtimeA<=TsumA_0 & TtimeA(13 downto 2);
+  MamplA<=MsumA_0 & MamplA(13 downto 2); MamplAI<=MsumAI_0 & MamplAI(13 downto 2); MamplAO<=MsumAO_0 & MamplAO(13 downto 2) ;
 
 end if;
 
@@ -320,7 +326,7 @@ if (mt_cou="110") then Nchan_A<=Nchan_A0; end if;
 if (mt_cou="000") then 
 
 Time_o<=TsumA_F & TtimeA(13 downto 2);
-Ampl_o<= MsumA_F & MamplA(13 downto 2);
+Ampl_o<= MsumA_F & MamplA(13 downto 2); AmplI_o<= MsumAI_F & MamplAI(13 downto 2); AmplO_o<= MsumAO_F & MamplAO(13 downto 2);
 bkgnd<=bkgnd_0; 
    
 end if;
@@ -335,8 +341,15 @@ M10sumA<= ("00"&HDMI_in(5)(2))+("00"&HDMI_in(6)(2))+("00"&HDMI_in(7)(2))+("00"&H
 M01sumA<= ("00"&HDMI_in(0)(3))+("00"&HDMI_in(1)(3))+("00"&HDMI_in(2)(3))+("00"&HDMI_in(3)(3))+("00"&HDMI_in(4)(3));
 M11sumA<= ("00"&HDMI_in(5)(3))+("00"&HDMI_in(6)(3))+("00"&HDMI_in(7)(3))+("00"&HDMI_in(8)(3))+("00"&HDMI_in(9)(3));
 
+MsumAI_0<= ("00"&M00sumA) + ("0" & M01sumA&"0") + ("00"& MamplAI(16 downto 14));
+MsumAO_0<= ("00"&M10sumA) + ("0" & M11sumA&"0") + ("00"& MamplAO(16 downto 14));
 
-MsumA_0<= ("000"&M00sumA) + ("00" & M01sumA&"0") + ("000"&M10sumA) + ("00" & M11sumA&"0") + ("00"& MamplA(17 downto 14));
+
+MsumA_0<= ("000"&M00sumA) + ("00" & M01sumA & "0") + ("000"&M10sumA) + ("00" & M11sumA & "0") + ("00"& MamplA(17 downto 14));
+
+MsumAI_F<= ("0" & M00sumA) + (M01sumA&"0") + ("0" & MamplAI(16 downto 14)) + (M01sumA(1 downto 0) & "00") + (M01sumA(0) & "000");
+MsumAO_F<= ("0" & M10sumA) + (M11sumA&"0") + ("0" & MamplAO(16 downto 14)) + (M11sumA(1 downto 0) & "00") + (M11sumA(0) & "000");
+          
 
 MsumA_F<= ("00" & M00sumA) + ("0" & M01sumA&"0") +("00" & M10sumA) + ("0" & M11sumA & "0") + ("0" & MamplA(17 downto 14)) + (M01sumA & "00") + (M11sumA & "00") + (M01sumA(1 downto 0) & "000") + (M11sumA(1 downto 0) & "000") +
           (M01sumA(0) & "0000") + ( M11sumA(0) & "0000");
