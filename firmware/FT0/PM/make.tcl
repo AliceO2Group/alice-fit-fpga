@@ -20,7 +20,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "PM"
+set project_name "PM12"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -78,7 +78,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/PM.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/PM12.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -216,7 +216,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top"                     "PM"\
+		   "top"                     "PM12"\
 		   "edif_extra_search_paths" "D:/proj/PM/ipcore_dir"] \
 	[get_filesets sources_1]
 

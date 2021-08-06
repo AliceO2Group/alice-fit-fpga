@@ -47,8 +47,7 @@ end BC_correlator;
 
 architecture RTL of BC_correlator is
 
-signal ack0, clr_mem, clr_req, inc_i : STD_LOGIC;
-signal wea : STD_LOGIC_vector (0 downto 0);
+signal ack0, clr_mem, clr_req, inc_i, wea : STD_LOGIC;
 signal m_rd, m_wr : STD_LOGIC_vector (31 downto 0);
 
 COMPONENT BC_corr_mem
@@ -69,10 +68,13 @@ END COMPONENT;
 
 begin
 
-m0 : BC_corr_mem PORT MAP (clka => clk320, wea => wea, addra => BC_cou, dina => m_wr, douta => m_rd, clkb => ipb_clk, web => "0", addrb => addr, dinb => (others=>'0'), doutb => data);
+m0 : BC_corr_mem PORT MAP (clka => clk320, wea(0) => wea, addra => BC_cou, dina => m_wr, douta => m_rd, clkb => ipb_clk, web => "0", addrb => addr, dinb => (others=>'0'), doutb => data);
 
 
-m_wr<= x"0000000" & "000" & inc_i when (clr_mem='1') else m_rd+1;
+m_wr<= x"0000000" & "000" & inc_i when (clr_mem='1') 
+else m_rd+1 when (m_rd/=x"FFFFFFFF") else x"FFFFFFFF";
+
+wea<= '1' when ((clr_mem='1') or (inc='1')) and (mt_cou="100") else '0';
 
 process(clk320)
 begin
@@ -84,17 +86,7 @@ if (clk320'event and clk320='1') then
 
 if  (BC_cou=0) and (mt_cou="010") then clr_mem<=clr_req; end if;
 
-if (mt_cou="011") then
-
-  inc_i<= inc;
-
-  if (clr_mem='1') or (inc='1') then wea(0)<= '1'; end if;
-  
-else  
- wea(0)<= '0';
-end if;
-
-
+if (mt_cou="011") then   inc_i<= inc; end if;
 
 end if;
 end process;
