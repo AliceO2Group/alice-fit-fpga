@@ -2,95 +2,101 @@
 -- Company: INR RAS
 -- Engineer: Finogeev D. A. dmitry-finogeev@yandex.ru
 -- 
--- Create Date:    09/11/2017 
--- Design Name: 
--- Module Name:    RXDATA_CLKSync - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Create Date:    2017 
+-- Description: generate reset signals and sysclk counter
 --
--- Dependencies: 
---
--- Revision: 
--- Revision
--- Additional Comments: 
---
+-- Revision: 06/2021
 ----------------------------------------------------------------------------------
 
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_1164.all;
 use work.fit_gbt_common_package.all;
-use ieee.std_logic_unsigned.all ;
+use ieee.std_logic_unsigned.all;
 
 entity Reset_Generator is
-    Port ( 
-		RESET_I 		: in STD_LOGIC;
-		SysClk_I 		: in  STD_LOGIC;
-		DataClk_I 		: in  STD_LOGIC;
-		Sys_Cntr_ready_I: in  STD_LOGIC;
-		
-		Reset_DClk_O	: out std_logic;
-		General_reset_O : out std_logic;
-		Reset_DClk40_O	: out std_logic;
-		General_reset40_O : out std_logic
-		
-		);
+  port (
+    RESET40_I : in std_logic;
+    SysClk_I  : in std_logic;
+    DataClk_I : in std_logic;
+
+    Control_register_I : in readout_control_t;
+
+    SysClk_count_O : out std_logic_vector(3 downto 0);
+
+    Reset_DClk_O : out std_logic;
+    Reset_SClk_O : out std_logic;
+    ResetGBT_O   : out std_logic
+    );
 end Reset_Generator;
 
 architecture Behavioral of Reset_Generator is
 
-	signal GenRes_DataClk_ff, GenRes_DataClk_ff1, GenRes_DataClk_ff_next :std_logic;
-	signal General_reset_ff, General_reset_ff_next : std_logic;
-	signal Cntr_reset_ff, Cntr_reset_ff1, Cntr_reset_ff_next : std_logic;
 
-	attribute keep : string;	
-	attribute keep of GenRes_DataClk_ff1 : signal is "true";
-	
+  signal reset_in, reset_sclk, reset_fsm, reset_gbt : std_logic;
+  signal DataClk_q_dataclk                : std_logic := '0';
+  signal DataClk_qff00_sysclk             : std_logic;
+  signal DataClk_front_sysclk             : std_logic;
+
+  signal count_ready, count_ready_clk40 : std_logic;
+  signal sysclk_count_ff                : std_logic_vector(2 downto 0);
+
+  attribute mark_debug : string;
+  attribute mark_debug of reset_in : signal is "true";
+  attribute mark_debug of reset_gbt : signal is "true";
+  attribute mark_debug of reset_fsm : signal is "true";
+  attribute mark_debug of reset_sclk : signal is "true";
+  attribute mark_debug of sysclk_count_ff : signal is "true";
+  attribute mark_debug of count_ready : signal is "true";
+  -- attribute mark_debug of  : signal is "true";
+
 begin
 
-Reset_DClk40_O<= Cntr_reset_ff1; General_reset40_O<= GenRes_DataClk_ff1;
+  ResetGBT_O     <= reset_gbt;
+  Reset_DClk_O   <= reset_fsm;
+  SysClk_count_O <= '0' & sysclk_count_ff;
 
-PROCESS (SysClk_I)
-BEGIN
- IF rising_edge(SysClk_I)THEN
- 
- Reset_DClk_O <= Cntr_reset_ff1;
- General_reset_O <= GenRes_DataClk_ff1;
- 
- END IF;
-END PROCESS;
+-- Data clk *********************************
+  process(DataClk_I)
+  begin
+    if rising_edge(DataClk_I)then
+      reset_in <= RESET40_I;
 
--- Sys clk ***********************************
-	PROCESS (DataClk_I)
-	BEGIN
-		IF rising_edge(DataClk_I)THEN
-			IF(RESET_I = '1') THEN
-				GenRes_DataClk_ff <= '1';
-				General_reset_ff <= '1';
-				Cntr_reset_ff <= '1';
-			ELSE
-				GenRes_DataClk_ff <= GenRes_DataClk_ff_next;
-				General_reset_ff <= General_reset_ff_next;
-				Cntr_reset_ff <= Cntr_reset_ff_next;
-				
-				Cntr_reset_ff1 <= Cntr_reset_ff;
-				GenRes_DataClk_ff1 <= GenRes_DataClk_ff;
-			END IF;
-		END IF;
-	END PROCESS;
--- ********************************************
+      count_ready_clk40 <= count_ready;
+      DataClk_q_dataclk <= not DataClk_q_dataclk;
+      reset_gbt         <= reset_in or Control_register_I.reset_gbt;
+      reset_fsm         <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40;
+
+    end if;
+  end process;
+-- ***************************************************
+
+
+-- Clock clk *********************************
+  process(SysClk_I)
+  begin
+    if rising_edge(SysClk_I)then
+
+      reset_sclk   <= reset_in;
+      Reset_SClk_O <= reset_fsm;
+
+      if(reset_sclk = '1')then
+        count_ready <= '0';
+
+      else
+        DataClk_qff00_sysclk <= DataClk_q_dataclk;
+
+        if (DataClk_front_sysclk = '1') then sysclk_count_ff <= "001"; count_ready <= '1';
+        else sysclk_count_ff                                 <= sysclk_count_ff+1;
+        end if;
+
+      end if;
+
+    end if;
+  end process;
+-- ***************************************************
 
 -- FSM ***********************************************
-GenRes_DataClk_ff_next <= '1' WHEN (RESET_I = '1') ELSE
-						General_reset_ff;
-	
-Cntr_reset_ff_next <=	'1'     WHEN (RESET_I = '1') ELSE
-						'0';
-						
-General_reset_ff_next <= 	'1' WHEN (RESET_I = '1') ELSE
-							'1' WHEN (General_reset_ff = '1') and (Sys_Cntr_ready_I = '0') ELSE
-							'0';
+  DataClk_front_sysclk <= DataClk_q_dataclk xor DataClk_qff00_sysclk;
 
 
 end Behavioral;

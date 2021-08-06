@@ -13,492 +13,998 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4338377974fs"></ZoomStartTime>
-      <ZoomEndTime time="4339424475fs"></ZoomEndTime>
-      <Cursor1Time time="4339250058fs"></Cursor1Time>
+      <ZoomStartTime time="2048804418fs"></ZoomStartTime>
+      <ZoomEndTime time="2049060819fs"></ZoomEndTime>
+      <Cursor1Time time="2048926218fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="463"></NameColumnWidth>
-      <ValueColumnWidth column_width="385"></ValueColumnWidth>
+      <NameColumnWidth column_width="373"></NameColumnWidth>
+      <ValueColumnWidth column_width="179"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
-   <wvobject fp_name="group177" type="group">
-      <obj_property name="label">INPUTS</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject fp_name="/testbench_readout/FSM_Clocks_signal" type="array">
-         <obj_property name="ElementShortName">FSM_Clocks_signal</obj_property>
-         <obj_property name="ObjectShortName">FSM_Clocks_signal</obj_property>
-      </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/SysClk_count_O" type="array">
-         <obj_property name="ElementShortName">SysClk_count_O[3:0]</obj_property>
-         <obj_property name="ObjectShortName">SysClk_count_O[3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/testbench_readout/Control_register_from_file" type="array">
-         <obj_property name="ElementShortName">Control_register_from_file[0:12][31:0]</obj_property>
-         <obj_property name="ObjectShortName">Control_register_from_file[0:12][31:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
-         <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
-         <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Data_Gen" type="array">
-            <obj_property name="ElementShortName">.Data_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Data_Gen</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen" type="array">
-            <obj_property name="ElementShortName">.Trigger_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Trigger_Gen</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.RDH_data" type="array">
-            <obj_property name="ElementShortName">.RDH_data</obj_property>
-            <obj_property name="ObjectShortName">.RDH_data</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.readout_bypass" type="logic">
-            <obj_property name="ElementShortName">.readout_bypass</obj_property>
-            <obj_property name="ObjectShortName">.readout_bypass</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_response" type="logic">
-            <obj_property name="ElementShortName">.is_hb_response</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_response</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.trg_data_select" type="array">
-            <obj_property name="ElementShortName">.trg_data_select[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.trg_data_select[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.n_BCID_delay" type="array">
-            <obj_property name="ElementShortName">.n_BCID_delay[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.n_BCID_delay[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.crutrg_delay_comp" type="array">
-            <obj_property name="ElementShortName">.crutrg_delay_comp[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.crutrg_delay_comp[11:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.max_data_payload" type="array">
-            <obj_property name="ElementShortName">.max_data_payload[15:0]</obj_property>
-            <obj_property name="ObjectShortName">.max_data_payload[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_orbc_synd" type="logic">
-            <obj_property name="ElementShortName">.reset_orbc_synd</obj_property>
-            <obj_property name="ObjectShortName">.reset_orbc_synd</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_drophit_counter" type="logic">
-            <obj_property name="ElementShortName">.reset_drophit_counter</obj_property>
-            <obj_property name="ObjectShortName">.reset_drophit_counter</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gen_offset" type="logic">
-            <obj_property name="ElementShortName">.reset_gen_offset</obj_property>
-            <obj_property name="ObjectShortName">.reset_gen_offset</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt_rxerror" type="logic">
-            <obj_property name="ElementShortName">.reset_gbt_rxerror</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt_rxerror</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt" type="logic">
-            <obj_property name="ElementShortName">.reset_gbt</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_rxph_error" type="logic">
-            <obj_property name="ElementShortName">.reset_rxph_error</obj_property>
-            <obj_property name="ObjectShortName">.reset_rxph_error</obj_property>
-         </wvobject>
-         <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.strt_rdmode_lock" type="logic">
-            <obj_property name="ElementShortName">.strt_rdmode_lock</obj_property>
-            <obj_property name="ObjectShortName">.strt_rdmode_lock</obj_property>
-         </wvobject>
-      </wvobject>
-      <wvobject fp_name="group285" type="group">
-         <obj_property name="label">Readout_unit</obj_property>
-         <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
-         <wvobject fp_name="group326" type="group">
-            <obj_property name="label">Reset_gen</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Reset_Generator_comp/General_reset40_O" type="logic">
-               <obj_property name="ElementShortName">General_reset40_O</obj_property>
-               <obj_property name="ObjectShortName">General_reset40_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Reset_Generator_comp/General_reset_O" type="logic">
-               <obj_property name="ElementShortName">General_reset_O</obj_property>
-               <obj_property name="ObjectShortName">General_reset_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Reset_Generator_comp/Reset_DClk_O" type="logic">
-               <obj_property name="ElementShortName">Reset_DClk_O</obj_property>
-               <obj_property name="ObjectShortName">Reset_DClk_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Reset_Generator_comp/Reset_DClk40_O" type="logic">
-               <obj_property name="ElementShortName">Reset_DClk40_O</obj_property>
-               <obj_property name="ObjectShortName">Reset_DClk40_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Reset_Generator_comp/GenRes_DataClk_ff" type="logic">
-               <obj_property name="ElementShortName">GenRes_DataClk_ff</obj_property>
-               <obj_property name="ObjectShortName">GenRes_DataClk_ff</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group324" type="group">
-            <obj_property name="label">ClkStrobe</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/RESET_I" type="logic">
-               <obj_property name="ElementShortName">RESET_I</obj_property>
-               <obj_property name="ObjectShortName">RESET_I</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/RESET40_I" type="logic">
-               <obj_property name="ElementShortName">RESET40_I</obj_property>
-               <obj_property name="ObjectShortName">RESET40_I</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/DataClk_I" type="logic">
-               <obj_property name="ElementShortName">DataClk_I</obj_property>
-               <obj_property name="ObjectShortName">DataClk_I</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/DataClk_q_dataclk" type="logic">
-               <obj_property name="ElementShortName">DataClk_q_dataclk</obj_property>
-               <obj_property name="ObjectShortName">DataClk_q_dataclk</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/DataClk_qff00_sysclk" type="logic">
-               <obj_property name="ElementShortName">DataClk_qff00_sysclk</obj_property>
-               <obj_property name="ObjectShortName">DataClk_qff00_sysclk</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/DataClk_front_sysclk" type="logic">
-               <obj_property name="ElementShortName">DataClk_front_sysclk</obj_property>
-               <obj_property name="ObjectShortName">DataClk_front_sysclk</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/DataClk_I_strobe_comp/Counter_ready_O" type="logic">
-               <obj_property name="ElementShortName">Counter_ready_O</obj_property>
-               <obj_property name="ObjectShortName">Counter_ready_O</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group167" type="group">
-            <obj_property name="label">TRG_gen</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen.Readout_command" type="other">
-               <obj_property name="ElementShortName">.Readout_command</obj_property>
-               <obj_property name="ObjectShortName">.Readout_command</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/readout_command_ff" type="other">
-               <obj_property name="ElementShortName">readout_command_ff</obj_property>
-               <obj_property name="ObjectShortName">readout_command_ff</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/readout_command_ff1" type="other">
-               <obj_property name="ElementShortName">readout_command_ff1</obj_property>
-               <obj_property name="ObjectShortName">readout_command_ff1</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/rd_trg_send_mode" type="other">
-               <obj_property name="ElementShortName">rd_trg_send_mode</obj_property>
-               <obj_property name="ObjectShortName">rd_trg_send_mode</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/is_rd_trg_send" type="logic">
-               <obj_property name="ElementShortName">is_rd_trg_send</obj_property>
-               <obj_property name="ObjectShortName">is_rd_trg_send</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/runType_mode" type="array">
-               <obj_property name="ElementShortName">runType_mode[31:0]</obj_property>
-               <obj_property name="ObjectShortName">runType_mode[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/running_mode" type="array">
-               <obj_property name="ElementShortName">running_mode[31:0]</obj_property>
-               <obj_property name="ObjectShortName">running_mode[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/TRG_readout_command" type="array">
-               <obj_property name="ElementShortName">TRG_readout_command[31:0]</obj_property>
-               <obj_property name="ObjectShortName">TRG_readout_command[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/TRG_result" type="array">
-               <obj_property name="ElementShortName">TRG_result[31:0]</obj_property>
-               <obj_property name="ObjectShortName">TRG_result[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/RX_Data_gen_ff" type="array">
-               <obj_property name="ElementShortName">RX_Data_gen_ff[79:0]</obj_property>
-               <obj_property name="ObjectShortName">RX_Data_gen_ff[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_BCID_from_O" type="array">
-               <obj_property name="ElementShortName">Current_BCID_from_O[11:0]</obj_property>
-               <obj_property name="ObjectShortName">Current_BCID_from_O[11:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_ORBIT_from_O" type="array">
-               <obj_property name="ElementShortName">Current_ORBIT_from_O[31:0]</obj_property>
-               <obj_property name="ObjectShortName">Current_ORBIT_from_O[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_ORBC_Gen_comp/Current_Trigger_from_O" type="array">
-               <obj_property name="ElementShortName">Current_Trigger_from_O[31:0]</obj_property>
-               <obj_property name="ObjectShortName">Current_Trigger_from_O[31:0]</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group163" type="group">
-            <obj_property name="label">RX_decoder</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/RX_Data_Decoder_comp/Trigger_valid_bit" type="logic">
-               <obj_property name="ElementShortName">Trigger_valid_bit</obj_property>
-               <obj_property name="ObjectShortName">Trigger_valid_bit</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/RX_Data_Decoder_comp/TRGTYPE_received" type="array">
-               <obj_property name="ElementShortName">TRGTYPE_received[31:0]</obj_property>
-               <obj_property name="ObjectShortName">TRGTYPE_received[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/RX_Data_Decoder_comp/CRU_readout_mode" type="other">
-               <obj_property name="ElementShortName">CRU_readout_mode</obj_property>
-               <obj_property name="ObjectShortName">CRU_readout_mode</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group284" type="group">
-            <obj_property name="label">data_gen</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_pattern" type="array">
-               <obj_property name="ElementShortName">bunch_pattern[31:0]</obj_property>
-               <obj_property name="ObjectShortName">bunch_pattern[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_freq" type="array">
-               <obj_property name="ElementShortName">bunch_freq[15:0]</obj_property>
-               <obj_property name="ObjectShortName">bunch_freq[15:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_freq_hboffset" type="array">
-               <obj_property name="ElementShortName">bunch_freq_hboffset[11:0]</obj_property>
-               <obj_property name="ObjectShortName">bunch_freq_hboffset[11:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/reset_offset" type="logic">
-               <obj_property name="ElementShortName">reset_offset</obj_property>
-               <obj_property name="ObjectShortName">reset_offset</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/FSM_STATE" type="other">
-               <obj_property name="ElementShortName">FSM_STATE</obj_property>
-               <obj_property name="ObjectShortName">FSM_STATE</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bfreq_counter" type="array">
-               <obj_property name="ElementShortName">bfreq_counter[15:0]</obj_property>
-               <obj_property name="ObjectShortName">bfreq_counter[15:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bpattern_counter" type="other">
-               <obj_property name="ElementShortName">bpattern_counter</obj_property>
-               <obj_property name="ObjectShortName">bpattern_counter</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/cnt_packet_counter" type="array">
-               <obj_property name="ElementShortName">cnt_packet_counter[79:0]</obj_property>
-               <obj_property name="ObjectShortName">cnt_packet_counter[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/pword_counter" type="array">
-               <obj_property name="ElementShortName">pword_counter[3:0]</obj_property>
-               <obj_property name="ObjectShortName">pword_counter[3:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/is_boffset_sync" type="logic">
-               <obj_property name="ElementShortName">is_boffset_sync</obj_property>
-               <obj_property name="ObjectShortName">is_boffset_sync</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/is_packet_send_for_cntr_ff" type="logic">
-               <obj_property name="ElementShortName">is_packet_send_for_cntr_ff</obj_property>
-               <obj_property name="ObjectShortName">is_packet_send_for_cntr_ff</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/n_words_in_packet_send" type="array">
-               <obj_property name="ElementShortName">n_words_in_packet_send[3:0]</obj_property>
-               <obj_property name="ObjectShortName">n_words_in_packet_send[3:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/data_gen_report" type="array">
-               <obj_property name="ElementShortName">data_gen_report[31:0]</obj_property>
-               <obj_property name="ObjectShortName">data_gen_report[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_gen_ff" type="array">
-               <obj_property name="ElementShortName">Board_data_gen_ff</obj_property>
-               <obj_property name="ObjectShortName">Board_data_gen_ff</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_O" type="array">
-               <obj_property name="ElementShortName">Board_data_O</obj_property>
-               <obj_property name="ObjectShortName">Board_data_O</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group80" type="group">
-            <obj_property name="label">converter</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/Board_data_I" type="array">
-               <obj_property name="ElementShortName">Board_data_I</obj_property>
-               <obj_property name="ObjectShortName">Board_data_I</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/raw_data_fifo_isempty" type="logic">
-               <obj_property name="ElementShortName">raw_data_fifo_isempty</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_isempty</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/data_fromfifo" type="array">
-               <obj_property name="ElementShortName">data_fromfifo[79:0]</obj_property>
-               <obj_property name="ObjectShortName">data_fromfifo[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_header_from_fifo" type="logic">
-               <obj_property name="ElementShortName">is_header_from_fifo</obj_property>
-               <obj_property name="ObjectShortName">is_header_from_fifo</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/is_data_from_fifo" type="logic">
-               <obj_property name="ElementShortName">is_data_from_fifo</obj_property>
-               <obj_property name="ObjectShortName">is_data_from_fifo</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_is_space_for_packet_ff" type="logic">
-               <obj_property name="ElementShortName">FIFO_is_space_for_packet_ff</obj_property>
-               <obj_property name="ObjectShortName">FIFO_is_space_for_packet_ff</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/sending_event" type="logic">
-               <obj_property name="ElementShortName">sending_event</obj_property>
-               <obj_property name="ObjectShortName">sending_event</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_WE_O" type="logic">
-               <obj_property name="ElementShortName">FIFO_WE_O</obj_property>
-               <obj_property name="ObjectShortName">FIFO_WE_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/DataConverter_comp/FIFO_data_word_O" type="array">
-               <obj_property name="ElementShortName">FIFO_data_word_O[79:0]</obj_property>
-               <obj_property name="ObjectShortName">FIFO_data_word_O[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/raw_data_fifo_data_fromfifo" type="array">
-               <obj_property name="ElementShortName">raw_data_fifo_data_fromfifo[79:0]</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_data_fromfifo[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/raw_data_fifo_rden" type="logic">
-               <obj_property name="ElementShortName">raw_data_fifo_rden</obj_property>
-               <obj_property name="ObjectShortName">raw_data_fifo_rden</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group123" type="group">
-            <obj_property name="label">selector_fifos</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/RAWFIFO_RE_O" type="logic">
-               <obj_property name="ElementShortName">RAWFIFO_RE_O</obj_property>
-               <obj_property name="ObjectShortName">RAWFIFO_RE_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/RAWFIFO_data_word_I" type="array">
-               <obj_property name="ElementShortName">RAWFIFO_data_word_I[79:0]</obj_property>
-               <obj_property name="ObjectShortName">RAWFIFO_data_word_I[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_re" type="logic">
-               <obj_property name="ElementShortName">trgfifo_re</obj_property>
-               <obj_property name="ObjectShortName">trgfifo_re</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_out_trigger" type="array">
-               <obj_property name="ElementShortName">trgfifo_out_trigger[31:0]</obj_property>
-               <obj_property name="ObjectShortName">trgfifo_out_trigger[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_out_orbit" type="array">
-               <obj_property name="ElementShortName">trgfifo_out_orbit[31:0]</obj_property>
-               <obj_property name="ObjectShortName">trgfifo_out_orbit[31:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/trgfifo_out_bc" type="array">
-               <obj_property name="ElementShortName">trgfifo_out_bc[11:0]</obj_property>
-               <obj_property name="ObjectShortName">trgfifo_out_bc[11:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_trg_first_data_late" type="logic">
-               <obj_property name="ElementShortName">is_trg_first_data_late</obj_property>
-               <obj_property name="ObjectShortName">is_trg_first_data_late</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_trg_eq_data" type="logic">
-               <obj_property name="ElementShortName">is_trg_eq_data</obj_property>
-               <obj_property name="ObjectShortName">is_trg_eq_data</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_trg_late_data_first" type="logic">
-               <obj_property name="ElementShortName">is_trg_late_data_first</obj_property>
-               <obj_property name="ObjectShortName">is_trg_late_data_first</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/SLCTFIFO_WE_O" type="logic">
-               <obj_property name="ElementShortName">SLCTFIFO_WE_O</obj_property>
-               <obj_property name="ObjectShortName">SLCTFIFO_WE_O</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/SLCTFIFO_data_word_O" type="array">
-               <obj_property name="ElementShortName">SLCTFIFO_data_word_O[79:0]</obj_property>
-               <obj_property name="ObjectShortName">SLCTFIFO_data_word_O[79:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/cntpckfifo_we" type="logic">
-               <obj_property name="ElementShortName">cntpckfifo_we</obj_property>
-               <obj_property name="ObjectShortName">cntpckfifo_we</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/cntpckfifo_data_toff" type="array">
-               <obj_property name="ElementShortName">cntpckfifo_data_toff[159:0]</obj_property>
-               <obj_property name="ObjectShortName">cntpckfifo_data_toff[159:0]</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group145" type="group">
-            <obj_property name="label">readout_mode</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_ff00" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_ff00</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_ff00</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_ff00_syscl" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_ff00_syscl</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_ff00_syscl</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_ff01" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_ff01</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_ff01</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_manage" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_manage</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_manage</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_manage_DtClk" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_manage_DtClk</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_manage_DtClk</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/Readout_Mode_manage_next" type="other">
-               <obj_property name="ElementShortName">Readout_Mode_manage_next</obj_property>
-               <obj_property name="ObjectShortName">Readout_Mode_manage_next</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject fp_name="group137" type="group">
-            <obj_property name="label">selector_logic</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/FSM_STATE" type="other">
-               <obj_property name="ElementShortName">FSM_STATE</obj_property>
-               <obj_property name="ObjectShortName">FSM_STATE</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/rdata_state" type="other">
-               <obj_property name="ElementShortName">rdata_state</obj_property>
-               <obj_property name="ObjectShortName">rdata_state</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/cntpckws_state" type="other">
-               <obj_property name="ElementShortName">cntpckws_state</obj_property>
-               <obj_property name="ObjectShortName">cntpckws_state</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_hb_response" type="logic">
-               <obj_property name="ElementShortName">is_hb_response</obj_property>
-               <obj_property name="ObjectShortName">is_hb_response</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_frame_open" type="logic">
-               <obj_property name="ElementShortName">is_frame_open</obj_property>
-               <obj_property name="ObjectShortName">is_frame_open</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_sending_packet_ff" type="logic">
-               <obj_property name="ElementShortName">is_sending_packet_ff</obj_property>
-               <obj_property name="ObjectShortName">is_sending_packet_ff</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/max_data_packet_payload" type="array">
-               <obj_property name="ElementShortName">max_data_packet_payload[15:0]</obj_property>
-               <obj_property name="ObjectShortName">max_data_packet_payload[15:0]</obj_property>
-            </wvobject>
-            <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_Packager_comp/Event_Selector_comp/wcnt_fullpck_ff" type="array">
-               <obj_property name="ElementShortName">wcnt_fullpck_ff[15:0]</obj_property>
-               <obj_property name="ObjectShortName">wcnt_fullpck_ff[15:0]</obj_property>
-            </wvobject>
-         </wvobject>
-      </wvobject>
-   </wvobject>
-   <wvobject fp_name="group184" type="group">
-      <obj_property name="label">OUTPUTS</obj_property>
+   <WVObjectSize size="9" />
+   <wave_markers>
+      <marker time="2048989426" label="" />
+   </wave_markers>
+   <wvobject fp_name="group395" type="group">
+      <obj_property name="label">TESTBENCH</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/sim_iter_num" type="array">
          <obj_property name="ElementShortName">sim_iter_num[63:0]</obj_property>
          <obj_property name="ObjectShortName">sim_iter_num[63:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/Data_from_FITrd" type="array">
-         <obj_property name="ElementShortName">Data_from_FITrd[79:0]</obj_property>
-         <obj_property name="ObjectShortName">Data_from_FITrd[79:0]</obj_property>
+      <wvobject fp_name="/testbench_readout/RESET" type="logic">
+         <obj_property name="ElementShortName">RESET</obj_property>
+         <obj_property name="ObjectShortName">RESET</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/IsData_from_FITrd" type="logic">
-         <obj_property name="ElementShortName">IsData_from_FITrd</obj_property>
-         <obj_property name="ObjectShortName">IsData_from_FITrd</obj_property>
+      <wvobject fp_name="/testbench_readout/DATA_CLK" type="logic">
+         <obj_property name="ElementShortName">DATA_CLK</obj_property>
+         <obj_property name="ObjectShortName">DATA_CLK</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/data_gen_report" type="array">
-         <obj_property name="ElementShortName">data_gen_report[31:0]</obj_property>
-         <obj_property name="ObjectShortName">data_gen_report[31:0]</obj_property>
+      <wvobject fp_name="/testbench_readout/SYS_CLK" type="logic">
+         <obj_property name="ElementShortName">SYS_CLK</obj_property>
+         <obj_property name="ObjectShortName">SYS_CLK</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/FIT_GBT_status_O" type="array">
-         <obj_property name="ElementShortName">FIT_GBT_status_O</obj_property>
-         <obj_property name="ObjectShortName">FIT_GBT_status_O</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/FSM_Clocks.System_Counter" type="array">
+         <obj_property name="ElementShortName">.System_Counter[3:0]</obj_property>
+         <obj_property name="ObjectShortName">.System_Counter[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
+         <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
+         <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/GBT_status" type="array">
+         <obj_property name="ElementShortName">GBT_status</obj_property>
+         <obj_property name="ObjectShortName">GBT_status</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group235" type="group">
+      <obj_property name="label">RXGENERATOR</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_pattern" type="array">
+         <obj_property name="ElementShortName">.trigger_pattern[63:0]</obj_property>
+         <obj_property name="ObjectShortName">.trigger_pattern[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.trigger_cont_value" type="array">
+         <obj_property name="ElementShortName">.trigger_cont_value[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.trigger_cont_value[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.bunch_freq" type="array">
+         <obj_property name="ElementShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="ObjectShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.Trigger_Gen.bc_start" type="array">
+         <obj_property name="ElementShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/Control_register_I.reset_gensync" type="logic">
+         <obj_property name="ElementShortName">.reset_gensync</obj_property>
+         <obj_property name="ObjectShortName">.reset_gensync</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_gen" type="array">
+         <obj_property name="ElementShortName">orbit_gen[31:0]</obj_property>
+         <obj_property name="ObjectShortName">orbit_gen[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bc_gen" type="array">
+         <obj_property name="ElementShortName">bc_gen[11:0]</obj_property>
+         <obj_property name="ObjectShortName">bc_gen[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_command" type="other">
+         <obj_property name="ElementShortName">run_command</obj_property>
+         <obj_property name="ObjectShortName">run_command</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_state" type="other">
+         <obj_property name="ElementShortName">run_state</obj_property>
+         <obj_property name="ObjectShortName">run_state</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_trgcnt" type="other">
+         <obj_property name="ElementShortName">send_trgcnt</obj_property>
+         <obj_property name="ObjectShortName">send_trgcnt</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_soc" type="other">
+         <obj_property name="ElementShortName">send_soc</obj_property>
+         <obj_property name="ObjectShortName">send_soc</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_eoc" type="other">
+         <obj_property name="ElementShortName">send_eoc</obj_property>
+         <obj_property name="ObjectShortName">send_eoc</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_sot" type="other">
+         <obj_property name="ElementShortName">send_sot</obj_property>
+         <obj_property name="ObjectShortName">send_sot</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/send_eot" type="other">
+         <obj_property name="ElementShortName">send_eot</obj_property>
+         <obj_property name="ObjectShortName">send_eot</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bunch_in_sync" type="other">
+         <obj_property name="ElementShortName">bunch_in_sync</obj_property>
+         <obj_property name="ObjectShortName">bunch_in_sync</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/bunch_counter" type="other">
+         <obj_property name="ElementShortName">bunch_counter</obj_property>
+         <obj_property name="ObjectShortName">bunch_counter</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_cnt" type="array">
+         <obj_property name="ElementShortName">trggen_cnt[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_cnt[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_sox" type="array">
+         <obj_property name="ElementShortName">trggen_sox[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_sox[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_hb" type="array">
+         <obj_property name="ElementShortName">trggen_hb[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_hb[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/trggen_rdstate" type="array">
+         <obj_property name="ElementShortName">trggen_rdstate[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trggen_rdstate[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/rx_data_gen" type="array">
+         <obj_property name="ElementShortName">rx_data_gen[79:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_data_gen[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/rx_isdata_gen" type="logic">
+         <obj_property name="ElementShortName">rx_isdata_gen</obj_property>
+         <obj_property name="ObjectShortName">rx_isdata_gen</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group603" type="group">
+      <obj_property name="label">RXDECODER</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/Control_register_I.reset_orbc_sync" type="logic">
+         <obj_property name="ElementShortName">.reset_orbc_sync</obj_property>
+         <obj_property name="ObjectShortName">.reset_orbc_sync</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_orbit" type="array">
+         <obj_property name="ElementShortName">cru_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_bc" type="array">
+         <obj_property name="ElementShortName">cru_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_trigger" type="array">
+         <obj_property name="ElementShortName">cru_trigger[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_trigger[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_is_trg" type="other">
+         <obj_property name="ElementShortName">cru_is_trg</obj_property>
+         <obj_property name="ObjectShortName">cru_is_trg</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_orbit_ff" type="array">
+         <obj_property name="ElementShortName">cru_orbit_ff[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_orbit_ff[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_bc_ff" type="array">
+         <obj_property name="ElementShortName">cru_bc_ff[11:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_bc_ff[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_trigger_ff" type="array">
+         <obj_property name="ElementShortName">cru_trigger_ff[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cru_trigger_ff[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_is_trg_ff" type="other">
+         <obj_property name="ElementShortName">cru_is_trg_ff</obj_property>
+         <obj_property name="ObjectShortName">cru_is_trg_ff</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_is_trg_ff" type="other">
+         <obj_property name="ElementShortName">cru_is_trg_ff</obj_property>
+         <obj_property name="ObjectShortName">cru_is_trg_ff</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/readout_mode" type="other">
+         <obj_property name="ElementShortName">readout_mode</obj_property>
+         <obj_property name="ObjectShortName">readout_mode</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/orbc_sync_mode" type="other">
+         <obj_property name="ElementShortName">orbc_sync_mode</obj_property>
+         <obj_property name="ObjectShortName">orbc_sync_mode</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/sync_orbit" type="array">
+         <obj_property name="ElementShortName">sync_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">sync_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/sync_bc" type="array">
+         <obj_property name="ElementShortName">sync_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">sync_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/sync_orbit_corr" type="array">
+         <obj_property name="ElementShortName">sync_orbit_corr[31:0]</obj_property>
+         <obj_property name="ObjectShortName">sync_orbit_corr[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/sync_bc_corr" type="array">
+         <obj_property name="ElementShortName">sync_bc_corr[11:0]</obj_property>
+         <obj_property name="ObjectShortName">sync_bc_corr[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/ORBC_ID_from_CRU_O" type="array">
+         <obj_property name="ElementShortName">ORBC_ID_from_CRU_O[43:0]</obj_property>
+         <obj_property name="ObjectShortName">ORBC_ID_from_CRU_O[43:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/ORBC_ID_from_CRU_corrected_O" type="array">
+         <obj_property name="ElementShortName">ORBC_ID_from_CRU_corrected_O[43:0]</obj_property>
+         <obj_property name="ObjectShortName">ORBC_ID_from_CRU_corrected_O[43:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/Trigger_O" type="array">
+         <obj_property name="ElementShortName">Trigger_O[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Trigger_O[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/BCIDsync_Mode_O" type="other">
+         <obj_property name="ElementShortName">BCIDsync_Mode_O</obj_property>
+         <obj_property name="ObjectShortName">BCIDsync_Mode_O</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/Readout_Mode_O" type="other">
+         <obj_property name="ElementShortName">Readout_Mode_O</obj_property>
+         <obj_property name="ObjectShortName">Readout_Mode_O</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/CRU_Readout_Mode_O" type="other">
+         <obj_property name="ElementShortName">CRU_Readout_Mode_O</obj_property>
+         <obj_property name="ObjectShortName">CRU_Readout_Mode_O</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/Start_run_O" type="logic">
+         <obj_property name="ElementShortName">Start_run_O</obj_property>
+         <obj_property name="ObjectShortName">Start_run_O</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/Stop_run_O" type="logic">
+         <obj_property name="ElementShortName">Stop_run_O</obj_property>
+         <obj_property name="ObjectShortName">Stop_run_O</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group449" type="group">
+      <obj_property name="label">DGENERATOR</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Status_register_I.BCIDsync_Mode" type="other">
+         <obj_property name="ElementShortName">.BCIDsync_Mode</obj_property>
+         <obj_property name="ObjectShortName">.BCIDsync_Mode</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Status_register_I.Trigger_from_CRU" type="array">
+         <obj_property name="ElementShortName">.Trigger_from_CRU[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.Trigger_from_CRU[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Control_register_I.Data_Gen.trigger_resp_mask" type="array">
+         <obj_property name="ElementShortName">.trigger_resp_mask[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.trigger_resp_mask[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Status_register_I.BCID_from_CRU" type="array">
+         <obj_property name="ElementShortName">.BCID_from_CRU[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.BCID_from_CRU[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Status_register_I.ORBIT_from_CRU" type="array">
+         <obj_property name="ElementShortName">.ORBIT_from_CRU[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.ORBIT_from_CRU[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Control_register_I.Data_Gen.bc_start" type="array">
+         <obj_property name="ElementShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.bc_start[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Control_register_I.BCID_offset" type="array">
+         <obj_property name="ElementShortName">.BCID_offset[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.BCID_offset[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Control_register_I.Data_Gen.bunch_freq" type="array">
+         <obj_property name="ElementShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="ObjectShortName">.bunch_freq[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Control_register_I.Data_Gen.bunch_pattern" type="array">
+         <obj_property name="ElementShortName">.bunch_pattern[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.bunch_pattern[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_in_sync" type="other">
+         <obj_property name="ElementShortName">bunch_in_sync</obj_property>
+         <obj_property name="ObjectShortName">bunch_in_sync</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/bunch_counter" type="other">
+         <obj_property name="ElementShortName">bunch_counter</obj_property>
+         <obj_property name="ObjectShortName">bunch_counter</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/packet_size_select" type="other">
+         <obj_property name="ElementShortName">packet_size_select</obj_property>
+         <obj_property name="ObjectShortName">packet_size_select</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/FSM_Clocks_I.System_Counter" type="array">
+         <obj_property name="ElementShortName">.System_Counter[3:0]</obj_property>
+         <obj_property name="ObjectShortName">.System_Counter[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/packet_size_select_sc" type="other">
+         <obj_property name="ElementShortName">packet_size_select_sc</obj_property>
+         <obj_property name="ObjectShortName">packet_size_select_sc</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/word_counter" type="other">
+         <obj_property name="ElementShortName">word_counter</obj_property>
+         <obj_property name="ObjectShortName">word_counter</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/event_size" type="other">
+         <obj_property name="ElementShortName">event_size</obj_property>
+         <obj_property name="ObjectShortName">event_size</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/event_orbit" type="array">
+         <obj_property name="ElementShortName">event_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">event_orbit[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/event_bc" type="array">
+         <obj_property name="ElementShortName">event_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">event_bc[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/readout_status_o.Readout_Mode" type="other">
+         <obj_property name="ElementShortName">.Readout_Mode</obj_property>
+         <obj_property name="ObjectShortName">.Readout_Mode</obj_property>
+         <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o" type="array">
+         <obj_property name="ElementShortName">datagen_report_o</obj_property>
+         <obj_property name="ObjectShortName">datagen_report_o</obj_property>
+         <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
          <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o.orbit" type="array">
+            <obj_property name="ElementShortName">.orbit[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.orbit[31:0]</obj_property>
+            <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o.bc" type="array">
+            <obj_property name="ElementShortName">.bc[11:0]</obj_property>
+            <obj_property name="ObjectShortName">.bc[11:0]</obj_property>
+            <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o.size" type="array">
+            <obj_property name="ElementShortName">.size[7:0]</obj_property>
+            <obj_property name="ObjectShortName">.size[7:0]</obj_property>
+            <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o.packet_num" type="array">
+            <obj_property name="ElementShortName">.packet_num[35:0]</obj_property>
+            <obj_property name="ObjectShortName">.packet_num[35:0]</obj_property>
+            <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/datagen_report_o.sel_fifo_count" type="array">
+            <obj_property name="ElementShortName">.sel_fifo_count[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.sel_fifo_count[15:0]</obj_property>
+            <obj_property name="CustomSignalColor">#A52A2A</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Module_Data_Gen_comp/Board_data_O" type="array">
+         <obj_property name="ElementShortName">Board_data_O</obj_property>
+         <obj_property name="ObjectShortName">Board_data_O</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group460" type="group">
+      <obj_property name="label">CONVERTER</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/Board_data_I" type="array">
+         <obj_property name="ElementShortName">Board_data_I</obj_property>
+         <obj_property name="ObjectShortName">Board_data_I</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/send_mode_ison_sclk" type="other">
+         <obj_property name="ElementShortName">send_mode_ison_sclk</obj_property>
+         <obj_property name="ObjectShortName">send_mode_ison_sclk</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/sending_event" type="other">
+         <obj_property name="ElementShortName">sending_event</obj_property>
+         <obj_property name="ObjectShortName">sending_event</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/header_fifo_din" type="array">
+         <obj_property name="ElementShortName">header_fifo_din[79:0]</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_din[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/header_fifo_we" type="logic">
+         <obj_property name="ElementShortName">header_fifo_we</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_we</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/data_fifo_din" type="array">
+         <obj_property name="ElementShortName">data_fifo_din[79:0]</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_din[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/data_fifo_we" type="logic">
+         <obj_property name="ElementShortName">data_fifo_we</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_we</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/header_fifo_empty" type="logic">
+         <obj_property name="ElementShortName">header_fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_empty</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/data_fifo_empty" type="logic">
+         <obj_property name="ElementShortName">data_fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_empty</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group400" type="group">
+      <obj_property name="label">SELECTOR</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/send_mode_sc" type="other">
+         <obj_property name="ElementShortName">send_mode_sc</obj_property>
+         <obj_property name="ObjectShortName">send_mode_sc</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/send_trg_mode_sc" type="other">
+         <obj_property name="ElementShortName">send_trg_mode_sc</obj_property>
+         <obj_property name="ObjectShortName">send_trg_mode_sc</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/header_fifo_data_i" type="array">
+         <obj_property name="ElementShortName">header_fifo_data_i[79:0]</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_data_i[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/header_fifo_rden_o" type="logic">
+         <obj_property name="ElementShortName">header_fifo_rden_o</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_rden_o</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_fifo_data_i" type="array">
+         <obj_property name="ElementShortName">data_fifo_data_i[79:0]</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_data_i[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_fifo_rden_o" type="logic">
+         <obj_property name="ElementShortName">data_fifo_rden_o</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_rden_o</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/header_fifo_empty_i" type="logic">
+         <obj_property name="ElementShortName">header_fifo_empty_i</obj_property>
+         <obj_property name="ObjectShortName">header_fifo_empty_i</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/no_raw_data_i" type="other">
+         <obj_property name="ElementShortName">no_raw_data_i</obj_property>
+         <obj_property name="ObjectShortName">no_raw_data_i</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_ndwords" type="array">
+         <obj_property name="ElementShortName">data_ndwords[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_ndwords[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_orbit" type="array">
+         <obj_property name="ElementShortName">data_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">data_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_bc" type="array">
+         <obj_property name="ElementShortName">data_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">data_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trgfifo_out_trigger" type="array">
+         <obj_property name="ElementShortName">trgfifo_out_trigger[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trgfifo_out_trigger[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trgfifo_out_orbit" type="array">
+         <obj_property name="ElementShortName">trgfifo_out_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">trgfifo_out_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trgfifo_out_bc" type="array">
+         <obj_property name="ElementShortName">trgfifo_out_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">trgfifo_out_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trgfifo_re" type="logic">
+         <obj_property name="ElementShortName">trgfifo_re</obj_property>
+         <obj_property name="ObjectShortName">trgfifo_re</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/curr_orbit_sc" type="array">
+         <obj_property name="ElementShortName">curr_orbit_sc[31:0]</obj_property>
+         <obj_property name="ObjectShortName">curr_orbit_sc[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/curr_bc_sc" type="array">
+         <obj_property name="ElementShortName">curr_bc_sc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">curr_bc_sc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/is_hbtrg" type="other">
+         <obj_property name="ElementShortName">is_hbtrg</obj_property>
+         <obj_property name="ObjectShortName">is_hbtrg</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/is_sel_trg" type="other">
+         <obj_property name="ElementShortName">is_sel_trg</obj_property>
+         <obj_property name="ObjectShortName">is_sel_trg</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/read_data" type="other">
+         <obj_property name="ElementShortName">read_data</obj_property>
+         <obj_property name="ObjectShortName">read_data</obj_property>
+         <obj_property name="CustomSignalColor">#008000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/read_trigger" type="other">
+         <obj_property name="ElementShortName">read_trigger</obj_property>
+         <obj_property name="ObjectShortName">read_trigger</obj_property>
+         <obj_property name="CustomSignalColor">#008000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_close_cmd" type="other">
+         <obj_property name="ElementShortName">rdh_close_cmd</obj_property>
+         <obj_property name="ObjectShortName">rdh_close_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_is_old" type="other">
+         <obj_property name="ElementShortName">data_is_old</obj_property>
+         <obj_property name="ObjectShortName">data_is_old</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trg_is_old" type="other">
+         <obj_property name="ElementShortName">trg_is_old</obj_property>
+         <obj_property name="ObjectShortName">trg_is_old</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trg_eq_data" type="other">
+         <obj_property name="ElementShortName">trg_eq_data</obj_property>
+         <obj_property name="ObjectShortName">trg_eq_data</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trg_later_data" type="other">
+         <obj_property name="ElementShortName">trg_later_data</obj_property>
+         <obj_property name="ObjectShortName">trg_later_data</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_later_trg" type="other">
+         <obj_property name="ElementShortName">data_later_trg</obj_property>
+         <obj_property name="ObjectShortName">data_later_trg</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/no_more_data" type="other">
+         <obj_property name="ElementShortName">no_more_data</obj_property>
+         <obj_property name="ObjectShortName">no_more_data</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/send_gear_rdh" type="other">
+         <obj_property name="ElementShortName">send_gear_rdh</obj_property>
+         <obj_property name="ObjectShortName">send_gear_rdh</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/FSM_STATE" type="other">
+         <obj_property name="ElementShortName">FSM_STATE</obj_property>
+         <obj_property name="ObjectShortName">FSM_STATE</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_ndwords_cmd" type="array">
+         <obj_property name="ElementShortName">data_ndwords_cmd[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_ndwords_cmd[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/is_hbtrg_cmd" type="other">
+         <obj_property name="ElementShortName">is_hbtrg_cmd</obj_property>
+         <obj_property name="ObjectShortName">is_hbtrg_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/read_data_cmd" type="other">
+         <obj_property name="ElementShortName">read_data_cmd</obj_property>
+         <obj_property name="ObjectShortName">read_data_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/read_trigger_cmd" type="other">
+         <obj_property name="ElementShortName">read_trigger_cmd</obj_property>
+         <obj_property name="ObjectShortName">read_trigger_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_close_cmd" type="other">
+         <obj_property name="ElementShortName">rdh_close_cmd</obj_property>
+         <obj_property name="ObjectShortName">rdh_close_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_reject_cmd" type="other">
+         <obj_property name="ElementShortName">data_reject_cmd</obj_property>
+         <obj_property name="ObjectShortName">data_reject_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/dropping_data_cmd" type="other">
+         <obj_property name="ElementShortName">dropping_data_cmd</obj_property>
+         <obj_property name="ObjectShortName">dropping_data_cmd</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/drop_counter" type="array">
+         <obj_property name="ElementShortName">drop_counter[15:0]</obj_property>
+         <obj_property name="ObjectShortName">drop_counter[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_trigger" type="array">
+         <obj_property name="ElementShortName">rdh_trigger[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_trigger[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_orbit" type="array">
+         <obj_property name="ElementShortName">rdh_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_bc" type="array">
+         <obj_property name="ElementShortName">rdh_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_size_counter" type="other">
+         <obj_property name="ElementShortName">rdh_size_counter</obj_property>
+         <obj_property name="ObjectShortName">rdh_size_counter</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/rdh_packet_counter" type="other">
+         <obj_property name="ElementShortName">rdh_packet_counter</obj_property>
+         <obj_property name="ObjectShortName">rdh_packet_counter</obj_property>
+         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/word_counter" type="array">
+         <obj_property name="ElementShortName">word_counter[7:0]</obj_property>
+         <obj_property name="ObjectShortName">word_counter[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/reading_header" type="other">
+         <obj_property name="ElementShortName">reading_header</obj_property>
+         <obj_property name="ObjectShortName">reading_header</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/reading_last_word" type="other">
+         <obj_property name="ElementShortName">reading_last_word</obj_property>
+         <obj_property name="ObjectShortName">reading_last_word</obj_property>
+         <obj_property name="CustomSignalColor">#0000FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/slct_fifo_din" type="array">
+         <obj_property name="ElementShortName">slct_fifo_din[79:0]</obj_property>
+         <obj_property name="ObjectShortName">slct_fifo_din[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/slct_fifo_wren" type="logic">
+         <obj_property name="ElementShortName">slct_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">slct_fifo_wren</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/cntpck_fifo_din" type="array">
+         <obj_property name="ElementShortName">cntpck_fifo_din[127:0]</obj_property>
+         <obj_property name="ObjectShortName">cntpck_fifo_din[127:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/cntpck_fifo_wren" type="logic">
+         <obj_property name="ElementShortName">cntpck_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">cntpck_fifo_wren</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/testbench_readout/GBT_status.fsm_errors" type="array">
+      <obj_property name="ElementShortName">.fsm_errors[15:0]</obj_property>
+      <obj_property name="ObjectShortName">.fsm_errors[15:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FF0000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="group452" type="group">
+      <obj_property name="label">RDHGEN</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_orbit" type="array">
+         <obj_property name="ElementShortName">rdh_orbit[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_orbit[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_bc" type="array">
+         <obj_property name="ElementShortName">rdh_bc[11:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_bc[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_trg" type="array">
+         <obj_property name="ElementShortName">rdh_trg[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_trg[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_stop" type="array">
+         <obj_property name="ElementShortName">rdh_stop[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_stop[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_pages_counter" type="array">
+         <obj_property name="ElementShortName">rdh_pages_counter[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_pages_counter[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_offset_new_packet" type="array">
+         <obj_property name="ElementShortName">rdh_offset_new_packet[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rdh_offset_new_packet[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/rdh_nwords" type="other">
+         <obj_property name="ElementShortName">rdh_nwords</obj_property>
+         <obj_property name="ObjectShortName">rdh_nwords</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/Is_Data_O" type="logic">
+         <obj_property name="ElementShortName">Is_Data_O</obj_property>
+         <obj_property name="ObjectShortName">Is_Data_O</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/CRU_packet_Builder_comp/Data_O" type="array">
+         <obj_property name="ElementShortName">Data_O[79:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_O[79:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group455" type="group">
+      <obj_property name="label">OUTPUTS</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/testbench_readout/GBT_status_reg" type="array">
+         <obj_property name="ElementShortName">GBT_status_reg[0:14][31:0]</obj_property>
+         <obj_property name="ObjectShortName">GBT_status_reg[0:14][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/GBT_status" type="array">
+         <obj_property name="ElementShortName">GBT_status</obj_property>
+         <obj_property name="ObjectShortName">GBT_status</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/testbench_readout/GBT_status.GBT_status" type="array">
+            <obj_property name="ElementShortName">.GBT_status</obj_property>
+            <obj_property name="ObjectShortName">.GBT_status</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.datagen_report" type="array">
+            <obj_property name="ElementShortName">.datagen_report</obj_property>
+            <obj_property name="ObjectShortName">.datagen_report</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.Readout_Mode" type="other">
+            <obj_property name="ElementShortName">.Readout_Mode</obj_property>
+            <obj_property name="ObjectShortName">.Readout_Mode</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.CRU_Readout_Mode" type="other">
+            <obj_property name="ElementShortName">.CRU_Readout_Mode</obj_property>
+            <obj_property name="ObjectShortName">.CRU_Readout_Mode</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.BCIDsync_Mode" type="other">
+            <obj_property name="ElementShortName">.BCIDsync_Mode</obj_property>
+            <obj_property name="ObjectShortName">.BCIDsync_Mode</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.Start_run" type="logic">
+            <obj_property name="ElementShortName">.Start_run</obj_property>
+            <obj_property name="ObjectShortName">.Start_run</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.Stop_run" type="logic">
+            <obj_property name="ElementShortName">.Stop_run</obj_property>
+            <obj_property name="ObjectShortName">.Stop_run</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.Trigger_from_CRU" type="array">
+            <obj_property name="ElementShortName">.Trigger_from_CRU[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.Trigger_from_CRU[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.BCID_from_CRU" type="array">
+            <obj_property name="ElementShortName">.BCID_from_CRU[11:0]</obj_property>
+            <obj_property name="ObjectShortName">.BCID_from_CRU[11:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.ORBIT_from_CRU" type="array">
+            <obj_property name="ElementShortName">.ORBIT_from_CRU[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.ORBIT_from_CRU[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.BCID_from_CRU_corrected" type="array">
+            <obj_property name="ElementShortName">.BCID_from_CRU_corrected[11:0]</obj_property>
+            <obj_property name="ObjectShortName">.BCID_from_CRU_corrected[11:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.ORBIT_from_CRU_corrected" type="array">
+            <obj_property name="ElementShortName">.ORBIT_from_CRU_corrected[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.ORBIT_from_CRU_corrected[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.rx_phase" type="array">
+            <obj_property name="ElementShortName">.rx_phase[2:0]</obj_property>
+            <obj_property name="ObjectShortName">.rx_phase[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.cnv_fifo_max" type="array">
+            <obj_property name="ElementShortName">.cnv_fifo_max[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.cnv_fifo_max[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.cnv_drop_cnt" type="array">
+            <obj_property name="ElementShortName">.cnv_drop_cnt[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.cnv_drop_cnt[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.sel_fifo_max" type="array">
+            <obj_property name="ElementShortName">.sel_fifo_max[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.sel_fifo_max[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.sel_drop_cnt" type="array">
+            <obj_property name="ElementShortName">.sel_drop_cnt[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.sel_drop_cnt[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.gbt_data_cnt" type="array">
+            <obj_property name="ElementShortName">.gbt_data_cnt[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.gbt_data_cnt[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.ipbusrd_fifo_cnt" type="array">
+            <obj_property name="ElementShortName">.ipbusrd_fifo_cnt[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.ipbusrd_fifo_cnt[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.ipbusrd_fifo_out" type="array">
+            <obj_property name="ElementShortName">.ipbusrd_fifo_out[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.ipbusrd_fifo_out[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/testbench_readout/GBT_status.fsm_errors" type="array">
+            <obj_property name="ElementShortName">.fsm_errors[15:0]</obj_property>
+            <obj_property name="ObjectShortName">.fsm_errors[15:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Data_from_FITrd_O" type="array">
+         <obj_property name="ElementShortName">Data_from_FITrd_O[79:0]</obj_property>
+         <obj_property name="ObjectShortName">Data_from_FITrd_O[79:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/IsData_from_FITrd_O" type="logic">
+         <obj_property name="ElementShortName">IsData_from_FITrd_O</obj_property>
+         <obj_property name="ObjectShortName">IsData_from_FITrd_O</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
