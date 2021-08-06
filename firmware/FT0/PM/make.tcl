@@ -186,21 +186,18 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_PM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_PM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/cru_ltu_emu.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
 
 add_files -norecurse -fileset sources_1 $files

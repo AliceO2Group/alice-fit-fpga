@@ -59,7 +59,7 @@ set_false_path -from [get_cells {{CH*_shift_reg[*]} {CH*_rc_reg[*]} {ampl_sat_re
 set_false_path -from [get_cells ipbus_control_reg_reg[*][*]]  
 
 #set_max_delay  -datapath_only -from [get_clocks RXDataCLK] -to [get_pins IsRXData0_reg/D] 5.000
-set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_ErrorDet] FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_Ready] IsRXData0_reg}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[*] IsRXData0_reg}]
 
 
 
@@ -103,17 +103,11 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_reg*}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg] 2.000
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
+set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]
 
 set_false_path -from [get_clocks -include_generated_clocks MCLK1] -to [get_clocks RXDataCLK]
 
 
-#set_multicycle_path -setup -start -from [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_ffsc_reg[*]}] -to [get_cells  {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_ffdc_reg[*]}] 7
-#set_multicycle_path -hold -from [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_ffsc_reg[*]}] -to [get_cells  {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_ffdc_reg[*]}] 6
-
-#set_multicycle_path -setup -start -from [get_cells {FitGbtPrg/DataClk_I_strobe_comp/count_ready_reg}] -to [get_cells  {FitGbtPrg/DataClk_I_strobe_comp/count_ready_dtclk_ff_reg}] 7
-#set_multicycle_path -hold -from [get_cells {FitGbtPrg/DataClk_I_strobe_comp/count_ready_reg}] -to [get_cells  {FitGbtPrg/DataClk_I_strobe_comp/count_ready_dtclk_ff_reg}] 6
-
-#set_multicycle_path -setup -start -from [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_ffsc_reg}] -to [get_cells  {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_ffdc_reg}] 7
-#set_multicycle_path -hold -from [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_ffsc_reg}] -to [get_cells  {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_ffdc_reg}] 6
 
 

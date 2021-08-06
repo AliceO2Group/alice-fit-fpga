@@ -7,11 +7,12 @@ build
 .Xil
 *.zip
 
-simulation_inputs
-simulation_outputs
-test_data
+__pycache__
+sim_data
 
 .idea
 venv
 *.pyc
 
+#notepad++ backup
+nppBackup

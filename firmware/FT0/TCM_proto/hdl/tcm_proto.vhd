@@ -219,10 +219,8 @@ signal ldr : STD_LOGIC_VECTOR(3 downto 0);
 signal Tmode : STD_LOGIC_VECTOR(7 downto 0);
 signal Rd_word, FIFO_in : STD_LOGIC_VECTOR(159 downto 0);
 signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_ack, RST_req : STD_LOGIC;
---signal readout_conf :  rdout_conf_arr;
---signal readout_stat :  rdout_stat_arr;
-signal readout_conf :  cntr_reg_addrreg_type;
-signal readout_stat :  status_reg_addrreg_type;
+signal readout_control_reg :  ctrl_reg_t;
+signal readout_statrs_reg :  stat_reg_t;
 signal New_BCID : STD_LOGIC;
 signal las_o, l_st, flshreg_sel, bkgndA, bkgndC, bkgndC0, bkgndC1, bkgndC2, bgA_inc, bgC_inc, bgOr, bgAnd, orA_str, orA_cnt, orC_cnt, Or_or, Or_and, Bg_Aclr, Bg_Cclr, Bg_Orclr, Bg_Andclr, sca, scc, ca, cc, scb, cb : STD_LOGIC;
 signal tstamp_sel, d_rd, d_rdy, adc_sel, adc_sel1, rout_lock0, rout_lock1, rout_lock2, PM_rst, cctrl_rst, clk_src, clk_l, clk_frs, mcuts_sel, pmena_sel, pm_err, bccorr_sel, bccorr_ack, corr_inc, SC_str, CC_str, V_str : STD_LOGIC;
@@ -355,8 +353,8 @@ end component;
    -- ###############################################
    -- #########  GBT Readout ########################
    -- ###############################################
-   signal FIT_GBT_status : FIT_GBT_status_type;
-   signal FIT_GBT_control : CONTROL_REGISTER_type;
+   signal readout_status : readout_status_t;
+   signal readout_control : readout_control_t;
            
    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
    signal IsData_from_FITrd        : STD_LOGIC;
@@ -369,9 +367,6 @@ end component;
    signal gbt_global_status : std_logic_vector(3 downto 0);
    signal readout_laser_out, readout_laser_out_ff0, readout_laser_out_ff1 : std_logic;
    
-   signal    ipbus_control_reg : cntr_reg_addrreg_type;
-   signal    ipbus_status_reg: status_reg_addrreg_type;
-
 
    component FIT_GBT_project is
        generic (
@@ -387,7 +382,7 @@ end component;
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
            
            Board_data_I        : in board_data_type; --PM or TCM data
-           Control_register_I    : in CONTROL_REGISTER_type;
+           Control_register_I    : in readout_control_t;
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -408,11 +403,7 @@ end component;
            IsRxData_rxclk_from_GBT_O    : out  STD_LOGIC;
    
            -- FIT readour status, including BCOR_ID to PM/TCM
-           FIT_GBT_status_O : out FIT_GBT_status_type;
-           rx_ph320 : out std_logic_vector(2 downto 0);
-		   ph_error320 : out std_logic
-
-           --GPIO_O : out std_logic_vector(15 downto 0)
+           readout_status_O : out readout_status_t
        );
    end component;
    -- ###############################################
@@ -740,7 +731,7 @@ FitGbtPrg: FIT_GBT_project
 		GBT_RxFrameClk_O	=> RX_CLK,
 		
 		Board_data_I		=> TCM_data_toreadout,
-		Control_register_I	=> FIT_GBT_control,
+		Control_register_I	=> readout_control,
 		
 		MGT_RX_P_I			=>	GBT_RX_P,
 		MGT_RX_N_I			=>	GBT_RX_N,
@@ -758,18 +749,14 @@ FitGbtPrg: FIT_GBT_project
 		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
 		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
 		
-        rx_ph320 => rx_phase_status(2 downto 0),
-		ph_error320 => rx_phase_status(3),
-
-		FIT_GBT_status_O 	=> FIT_GBT_status
---		GPIO_O => GPIO
+		readout_status_O 	=> readout_status
 		);		
 -- =====================================================
 
 GBT_is_RXD <= IsRxData_rxclk_from_GBT;
 
-GBTRX_ready <= FIT_GBT_status.GBT_status.gbtRx_Ready;
-RX_err <= FIT_GBT_status.GBT_status.gbtRx_ErrorDet;
+GBTRX_ready <= readout_status.GBT_status.gbtRx_Ready;
+RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 
 --PM_data_toreadout.is_header  <=  GBT_is_TXD;
 --PM_data_toreadout.is_data    <=  GBT_is_TXD;
@@ -777,35 +764,32 @@ RX_err <= FIT_GBT_status.GBT_status.gbtRx_ErrorDet;
 --PM_data_toreadout.data_word  <=  GBT_TX_D;
 
    
-FIT_GBT_control <= func_CNTRREG_getcntrreg(ipbus_control_reg);
-ipbus_status_reg <= func_STATREG_getaddrreg(FIT_GBT_status);
+readout_control <= func_CNTRREG_getcntrreg(readout_control_reg);
+readout_statrs_reg <= func_STATREG_getaddrreg(readout_status);
 
-ipbus_control_reg <= readout_conf;
-readout_stat <= ipbus_status_reg;
-
-gbt_global_status(0) <=  FIT_GBT_status.GBT_status.Rx_Phase_error;
---gbt_global_status(1) <=  '1' when FIT_GBT_status.BCIDsync_Mode = mode_LOST else '0';
---gbt_global_status(2) <=  '1' when FIT_GBT_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
+gbt_global_status(0) <=  readout_status.GBT_status.Rx_Phase_error;
+--gbt_global_status(1) <=  '1' when readout_status.BCIDsync_Mode = mode_LOST else '0';
+--gbt_global_status(2) <=  '1' when readout_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
 gbt_global_status(3) <=  '0';
 
 
 process (clksys40)
 begin
     if (clksys40'event and clksys40='1') then
-         if ( FIT_GBT_status.BCIDsync_Mode = mode_LOST) then
+         if ( readout_status.BCIDsync_Mode = mode_LOST) then
          gbt_global_status(1) <=  '1';
         else 
          gbt_global_status(1) <=  '0';
         end if;
 
 
-        if ( FIT_GBT_status.hits_rd_counter_selector.hits_skipped = x"0000_0000") then
+        if ( readout_status.fsm_errors = x"00") then
          gbt_global_status(2) <=  '0';
         else 
          gbt_global_status(2) <=  '1';
         end if;
         
-        if ( FIT_GBT_status.Trigger_from_CRU and FIT_GBT_control.Data_Gen.trigger_resp_mask ) /= 0 then
+        if ( readout_status.Trigger_from_CRU and readout_control.Data_Gen.trigger_resp_mask ) /= 0 then
          readout_laser_out <=  '1';
         else 
          readout_laser_out <=  '0';
@@ -968,7 +952,7 @@ else cnt_ctrl_data when (cnt_ctrl_sel='1') and (ipb_isrd='1')
 else trg_r(to_integer(unsigned(ipb_addr(3 downto 1)))) when  (Tout_sel='1') and (ipb_isrd='1') and (ipb_addr(3 downto 0)<x"A")
 else x"0000" & '0' & trig_mod when (Tmode_sel='1') and (ipb_isrd='1')
 else count_r(to_integer(unsigned(ipb_addr(3 downto 0)))) when (Tcnt_sel='1') and (ipb_isrd='1')
-else readout_conf(to_integer(unsigned(ipb_addr(5 downto 0)))-16#18#) when (rdoutc_sel='1') and (ipb_isrd='1')
+else readout_control_reg(to_integer(unsigned(ipb_addr(5 downto 0)))-16#18#) when (rdoutc_sel='1') and (ipb_isrd='1')
 else mcu_ts when (mcuts_sel='1')
 else rout_buf when (rdouts_sel='1')
 else f_out when (fifo_sel='1')
@@ -1238,12 +1222,12 @@ if (lpatt0_sel='1') and (ipb_iswr='1') then l_patt0<=ipb_data_out(31 downto 0); 
 if (lpatt1_sel='1') and (ipb_iswr='1') then l_patt1<=ipb_data_out(31 downto 0); end if;
 if (pmena_sel='1') and (ipb_iswr='1') then pm_ena<=ipb_data_out(19 downto 0); end if;
 
-if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_conf(0)(22)<='1';
+if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_control_reg(0)(22)<='1';
  else
   if (rdoutc_sel='1') and (ipb_iswr='1') then
-  if  (ipb_addr(7 downto 0)=16#D8#) then readout_conf(0)<= ipb_data_out(31 downto 23) & (ipb_data_out(22) or not GBTRX_ready1) & ipb_data_out(21 downto 0);
+  if  (ipb_addr(7 downto 0)=16#D8#) then readout_control_reg(0)<= ipb_data_out(31 downto 23) & (ipb_data_out(22) or not GBTRX_ready1) & ipb_data_out(21 downto 0);
     else  
-     readout_conf(to_integer(unsigned(ipb_addr(7 downto 0)))-16#D8#)<=ipb_data_out(31 downto 0);
+     readout_control_reg(to_integer(unsigned(ipb_addr(7 downto 0)))-16#D8#)<=ipb_data_out(31 downto 0);
   end if; 
  end if;
 end if;
@@ -1416,11 +1400,14 @@ process (CLK320A)
 begin
 if (CLK320A'event and CLK320A='1') then
     
+rx_phase_status(2 downto 0) <= readout_status.rx_phase;
+rx_phase_status(3) <= readout_status.GBT_status.Rx_Phase_error;
+
 laser_t0<=l_on0; laser_t<=laser_t0; 
  cnt_lock2<=cnt_lock1; cnt_lock1<=cnt_lock0; cnt_lock0<=Tcnt_0_rd; cnt_clr2<=cnt_clr1; cnt_clr1<=cnt_clr0; cnt_clr0<=Tcnt_clr; 
  rout_lock2<=rout_lock1; rout_lock1<=rout_lock0; rout_lock0<=rdouts_sel and ipb_clk;
  
- if (rout_lock1='1') and (rout_lock2='0') then rout_buf <=readout_stat(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#); end if; 
+ if (rout_lock1='1') and (rout_lock2='0') then rout_buf <=readout_statrs_reg(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#); end if; 
 
 B_rdy3<=B_rdy2; B_rdy2<=B_rdy1; B_rdy1<=B_rdy0; B_rdy0<=B_rdy;
 
@@ -1444,7 +1431,7 @@ end if;
 
 
 if (bitcnt_A="001") then 
- if (New_BCID='1') then BC_COU<=FIT_GBT_status. BCID_from_CRU_corrected; Orbit_ID<=FIT_GBT_status. ORBIT_from_CRU_corrected;
+ if (New_BCID='1') then BC_COU<=readout_status. BCID_from_CRU_corrected; Orbit_ID<=readout_status. ORBIT_from_CRU_corrected;
  else
   if (BC_COU=x"DEB") then BC_cou<=x"000"; Orbit_ID<=Orbit_ID+1; else BC_cou<=BC_cou+1; end if;
   end if;
@@ -1486,7 +1473,7 @@ end if;
  end if;
 end process;
 
-New_BCID <= FIT_GBT_status.Start_run when (FIT_GBT_status.BCIDsync_Mode=mode_SYNC) else '0';
+New_BCID <= readout_status.Start_run when (readout_status.BCIDsync_Mode=mode_SYNC) else '0';
 
 
 FIFO_in<= TDA(2)(15 downto 0) & TDA(1) & TDA(0) & TDA(4) & TDA(3) & TDA(2)(31 downto 16) when (bitcnt_A="100") and (gbt_wr='1')     

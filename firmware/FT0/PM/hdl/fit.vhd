@@ -426,8 +426,8 @@ component TDCCHAN is
    -- ###############################################
    -- #########  GBT Readout ########################
    -- ###############################################
-   signal FIT_GBT_status : FIT_GBT_status_type;
-   signal FIT_GBT_control : CONTROL_REGISTER_type;
+   signal readout_status : readout_status_t;
+   signal readout_control : readout_control_t;
          
            
    signal Data_from_FITrd             : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -438,8 +438,8 @@ component TDCCHAN is
    
    signal PM_data_toreadout		:  board_data_type;
    
-   signal    ipbus_control_reg : cntr_reg_addrreg_type;
-   signal    ipbus_status_reg: status_reg_addrreg_type;
+   signal    ipbus_control_reg : ctrl_reg_t;
+   signal    ipbus_status_reg: stat_reg_t;
 
    signal    gbt_global_status : std_logic_vector(3 downto 0);
 
@@ -457,7 +457,7 @@ component TDCCHAN is
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
            
            Board_data_I        : in board_data_type; --PM or TCM data
-           Control_register_I    : in CONTROL_REGISTER_type;
+           Control_register_I    : in readout_control_t;
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -476,10 +476,8 @@ component TDCCHAN is
            IsData_to_GBT_I    : in  STD_LOGIC;
            RxData_rxclk_from_GBT_O     : out  std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
            IsRxData_rxclk_from_GBT_O    : out  STD_LOGIC;
-           rx_ph320 : out std_logic_vector(2 downto 0);
-		   ph_error320 : out std_logic; 
               -- FIT readour status, including BCOR_ID to PM/TCM
-           FIT_GBT_status_O : out FIT_GBT_status_type
+           readout_status_o : out readout_status_t
                       
        );
    end component;
@@ -925,7 +923,7 @@ FitGbtPrg: FIT_GBT_project
 		GBT_RxFrameClk_O	=> RX_CLK,
 		
 		Board_data_I		=> PM_data_toreadout,
-		Control_register_I	=> FIT_GBT_control,
+		Control_register_I	=> readout_control,
 		
 		MGT_RX_P_I			=>	GBT_RX_P,
 		MGT_RX_N_I			=>	GBT_RX_N,
@@ -942,18 +940,14 @@ FitGbtPrg: FIT_GBT_project
 		
 		RxData_rxclk_from_GBT_O	 	=> RxData_rxclk_from_GBT,
 		IsRxData_rxclk_from_GBT_O	=> IsRxData_rxclk_from_GBT,
-		rx_ph320 => rx_phase_status(2 downto 0),
-		ph_error320 => rx_phase_status(3),  
 
-		FIT_GBT_status_O 	=> FIT_GBT_status
+		readout_status_o 	=> readout_status
 		);		
 -- =====================================================
 
 GBT_is_RXD <= IsRxData_rxclk_from_GBT;
-GBTRX_ready <= FIT_GBT_status.GBT_status.gbtRx_Ready;
-RX_err <= FIT_GBT_status.GBT_status.gbtRx_ErrorDet;
-
-
+GBTRX_ready <= readout_status.GBT_status.gbtRx_Ready;
+RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 
 --PM_data_toreadout.is_header  <=  GBT_is_TXD;
 --PM_data_toreadout.is_data    <=  GBT_is_TXD;
@@ -961,18 +955,18 @@ RX_err <= FIT_GBT_status.GBT_status.gbtRx_ErrorDet;
 --PM_data_toreadout.data_word  <=  GBT_TX_D;
 
    
-FIT_GBT_control <= func_CNTRREG_getcntrreg(ipbus_control_reg);
-ipbus_status_reg <= func_STATREG_getaddrreg(FIT_GBT_status);
+readout_control <= func_CNTRREG_getcntrreg(ipbus_control_reg);
+ipbus_status_reg <= func_STATREG_getaddrreg(readout_status);
 
-gbt_global_status(0) <=  FIT_GBT_status.GBT_status.Rx_Phase_error;
-gbt_global_status(1) <=  '1' when FIT_GBT_status.BCIDsync_Mode = mode_LOST else '0';
---gbt_global_status(2) <=  '1' when FIT_GBT_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
+gbt_global_status(0) <=  readout_status.GBT_status.Rx_Phase_error;
+gbt_global_status(1) <=  '1' when readout_status.BCIDsync_Mode = mode_LOST else '0';
+--gbt_global_status(2) <=  '1' when readout_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
 gbt_global_status(3) <=  '0';
 
 process (clk320)
 begin
     if (clk320'event and clk320='1') then
-        if ( FIT_GBT_status.hits_rd_counter_selector.hits_skipped = x"0000_0000") then
+        if ( readout_status.fsm_errors = x"00") then
          gbt_global_status(2) <=  '0';
         else 
          gbt_global_status(2) <=  '1';
@@ -1910,6 +1904,9 @@ process (clk320)
 begin
 if (clk320'event and clk320='1') then
 
+rx_phase_status(2 downto 0) <= readout_status.rx_phase;
+rx_phase_status(3) <= readout_status.GBT_status.Rx_Phase_error;
+
 spi_lock320<=spi_lock320_0;  spi_lock320_0<= rd_lock;
 hspi_lock320<=hspi_lock320_0;  hspi_lock320_0<= rd_lock_hspi;
 tto<=tt;  tao<=ta;  
@@ -1917,7 +1914,6 @@ MCLK40_0<=MCLK40T; MCLK40_1<=MCLK40_0; if (MCLK40_0/=MCLK40_1) then mt_cou<="000
 
 PM_data_toreadout.is_header  <=  wr_out_id;
 PM_data_toreadout.is_data    <=  Event_ready or wr_out_id;
-PM_data_toreadout.is_packet  <=  Event_ready or wr_out_id;
 
 if (wr_out_id='1') then DATA80_in<= x"F" & '0' & WRDS_NUM & x"000000" & rx_phase_status & EV_ID_out(55 downto 12);
    else DATA80_in<=EV_DATA80;
@@ -1987,8 +1983,8 @@ end if;
 if  (Event_ready='1') or (Event_ready_0='1') then  CH_N0<= CH_N0_0; CH_N1<= CH_N1_0; end if;
 
 if (mt_cou="001") then
-  if (New_BCID='1') then BC_COU<=FIT_GBT_status. BCID_from_CRU_corrected; Orbit_ID<=FIT_GBT_status. ORBIT_from_CRU_corrected;
-    if (FIT_GBT_status. BCID_from_CRU_corrected>x"003") then TR_to<=FIT_GBT_status. BCID_from_CRU_corrected(5 downto 0)-"000100"; else TR_to<="1010" & FIT_GBT_status. BCID_from_CRU_corrected(1 downto 0); end if;
+  if (New_BCID='1') then BC_COU<=readout_status. BCID_from_CRU_corrected; Orbit_ID<=readout_status. ORBIT_from_CRU_corrected;
+    if (readout_status. BCID_from_CRU_corrected>x"003") then TR_to<=readout_status. BCID_from_CRU_corrected(5 downto 0)-"000100"; else TR_to<="1010" & readout_status. BCID_from_CRU_corrected(1 downto 0); end if;
   
     else  
     if (BC_COU=x"DEB") then BC_cou<=x"000"; Orbit_ID<=Orbit_ID+1; else BC_cou<=BC_cou+1; end if;
@@ -2002,7 +1998,7 @@ if (mt_cou="001") then
 end if;
 end process;
 
-New_BCID <= FIT_GBT_status.Start_run when (FIT_GBT_status.BCIDsync_Mode=mode_SYNC) else '0';
+New_BCID <= readout_status.Start_run when (readout_status.BCIDsync_Mode=mode_SYNC) else '0';
 
 CH_N0_0<= x"1" when  CH_do(0)='1'
    else   x"2" when  CH_do(1)='1'

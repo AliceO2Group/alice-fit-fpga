@@ -219,21 +219,18 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/cru_ltu_emu.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
 ]
 #set imported_files [import_files -fileset sources_1 $files]
 add_files -norecurse -fileset sources_1 $files
