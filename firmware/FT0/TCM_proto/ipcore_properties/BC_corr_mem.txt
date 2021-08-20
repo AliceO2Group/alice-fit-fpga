@@ -51,7 +51,7 @@ CONFIG.RST.ARESETN.INSERT_VIP                      string  false      0
 CONFIG.Read_Width_A                                string  false      32
 CONFIG.Read_Width_B                                string  false      32
 CONFIG.Register_PortA_Output_of_Memory_Core        string  false      false
-CONFIG.Register_PortA_Output_of_Memory_Primitives  string  false      false
+CONFIG.Register_PortA_Output_of_Memory_Primitives  string  false      true
 CONFIG.Register_PortB_Output_of_Memory_Core        string  false      false
 CONFIG.Register_PortB_Output_of_Memory_Primitives  string  false      false
 CONFIG.Remaining_Memory_Locations                  string  false      0
