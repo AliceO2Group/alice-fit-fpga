@@ -231,6 +231,7 @@ package fit_gbt_common_package is
     -- 4 - [Selector] trg_fifo was full
     -- 5 - [Converter] data_fifo is not empty while start of run
     -- 6 - [Converter] header_fifo is not empty while start of run
+    -- 7 - [Converter] tcm_data_fifo is full (TCM only)
     fsm_errors : std_logic_vector(15 downto 0);
   end record;
 

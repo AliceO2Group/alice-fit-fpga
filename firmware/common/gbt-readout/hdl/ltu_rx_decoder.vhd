@@ -45,7 +45,10 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
+  
+  signal sync_bc_int, bc_delay_int, bc_max_int : natural;
 
+  signal run_not_permit                 : boolean;
   signal orbc_sync_mode                 : bcid_sync_t;
   signal readout_mode, cru_readout_mode : rdmode_t;
 
@@ -58,6 +61,11 @@ begin
 
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
+  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors > 0);
+
+	sync_bc_int <= to_integer(unsigned(sync_bc));
+	bc_delay_int <= to_integer(unsigned(bc_delay));
+	bc_max_int <= to_integer(unsigned(LHC_BCID_max));
 
 
 -- Data ff data clk **********************************
@@ -66,7 +74,7 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-      bc_delay <= Control_register_I.BCID_offset;
+      bc_delay <= Control_register_I.BCID_offset+1;
 
       ORBC_ID_from_CRU_O <= sync_orbit & sync_bc;
       BCIDsync_Mode_O    <= orbc_sync_mode;
@@ -95,9 +103,9 @@ begin
 
       else
 
-        if cru_is_trg_ff then Trigger_O     <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
-        if is_SOR_ff then Start_run_O       <= '1';            else Start_run_O <= '0'; end if;
-        if is_EOC or is_EOT then Stop_run_O <= '1';            else Stop_run_O <= '0'; end if;
+        if cru_is_trg_ff then Trigger_O                      <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
+        if is_SOR_ff and not run_not_permit then Start_run_O <= '1';            else Start_run_O <= '0'; end if;
+        if is_EOC or is_EOT then Stop_run_O                  <= '1';            else Stop_run_O <= '0'; end if;
 
         -- syncronize orbc from cru to detector with first trigger
         if orbc_sync_mode = mode_STR and cru_is_trg then
@@ -124,16 +132,17 @@ begin
         else cru_readout_mode                     <= mode_TRG; end if;
 
         -- XOR FSM
-        if (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors > 0) then readout_mode <= mode_IDLE;
-        elsif (readout_mode = mode_IDLE) and is_SOC then readout_mode                                                             <= mode_CNT;
-        elsif (readout_mode = mode_CNT) and is_EOC then readout_mode                                                              <= mode_IDLE;
-        elsif (readout_mode = mode_IDLE) and is_SOT then readout_mode                                                             <= mode_TRG;
-        elsif (readout_mode = mode_TRG) and is_EOT then readout_mode                                                              <= mode_IDLE;
-        elsif (readout_mode = mode_IDLE) and cru_readout_mode /= mode_IDLE then readout_mode                                      <= cru_readout_mode;
+        if run_not_permit then readout_mode                                                  <= mode_IDLE;
+        elsif (readout_mode = mode_IDLE) and is_SOC then readout_mode                        <= mode_CNT;
+        elsif (readout_mode = mode_CNT) and is_EOC then readout_mode                         <= mode_IDLE;
+        elsif (readout_mode = mode_IDLE) and is_SOT then readout_mode                        <= mode_TRG;
+        elsif (readout_mode = mode_TRG) and is_EOT then readout_mode                         <= mode_IDLE;
+        elsif (readout_mode = mode_IDLE) and cru_readout_mode /= mode_IDLE then readout_mode <= cru_readout_mode;
         end if;
+		
 
         -- evid corrected
-        if (sync_bc + bc_delay) <= LHC_BCID_max then
+        if (sync_bc_int + bc_delay_int) <= bc_max_int then
           sync_bc_corr    <= (sync_bc + bc_delay);
           sync_orbit_corr <= sync_orbit;
         else

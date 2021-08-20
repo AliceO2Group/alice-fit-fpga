@@ -173,6 +173,7 @@ begin
     if(rising_edge(FSM_Clocks_I.System_Clk)) then
 
       reset_drop_counters <= Control_register_I.reset_data_counters;
+      start_of_run        <= Status_register_I.Start_run = '1';
 
       header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
       data_word                                                 <= tcm_data_fifo_dout;
@@ -181,7 +182,6 @@ begin
       header_pcklen_ff                                          <= header_pcklen;
 
       send_mode_ison_sclk <= send_mode_ison;
-      start_of_run        <= Status_register_I.Start_run = '1';
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
@@ -221,7 +221,7 @@ begin
         end if;
 
         if start_of_run then errors(1 downto 0)    <= (not header_fifo_empty) & (not data_fifo_empty); end if;
-        if tcm_data_fifo_full = '1' then errors(2) <= '1'; end if;
+        if tcm_data_fifo_full = '1' and send_mode_ison_sclk then errors(2) <= '1'; end if;
 
 
       end if;

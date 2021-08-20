@@ -97,6 +97,13 @@ class run_reader:
                 if trg_run_ongoing: self.trg_data.append({'trigger': istatus.cru_trigger, 'bc': istatus.cru_bc, 'orbit': istatus.cru_orbit})
                 if (istatus.cru_trigger & cnst.TRG_const_EOC) or (istatus.cru_trigger & cnst.TRG_const_EOT): trg_run_ongoing = False; self.stop_ortbit = istatus.cru_orbit
 
+        # deleting data out of SOX-EOX
+        for igen in copy.copy(self.gen_data):
+            if igen['orbit'] < self.trg_data[0]['orbit']: self.gen_data.remove(igen)
+            if igen['orbit'] > self.trg_data[-1]['orbit']: self.gen_data.remove(igen)
+            if igen['orbit'] == self.trg_data[0]['orbit'] and igen['bc'] < self.trg_data[0]['bc']: self.gen_data.remove(igen)
+            if igen['orbit'] == self.trg_data[-1]['orbit'] and igen['bc'] > self.trg_data[-1]['bc']: self.gen_data.remove(igen)
+
         # deleting data not matched to trigger in trg run
         if self.run_meta.ctrl_reg.trg_rd_command == readout_cmd.trigger:
             for igen in copy.copy(self.gen_data):
