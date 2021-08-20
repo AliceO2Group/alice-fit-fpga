@@ -265,8 +265,6 @@ begin
       header_fifo_rden_o  => raw_heaer_rden,
       data_fifo_rden_o    => raw_data_rden,
       header_fifo_empty_i => raw_header_empty,
-      no_raw_data_i       => no_raw_data,
-
 
       slct_fifo_dout_o  => slct_fifo_dout,
       slct_fifo_empty_o => slct_fifo_empty,

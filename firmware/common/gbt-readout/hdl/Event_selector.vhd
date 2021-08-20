@@ -29,7 +29,6 @@ entity Event_selector is
     header_fifo_rden_o  : out std_logic;
     data_fifo_rden_o    : out std_logic;
     header_fifo_empty_i : in  std_logic;
-    no_raw_data_i       : in  boolean;
 
     slct_fifo_dout_o  : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     slct_fifo_empty_o : out std_logic;
@@ -94,20 +93,20 @@ architecture Behavioral of Event_selector is
   signal rdh_bc      : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- cru readout states
-  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                                              : boolean;
+  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                                                              : boolean;
   -- data-trg comparison
-  signal is_hbtrg, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd, start_select : boolean;
-  signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                                      : boolean;
+  signal is_hbtrg, is_sox, is_eox, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd, start_select : boolean;
+  signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                                                      : boolean;
   -- packet reading states
-  signal reading_header, reading_last_word                                                                                         : boolean;
+  signal reading_header, reading_last_word                                                                                                         : boolean;
   -- pushing data to select fifo by TRG/CNT mode
-  signal data_reject_cmd                                                                                                           : boolean;
-  -- becames true after first rdh to not respond it; and becomes false after last rdh_close_cmd sent to do not send in continiosly
-  signal send_gear_rdh, no_more_data                                                                                               : boolean;
+  signal data_reject_cmd                                                                                                                           : boolean;
+  -- send_gear_rdh becames true after first SOX and false after EOX, used to select data and do not send firs RDH response, send_last_rdh used to send last RDH response to EOX
+  signal send_gear_rdh, send_last_rdh                                                                                                              : boolean;
   -- dropping data when select fifo is full
-  signal dropping_data_cmd                                                                                                         : boolean;
-  signal stop_bit                                                                                                                  : std_logic;
-  signal reset_drop_cnt_sc                                                                                                         : boolean;
+  signal dropping_data_cmd                                                                                                                         : boolean;
+  signal stop_bit                                                                                                                                  : std_logic;
+  signal reset_drop_cnt_sc                                                                                                                         : boolean;
 
 begin
 
@@ -188,7 +187,7 @@ begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
       packets_dropped_o <= drop_counter;
-      errors_o          <= (not trgfifo_full_latch) & fifo_notempty_while_start;
+      errors_o          <= trgfifo_full_latch & fifo_notempty_while_start;
 
       if Status_register_I.BCID_from_CRU >= bcid_delay then
         curr_orbit <= Status_register_I.ORBIT_from_CRU;
@@ -213,7 +212,7 @@ begin
         end if;
 
         -- trigger fifo full latching
-        if trgfifo_full = '1' then trgfifo_full_latch <= '1'; end if;
+        if (trgfifo_full = '1') and (Status_register_I.Readout_Mode /= mode_IDLE) then trgfifo_full_latch <= '1'; end if;
 
       end if;
 
@@ -259,9 +258,9 @@ begin
           read_data_cmd    <= read_data;
           read_trigger_cmd <= read_trigger;
           is_hbtrg_cmd     <= is_hbtrg and read_trigger;
-          rdh_close_cmd    <= (is_hbtrg and read_trigger) or (rdh_size_counter >= max_rdh_size) or (no_more_data and send_gear_rdh);
-          --                      rejecting by trigger in TRG mode                          rejecting data before first orbit, but not first event for SOX trigeer
-          data_reject_cmd  <= (send_trg_mode_sc and not (trg_eq_data and is_sel_trg)) or (not send_gear_rdh and not (is_hbtrg and read_trigger));
+          rdh_close_cmd    <= (is_hbtrg and read_trigger) or (rdh_size_counter >= max_rdh_size) or send_last_rdh;
+          --                      rejecting by trigger in TRG mode                          rejecting data out of sox/eox, but not first event for SOX trg
+          data_reject_cmd  <= (send_trg_mode_sc and not (trg_eq_data and is_sel_trg)) or (not send_gear_rdh and not (is_sox and read_trigger));
 
           data_ndwords_cmd  <= data_ndwords;
           dropping_data_cmd <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1');
@@ -283,7 +282,8 @@ begin
             rdh_size_counter                        <= 0;
           end if;
 
-          if not send_gear_rdh and is_hbtrg_cmd then send_gear_rdh <= true; elsif send_gear_rdh and no_more_data then send_gear_rdh <= false; end if;
+          send_last_rdh                                     <= false;
+          if is_sox and read_trigger_cmd then send_gear_rdh <= true; elsif is_eox and read_trigger_cmd then send_gear_rdh <= false; send_last_rdh <= true; end if;
 
           if FSM_STATE_NEXT = s2_dread then reading_header <= true; end if;
 
@@ -319,13 +319,14 @@ begin
 --    | TRG = DATA |             | read trigger and data | data match trigger
 
   is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
+  is_sox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_SOT or TRG_const_SOC)) /= TRG_const_void;
+  is_eox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_EOT or TRG_const_EOC)) /= TRG_const_void;
   is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
   trg_eq_data    <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
   data_is_old    <= (header_fifo_empty_i = '0') and ((data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
   trg_is_old     <= (trgfifo_empty = '0') and ((trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
   trg_later_data <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
   data_later_trg <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
-  no_more_data   <= no_raw_data_i and trgfifo_empty = '1';
 
 -- no data in fifo
   read_data <= false when header_fifo_empty_i = '1' else
@@ -357,7 +358,7 @@ begin
     -- SELECT from DREAD
     s1_select when (FSM_STATE = s2_dread) and reading_last_word and start_select else
     -- SELECT last rdh
-    s1_select when no_more_data and send_gear_rdh else
+    s1_select when send_last_rdh else
 
     -- IDLE from DREAD
     s0_idle when (FSM_STATE = s2_dread) and reading_last_word else
@@ -374,7 +375,7 @@ begin
 
 -- stop bit for HB and last packet
   stop_bit <= '1' when is_hbtrg_cmd else
-              '1' when no_more_data else
+              '1' when send_last_rdh else
               '0';
 
 -- not reading trigger
@@ -382,7 +383,7 @@ begin
 
 -- pushing RDH info while closing RDH packet                     
   cntpck_fifo_din  <= std_logic_vector(to_unsigned(0, 128-97)) & stop_bit & std_logic_vector(to_unsigned(rdh_packet_counter, 8)) & std_logic_vector(to_unsigned(rdh_size_counter, 12)) & rdh_orbit & rdh_bc & rdh_trigger;
-  cntpck_fifo_wren <= '1' when (FSM_STATE = s1_select) and rdh_close_cmd and send_gear_rdh else '0';
+  cntpck_fifo_wren <= '1' when (FSM_STATE = s1_select) and rdh_close_cmd and (send_gear_rdh or send_last_rdh) else '0';
 
 -- reading header when counter 0 and fsm state is reading data 
   header_fifo_rd <= '1' when reading_header                              else '0';
