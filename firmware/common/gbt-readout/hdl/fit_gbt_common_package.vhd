@@ -167,6 +167,7 @@ package fit_gbt_common_package is
 -- ===== FIT GBT STATUS ========================================
   constant stat_reg_size         : integer := 9;
   constant stat_reg_size_sim     : integer := stat_reg_size+6;
+  constant ipbusrd_stat_addr_offset : integer := 16;
   constant ipbusrd_fifo_out_addr : integer := 8;
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
@@ -333,7 +334,24 @@ package body fit_gbt_common_package is
       cntr_reg.Data_Gen.usage_generator := use_NO_generator;
     end if;
 
+    if(cntrl_reg_addrreg(0)(7 downto 4) = x"0") then
+      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
+    elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"1") then
+      cntr_reg.Trigger_Gen.usage_generator := use_CONT_generator;
+    elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"2") then
+      cntr_reg.Trigger_Gen.usage_generator := use_TX_generator;
+    else
+      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
+    end if;
 
+    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
+    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
+    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
+    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
+    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
+    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
+    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
+	-- reg [0](15) is empty
 
     if(cntrl_reg_addrreg(0)(19 downto 16) = x"0") then
       cntr_reg.Trigger_Gen.Readout_command := idle;
@@ -345,30 +363,10 @@ package body fit_gbt_common_package is
       cntr_reg.Trigger_Gen.Readout_command := idle;
     end if;
 
-
-
-    if(cntrl_reg_addrreg(0)(7 downto 4) = x"0") then
-      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
-    elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"1") then
-      cntr_reg.Trigger_Gen.usage_generator := use_CONT_generator;
-    elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"2") then
-      cntr_reg.Trigger_Gen.usage_generator := use_TX_generator;
-    else
-      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
-    end if;
-
     cntr_reg.is_hb_response := cntrl_reg_addrreg(0)(20);
     cntr_reg.readout_bypass := cntrl_reg_addrreg(0)(21);
     cntr_reg.force_idle     := cntrl_reg_addrreg(0)(22);
-
-    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
-    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
-    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
-    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
-    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
-    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
-    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
-
+	-- reg [0](23 - 31) is empty
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);
@@ -376,7 +374,6 @@ package body fit_gbt_common_package is
     cntr_reg.Trigger_Gen.trigger_pattern(63 downto 32) := cntrl_reg_addrreg(4);
     cntr_reg.Trigger_Gen.trigger_pattern(31 downto 0)  := cntrl_reg_addrreg(5);
     cntr_reg.Trigger_Gen.trigger_cont_value            := cntrl_reg_addrreg(6);
-
 
     cntr_reg.Trigger_Gen.bunch_freq := cntrl_reg_addrreg(7)(31 downto 16);
     cntr_reg.Data_Gen.bunch_freq    := cntrl_reg_addrreg(7)(15 downto 0);
@@ -386,7 +383,7 @@ package body fit_gbt_common_package is
     cntr_reg.RDH_data.FEE_ID  := cntrl_reg_addrreg(9)(15 downto 0);
     cntr_reg.RDH_data.SYS_ID  := cntrl_reg_addrreg(9)(23 downto 16);
     cntr_reg.RDH_data.PRT_BIT := cntrl_reg_addrreg(9)(31 downto 24);
-
+    -- reg 10 is empty
     cntr_reg.BCID_offset     := cntrl_reg_addrreg(11)(11 downto 0);
     cntr_reg.trg_data_select := cntrl_reg_addrreg(12)(31 downto 0);
 
