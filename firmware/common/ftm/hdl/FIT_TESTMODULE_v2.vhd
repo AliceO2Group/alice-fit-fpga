@@ -551,7 +551,7 @@ begin
       IPBUS_isrd_I      => ipb_isrd,
       IPBUS_ack_O       => ipb_ack_tm,
       IPBUS_err_O       => ipb_err_tm,
-      IPBUS_base_addr_I => (others => '0')
+      IPBUS_base_addr_I => x"0D8"
       );
 -- =====================================================
 

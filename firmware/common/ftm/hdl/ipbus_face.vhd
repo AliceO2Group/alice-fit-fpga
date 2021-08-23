@@ -257,14 +257,15 @@ begin
 
   end process;
 -- ***************************************************
-  ipbus_ack <= '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int < ctrl_reg_size + stat_reg_size) else  -- reading
+  ipbus_ack <= '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int < ctrl_reg_size) else  -- reading control
+               '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int >= ipbusrd_stat_addr_offset) and (ipbus_addr_int < ipbusrd_stat_addr_offset + stat_reg_size) else  -- reading status
                '1' when (IPBUS_iswr_I = '1') and (ipbus_addr_int < ctrl_reg_size) else  -- writing
                '0';
 
 
   ipbus_do <= (others => '0') when (ipbus_ack = '0') or (IPBUS_isrd_I = '0') else
               ctrl_reg(ipbus_addr_int)                      when (ipbus_addr_int < ctrl_reg_size) else
-              stat_reg_ipbclk(ipbus_addr_int-ctrl_reg_size) when (ipbus_addr_int < stat_reg_size+ctrl_reg_size) else
+              stat_reg_ipbclk(ipbus_addr_int-ipbusrd_stat_addr_offset) when (ipbus_addr_int >= ipbusrd_stat_addr_offset) and (ipbus_addr_int < ipbusrd_stat_addr_offset + stat_reg_size) else
               x"00000000";
 
 end Behavioral;
