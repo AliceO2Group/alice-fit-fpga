@@ -35,15 +35,16 @@ end cru_ltu_emu;
 
 architecture Behavioral of cru_ltu_emu is
 
-  signal bunch_freq : natural range 0 to 65535;
-  signal bc_start   : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal bunch_freq          : natural range 0 to 65535;
+  signal bc_start            : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal hbr_rate, hbr_count : std_logic_vector(3 downto 0);
 
   -- Event ID
   signal orbit_gen : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal bc_gen    : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- fsm signals
-  signal run_state, run_state_ff, run_command                              : rdcmd_t := idle;
+  signal run_state, run_state_ff, run_command                : rdcmd_t := idle;
   signal bunch_counter                                       : natural range 0 to 65535;
   signal bunch_in_sync                                       : boolean;
   signal send_trgcnt, send_soc, send_eoc, send_sot, send_eot : boolean;
@@ -64,6 +65,7 @@ begin
   bunch_freq  <= to_integer(unsigned(Control_register_I.Trigger_Gen.bunch_freq));
   bc_start    <= x"deb" when Control_register_I.Trigger_Gen.bc_start = 0 else
               Control_register_I.Trigger_Gen.bc_start - 1;
+  hbr_rate <= Control_register_I.Trigger_Gen.hbr_rate;
 
 
 -- Data ff data clk **********************************
@@ -75,13 +77,14 @@ begin
 
         orbit_gen     <= (others => '0');
         bc_gen        <= (others => '0');
+        hbr_count     <= (others => '0');
         run_state     <= idle;
         bunch_counter <= 0;
         bunch_in_sync <= false;
 
       else
-	    -- last cycle with EOR trigger is also with RS/RT
-	    run_state_ff <= run_state;
+        -- last cycle with EOR trigger is also with RS/RT
+        run_state_ff <= run_state;
 
         -- Event ID generator
         if bc_gen < LHC_BCID_max then bc_gen <= bc_gen + 1;
@@ -106,6 +109,13 @@ begin
         -- start sync when bc_start
         elsif (not bunch_in_sync) and (bc_gen = bc_start) then bunch_in_sync <= true; end if;
 
+
+        -- HBr generator
+        if bc_gen = x"000" then
+          if hbr_rate = x"0" then hbr_count         <= x"F";
+          elsif hbr_count = hbr_rate then hbr_count <= x"0";
+          else hbr_count                            <= hbr_count + 1; end if;
+        end if;
 
 
         -- SOX / EOX generator
@@ -141,7 +151,9 @@ begin
                 TRG_const_EOT when send_eot else
                 (others => '0');
 
-  trggen_hb <= TRG_const_Orbit or TRG_const_HB or TRG_const_TF when bc_gen = x"000" else (others => '0');
+  trggen_hb <= TRG_const_Orbit or TRG_const_HB or TRG_const_HBr or TRG_const_TF when bc_gen = x"000" and (hbr_count = hbr_rate) else
+               TRG_const_Orbit or TRG_const_HB or TRG_const_TF when bc_gen = x"000" and (hbr_count /= hbr_rate) else
+               (others => '0');
 
   trggen_rdstate <= TRG_const_RS when (run_state = trigger) or (run_state_ff = trigger) else
                     TRG_const_RS or TRG_const_RT when (run_state = continious) or (run_state_ff = continious) else

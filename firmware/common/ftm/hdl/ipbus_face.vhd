@@ -146,6 +146,8 @@ begin
   readout_status.BCID_from_CRU    <= FIT_GBT_status_I.BCID_from_CRU;
   readout_status.ORBIT_from_CRU   <= FIT_GBT_status_I.ORBIT_from_CRU;
   readout_status.Trigger_from_CRU <= FIT_GBT_status_I.Trigger_from_CRU;
+  readout_status.bcind_trg        <= FIT_GBT_status_I.bcind_trg;
+  readout_status.bcind_evt        <= FIT_GBT_status_I.bcind_evt;
   readout_status.Stop_run         <= FIT_GBT_status_I.Stop_run;
   readout_status.Start_run        <= FIT_GBT_status_I.Start_run;
   readout_status.rx_phase         <= FIT_GBT_status_I.rx_phase;

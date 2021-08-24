@@ -13,6 +13,7 @@ import copy
 import lib.constants as cnst
 import lib.pylog as pylog
 from lib.constants import filename_simout
+from lib.constants import TRG_const_HBr
 from lib.control_reg import readout_cmd
 from lib.run_generator import run_generator
 from lib.status_reg import status_reg
@@ -103,6 +104,14 @@ class run_reader:
             if igen['orbit'] > self.trg_data[-1]['orbit']: self.gen_data.remove(igen)
             if igen['orbit'] == self.trg_data[0]['orbit'] and igen['bc'] < self.trg_data[0]['bc']: self.gen_data.remove(igen)
             if igen['orbit'] == self.trg_data[-1]['orbit'] and igen['bc'] > self.trg_data[-1]['bc']: self.gen_data.remove(igen)
+
+        # deleting data in HBr orbits
+        if self.run_meta.ctrl_reg.is_hb_reject:
+            for itrg in self.trg_data:
+                if (itrg['trigger'] & TRG_const_HBr) > 0:
+                    for igen in copy.copy(self.gen_data):
+                        if igen['orbit'] == itrg['orbit']:
+                            self.gen_data.remove(igen)
 
         # deleting data not matched to trigger in trg run
         if self.run_meta.ctrl_reg.trg_rd_command == readout_cmd.trigger:

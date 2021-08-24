@@ -30,6 +30,7 @@ entity ltu_rx_decoder is
     ORBC_ID_from_CRU_O           : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRU
     ORBC_ID_from_CRU_corrected_O : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
     Trigger_O                    : out std_logic_vector(Trigger_bitdepth-1 downto 0);
+	trg_match_resp_mask_o        : out std_logic;
 
     BCIDsync_Mode_O    : out bcid_sync_t;
     Readout_Mode_O     : out rdmode_t;
@@ -106,6 +107,7 @@ begin
         if cru_is_trg_ff then Trigger_O                      <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
         if is_SOR_ff and not run_not_permit then Start_run_O <= '1';            else Start_run_O <= '0'; end if;
         if is_EOC or is_EOT then Stop_run_O                  <= '1';            else Stop_run_O <= '0'; end if;
+		if (cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void then trg_match_resp_mask_o <= '1'; else trg_match_resp_mask_o <= '0'; end if;
 
         -- syncronize orbc from cru to detector with first trigger
         if orbc_sync_mode = mode_STR and cru_is_trg then

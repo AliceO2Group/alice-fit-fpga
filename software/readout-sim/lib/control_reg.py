@@ -57,9 +57,11 @@ class control_reg:
         self.trg_cont_val = 0
         self.trg_bunch_freq = 0
         self.trg_bc_start = 0
+        self.trg_hbr_rate = 0
 
         self.rd_bypass = 0
         self.is_hb_response = 0
+        self.is_hb_reject = 0
         self.trg_data_select = 0
         self.force_idle = 0
 
@@ -94,10 +96,12 @@ class control_reg:
         log.info("    trg_cont_val: %s" % (hex(self.trg_cont_val)))
         log.info("    trg_bunch_freq: %s" % (hex(self.trg_bunch_freq)))
         log.info("    trg_freq_offset: %s" % (hex(self.trg_bc_start)))
+        log.info("    trg_hbr_rate: %s" % (hex(self.trg_hbr_rate)))
 
         log.info("readout param:")
         log.info("    rd_bypass: %s" % (hex(self.rd_bypass)))
         log.info("    is_hb_response: %s" % (hex(self.is_hb_response)))
+        log.info("    is_hb_rject: %s" % (hex(self.is_hb_reject)))
         log.info("    trg_data_select: %s" % (hex(self.trg_data_select)))
         log.info("    strt_rdmode_lock: %s" % (hex(self.force_idle)))
 
@@ -125,11 +129,11 @@ class control_reg:
         reset_field = bitstring.pack('uint:1=0, 7*uint:1', self.reset_readout, self.reset_rxph_error, self.reset_gbt,
                                      self.reset_gbt_rxerror,
                                      self.reset_gensync, self.reset_data_counters, self.reset_orbc_sync)
-        rd_mode = bitstring.pack('uint:1=0, 3*uint:1', self.force_idle, self.rd_bypass, self.is_hb_response)
+        rd_mode = bitstring.pack('4*uint:1', self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)
 
         bitarray.append(
-            bitstring.pack('uint:8=0, 2*uint:4,  uint:8, 2*uint:4', rd_mode.int, self.trg_rd_command.value,
-                           reset_field.int, self.trg_gen.value, self.data_gen.value))
+            bitstring.pack('uint:8=0, 2*uint:4,  uint:8, 2*uint:4', rd_mode.uint, self.trg_rd_command.value,
+                           reset_field.uint, self.trg_gen.value, self.data_gen.value))
         bitarray.append(bitstring.pack('uint:32', self.data_trg_respond_mask))
         bitarray.append(bitstring.pack('uint:32', self.data_bunch_pattern))
         bitarray.append(bitstring.pack('uint:32=0'))
@@ -138,7 +142,7 @@ class control_reg:
         bitarray.append(bitstring.pack('uint:32', self.trg_cont_val))
 
         bitarray.append(bitstring.pack('2*uint:16', self.trg_bunch_freq, self.data_bunch_freq))
-        bitarray.append(bitstring.pack('2*uint:16', self.trg_bc_start, self.data_bc_start))
+        bitarray.append(bitstring.pack('uint:4, uint:12, uint:16', self.trg_hbr_rate, self.trg_bc_start, self.data_bc_start))
         bitarray.append(bitstring.pack('2*uint:8, uint:16', self.RDH_PRT_BIT, self.RDH_SYS_ID, self.RDH_FEEID))
         bitarray.append(bitstring.pack('uint:32=0'))
         bitarray.append(bitstring.pack('uint:20=0, uint:12', self.bcid_offset))

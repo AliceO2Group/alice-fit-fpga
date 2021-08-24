@@ -29,6 +29,7 @@ def generate_sim_inputs():
     test_ctrl_reg.data_gen = gen_mode.main_gen
     test_ctrl_reg.trg_gen = gen_mode.main_gen
     test_ctrl_reg.trg_single_val = 0
+    test_ctrl_reg.trg_hbr_rate = 0x3
     test_ctrl_reg.rd_bypass = 0
     test_ctrl_reg.is_hb_response = 1
     test_ctrl_reg.force_idle = 0
@@ -43,6 +44,105 @@ def generate_sim_inputs():
     test_ctrl_reg.RDH_SYS_ID = 0xBB
     test_ctrl_reg.RDH_PRT_BIT = 0xCC
 
+    # # RENERATING RUN ========================================
+    # run_gen.run_comment = """
+    #     - BC indicator test RUN
+    #     """
+    # test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    # test_ctrl_reg.bcid_offset = 0x50
+    # test_ctrl_reg.data_trg_respond_mask = 0x23
+    # test_ctrl_reg.data_bunch_pattern = 0x1
+    # test_ctrl_reg.data_bunch_freq = 0x0
+    # test_ctrl_reg.data_bc_start = 0x0
+    # test_ctrl_reg.trg_pattern_0 = 0x1
+    # test_ctrl_reg.trg_pattern_1 = 0x0
+    # test_ctrl_reg.trg_cont_val = 0x20
+    # test_ctrl_reg.trg_bunch_freq = cnst.orbit_size*3
+    # test_ctrl_reg.trg_bc_start = 0x600
+    # test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    # run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    # run_gen.generate_ctrl_pattern(200)
+    # run_list.append(copy.copy(run_gen))
+    # # =======================================================
+
+    # # RENERATING RUN ========================================
+    # run_gen.run_comment = """
+    #     - HB response OFF test
+    #     """
+    # test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    # test_ctrl_reg.bcid_offset = 0x50
+    # test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    # test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    # test_ctrl_reg.data_bunch_freq = cnst.orbit_size
+    # test_ctrl_reg.data_bc_start = 0x100
+    # test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    # test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    # test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    # test_ctrl_reg.trg_bunch_freq = cnst.orbit_size
+    # test_ctrl_reg.trg_bc_start = 0x600
+    # test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    # test_ctrl_reg.is_hb_response = 0
+    # run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    # run_gen.generate_ctrl_pattern(10)
+    # run_list.append(copy.copy(run_gen))
+    # test_ctrl_reg.is_hb_response = 1
+    # # =======================================================
+
+    # # RENERATING RUN ========================================
+    # run_gen.run_comment = """
+    #     - Readout bypass test
+    #     """
+    # test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    # test_ctrl_reg.bcid_offset = 0x50
+    # test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    # test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    # test_ctrl_reg.data_bunch_freq = cnst.orbit_size
+    # test_ctrl_reg.data_bc_start = 0x100
+    # test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    # test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    # test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    # test_ctrl_reg.trg_bunch_freq = cnst.orbit_size
+    # test_ctrl_reg.trg_bc_start = 0x600
+    # test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    # test_ctrl_reg.rd_bypass = 1
+    # run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    # run_gen.generate_ctrl_pattern(10)
+    # run_list.append(copy.copy(run_gen))
+    # test_ctrl_reg.rd_bypass = 0
+    # # =======================================================
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - CONTINIOUS RUN
+        - HB reject
+        - DATA GEN TEST
+        - 2 packets per orbit
+           - no gaps
+           - lenght 16
+           - lenght 1
+        - 48 CLB triggers with data response
+           - without gaps
+           - gap = 1
+           - 0xFFAFFAA...
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0x50
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    test_ctrl_reg.data_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.data_bc_start = 0x100
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    test_ctrl_reg.is_hb_reject = 1
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(run_len)
+    run_list.append(copy.copy(run_gen))
+    test_ctrl_reg.is_hb_reject = 0
+    # =======================================================
 
 
     # RENERATING RUN ========================================

@@ -221,6 +221,7 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/bc_indicator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
