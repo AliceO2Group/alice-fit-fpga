@@ -29,7 +29,7 @@ entity FIT_GBT_project is
     GBT_RxFrameClk_O : out std_logic;   --Rx GBT frame clk 40MHz
     FSM_Clocks_O     : out rdclocks_t;
 
-    Board_data_I       : in board_data_type;        --PM or TCM data @320MHz
+    Board_data_I       : in board_data_type;    --PM or TCM data @320MHz
     Control_register_I : in readout_control_t;  -- control registers @DataClk
 
     MGT_RX_P_I    : in  std_logic;
@@ -79,6 +79,7 @@ architecture Behavioral of FIT_GBT_project is
   signal FIT_GBT_STATUS                   : readout_status_t;
   signal ORBC_ID_from_RXdecoder           : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRUS
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
+  signal trg_match_resp_mask              : std_logic;
 
 
 
@@ -87,6 +88,12 @@ architecture Behavioral of FIT_GBT_project is
   signal raw_header_dout, raw_data_dout                  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_heaer_rden, raw_data_rden, raw_header_empty : std_logic;
   signal no_raw_data                                     : boolean;
+
+  signal raw_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal raw_isdata : std_logic;
+  signal data_bcid  : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal data_bcen  : std_logic;
+
 
   signal slct_fifo_dout  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal slct_fifo_empty : std_logic;
@@ -104,8 +111,8 @@ architecture Behavioral of FIT_GBT_project is
 
   attribute mark_debug                             : string;
   attribute mark_debug of Board_data_from_main_gen : signal is "true";
-  attribute mark_debug of RX_Data_DataClk : signal is "true";
-  attribute mark_debug of RX_IsData_DataClk : signal is "true";
+  attribute mark_debug of RX_Data_DataClk          : signal is "true";
+  attribute mark_debug of RX_IsData_DataClk        : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -125,9 +132,6 @@ begin
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.fsm_errors(15 downto 8)  <= (others => '0');
-
-
-
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -176,7 +180,7 @@ begin
 -- RX Data Decoder ============================================
   ltu_rx_decoder_comp : entity work.ltu_rx_decoder
     port map (
-      FSM_Clocks_I => FSM_Clocks,
+      FSM_Clocks_I       => FSM_Clocks,
       Status_register_I  => FIT_GBT_STATUS,
       Control_register_I => Control_register_I,
 
@@ -186,6 +190,7 @@ begin
       ORBC_ID_from_CRU_O           => ORBC_ID_from_RXdecoder,
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
+      trg_match_resp_mask_o        => trg_match_resp_mask,
 
       Readout_Mode_O     => FIT_GBT_STATUS.Readout_Mode,
       CRU_Readout_Mode_O => FIT_GBT_STATUS.CRU_Readout_Mode,
@@ -194,6 +199,30 @@ begin
       BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode
       );
 -- =============================================================
+
+-- DATA BC INDICATOR =====================================
+  bc_indicator_data_comp : entity work.bc_indicator
+    generic map(USE_SYSCLK => true)
+    port map(
+      FSM_Clocks_I       => FSM_Clocks,
+      Control_register_I => Control_register_I,
+      bcid_i             => data_bcid,
+      bcen_i             => data_bcen,
+      indicator_o        => FIT_GBT_STATUS.bcind_evt
+      );
+-- =====================================================
+
+-- TRI BC INDICATOR =====================================
+  bc_indicator_trg_comp : entity work.bc_indicator
+    generic map(USE_SYSCLK => false)
+    port map(
+      FSM_Clocks_I       => FSM_Clocks,
+      Control_register_I => Control_register_I,
+      bcid_i             => FIT_GBT_STATUS.BCID_from_CRU,
+      bcen_i             => trg_match_resp_mask,
+      indicator_o        => FIT_GBT_STATUS.bcind_trg
+      );
+-- =====================================================
 
 -- DATA GENERATOR =====================================
   Module_Data_Gen_comp : entity work.Module_Data_Gen
@@ -248,7 +277,13 @@ begin
 
       drop_ounter_o  => FIT_GBT_STATUS.cnv_drop_cnt,
       fifo_cnt_max_o => FIT_GBT_STATUS.cnv_fifo_max,
-      errors_o       => FIT_GBT_STATUS.fsm_errors(7 downto 5)
+
+      raw_data_o   => raw_data,
+      raw_isdata_o => raw_isdata,
+      data_bcid_o  => data_bcid,
+      data_bcen_o  => data_bcen,
+
+      errors_o => FIT_GBT_STATUS.fsm_errors(7 downto 5)
       );
 -- ===========================================================
 
@@ -265,6 +300,9 @@ begin
       header_fifo_rden_o  => raw_heaer_rden,
       data_fifo_rden_o    => raw_data_rden,
       header_fifo_empty_i => raw_header_empty,
+
+      raw_data_i   => raw_data,
+      raw_isdata_i => raw_isdata,
 
       slct_fifo_dout_o  => slct_fifo_dout,
       slct_fifo_empty_o => slct_fifo_empty,

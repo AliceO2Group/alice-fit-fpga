@@ -30,6 +30,10 @@ entity Event_selector is
     data_fifo_rden_o    : out std_logic;
     header_fifo_empty_i : in  std_logic;
 
+    -- raw data for readout bypass mode
+    raw_data_i   : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    raw_isdata_i : in std_logic;
+
     slct_fifo_dout_o  : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
     slct_fifo_empty_o : out std_logic;
     slct_fifo_rden_i  : in  std_logic;
@@ -55,7 +59,7 @@ architecture Behavioral of Event_selector is
 
   -- actual bcid is dalayed to take a chance to trigger go throught fifo
   constant bcid_delay   : natural := 32;
-  constant max_rdh_size : natural := 512 - (4+16);
+  constant max_rdh_size : natural := 512 - (4+16);  -- 492, 0x1ec
 
   signal data_ndwords, data_ndwords_cmd : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
   signal data_orbit                     : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
@@ -92,21 +96,25 @@ architecture Behavioral of Event_selector is
   signal rdh_orbit   : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal rdh_bc      : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
+  -- control options
+  signal hb_rdh_response, readout_bypass, hb_reject : boolean;
+
   -- cru readout states
-  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                                                              : boolean;
+  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                           : boolean;
   -- data-trg comparison
-  signal is_hbtrg, is_sox, is_eox, is_hbtrg_cmd, is_sel_trg, read_data, read_data_cmd, read_trigger, read_trigger_cmd, rdh_close_cmd, start_select : boolean;
-  signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                                                      : boolean;
+  signal is_hbtrg, is_hb_r_trg, is_sox, is_eox, is_hbtrg_cmd, is_sel_trg, read_data, read_trigger, start_select : boolean;
+  signal read_data_cmd, read_trigger_cmd, rdh_close_cmd, hb_reject_cmd                                          : boolean;
+  signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                   : boolean;
   -- packet reading states
-  signal reading_header, reading_last_word                                                                                                         : boolean;
+  signal reading_header, reading_last_word                                                                      : boolean;
   -- pushing data to select fifo by TRG/CNT mode
-  signal data_reject_cmd                                                                                                                           : boolean;
+  signal data_reject_cmd                                                                                        : boolean;
   -- send_gear_rdh becames true after first SOX and false after EOX, used to select data and do not send firs RDH response, send_last_rdh used to send last RDH response to EOX
-  signal send_gear_rdh, send_last_rdh                                                                                                              : boolean;
+  signal send_gear_rdh, send_last_rdh                                                                           : boolean;
   -- dropping data when select fifo is full
-  signal dropping_data_cmd                                                                                                                         : boolean;
-  signal stop_bit                                                                                                                                  : std_logic;
-  signal reset_drop_cnt_sc                                                                                                                         : boolean;
+  signal dropping_data_cmd                                                                                      : boolean;
+  signal stop_bit                                                                                               : std_logic;
+  signal reset_drop_cnt_sc                                                                                      : boolean;
 
 begin
 
@@ -231,9 +239,19 @@ begin
       start_of_run          <= Status_register_I.Start_run = '1';
       trigger_select_val_sc <= Control_register_I.trg_data_select;
       reset_drop_cnt_sc     <= Control_register_I.reset_data_counters = '1';
+      hb_rdh_response       <= Control_register_I.is_hb_response = '1';
+      readout_bypass        <= Control_register_I.readout_bypass = '1';
+      hb_reject             <= Control_register_I.is_hb_reject = '1';
 
-      slct_fifo_din_ff    <= slct_fifo_din;
-      slct_fifo_wren_ff   <= slct_fifo_wren;
+      -- put raw data in select fifo for readout bypass mode
+      if readout_bypass then
+        slct_fifo_din_ff  <= raw_data_i;
+        slct_fifo_wren_ff <= raw_isdata_i;
+      else
+        slct_fifo_din_ff  <= slct_fifo_din;
+        slct_fifo_wren_ff <= slct_fifo_wren;
+      end if;
+
       cntpck_fifo_din_ff  <= cntpck_fifo_din;
       cntpck_fifo_wren_ff <= cntpck_fifo_wren;
       start_select        <= read_data or read_trigger;
@@ -258,12 +276,15 @@ begin
           read_data_cmd    <= read_data;
           read_trigger_cmd <= read_trigger;
           is_hbtrg_cmd     <= is_hbtrg and read_trigger;
-          rdh_close_cmd    <= (is_hbtrg and read_trigger) or (rdh_size_counter >= max_rdh_size) or send_last_rdh;
+          rdh_close_cmd    <= (is_hbtrg and read_trigger and hb_rdh_response) or (rdh_size_counter >= max_rdh_size) or send_last_rdh;
           --                      rejecting by trigger in TRG mode                          rejecting data out of sox/eox, but not first event for SOX trg
           data_reject_cmd  <= (send_trg_mode_sc and not (trg_eq_data and is_sel_trg)) or (not send_gear_rdh and not (is_sox and read_trigger));
 
           data_ndwords_cmd  <= data_ndwords;
           dropping_data_cmd <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1');
+
+          if is_hb_r_trg and read_trigger then hb_reject_cmd <= true;
+          elsif is_hbtrg and read_trigger then hb_reject_cmd <= false; end if;
 
         end if;
 
@@ -319,6 +340,7 @@ begin
 --    | TRG = DATA |             | read trigger and data | data match trigger
 
   is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
+  is_hb_r_trg    <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HBr) /= TRG_const_void;
   is_sox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_SOT or TRG_const_SOC)) /= TRG_const_void;
   is_eox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_EOT or TRG_const_EOC)) /= TRG_const_void;
   is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
@@ -348,6 +370,8 @@ begin
                   false;
 
   FSM_STATE_NEXT <=
+    -- IDLE in BYPASS mode
+    s0_idle  when readout_bypass else
     -- START READING
     s2_dread when (FSM_STATE = s1_select) and read_data_cmd else
     -- IDLE after SELECT (trg read)
@@ -391,8 +415,8 @@ begin
   data_fifo_rd   <= '1' when not reading_header and FSM_STATE = s2_dread else '0';
 
 -- pushing data from raw to slct fifo
-  slct_fifo_din  <= header_fifo_data_i               when reading_header                                else data_fifo_data_i;
-  slct_fifo_wren <= (header_fifo_rd or data_fifo_rd) when not data_reject_cmd and not dropping_data_cmd else '0';
+  slct_fifo_din  <= header_fifo_data_i               when reading_header                                                                      else data_fifo_data_i;
+  slct_fifo_wren <= (header_fifo_rd or data_fifo_rd) when not data_reject_cmd and not (hb_reject_cmd and hb_reject) and not dropping_data_cmd else '0';
 
 end Behavioral;
 

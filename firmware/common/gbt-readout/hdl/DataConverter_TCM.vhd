@@ -37,6 +37,11 @@ entity DataConverter is
     drop_ounter_o  : out std_logic_vector(15 downto 0);
     fifo_cnt_max_o : out std_logic_vector(15 downto 0);
 
+    raw_data_o   : out std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+    raw_isdata_o : out std_logic;
+    data_bcid_o  : out std_logic_vector(BC_id_bitdepth-1 downto 0);
+    data_bcen_o  : out std_logic;
+
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
@@ -60,6 +65,7 @@ architecture Behavioral of DataConverter is
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
 
+  signal readout_bypass                                    : boolean;
   signal send_mode_ison, send_mode_ison_sclk, start_of_run : boolean;
   signal reset_drop_counters                               : std_logic;
   signal drop_counter                                      : std_logic_vector(15 downto 0);
@@ -104,6 +110,12 @@ begin
   header_pcklen <= func_PMHEADER_n_dwords(tcm_data_fifo_dout);
   header_orbit  <= func_PMHEADER_getORBIT(tcm_data_fifo_dout);
   header_bc     <= func_PMHEADER_getBC(tcm_data_fifo_dout);
+
+  raw_data_o   <= tcm_data_fifo_dout;
+  raw_isdata_o <= not tcm_data_fifo_empty;
+  data_bcid_o  <= header_bc;
+  data_bcen_o  <= '1' when tcm_data_fifo_dout(79 downto 76) = x"f" else '0';
+
 
 -- tcm_data_160to80bit_fifo =============================================
   tcm_data_160to80bit_fifo_comp : entity work.tcm_data_160to80bit_fifo
@@ -174,6 +186,7 @@ begin
 
       reset_drop_counters <= Control_register_I.reset_data_counters;
       start_of_run        <= Status_register_I.Start_run = '1';
+      readout_bypass      <= Control_register_I.readout_bypass = '1';
 
       header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
       data_word                                                 <= tcm_data_fifo_dout;
@@ -220,7 +233,7 @@ begin
           rawfifo_cnt_max <= (others => '0');
         end if;
 
-        if start_of_run then errors(1 downto 0)    <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+        if start_of_run then errors(1 downto 0)                            <= (not header_fifo_empty) & (not data_fifo_empty); end if;
         if tcm_data_fifo_full = '1' and send_mode_ison_sclk then errors(2) <= '1'; end if;
 
 
@@ -232,10 +245,12 @@ begin
   end process;
 -- ****************************************************
   header_fifo_din <= header_word_latch;
-  header_fifo_we  <= '1' when word_counter = header_pcklen_latch-1 and sending_event else '0';
+  header_fifo_we  <= '0' when readout_bypass else
+                    '1' when word_counter = header_pcklen_latch-1 and sending_event else '0';
 
   data_fifo_din <= data_word;
-  data_fifo_we  <= '1' when is_data = '1' and is_header = '0' and sending_event else '0';
+  data_fifo_we  <= '0' when readout_bypass else
+                  '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
   -- all data sent in run
   no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not send_mode_ison_sclk;

@@ -33,20 +33,22 @@ architecture Behavioral of Reset_Generator is
 
 
   signal reset_in, reset_sclk, reset_fsm, reset_gbt : std_logic;
-  signal DataClk_q_dataclk                : std_logic := '0';
-  signal DataClk_qff00_sysclk             : std_logic;
-  signal DataClk_front_sysclk             : std_logic;
+  signal DataClk_q_dataclk                          : std_logic := '0';
+  signal DataClk_qff00_sysclk                       : std_logic;
+  signal DataClk_front_sysclk                       : std_logic;
 
   signal count_ready, count_ready_clk40 : std_logic;
   signal sysclk_count_ff                : std_logic_vector(2 downto 0);
+  signal rd_bypass, rd_bypass_ff        : boolean;
+  signal reset_by_bypass                : std_logic;
 
-  attribute mark_debug : string;
-  attribute mark_debug of reset_in : signal is "true";
-  attribute mark_debug of reset_gbt : signal is "true";
-  attribute mark_debug of reset_fsm : signal is "true";
-  attribute mark_debug of reset_sclk : signal is "true";
+  attribute mark_debug                    : string;
+  attribute mark_debug of reset_in        : signal is "true";
+  attribute mark_debug of reset_gbt       : signal is "true";
+  attribute mark_debug of reset_fsm       : signal is "true";
+  attribute mark_debug of reset_sclk      : signal is "true";
   attribute mark_debug of sysclk_count_ff : signal is "true";
-  attribute mark_debug of count_ready : signal is "true";
+  attribute mark_debug of count_ready     : signal is "true";
   -- attribute mark_debug of  : signal is "true";
 
 begin
@@ -61,10 +63,14 @@ begin
     if rising_edge(DataClk_I)then
       reset_in <= RESET40_I;
 
+      rd_bypass    <= Control_register_I.readout_bypass = '1';
+      rd_bypass_ff <= rd_bypass;
+      if (rd_bypass_ff and not rd_bypass) then reset_by_bypass <= '1'; else reset_by_bypass <= '0'; end if;
+
       count_ready_clk40 <= count_ready;
       DataClk_q_dataclk <= not DataClk_q_dataclk;
       reset_gbt         <= reset_in or Control_register_I.reset_gbt;
-      reset_fsm         <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40;
+      reset_fsm         <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40 or reset_by_bypass;
 
     end if;
   end process;

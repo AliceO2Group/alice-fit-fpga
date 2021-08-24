@@ -54,6 +54,9 @@ end CRU_packet_Builder;
 
 architecture Behavioral of CRU_packet_Builder is
 
+  -- control 
+  signal readout_bypass : boolean;
+
   -- PACKET format
   constant nwords_in_SOP : natural := 5;
   constant nwords_in_EOP : natural := 1;
@@ -87,7 +90,8 @@ architecture Behavioral of CRU_packet_Builder is
 
 begin
 
-  SLCTFIFO_RE_O <= slct_fifo_re;
+  -- continiosly reading select fifo in bypass mode
+  SLCTFIFO_RE_O <= slct_fifo_re when not readout_bypass else not SLCTFIFO_Is_Empty_I;
   CNTPFIFO_RE_O <= cntpck_fifo_re;
 
   rdh_feeid             <= Control_register_I.RDH_data.FEE_ID;
@@ -116,6 +120,8 @@ begin
         errors_o  <= (others => '0');
 
       else
+
+        readout_bypass <= Control_register_I.readout_bypass = '1';
 
         FSM_STATE <= FSM_STATE_NEXT;
 
@@ -154,12 +160,14 @@ begin
   cntpck_fifo_re <= '1' when (FSM_STATE = s1_sop) and word_counter = 0 else '0';
   slct_fifo_re   <= '1' when (FSM_STATE = s2_data)                     else '0';
 
-  Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s1_sop) else
+  Data_O <= SLCTFIFO_data_word_I when readout_bypass else
+            SOP_format(word_counter)(GBT_data_word_bitdepth-1 downto 0)                              when (FSM_STATE = s1_sop) else
             SLCTFIFO_data_word_I                                                                     when (FSM_STATE = s2_data) else
             EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth-1 downto 0) when (FSM_STATE = s3_eop) else
             (others => '0');
 
-  Is_Data_O <= SOP_format(word_counter)(GBT_data_word_bitdepth) when (FSM_STATE = s1_sop) else
+  Is_Data_O <= not SLCTFIFO_Is_Empty_I when readout_bypass else
+               SOP_format(word_counter)(GBT_data_word_bitdepth)                              when (FSM_STATE = s1_sop) else
                '1'                                                                           when (FSM_STATE = s2_data) else
                EOP_format(word_counter - rdh_nwords - nwords_in_SOP)(GBT_data_word_bitdepth) when (FSM_STATE = s3_eop) else
                '0';

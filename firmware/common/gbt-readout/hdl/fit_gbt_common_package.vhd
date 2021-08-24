@@ -92,6 +92,7 @@ package fit_gbt_common_package is
     trigger_cont_value : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- trigger that sendign continious
     bunch_freq         : std_logic_vector(15 downto 0);  -- trigger frequency
     bc_start           : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
+    hbr_rate           : std_logic_vector(3 downto 0);  -- HB reject rate, 0 - off
   end record;
 
   type rdh_ctrl_t is record
@@ -107,6 +108,7 @@ package fit_gbt_common_package is
 
     readout_bypass  : std_logic;
     is_hb_response  : std_logic;
+    is_hb_reject    : std_logic;
     force_idle      : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
@@ -138,7 +140,8 @@ package fit_gbt_common_package is
         trigger_pattern    => x"0000000000000000",
         trigger_cont_value => TRG_const_void,
         bunch_freq         => x"0000",
-        bc_start           => x"000"
+        bc_start           => x"000",
+        hbr_rate           => x"0"
         ),
 
       RDH_data  => (
@@ -149,6 +152,7 @@ package fit_gbt_common_package is
 
       readout_bypass  => '0',
       is_hb_response  => '1',
+      is_hb_reject    => '1',
       trg_data_select => x"00000000",
 
       BCID_offset => x"000",
@@ -165,10 +169,10 @@ package fit_gbt_common_package is
 -- =============================================================
 
 -- ===== FIT GBT STATUS ========================================
-  constant stat_reg_size         : integer := 9;
-  constant stat_reg_size_sim     : integer := stat_reg_size+6;
+  constant stat_reg_size            : integer := 9;
+  constant stat_reg_size_sim        : integer := stat_reg_size+6;
   constant ipbusrd_stat_addr_offset : integer := 16;
-  constant ipbusrd_fifo_out_addr : integer := 8;
+  constant ipbusrd_fifo_out_addr    : integer := 8;
   type stat_reg_t is array (0 to stat_reg_size-1) of std_logic_vector(31 downto 0);
   type stat_reg_sim_t is array (0 to stat_reg_size_sim-1) of std_logic_vector(31 downto 0);  -- extended status registers set for simulation (trigger added)
 
@@ -190,10 +194,15 @@ package fit_gbt_common_package is
   end record;
 
   type datagen_report_t is record
-    orbit          : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
-    bc             : std_logic_vector(BC_id_bitdepth-1 downto 0);
-    size           : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
-    packet_num     : std_logic_vector(35 downto 0);
+    orbit      : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+    bc         : std_logic_vector(BC_id_bitdepth-1 downto 0);
+    size       : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+    packet_num : std_logic_vector(35 downto 0);
+  end record;
+
+  type bc_indicator_t is record
+    bc    : std_logic_vector(BC_id_bitdepth-1 downto 0);
+    count : std_logic_vector(3 downto 0);
   end record;
 
 
@@ -219,6 +228,9 @@ package fit_gbt_common_package is
     sel_fifo_max : std_logic_vector(15 downto 0);
     sel_drop_cnt : std_logic_vector(15 downto 0);
     gbt_data_cnt : std_logic_vector(31 downto 0);
+
+    bcind_evt : bc_indicator_t;
+    bcind_trg : bc_indicator_t;
 
     -- readout via IPbus, used in FTM only
     ipbusrd_fifo_cnt : std_logic_vector(15 downto 0);
@@ -351,7 +363,7 @@ package body fit_gbt_common_package is
     cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
     cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
     cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
-	-- reg [0](15) is empty
+    -- reg [0](15) is empty
 
     if(cntrl_reg_addrreg(0)(19 downto 16) = x"0") then
       cntr_reg.Trigger_Gen.Readout_command := idle;
@@ -366,7 +378,8 @@ package body fit_gbt_common_package is
     cntr_reg.is_hb_response := cntrl_reg_addrreg(0)(20);
     cntr_reg.readout_bypass := cntrl_reg_addrreg(0)(21);
     cntr_reg.force_idle     := cntrl_reg_addrreg(0)(22);
-	-- reg [0](23 - 31) is empty
+    cntr_reg.is_hb_reject   := cntrl_reg_addrreg(0)(23);
+    -- reg [0](23 - 31) is empty
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);
@@ -377,15 +390,16 @@ package body fit_gbt_common_package is
 
     cntr_reg.Trigger_Gen.bunch_freq := cntrl_reg_addrreg(7)(31 downto 16);
     cntr_reg.Data_Gen.bunch_freq    := cntrl_reg_addrreg(7)(15 downto 0);
-    cntr_reg.Trigger_Gen.bc_start   := cntrl_reg_addrreg(8)(27 downto 16);
     cntr_reg.Data_Gen.bc_start      := cntrl_reg_addrreg(8)(11 downto 0);
+    cntr_reg.Trigger_Gen.bc_start   := cntrl_reg_addrreg(8)(27 downto 16);
+    cntr_reg.Trigger_Gen.hbr_rate   := cntrl_reg_addrreg(8)(31 downto 28);
 
     cntr_reg.RDH_data.FEE_ID  := cntrl_reg_addrreg(9)(15 downto 0);
     cntr_reg.RDH_data.SYS_ID  := cntrl_reg_addrreg(9)(23 downto 16);
     cntr_reg.RDH_data.PRT_BIT := cntrl_reg_addrreg(9)(31 downto 24);
     -- reg 10 is empty
-    cntr_reg.BCID_offset     := cntrl_reg_addrreg(11)(11 downto 0);
-    cntr_reg.trg_data_select := cntrl_reg_addrreg(12)(31 downto 0);
+    cntr_reg.BCID_offset      := cntrl_reg_addrreg(11)(11 downto 0);
+    cntr_reg.trg_data_select  := cntrl_reg_addrreg(12)(31 downto 0);
 
     return cntr_reg;
   end function;
@@ -455,7 +469,7 @@ package body fit_gbt_common_package is
     status_reg_addrreg(3)                     := status_reg.cnv_fifo_max & status_reg.cnv_drop_cnt;
     status_reg_addrreg(4)                     := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
     status_reg_addrreg(5)                     := status_reg.gbt_data_cnt;
-    status_reg_addrreg(6)                     := x"00000000";
+    status_reg_addrreg(6)                     := status_reg.bcind_trg.count & status_reg.bcind_trg.bc & status_reg.bcind_evt.count & status_reg.bcind_evt.bc;
     status_reg_addrreg(7)                     := status_reg.ipbusrd_fifo_cnt & x"0000";
     status_reg_addrreg(ipbusrd_fifo_out_addr) := status_reg.ipbusrd_fifo_out;  --8
 
