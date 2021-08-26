@@ -57,8 +57,8 @@ architecture Behavioral of cru_ltu_emu is
 
 begin
 
-  RX_Data_O   <= RX_Data_I   when (Control_register_I.Trigger_Gen.usage_generator = use_NO_generator) else rx_data_gen;
-  RX_IsData_O <= RX_IsData_I when (Control_register_I.Trigger_Gen.usage_generator = use_NO_generator) else rx_isdata_gen;
+  RX_Data_O   <= RX_Data_I   when (Control_register_I.Trigger_Gen.usage_generator = gen_off) else rx_data_gen;
+  RX_IsData_O <= RX_IsData_I when (Control_register_I.Trigger_Gen.usage_generator = gen_off) else rx_isdata_gen;
 
 
   run_command <= Control_register_I.Trigger_Gen.Readout_command;

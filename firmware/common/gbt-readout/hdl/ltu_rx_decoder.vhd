@@ -30,7 +30,7 @@ entity ltu_rx_decoder is
     ORBC_ID_from_CRU_O           : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRU
     ORBC_ID_from_CRU_corrected_O : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
     Trigger_O                    : out std_logic_vector(Trigger_bitdepth-1 downto 0);
-	trg_match_resp_mask_o        : out std_logic;
+    trg_match_resp_mask_o        : out std_logic;
 
     BCIDsync_Mode_O    : out bcid_sync_t;
     Readout_Mode_O     : out rdmode_t;
@@ -46,7 +46,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
-  
+
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
 
   signal run_not_permit                 : boolean;
@@ -57,6 +57,22 @@ architecture Behavioral of ltu_rx_decoder is
   signal bc_delay                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
 
+  attribute mark_debug                     : string;
+  attribute MARK_DEBUG of orbc_sync_mode   : signal is "true";
+  attribute MARK_DEBUG of readout_mode     : signal is "true";
+  attribute MARK_DEBUG of cru_readout_mode : signal is "true";
+  attribute MARK_DEBUG of run_not_permit   : signal is "true";
+  attribute MARK_DEBUG of is_cru_run       : signal is "true";
+  attribute MARK_DEBUG of is_cru_cnt       : signal is "true";
+  attribute MARK_DEBUG of cru_trigger      : signal is "true";
+  attribute MARK_DEBUG of is_SOC           : signal is "true";
+  attribute MARK_DEBUG of is_SOT           : signal is "true";
+  attribute MARK_DEBUG of is_EOC           : signal is "true";
+  attribute MARK_DEBUG of is_EOT           : signal is "true";
+
+
+
+
 begin
 
 
@@ -64,9 +80,9 @@ begin
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors > 0);
 
-	sync_bc_int <= to_integer(unsigned(sync_bc));
-	bc_delay_int <= to_integer(unsigned(bc_delay));
-	bc_max_int <= to_integer(unsigned(LHC_BCID_max));
+  sync_bc_int  <= to_integer(unsigned(sync_bc));
+  bc_delay_int <= to_integer(unsigned(bc_delay));
+  bc_max_int   <= to_integer(unsigned(LHC_BCID_max));
 
 
 -- Data ff data clk **********************************
@@ -75,7 +91,7 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-      bc_delay <= Control_register_I.BCID_offset+1;
+      bc_delay <= Control_register_I.BCID_offset;
 
       ORBC_ID_from_CRU_O <= sync_orbit & sync_bc;
       BCIDsync_Mode_O    <= orbc_sync_mode;
@@ -104,10 +120,10 @@ begin
 
       else
 
-        if cru_is_trg_ff then Trigger_O                      <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
-        if is_SOR_ff and not run_not_permit then Start_run_O <= '1';            else Start_run_O <= '0'; end if;
-        if is_EOC or is_EOT then Stop_run_O                  <= '1';            else Stop_run_O <= '0'; end if;
-		if (cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void then trg_match_resp_mask_o <= '1'; else trg_match_resp_mask_o <= '0'; end if;
+        if cru_is_trg_ff then Trigger_O                                                                                    <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
+        if is_SOR_ff and not run_not_permit then Start_run_O                                                               <= '1';            else Start_run_O <= '0'; end if;
+        if is_EOC or is_EOT then Stop_run_O                                                                                <= '1';            else Stop_run_O <= '0'; end if;
+        if (cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void then trg_match_resp_mask_o <= '1';            else trg_match_resp_mask_o <= '0'; end if;
 
         -- syncronize orbc from cru to detector with first trigger
         if orbc_sync_mode = mode_STR and cru_is_trg then
@@ -130,8 +146,8 @@ begin
 
         -- CRU readout mode
         if (not is_cru_run) then cru_readout_mode <= mode_IDLE;
-        elsif is_cru_cnt then cru_readout_mode    <= mode_CNT;
-        else cru_readout_mode                     <= mode_TRG; end if;
+        elsif is_cru_cnt then cru_readout_mode                      <= mode_CNT;
+        else cru_readout_mode                                       <= mode_TRG; end if;
 
         -- XOR FSM
         if run_not_permit then readout_mode                                                  <= mode_IDLE;
@@ -141,7 +157,7 @@ begin
         elsif (readout_mode = mode_TRG) and is_EOT then readout_mode                         <= mode_IDLE;
         elsif (readout_mode = mode_IDLE) and cru_readout_mode /= mode_IDLE then readout_mode <= cru_readout_mode;
         end if;
-		
+
 
         -- evid corrected
         if (sync_bc_int + bc_delay_int) <= bc_max_int then

@@ -48,6 +48,9 @@ architecture Behavioral of bc_indicator is
   attribute mark_debug of bc_count  : signal is "true";
   attribute mark_debug of count_tot : signal is "true";
   attribute mark_debug of count_sel : signal is "true";
+  attribute mark_debug of bc_out : signal is "true";
+  attribute mark_debug of bc_rate : signal is "true";
+
 
 begin
 

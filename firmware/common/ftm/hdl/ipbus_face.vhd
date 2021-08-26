@@ -103,6 +103,7 @@ architecture Behavioral of ipbus_face is
   attribute MARK_DEBUG of ipbus_addr_int         : signal is "true";
   attribute MARK_DEBUG of stat_reg_ipbclk        : signal is "true";
   attribute MARK_DEBUG of ctrl_reg               : signal is "true";
+  attribute MARK_DEBUG of ipbus_base_addr_int    : signal is "true";
 
 
 begin
@@ -225,7 +226,6 @@ begin
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
       readout_control   <= func_CNTRREG_getcntrreg(ctrl_reg);
-      --readout_control <= test_CONTROL_REG;
       -- extra latch for ila
       readout_status_ff <= readout_status;
       stat_reg          <= func_STATREG_getaddrreg(readout_status_ff);
@@ -259,8 +259,7 @@ begin
 
   end process;
 -- ***************************************************
-  ipbus_ack <= '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int < ctrl_reg_size) else  -- reading control
-               '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int >= ipbusrd_stat_addr_offset) and (ipbus_addr_int < ipbusrd_stat_addr_offset + stat_reg_size) else  -- reading status
+  ipbus_ack <= '1' when (IPBUS_isrd_I = '1') and (ipbus_addr_int < ipbusrd_stat_addr_offset + stat_reg_size) else  -- reading
                '1' when (IPBUS_iswr_I = '1') and (ipbus_addr_int < ctrl_reg_size) else  -- writing
                '0';
 

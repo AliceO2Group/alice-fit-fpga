@@ -54,6 +54,10 @@ package fit_gbt_common_package is
   constant TRG_const_FErst : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00001000";  -- FEE reset
   constant TRG_const_RT    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00002000";  -- Run Type; 1=Cont, 0=Trig
   constant TRG_const_RS    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00004000";  --Running State; 1=Running
+  
+  -- trigger mask for selector FIFO
+  constant TRG_fifo_mask  : std_logic_vector(Trigger_bitdepth-1 downto 0) := TRG_const_Orbit + TRG_const_HB + TRG_const_HBr + TRG_const_Ph + TRG_const_Cal + 
+                                                                             TRG_const_SOT + TRG_const_EOT + TRG_const_SOC + TRG_const_EOC + TRG_const_TF;
 
   constant LHC_BCID_max : std_logic_vector(BC_id_bitdepth-1 downto 0) := x"deb";
 -- -------------------------------------------------------------
@@ -73,8 +77,8 @@ package fit_gbt_common_package is
   constant ctrl_reg_size : integer := 13;
   type ctrl_reg_t is array (0 to ctrl_reg_size-1) of std_logic_vector(31 downto 0);
 
-  type gen_mode_t is (use_NO_generator, use_MAIN_generator, use_TX_generator);
-  type trggen_mode_t is (use_NO_generator, use_CONT_generator, use_TX_generator);
+  type gen_mode_t is (gen_off, data_gen_on, gen_tx_out);
+  type trggen_mode_t is (gen_off, ltu_emu_on, gen_tx_out);
   type rdcmd_t is (idle, continious, trigger);
 
   type ctrl_gen_t is record
@@ -127,7 +131,7 @@ package fit_gbt_common_package is
   constant test_CONTROL_REG : readout_control_t :=
     (
       Data_Gen            => (
-        usage_generator   => use_NO_generator,
+        usage_generator   => gen_off,
         trigger_resp_mask => TRG_const_void,
         bunch_pattern     => x"00000000",
         bunch_freq        => x"0000",
@@ -135,7 +139,7 @@ package fit_gbt_common_package is
         ),
 
       Trigger_Gen          => (
-        usage_generator    => use_NO_generator,
+        usage_generator    => gen_off,
         Readout_command    => idle,
         trigger_pattern    => x"0000000000000000",
         trigger_cont_value => TRG_const_void,
@@ -337,23 +341,23 @@ package body fit_gbt_common_package is
   begin
 
     if(cntrl_reg_addrreg(0)(3 downto 0) = x"0") then
-      cntr_reg.Data_Gen.usage_generator := use_NO_generator;
+      cntr_reg.Data_Gen.usage_generator := gen_off;
     elsif(cntrl_reg_addrreg(0)(3 downto 0) = x"1") then
-      cntr_reg.Data_Gen.usage_generator := use_MAIN_generator;
+      cntr_reg.Data_Gen.usage_generator := data_gen_on;
     elsif(cntrl_reg_addrreg(0)(3 downto 0) = x"2") then
-      cntr_reg.Data_Gen.usage_generator := use_TX_generator;
+      cntr_reg.Data_Gen.usage_generator := gen_tx_out;
     else
-      cntr_reg.Data_Gen.usage_generator := use_NO_generator;
+      cntr_reg.Data_Gen.usage_generator := gen_off;
     end if;
 
     if(cntrl_reg_addrreg(0)(7 downto 4) = x"0") then
-      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
+      cntr_reg.Trigger_Gen.usage_generator := gen_off;
     elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"1") then
-      cntr_reg.Trigger_Gen.usage_generator := use_CONT_generator;
+      cntr_reg.Trigger_Gen.usage_generator := ltu_emu_on;
     elsif(cntrl_reg_addrreg(0)(7 downto 4) = x"2") then
-      cntr_reg.Trigger_Gen.usage_generator := use_TX_generator;
+      cntr_reg.Trigger_Gen.usage_generator := gen_tx_out;
     else
-      cntr_reg.Trigger_Gen.usage_generator := use_NO_generator;
+      cntr_reg.Trigger_Gen.usage_generator := gen_off;
     end if;
 
     cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);

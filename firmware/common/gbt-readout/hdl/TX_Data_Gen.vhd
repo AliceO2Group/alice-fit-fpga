@@ -54,11 +54,11 @@ architecture Behavioral of TX_Data_Gen is
 
 begin
 
-  TX_Data_O <= TX_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
+  TX_Data_O <= TX_generation when (Control_register_I.Data_Gen.usage_generator = gen_tx_out) else
                TX_Data_I;
 
   TX_IsData_O <= tx_isdata;
-  tx_isdata   <= TX_IsData_generation when (Control_register_I.Data_Gen.usage_generator = use_TX_generator) else
+  tx_isdata   <= TX_IsData_generation when (Control_register_I.Data_Gen.usage_generator = gen_tx_out) else
                  TX_IsData_I;
 				 
   gbt_data_counter_o <= gbt_data_counter;
@@ -106,7 +106,7 @@ begin
 
 
   cont_counter_ff_next <= (others => '0') when (FSM_Clocks_I.Reset_dclk = '1') else
-                          (others => '0') when (Control_register_I.Data_Gen.usage_generator /= use_TX_generator) else
+                          (others => '0') when (Control_register_I.Data_Gen.usage_generator /= gen_tx_out) else
                           cont_counter_ff when (gen_counter_ff < count_val_void) else
                           cont_counter_ff when (gen_counter_ff = count_val_void) else
                           cont_counter_ff when (gen_counter_ff = count_val_data+1) else

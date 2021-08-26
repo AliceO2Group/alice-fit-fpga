@@ -135,8 +135,8 @@ begin
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
-  Data_from_FITrd_O         <= TX_Data_from_txgen   when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_Data_from_orbcgen;
-  IsData_from_FITrd_O       <= TX_IsData_from_txgen when (Control_register_I.Trigger_Gen.usage_generator /= use_TX_generator) else RX_IsData_from_orbcgen;
+  Data_from_FITrd_O         <= TX_Data_from_txgen   when (Control_register_I.Trigger_Gen.usage_generator /= gen_tx_out) else RX_Data_from_orbcgen;
+  IsData_from_FITrd_O       <= TX_IsData_from_txgen when (Control_register_I.Trigger_Gen.usage_generator /= gen_tx_out) else RX_IsData_from_orbcgen;
   RxData_rxclk_from_GBT_O   <= RX_Data_rxclk_from_GBT;
   IsRxData_rxclk_from_GBT_O <= RX_IsData_rxclk_from_GBT;
 
