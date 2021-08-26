@@ -59,11 +59,15 @@ architecture Behavioral of DataConverter is
       data_word => (others => '0')
       );
 
+  signal board_data                                           : board_data_type;
   signal header_pcklen, header_pcklen_ff, header_pcklen_latch : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
   signal header_orbit                                         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal header_bc                                            : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
+
+  signal data_bcid : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  signal data_bcen : std_logic;
 
   signal readout_bypass                                    : boolean;
   signal send_mode_ison, send_mode_ison_sclk, start_of_run : boolean;
@@ -113,8 +117,8 @@ begin
 
   raw_data_o   <= tcm_data_fifo_dout;
   raw_isdata_o <= not tcm_data_fifo_empty;
-  data_bcid_o  <= header_bc;
-  data_bcen_o  <= '1' when tcm_data_fifo_dout(79 downto 76) = x"f" else '0';
+
+
 
 
 -- tcm_data_160to80bit_fifo =============================================
@@ -122,9 +126,9 @@ begin
     port map(
       clk           => FSM_Clocks_I.System_Clk,
       srst          => FSM_Clocks_I.Reset_sclk,
-      WR_EN         => Board_data_I.is_data,
+      WR_EN         => board_data.is_data,
       RD_EN         => not tcm_data_fifo_empty,
-      DIN           => Board_data_I.data_word,
+      DIN           => board_data.data_word,
       DOUT          => tcm_data_fifo_dout,
       FULL          => tcm_data_fifo_full,
       EMPTY         => tcm_data_fifo_empty,
@@ -184,6 +188,7 @@ begin
   begin
     if(rising_edge(FSM_Clocks_I.System_Clk)) then
 
+      board_data          <= Board_data_I;
       reset_drop_counters <= Control_register_I.reset_data_counters;
       start_of_run        <= Status_register_I.Start_run = '1';
       readout_bypass      <= Control_register_I.readout_bypass = '1';
@@ -205,6 +210,19 @@ begin
         errors          <= (others => '0');
 
       else
+
+        -- bcid output for BC indicator
+        data_bcid <= header_bc;
+        if tcm_data_fifo_dout(79 downto 76) = x"f" then data_bcen <= '1'; else data_bcen <= '0'; end if;
+        -- is muted for laser data
+        if tcm_data_fifo_dout(5) = '0' and data_bcen = '1' then
+          data_bcen_o <= data_bcen;
+          data_bcid_o <= data_bcid;
+		else
+		  data_bcen_o <= '0';
+          data_bcid_o <= (others => '0');
+        end if;
+
 
         if is_header = '1' then
 

@@ -30,9 +30,9 @@ entity Module_Data_Gen is
     Status_register_I  : in readout_status_t;
     Control_register_I : in readout_control_t;
 
-    Board_data_I      : in  board_data_type;
-    Board_data_O      : out board_data_type;
-    datagen_report_o    : out datagen_report_t
+    Board_data_I     : in  board_data_type;
+    Board_data_O     : out board_data_type;
+    datagen_report_o : out datagen_report_t
     );
 end Module_Data_Gen;
 
@@ -60,7 +60,7 @@ architecture Behavioral of Module_Data_Gen is
   signal word_counter                                                         : natural range 0 to 16;
   signal cnt_packet_counter                                                   : std_logic_vector(data_word_bitdepth/2-1 downto 0);  -- continious packet counter
   signal Board_data_header, Board_data_data, Board_data_void, data_gen_result : board_data_type;
-  signal datagen_report    : datagen_report_t;
+  signal datagen_report                                                       : datagen_report_t;
 
 
   -- simulating data delay in PM/TCM FEE logic to check start data rejection in selector
@@ -70,7 +70,7 @@ architecture Behavioral of Module_Data_Gen is
 
 begin
 
-  Board_data_O      <= Board_data_gen_pipe(15)   when using_generator_sc              else Board_data_I;
+  Board_data_O <= Board_data_gen_pipe(15) when using_generator_sc else Board_data_I;
 
   gen_sync_reset <= Control_register_I.reset_gensync = '1';
   bunch_freq     <= to_integer(unsigned(Control_register_I.Data_Gen.bunch_freq));
@@ -160,27 +160,27 @@ begin
         using_generator_sc  <= false;
         gen_sync_reset_sc   <= gen_sync_reset;
         cnt_packet_counter  <= (others => '0');
-        
-        datagen_report.orbit <= (others => '0');
-		  datagen_report.bc <= (others => '0');
-		  datagen_report.size <= (others => '0');
-		  datagen_report.packet_num <= (others => '0');
+
+        datagen_report.orbit      <= (others => '0');
+        datagen_report.bc         <= (others => '0');
+        datagen_report.size       <= (others => '0');
+        datagen_report.packet_num <= (others => '0');
 
 
       else
 
         -- for TCM n gbt words is 2n+1, max pattern size is 7
         if packet_size_select < 7 then packet_size_select_sc <= packet_size_select; else packet_size_select_sc <= 7; end if;
-        using_generator_sc    <= Control_register_I.Data_Gen.usage_generator = use_MAIN_generator;
+        using_generator_sc                                   <= Control_register_I.Data_Gen.usage_generator = data_gen_on;
 
         Board_data_gen_pipe(0)       <= data_gen_result;
         Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
-		
-		        datagen_report.orbit <= (others => '0');
-		  datagen_report.bc <= (others => '0');
-		  datagen_report.size <= (others => '0');
-		  datagen_report.packet_num <= (others => '0');
-if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report; end if;
+
+        datagen_report.orbit                                          <= (others => '0');
+        datagen_report.bc                                             <= (others => '0');
+        datagen_report.size                                           <= (others => '0');
+        datagen_report.packet_num                                     <= (others => '0');
+        if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report; end if;
 
         -- start event
         if (FSM_Clocks_I.System_Counter = x"1") and (word_counter = 16 or word_counter = event_size) and (packet_size_select_sc > 0) then
@@ -191,12 +191,12 @@ if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report;
           event_rx_ph_err    <= Status_register_I.GBT_status.Rx_Phase_error;
           word_counter       <= 0;
           cnt_packet_counter <= cnt_packet_counter + 1;
-		  
-		  datagen_report.orbit <= event_orbit;
-		  datagen_report.bc <= event_bc;
-		  datagen_report.size <= std_logic_vector(to_unsigned(packet_size_select_sc*2+1, n_pckt_wrds_bitdepth));
-		  datagen_report.packet_num <= cnt_packet_counter(35 downto 0) + 1;
-		  
+
+          datagen_report.orbit      <= event_orbit;
+          datagen_report.bc         <= event_bc;
+          datagen_report.size       <= std_logic_vector(to_unsigned(packet_size_select_sc*2+1, n_pckt_wrds_bitdepth));
+          datagen_report.packet_num <= cnt_packet_counter(35 downto 0) + 1;
+
         -- not sending
         elsif word_counter = 16 then word_counter         <= 16;
         -- stop event

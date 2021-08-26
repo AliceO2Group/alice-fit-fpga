@@ -48,19 +48,19 @@ architecture Behavioral of RXDATA_CLKSync is
 
 --  -- data ff by data clk
   signal CLK_PH_counter_stop                                       : std_logic_vector (2 downto 0) := "000";
-  signal CLK_PH_counter_dc, CLK_PH_counter_dcp, CLK_PH_counter_dcm : std_logic_vector(2 downto 0) := "000";
+  signal CLK_PH_counter_dc, CLK_PH_counter_dcp, CLK_PH_counter_dcm : std_logic_vector(2 downto 0)  := "000";
 
 
-  signal is_phase_changed                   : std_logic;
-  signal reset_ph_chng, rx_clk_tg, c_locked : std_logic;
-  signal rx_error_reset, rx_error_reset_sclk: std_logic;
+  signal is_phase_changed                            : std_logic;
+  signal reset_ph_chng, rx_clk_tg, c_locked          : std_logic;
+  signal rx_error_reset                              : std_logic;
+  signal rx_error_reset_sclk, rx_error_reset_sclk_ff : boolean;
 
-
-  attribute keep : string;        
+  attribute keep                       : string;
   attribute keep of RX_IS_DATA_DATACLK : signal is "true";
-  attribute keep of RX_DATA_DATACLK : signal is "true";
-  attribute keep of RX_CLK_from00 : signal is "true";
-  attribute keep of RX_CLK_from01 : signal is "true";
+  attribute keep of RX_DATA_DATACLK    : signal is "true";
+  attribute keep of RX_CLK_from00      : signal is "true";
+  attribute keep of RX_CLK_from01      : signal is "true";
 
 begin
 
@@ -83,8 +83,8 @@ begin
       RX_DATA_DATACLK_O    <= RX_DATA_DATACLK;
       RX_IS_DATA_DATACLK_O <= RX_IS_DATA_DATACLK;
       CLK_PH_CNT_O         <= CLK_PH_counter_stop;
-	  
-	  rx_error_reset <= Control_register_I.force_idle or Control_register_I.reset_rxph_error;
+
+      rx_error_reset <= Control_register_I.force_idle or Control_register_I.reset_rxph_error;
     end if;
   end process;
 -- ***************************************************
@@ -93,23 +93,40 @@ begin
   process (FSM_Clocks_I.System_Clk)
   begin
     if(FSM_Clocks_I.System_Clk'event and FSM_Clocks_I.System_Clk = '1') then
-      RX_CLK_from00 <= rx_clk_tg; RX_CLK_from01 <= RX_CLK_from00; RX_CLK_from02 <= RX_CLK_from01;
-	  rx_error_reset_sclk <= rx_error_reset;
+      RX_CLK_from00          <= rx_clk_tg; RX_CLK_from01 <= RX_CLK_from00; RX_CLK_from02 <= RX_CLK_from01;
+      rx_error_reset_sclk    <= rx_error_reset = '1';
+      rx_error_reset_sclk_ff <= rx_error_reset_sclk;
 
-      if ((rx_error_reset_sclk or FSM_Clocks_I.Reset_sclk) = '1') then is_phase_changed <= '0'; c_locked <= '0';
+      if (FSM_Clocks_I.Reset_sclk = '1') or (not rx_error_reset_sclk and rx_error_reset_sclk_ff) then
+
+        is_phase_changed <= '0';
+        c_locked         <= '0';
+
       else
+
         if (RX_CLK_from01 /= RX_CLK_from02) then
-          CLK_PH_counter_stop                        <= FSM_Clocks_I.System_Counter(2 downto 0);
-          if (c_locked = '0') then CLK_PH_counter_dc <= FSM_Clocks_I.System_Counter(2 downto 0); c_locked <= '1';
+          CLK_PH_counter_stop <= FSM_Clocks_I.System_Counter(2 downto 0);
+
+          if (c_locked = '0') then
+            CLK_PH_counter_dc <= FSM_Clocks_I.System_Counter(2 downto 0);
+            c_locked          <= '1';
           else
-            if (CLK_PH_counter_stop /= CLK_PH_counter_dc) and (CLK_PH_counter_stop /= CLK_PH_counter_dcm) and (CLK_PH_counter_stop /= CLK_PH_counter_dcp) then is_phase_changed <= '1'; end if;
+
+            if rx_error_reset_sclk_ff then
+              is_phase_changed <= '0';
+            elsif (CLK_PH_counter_stop /= CLK_PH_counter_dc) and (CLK_PH_counter_stop /= CLK_PH_counter_dcm) and (CLK_PH_counter_stop /= CLK_PH_counter_dcp) then
+              is_phase_changed <= '1';
+            end if;
+
           end if;
+
         end if;
 
         if (FSM_Clocks_I.System_Counter(2 downto 0) = CLK_PH_counter_dcp) then
           RX_IS_DATA_DATACLK <= RX_IS_DATA_RXCLK_I;
           RX_DATA_DATACLK    <= RX_DATA_RXCLK_I;
         end if;
+
 
       end if;
     end if;
