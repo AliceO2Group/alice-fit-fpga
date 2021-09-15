@@ -69,10 +69,10 @@ architecture Behavioral of DataConverter is
   signal data_bcid : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal data_bcen : std_logic;
 
-  signal readout_bypass                                    : boolean;
-  signal send_mode_ison, send_mode_ison_sclk, start_of_run : boolean;
-  signal reset_drop_counters                               : std_logic;
-  signal drop_counter                                      : std_logic_vector(15 downto 0);
+  signal readout_bypass                                : boolean;
+  signal data_enabled, data_enabled_sclk, start_of_run : boolean;
+  signal reset_drop_counters                           : std_logic;
+  signal drop_counter                                  : std_logic_vector(15 downto 0);
 
   signal data_rawfifo_cnt, rawfifo_cnt_max                    : std_logic_vector(12 downto 0);
   signal header_rawfifo_full, data_rawfifo_full, rawfifo_full : std_logic;
@@ -175,7 +175,7 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-      send_mode_ison <= ((Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1')) and (Status_register_I.BCIDsync_Mode = mode_SYNC);
+      data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= errors;
@@ -199,7 +199,7 @@ begin
       if tcm_data_fifo_dout(79 downto 76) = x"f" then is_header <= '1'; else is_header <= '0'; end if;
       header_pcklen_ff                                          <= header_pcklen;
 
-      send_mode_ison_sclk <= send_mode_ison;
+      data_enabled_sclk <= data_enabled;
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
@@ -212,14 +212,14 @@ begin
       else
 
         -- bcid output for BC indicator
-        data_bcid <= header_bc;
+        data_bcid                                                 <= header_bc;
         if tcm_data_fifo_dout(79 downto 76) = x"f" then data_bcen <= '1'; else data_bcen <= '0'; end if;
         -- is muted for laser data
         if tcm_data_fifo_dout(5) = '0' and data_bcen = '1' then
           data_bcen_o <= data_bcen;
           data_bcid_o <= data_bcid;
-		else
-		  data_bcen_o <= '0';
+        else
+          data_bcen_o <= '0';
           data_bcid_o <= (others => '0');
         end if;
 
@@ -230,9 +230,9 @@ begin
           header_pcklen_latch <= header_pcklen_ff;
           word_counter        <= (others => '0');
 
-          sending_event <= (rawfifo_full = '0') and send_mode_ison_sclk;
+          sending_event <= (rawfifo_full = '0') and data_enabled_sclk;
 
-          if (rawfifo_full = '1') and send_mode_ison_sclk and drop_counter < x"ffff" then
+          if (rawfifo_full = '1') and data_enabled_sclk and drop_counter < x"ffff" then
             drop_counter <= drop_counter + 1;
           end if;
 
@@ -251,8 +251,8 @@ begin
           rawfifo_cnt_max <= (others => '0');
         end if;
 
-        if start_of_run then errors(1 downto 0)                            <= (not header_fifo_empty) & (not data_fifo_empty); end if;
-        if tcm_data_fifo_full = '1' and send_mode_ison_sclk then errors(2) <= '1'; end if;
+        if start_of_run then errors(1 downto 0)                          <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+        if tcm_data_fifo_full = '1' and data_enabled_sclk then errors(2) <= '1'; end if;
 
 
       end if;
@@ -271,7 +271,7 @@ begin
                   '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
   -- all data sent in run
-  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not send_mode_ison_sclk;
+  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
 
 end Behavioral;
 

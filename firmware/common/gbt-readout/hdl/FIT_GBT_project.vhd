@@ -196,7 +196,8 @@ begin
       CRU_Readout_Mode_O => FIT_GBT_STATUS.CRU_Readout_Mode,
       Start_run_O        => FIT_GBT_STATUS.Start_run,
       Stop_run_O         => FIT_GBT_STATUS.Stop_run,
-      BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode
+      BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode,
+	  Data_enable_o      => FIT_GBT_STATUS.data_enable
       );
 -- =============================================================
 
@@ -315,6 +316,7 @@ begin
       slct_fifo_cnt_o     => open,
       slct_fifo_cnt_max_o => FIT_GBT_STATUS.sel_fifo_max,
       packets_dropped_o   => FIT_GBT_STATUS.sel_drop_cnt,
+	  event_counter_o     => FIT_GBT_STATUS.event_counter,
       errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1)
       );
 -- ===========================================================

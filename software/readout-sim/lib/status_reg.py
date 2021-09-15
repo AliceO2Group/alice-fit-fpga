@@ -39,6 +39,9 @@ class status_reg:
         self.data_gen_bc = 0x0
         self.data_gen_size = 0x0
         self.data_gen_packnum = 0
+        self.data_enabled = 0
+        self.gbt_counter = 0
+        self.event_counter = 0
 
         self.fsm_error_msg = {1 << 0: '[RDH builder] reading empty fifo',
                               1 << 1: '[Selector] slct fifo is not empty',
@@ -72,6 +75,10 @@ class status_reg:
         print("    data_gen_orbit: ", hex(self.data_gen_orbit))
         print("    data_gen_bc: ", hex(self.data_gen_bc))
         print("    data_gen_size: ", hex(self.data_gen_size))
+        print("    data_enabled: ", hex(self.data_enabled))
+
+        print("    gbt_counter: ", hex(self.gbt_counter))
+        print("    event_counter: ", hex(self.event_counter))
 
     def get_fsm_err_msg(self):
         res = ""
@@ -85,21 +92,21 @@ class status_reg:
         self.readout_mode = readout_cmd(int(line_regs[0][-5: -4], base=16))
         self.cru_readout_mode = readout_cmd(int(line_regs[0][-8: -7], base=16))
         self.bcid_sync = bcid_smode(int(line_regs[0][-6: -5], base=16))
-
+        self.cru_orbit = int(line_regs[1][-8:], base=16)
+        self.cru_bc = int(line_regs[2][-3:], base=16)
         self.fsm_errors = int(line_regs[2][-8: -4], base=16)
         self.cnv_drop_cnt = int(line_regs[3][-4:], base=16)
         self.cnv_fifo_max = int(line_regs[3][-8: -4], base=16)
         self.sel_drop_cnt = int(line_regs[4][-4:], base=16)
         self.sel_fifo_max = int(line_regs[4][-8: -4], base=16)
+        self.gbt_counter = int(line_regs[5][-8:], base=16)
+        self.event_counter = int(line_regs[9][-8:], base=16)
 
-        self.cru_orbit = int(line_regs[1][-8:], base=16)
-        self.cru_bc = int(line_regs[2][-3:], base=16)
-
-        self.cru_orbit_corr = int(line_regs[9][-8:], base=16)
-        self.cru_bc_corr = int(line_regs[10][-3:], base=16)
-        self.cru_trigger = int(line_regs[11][-3:], base=16)
-
-        self.data_gen_orbit = int(line_regs[12][-8:], base=16)
-        self.data_gen_bc = int(line_regs[13][-3:], base=16)
-        self.data_gen_size = int(line_regs[13][-5:-4], base=16)
-        self.data_gen_packnum = int(line_regs[14][-8:], base=16)
+        self.cru_orbit_corr = int(line_regs[10][-8:], base=16)
+        self.cru_bc_corr = int(line_regs[11][-3:], base=16)
+        self.cru_trigger = int(line_regs[12][-3:], base=16)
+        self.data_gen_orbit = int(line_regs[13][-8:], base=16)
+        self.data_gen_bc = int(line_regs[14][-3:], base=16)
+        self.data_gen_size = int(line_regs[14][-5:-4], base=16)
+        self.data_enabled = int(line_regs[14][-7:-6], base=16)
+        self.data_gen_packnum = int(line_regs[15][-8:], base=16)

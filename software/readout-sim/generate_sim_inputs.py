@@ -17,7 +17,7 @@ from lib.run_generator import run_generator as run_generator
 
 
 def generate_sim_inputs():
-    run_len = 5
+    run_len = 10
 
     # class instances
     test_ctrl_reg = ctrl_rec()
@@ -113,6 +113,58 @@ def generate_sim_inputs():
 
     # RENERATING RUN ========================================
     run_gen.run_comment = """
+        - RUN with force idle
+        
+        - HB could be missed
+        - One excess stop bit should be found
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0x100
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    test_ctrl_reg.data_bunch_freq = cnst.orbit_size/2
+    test_ctrl_reg.data_bc_start = 0x100
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size/2
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+
+    test_ctrl_reg_force_idle = copy.copy(test_ctrl_reg)
+    test_ctrl_reg_force_idle.force_idle = 1
+
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(run_len, test_ctrl_reg_force_idle)
+    run_list.append(copy.copy(run_gen))
+    # =======================================================
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - Very high trg and data rate
+        - max bc offset
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0xd00
+    test_ctrl_reg.data_trg_respond_mask = 0
+    test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    test_ctrl_reg.data_bunch_freq = 16
+    test_ctrl_reg.data_bc_start = 0x65
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = 65
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    test_ctrl_reg.is_hb_reject = 0
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(20)
+    run_list.append(copy.copy(run_gen))
+    test_ctrl_reg.is_hb_reject = 0
+    # =======================================================
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
         - CONTINIOUS RUN
         - HB reject
         - DATA GEN TEST
@@ -163,7 +215,7 @@ def generate_sim_inputs():
     test_ctrl_reg.trg_bc_start = 0x600
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(3)
+    run_gen.generate_ctrl_pattern(5)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 

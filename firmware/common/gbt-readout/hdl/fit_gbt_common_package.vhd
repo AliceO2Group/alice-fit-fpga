@@ -55,10 +55,6 @@ package fit_gbt_common_package is
   constant TRG_const_RT    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00002000";  -- Run Type; 1=Cont, 0=Trig
   constant TRG_const_RS    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00004000";  --Running State; 1=Running
   
-  -- trigger mask for selector FIFO
-  constant TRG_fifo_mask  : std_logic_vector(Trigger_bitdepth-1 downto 0) := TRG_const_Orbit + TRG_const_HB + TRG_const_HBr + TRG_const_Ph + TRG_const_Cal + 
-                                                                             TRG_const_SOT + TRG_const_EOT + TRG_const_SOC + TRG_const_EOC + TRG_const_TF;
-
   constant LHC_BCID_max : std_logic_vector(BC_id_bitdepth-1 downto 0) := x"deb";
 -- -------------------------------------------------------------
 
@@ -173,7 +169,7 @@ package fit_gbt_common_package is
 -- =============================================================
 
 -- ===== FIT GBT STATUS ========================================
-  constant stat_reg_size            : integer := 9;
+  constant stat_reg_size            : integer := 10;
   constant stat_reg_size_sim        : integer := stat_reg_size+6;
   constant ipbusrd_stat_addr_offset : integer := 16;
   constant ipbusrd_fifo_out_addr    : integer := 8;
@@ -219,6 +215,7 @@ package fit_gbt_common_package is
     BCIDsync_Mode    : bcid_sync_t;
     Start_run        : std_logic;
     Stop_run         : std_logic;
+    data_enable      : std_logic;
 
     Trigger_from_CRU         : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- Trigger ID from CRUS
     BCID_from_CRU            : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
@@ -231,6 +228,7 @@ package fit_gbt_common_package is
     cnv_drop_cnt : std_logic_vector(15 downto 0);
     sel_fifo_max : std_logic_vector(15 downto 0);
     sel_drop_cnt : std_logic_vector(15 downto 0);
+	event_counter: std_logic_vector(31 downto 0);
     gbt_data_cnt : std_logic_vector(31 downto 0);
 
     bcind_evt : bc_indicator_t;
@@ -476,7 +474,7 @@ package body fit_gbt_common_package is
     status_reg_addrreg(6)                     := status_reg.bcind_trg.count & status_reg.bcind_trg.bc & status_reg.bcind_evt.count & status_reg.bcind_evt.bc;
     status_reg_addrreg(7)                     := status_reg.ipbusrd_fifo_cnt & x"0000";
     status_reg_addrreg(ipbusrd_fifo_out_addr) := status_reg.ipbusrd_fifo_out;  --8
-
+    status_reg_addrreg(9)                     := status_reg.event_counter;
 
     return status_reg_addrreg;
   end function;
@@ -491,12 +489,12 @@ package body fit_gbt_common_package is
       status_reg_addrreg_sim(i) := status_reg_addrreg(i);
     end loop;
 
-    status_reg_addrreg_sim(9)  := status_reg.ORBIT_from_CRU_corrected;
-    status_reg_addrreg_sim(10) := x"00000" & status_reg.BCID_from_CRU_corrected;
-    status_reg_addrreg_sim(11) := status_reg.Trigger_from_CRU;
-    status_reg_addrreg_sim(12) := status_reg.datagen_report.orbit;
-    status_reg_addrreg_sim(13) := x"00" & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
-    status_reg_addrreg_sim(14) := status_reg.datagen_report.packet_num(31 downto 0);
+    status_reg_addrreg_sim(stat_reg_size)  := status_reg.ORBIT_from_CRU_corrected;
+    status_reg_addrreg_sim(stat_reg_size+1) := x"00000" & status_reg.BCID_from_CRU_corrected;
+    status_reg_addrreg_sim(stat_reg_size+2) := status_reg.Trigger_from_CRU;
+    status_reg_addrreg_sim(stat_reg_size+3) := status_reg.datagen_report.orbit;
+    status_reg_addrreg_sim(stat_reg_size+4) := x"0" & "000"&status_reg.data_enable & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;
+    status_reg_addrreg_sim(stat_reg_size+5) := status_reg.datagen_report.packet_num(31 downto 0);
     --packet_num
     return status_reg_addrreg_sim;
   end function;

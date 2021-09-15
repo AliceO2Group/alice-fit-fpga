@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
 		if (pmtcm_map[pmtcm_iter][2] == 0) continue;
 		
 		uint32_t curr_ctrl_addr = ctrl_addr + pmtcm_map[pmtcm_iter][1];
+		uint32_t curr_thrs_cal_addr = trhr_calib_ch0 + pmtcm_map[pmtcm_iter][1];
+		
 		bool is_tcm = (pmtcm_iter == 0);
 		int res = 0;
 		uint8_t reg_size = 16;
@@ -58,6 +60,13 @@ int main(int argc, char *argv[]) {
 		printf(" reset ");
 		ctrl_reg[0] = 0x00100000; // release reset
 		res = slow_control.write_registers(ctrl_reg, reg_size, curr_ctrl_addr);
+		
+		//threshold calibration
+		if(not is_tcm){
+			ctrl_reg[0] = pmtcm_map[pmtcm_iter][4];
+			reg_size = 1;
+			res = slow_control.write_registers(ctrl_reg, reg_size, curr_thrs_cal_addr);
+		}
 		
 		printf(" done\n");
 

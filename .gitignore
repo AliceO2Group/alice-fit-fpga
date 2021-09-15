@@ -18,3 +18,4 @@ venv
 #notepad++ backup
 nppBackup
 *.run
+*.pyc
