@@ -64,10 +64,10 @@ architecture Behavioral of DataConverter is
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
 
-  signal readout_bypass                                    : boolean;
-  signal send_mode_ison, send_mode_ison_sclk, start_of_run : boolean;
-  signal reset_drop_counters                               : std_logic;
-  signal drop_counter                                      : std_logic_vector(15 downto 0);
+  signal readout_bypass                                : boolean;
+  signal data_enabled, data_enabled_sclk, start_of_run : boolean;
+  signal reset_drop_counters                           : std_logic;
+  signal drop_counter                                  : std_logic_vector(15 downto 0);
 
   signal data_rawfifo_cnt, rawfifo_cnt_max                    : std_logic_vector(12 downto 0);
   signal header_rawfifo_full, data_rawfifo_full, rawfifo_full : std_logic;
@@ -82,22 +82,36 @@ architecture Behavioral of DataConverter is
 
   signal errors : std_logic_vector(1 downto 0);
 
+  signal header_fifo_data : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal data_fifo_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal header_fifo_rden : std_logic;
+  signal data_fifo_rden   : std_logic;
 
-  attribute mark_debug : string;
---  attribute mark_debug of reset_drop_counters : signal is "true";
---  attribute mark_debug of header_fifo_din     : signal is "true";
---  attribute mark_debug of data_fifo_din       : signal is "true";
---  attribute mark_debug of header_fifo_we      : signal is "true";
---  attribute mark_debug of data_fifo_we        : signal is "true";
---  attribute mark_debug of word_counter        : signal is "true";
---  attribute mark_debug of sending_event       : signal is "true";
---  attribute mark_debug of header_word         : signal is "true";
---  attribute mark_debug of data_word           : signal is "true";
---  attribute mark_debug of is_data             : signal is "true";
---  attribute mark_debug of is_header           : signal is "true";
---  attribute mark_debug of header_pcklen_ff    : signal is "true";
---  attribute mark_debug of header_word_latch   : signal is "true";
---  attribute mark_debug of header_pcklen_latch : signal is "true";
+
+
+  attribute mark_debug                        : string;
+  attribute mark_debug of reset_drop_counters : signal is "true";
+  attribute mark_debug of header_fifo_din     : signal is "true";
+  attribute mark_debug of data_fifo_din       : signal is "true";
+  attribute mark_debug of header_fifo_we      : signal is "true";
+  attribute mark_debug of data_fifo_we        : signal is "true";
+  attribute mark_debug of word_counter        : signal is "true";
+  attribute mark_debug of sending_event       : signal is "true";
+  attribute mark_debug of header_word         : signal is "true";
+  attribute mark_debug of data_word           : signal is "true";
+  attribute mark_debug of is_data             : signal is "true";
+  attribute mark_debug of is_header           : signal is "true";
+  attribute mark_debug of header_pcklen_ff    : signal is "true";
+  attribute mark_debug of header_word_latch   : signal is "true";
+  attribute mark_debug of header_pcklen_latch : signal is "true";
+  attribute mark_debug of header_fifo_empty   : signal is "true";
+  attribute mark_debug of data_fifo_empty     : signal is "true";
+  attribute mark_debug of header_rawfifo_full : signal is "true";
+  attribute mark_debug of data_rawfifo_full   : signal is "true";
+  attribute mark_debug of header_fifo_data    : signal is "true";
+  attribute mark_debug of data_fifo_data      : signal is "true";
+  attribute mark_debug of header_fifo_rden    : signal is "true";
+  attribute mark_debug of data_fifo_rden      : signal is "true";
 
 begin
 
@@ -112,6 +126,11 @@ begin
   data_bcid_o  <= header_bc;
   data_bcen_o  <= Board_data_I.is_header;
 
+  header_fifo_data_o <= header_fifo_data;
+  data_fifo_data_o   <= data_fifo_data;
+  header_fifo_rden   <= header_fifo_rden_i;
+  data_fifo_rden     <= data_fifo_rden_i;
+
 
 ---- Raw_header_fifo =============================================
   raw_header_fifo_comp : entity work.raw_data_fifo
@@ -119,9 +138,9 @@ begin
       clk        => FSM_Clocks_I.System_Clk,
       srst       => FSM_Clocks_I.Reset_sclk,
       WR_EN      => header_fifo_we,
-      RD_EN      => header_fifo_rden_i,
+      RD_EN      => header_fifo_rden,
       DIN        => header_fifo_din,
-      DOUT       => header_fifo_data_o,
+      DOUT       => header_fifo_data,
       data_count => open,
       prog_full  => header_rawfifo_full,
       FULL       => open,
@@ -136,9 +155,9 @@ begin
       clk        => FSM_Clocks_I.System_Clk,
       srst       => FSM_Clocks_I.Reset_sclk,
       WR_EN      => data_fifo_we,
-      RD_EN      => data_fifo_rden_i,
+      RD_EN      => data_fifo_rden,
       DIN        => data_fifo_din,
-      DOUT       => data_fifo_data_o,
+      DOUT       => data_fifo_data,
       data_count => data_rawfifo_cnt,
       prog_full  => data_rawfifo_full,
       FULL       => open,
@@ -151,7 +170,7 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-      send_mode_ison <= ((Status_register_I.Readout_Mode /= mode_IDLE) or (Control_register_I.readout_bypass = '1')) and (Status_register_I.BCIDsync_Mode = mode_SYNC);
+      data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= '0'&errors;
@@ -175,7 +194,7 @@ begin
       is_header        <= Board_data_I.is_header;
       header_pcklen_ff <= header_pcklen;
 
-      send_mode_ison_sclk <= send_mode_ison;
+      data_enabled_sclk <= data_enabled;
 
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
@@ -193,9 +212,9 @@ begin
           header_pcklen_latch <= header_pcklen_ff;
           word_counter        <= (others => '0');
 
-          sending_event <= (rawfifo_full = '0') and send_mode_ison_sclk;
+          sending_event <= (rawfifo_full = '0') and data_enabled_sclk;
 
-          if (rawfifo_full = '1') and send_mode_ison_sclk and drop_counter < x"ffff" then
+          if (rawfifo_full = '1') and data_enabled_sclk and drop_counter < x"ffff" then
             drop_counter <= drop_counter + 1;
           end if;
 
@@ -231,7 +250,7 @@ begin
                   '1' when is_data = '1' and is_header = '0' and sending_event else '0';
 
   -- all data sent in run
-  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not send_mode_ison_sclk;
+  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
 
 end Behavioral;
 

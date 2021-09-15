@@ -8,6 +8,7 @@ Dmitry Finogeev dmitry.finogeev@cern.ch
 07/2021
 
 '''
+import copy
 import lib.pylog as pylog
 
 from lib.control_reg import control_reg as ctrl_reg
@@ -40,8 +41,8 @@ class run_generator:
         file = open(self.filename_ctrlreg, 'w')
         file.close()
 
-    # generate pattern of control registers to start and stop run
-    def generate_ctrl_pattern(self, norbits=3):
+    # generate pattern of control registers to start and stop run, ctrl_intrusion used inside run
+    def generate_ctrl_pattern(self, norbits=3, ctrl_intrusion = 0):
         self.log.info("RENERATING %s RUN for %i orbits in file %s" % (self.ctrl_reg.trg_rd_command, norbits, self.filename_ctrlreg))
 
         # open file
@@ -77,6 +78,17 @@ class run_generator:
         self.ctrl_reg.trg_rd_command = run_type
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(norbits * orbit_size): file.write(reg_line)
+
+        # generate intrusion
+        if ctrl_intrusion != 0:
+            ctrl_reg_cp = copy.copy(self.ctrl_reg)
+            self.ctrl_reg = ctrl_intrusion
+            reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
+            for i in range(norbits * orbit_size): file.write(reg_line)
+
+            self.ctrl_reg = ctrl_reg_cp
+            reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
+            for i in range(norbits * orbit_size): file.write(reg_line)
 
         # generate void orbits after run to finish sending data
         self.ctrl_reg.trg_rd_command = readout_cmd.idle

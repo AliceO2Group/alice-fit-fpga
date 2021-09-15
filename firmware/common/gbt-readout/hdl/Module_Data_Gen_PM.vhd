@@ -131,7 +131,7 @@ begin
         event_orbit <= Status_register_I.ORBIT_from_CRU_corrected;
         event_bc    <= Status_register_I.BCID_from_CRU_corrected;
 
-
+        datagen_report_o <= datagen_report;
 
       end if;
 
@@ -169,12 +169,6 @@ begin
         Board_data_gen_pipe(0)       <= data_gen_result;
         Board_data_gen_pipe(1 to 15) <= Board_data_gen_pipe(0 to 14);
 
-        datagen_report.orbit                                          <= (others => '0');
-        datagen_report.bc                                             <= (others => '0');
-        datagen_report.size                                           <= (others => '0');
-        datagen_report.packet_num                                     <= (others => '0');
-        if (FSM_Clocks_I.System_Counter = x"2") then datagen_report_o <= datagen_report; end if;
-
         -- start event
         if (FSM_Clocks_I.System_Counter = x"1") and (word_counter = 16 or word_counter = event_size) and (packet_size_select_sc > 0) then
           event_size         <= packet_size_select_sc;
@@ -185,11 +179,6 @@ begin
           word_counter       <= 0;
           cnt_packet_counter <= cnt_packet_counter + 1;
 
-          datagen_report.orbit      <= event_orbit;
-          datagen_report.bc         <= event_bc;
-          datagen_report.size       <= std_logic_vector(to_unsigned(packet_size_select_sc, 8));
-          datagen_report.packet_num <= cnt_packet_counter + 1;
-
         -- not sending
         elsif word_counter = 16 then word_counter         <= 16;
         -- stop event
@@ -199,6 +188,20 @@ begin
 
         -- reset packet counter
         if gen_sync_reset_sc then cnt_packet_counter <= (others => '0'); end if;
+
+
+        -- datagenreport sync to output data. pipe(6) is the last 320 cycle before 40 cycle
+        if Board_data_gen_pipe(3).is_header = '1' then
+          datagen_report.orbit      <= func_FITDATAHD_orbit(Board_data_gen_pipe(3).data_word);
+          datagen_report.bc         <= func_FITDATAHD_bc(Board_data_gen_pipe(3).data_word);
+          datagen_report.size       <= func_FITDATAHD_ndwords(Board_data_gen_pipe(3).data_word);
+          datagen_report.packet_num <= Board_data_gen_pipe(2).data_word(35 downto 0);
+        else
+          datagen_report.orbit      <= (others => '0');
+          datagen_report.bc         <= (others => '0');
+          datagen_report.size       <= (others => '0');
+          datagen_report.packet_num <= (others => '0');
+        end if;
 
       end if;
     end if;

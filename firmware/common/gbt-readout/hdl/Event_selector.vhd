@@ -45,6 +45,7 @@ entity Event_selector is
     slct_fifo_cnt_o     : out std_logic_vector(15 downto 0);
     slct_fifo_cnt_max_o : out std_logic_vector(15 downto 0);
     packets_dropped_o   : out std_logic_vector(15 downto 0);
+    event_counter_o     : out std_logic_vector(31 downto 0);
 
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - slct_fifo is not empty when run starts
@@ -77,6 +78,8 @@ architecture Behavioral of Event_selector is
   signal slct_fifo_din, slct_fifo_din_ff  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
   signal drop_counter                     : std_logic_vector(15 downto 0);
+  signal event_counter, event_counter_ff  : std_logic_vector(31 downto 0);
+  signal event_counter_zero_counter       : std_logic_vector(31 downto 0);
 
   signal slct_fifo_wren, slct_fifo_wren_ff, slct_fifo_busy, slct_fifo_full, slct_fifo_empty : std_logic;
 
@@ -86,7 +89,7 @@ architecture Behavioral of Event_selector is
   signal fifo_notempty_while_start : std_logic_vector(2 downto 0);
 
   type FSM_STATE_T is (s0_idle, s1_select, s2_dread);
-  signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
+  signal FSM_STATE, FSM_STATE_ff, FSM_STATE_NEXT : FSM_STATE_T;
 
   signal header_fifo_rd, data_fifo_rd         : std_logic;
   signal word_counter                         : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
@@ -100,7 +103,9 @@ architecture Behavioral of Event_selector is
   signal hb_rdh_response, readout_bypass, hb_reject : boolean;
 
   -- cru readout states
-  signal send_mode_sc, send_trg_mode_sc, start_of_run                                                           : boolean;
+  signal data_enabled_sc, send_trg_mode_sc, start_of_run                                                        : boolean;
+  -- trg_fifo set 'not_empty' after 2 cycles, is_readout should be delayed. is_readout_sc - actual
+  signal is_readout_sc, is_readout_ff1, is_readout_ff2, is_readout_ff3, is_readout_ff3_sc                       : boolean;
   -- data-trg comparison
   signal is_hbtrg, is_hb_r_trg, is_sox, is_eox, is_hbtrg_cmd, is_sel_trg, read_data, read_trigger, start_select : boolean;
   signal read_data_cmd, read_trigger_cmd, rdh_close_cmd, hb_reject_cmd                                          : boolean;
@@ -109,12 +114,20 @@ architecture Behavioral of Event_selector is
   signal reading_header, reading_last_word                                                                      : boolean;
   -- pushing data to select fifo by TRG/CNT mode
   signal data_reject_cmd                                                                                        : boolean;
-  -- send_gear_rdh becames true after first SOX and false after EOX, used to select data and do not send firs RDH response, send_last_rdh used to send last RDH response to EOX
+  -- send_gear_rdh becames true after first BC while readout and false after first BC while idle, used to do not send firs RDH response
+  -- send_last_rdh used to send last RDH response after readout finished
   signal send_gear_rdh, send_last_rdh                                                                           : boolean;
   -- dropping data when select fifo is full
   signal dropping_data_cmd                                                                                      : boolean;
   signal stop_bit                                                                                               : std_logic;
-  signal reset_drop_cnt_sc                                                                                      : boolean;
+  signal reset_dt_counters_sc                                                                                   : boolean;
+
+
+  attribute mark_debug                               : string;
+  attribute mark_debug of event_counter              : signal is "true";
+  attribute mark_debug of event_counter_zero_counter : signal is "true";
+
+
 
 begin
 
@@ -132,6 +145,7 @@ begin
   cntpck_fifo_empty_o <= cntpck_fifo_empty;
 
 
+
 -- TRG FIFO =============================================
   trg_fifo_comp_c : entity work.trg_fifo_comp
     port map(
@@ -147,7 +161,8 @@ begin
       FULL  => trgfifo_full
       );
 
-  trgfifo_we          <= '1' when ((TRG_fifo_mask and Status_register_I.Trigger_from_CRU) /= TRG_const_void) and Status_register_I.Readout_Mode /= mode_IDLE else '0';
+  trgfifo_we <= '1' when (((Control_register_I.trg_data_select or TRG_const_Orbit) and Status_register_I.Trigger_from_CRU) /= TRG_const_void)
+                and Status_register_I.Readout_Mode /= mode_IDLE else '0';
   trgfifo_din         <= Status_register_I.Trigger_from_CRU & Status_register_I.ORBIT_from_CRU & Status_register_I.BCID_from_CRU;
   trgfifo_out_trigger <= trgfifo_dout(75 downto BC_id_bitdepth + Orbit_id_bitdepth);
   trgfifo_out_orbit   <= trgfifo_dout(BC_id_bitdepth + Orbit_id_bitdepth -1 downto BC_id_bitdepth);
@@ -196,6 +211,12 @@ begin
 
       packets_dropped_o <= drop_counter;
       errors_o          <= trgfifo_full_latch & fifo_notempty_while_start;
+      event_counter_o   <= event_counter;
+
+
+      is_readout_ff1 <= Status_register_I.Readout_Mode /= mode_IDLE;
+      is_readout_ff2 <= is_readout_ff1;
+      is_readout_ff3 <= is_readout_ff2;
 
       if Status_register_I.BCID_from_CRU >= bcid_delay then
         curr_orbit <= Status_register_I.ORBIT_from_CRU;
@@ -235,13 +256,16 @@ begin
 
       curr_orbit_sc         <= curr_orbit;
       curr_bc_sc            <= curr_bc;
-      send_mode_sc          <= Status_register_I.Readout_Mode /= mode_IDLE;
+      data_enabled_sc       <= Status_register_I.data_enable = '1';
+      is_readout_sc         <= Status_register_I.Readout_Mode /= mode_IDLE;
+      is_readout_ff3_sc     <= is_readout_ff3;
       start_of_run          <= Status_register_I.Start_run = '1';
       trigger_select_val_sc <= Control_register_I.trg_data_select;
-      reset_drop_cnt_sc     <= Control_register_I.reset_data_counters = '1';
+      reset_dt_counters_sc  <= Control_register_I.reset_data_counters = '1';
       hb_rdh_response       <= Control_register_I.is_hb_response = '1';
       readout_bypass        <= Control_register_I.readout_bypass = '1';
       hb_reject             <= Control_register_I.is_hb_reject = '1';
+      event_counter_ff      <= event_counter;
 
       -- put raw data in select fifo for readout bypass mode
       if readout_bypass then
@@ -268,7 +292,8 @@ begin
 
       else
 
-        FSM_STATE <= FSM_STATE_NEXT;
+        FSM_STATE    <= FSM_STATE_NEXT;
+        FSM_STATE_ff <= FSM_STATE;
 
         -- latching readout commands
         if FSM_STATE_NEXT = s1_select then
@@ -277,8 +302,8 @@ begin
           read_trigger_cmd <= read_trigger;
           is_hbtrg_cmd     <= is_hbtrg and read_trigger;
           rdh_close_cmd    <= (is_hbtrg and read_trigger and hb_rdh_response) or (rdh_size_counter >= max_rdh_size) or send_last_rdh;
-          --                      rejecting by trigger in TRG mode                          rejecting data out of sox/eox, but not first event for SOX trg
-          data_reject_cmd  <= (send_trg_mode_sc and not (trg_eq_data and is_sel_trg)) or (not send_gear_rdh and not (is_sox and read_trigger));
+          --                      rejecting by trigger in TRG mode
+          data_reject_cmd  <= (send_trg_mode_sc and not (trg_eq_data and is_sel_trg)) or (not data_enabled_sc);
 
           data_ndwords_cmd  <= data_ndwords;
           dropping_data_cmd <= (slct_fifo_full = '1') or (cntpck_fifo_full = '1');
@@ -303,8 +328,9 @@ begin
             rdh_size_counter                        <= 0;
           end if;
 
-          send_last_rdh                                     <= false;
-          if is_sox and read_trigger_cmd then send_gear_rdh <= true; elsif is_eox and read_trigger_cmd then send_gear_rdh <= false; send_last_rdh <= true; end if;
+          -- send_gear_rdh is true after first trigger read        
+          send_last_rdh                                            <= false;
+          if is_readout_sc and read_trigger_cmd then send_gear_rdh <= true; end if;
 
           if FSM_STATE_NEXT = s2_dread then reading_header <= true; end if;
 
@@ -315,16 +341,29 @@ begin
           -- iterating words while reading data
           word_counter <= word_counter + 1;
 
+        elsif FSM_STATE = s0_idle then
+
+          -- readout is idle (delayed to wait fifo empty), trg_fifo is empty, and send_gear_rdh is true, send last rdh response
+          if not is_readout_ff3_sc and send_gear_rdh and (trgfifo_empty = '1') then send_gear_rdh <= false; send_last_rdh <= true; end if;
+
+
         end if;
 
 
         -- counting rdh payload
-        if slct_fifo_wren = '1' then rdh_size_counter                                        <= rdh_size_counter + 1; end if;
+        if slct_fifo_wren = '1' then rdh_size_counter                                                       <= rdh_size_counter + 1; end if;
         -- dropping packets counter
-        if reading_header and dropping_data_cmd and drop_counter < x"ffff" then drop_counter <= drop_counter + 1; end if;
-        if reset_drop_cnt_sc then drop_counter                                               <= (others => '0'); end if;
+        if reading_header and dropping_data_cmd and drop_counter < x"ffff" then drop_counter                <= drop_counter + 1; end if;
+        if slct_fifo_wren = '1' and header_fifo_rd = '1' and event_counter < x"ffffffff" then event_counter <= event_counter + 1; end if;
+        if reset_dt_counters_sc then drop_counter                                                           <= (others => '0'); event_counter <= (others => '0'); end if;
         -- errors if fifos are not empty while run starts
-        if start_of_run then fifo_notempty_while_start                                       <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
+        if start_of_run then fifo_notempty_while_start                                                      <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
+
+
+        -- zero event rate counter for ila triggering
+        if reset_dt_counters_sc then event_counter_zero_counter                 <= (others => '0');
+        elsif event_counter = event_counter_ff then event_counter_zero_counter  <= event_counter_zero_counter+1;
+        elsif event_counter /= event_counter_ff then event_counter_zero_counter <= (others => '0'); end if;
 
 
       end if;
@@ -377,15 +416,17 @@ begin
     -- IDLE after SELECT (trg read)
     s0_idle  when (FSM_STATE = s1_select) and not read_data_cmd else
 
-    -- SELECT from IDLE
-    s1_select when (FSM_STATE = s0_idle) and start_select else
+    -- SELECT from IDLE as start_select is delayed to avoid double select sel->idle->sel, idle twice is requaired
+    s1_select when (FSM_STATE = s0_idle) and (FSM_STATE_ff = s0_idle) and start_select else
     -- SELECT from DREAD
-    s1_select when (FSM_STATE = s2_dread) and reading_last_word and start_select else
-    -- SELECT last rdh
-    s1_select when send_last_rdh else
+    s1_select when (FSM_STATE = s2_dread) and (FSM_STATE_ff = s2_dread) and reading_last_word and start_select else
 
     -- IDLE from DREAD
     s0_idle when (FSM_STATE = s2_dread) and reading_last_word else
+
+    -- SELECT last rdh
+    s1_select when (FSM_STATE = s0_idle) and send_last_rdh else
+
     -- FSM state the same
     FSM_STATE;
 
