@@ -46,7 +46,7 @@ entity DataConverter is
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
     -- 2 - tcm_data_fifo is full
-    errors_o : out std_logic_vector(2 downto 0)
+    errors_o : out std_logic_vector(4 downto 0)
     );
 end DataConverter;
 
@@ -178,7 +178,7 @@ begin
       data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
-      errors_o       <= errors;
+      errors_o       <= "00"&errors;
     end if;
   end process;
 

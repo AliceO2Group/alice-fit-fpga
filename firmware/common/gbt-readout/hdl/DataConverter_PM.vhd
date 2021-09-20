@@ -5,7 +5,7 @@
 -- Create Date:    2017 
 -- Description: convert data from FEE to RDH format
 --
--- Revision: 07/2021
+-- Revision: 09/2021
 ----------------------------------------------------------------------------------
 
 library IEEE;
@@ -45,7 +45,9 @@ entity DataConverter is
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
     -- 2 - tcm_data_fifo is full (for tcm only)
-    errors_o : out std_logic_vector(2 downto 0)
+    -- 3 - input packet corrupted: extra word 
+    -- 4 - input packet corrupted: header too early 
+    errors_o : out std_logic_vector(4 downto 0)
     );
 end DataConverter;
 
@@ -63,6 +65,7 @@ architecture Behavioral of DataConverter is
   signal header_bc                                            : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_header, is_data                                   : std_logic;
+  signal zero_pck                                             : boolean;
 
   signal readout_bypass                                : boolean;
   signal data_enabled, data_enabled_sclk, start_of_run : boolean;
@@ -80,7 +83,8 @@ architecture Behavioral of DataConverter is
   signal header_fifo_we, data_fifo_we       : std_logic;
   signal header_fifo_empty, data_fifo_empty : std_logic;
 
-  signal errors : std_logic_vector(1 downto 0);
+  signal errors                           : std_logic_vector(1 downto 0);
+  signal err_extra_word, err_extra_header : std_logic;
 
   signal header_fifo_data : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal data_fifo_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -173,7 +177,7 @@ begin
       data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
-      errors_o       <= '0'&errors;
+      errors_o       <= err_extra_header&err_extra_word&'0'&errors;
     end if;
   end process;
 
@@ -193,36 +197,44 @@ begin
       is_data          <= Board_data_I.is_data;
       is_header        <= Board_data_I.is_header;
       header_pcklen_ff <= header_pcklen;
+      zero_pck         <= false;
 
       data_enabled_sclk <= data_enabled;
 
+
       if(FSM_Clocks_I.Reset_sclk = '1') then
 
-        sending_event   <= false;
-        drop_counter    <= (others => '0');
-        rawfifo_cnt_max <= (others => '0');
-        word_counter    <= (others => '1');
-        errors          <= (others => '0');
+        sending_event    <= false;
+        drop_counter     <= (others => '0');
+        rawfifo_cnt_max  <= (others => '0');
+        word_counter     <= (others => '1');
+        errors           <= (others => '0');
+        err_extra_word   <= '0';
+        err_extra_header <= '0';
 
       else
 
         if is_header = '1' then
 
-          header_word_latch   <= header_word;
-          header_pcklen_latch <= header_pcklen_ff;
-          word_counter        <= (others => '0');
-
-          sending_event <= (rawfifo_full = '0') and data_enabled_sclk;
-
-          if (rawfifo_full = '1') and data_enabled_sclk and drop_counter < x"ffff" then
-            drop_counter <= drop_counter + 1;
+          if (word_counter < header_pcklen_latch) then  -- header is too early, skiping heade
+            err_extra_header <= '1';
+          else  -- header after prev packet - ok; or word_counter is max (start)
+            header_word_latch                                                                          <= header_word;
+            header_pcklen_latch                                                                        <= header_pcklen_ff;
+            zero_pck                                                                                   <= header_pcklen_ff = 0;
+            word_counter                                                                               <= (others => '0');
+            sending_event                                                                              <= (rawfifo_full = '0') and data_enabled_sclk;
+            if (rawfifo_full = '1') and data_enabled_sclk and drop_counter < x"ffff" then drop_counter <= drop_counter + 1; end if;
           end if;
 
         elsif is_data = '1' then
 
-          word_counter <= word_counter + 1;
+          if (word_counter = header_pcklen_latch) and (err_extra_header = '0') then err_extra_word <= '1'; end if;
+          word_counter                                                                             <= word_counter + 1;
 
         end if;
+
+
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
 
@@ -233,7 +245,6 @@ begin
 
         if start_of_run then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
 
-
       end if;
 
     end if;
@@ -243,13 +254,13 @@ begin
 -- ****************************************************
   header_fifo_din <= header_word_latch;
   header_fifo_we  <= '0' when readout_bypass else
-                    '1' when word_counter = header_pcklen_latch-1 and sending_event else '0';
+                    '1' when ((word_counter = header_pcklen_latch-1) or zero_pck) and sending_event else '0';
 
   data_fifo_din <= data_word;
   data_fifo_we  <= '0' when readout_bypass else
-                  '1' when is_data = '1' and is_header = '0' and sending_event else '0';
+                  '1' when (is_data = '1' and is_header = '0') and (word_counter < header_pcklen_latch) and sending_event else '0';
 
-  -- all data sent in run
+-- all data sent in run
   no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
 
 end Behavioral;

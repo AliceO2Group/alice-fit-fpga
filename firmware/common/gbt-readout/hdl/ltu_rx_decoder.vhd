@@ -79,7 +79,7 @@ architecture Behavioral of ltu_rx_decoder is
 begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
-  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors > 0);
+  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors(7 downto 0) > 0);
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
