@@ -247,6 +247,8 @@ package fit_gbt_common_package is
     -- 5 - [Converter] data_fifo is not empty while start of run
     -- 6 - [Converter] header_fifo is not empty while start of run
     -- 7 - [Converter] tcm_data_fifo is full (TCM only)
+    -- 8 - [Converter] input packet corrupted: extra word (PM)
+    -- 9 - [Converter] input packet corrupted: header too early (PM)
     fsm_errors : std_logic_vector(15 downto 0);
   end record;
 

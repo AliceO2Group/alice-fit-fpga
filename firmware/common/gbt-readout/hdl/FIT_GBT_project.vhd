@@ -80,6 +80,7 @@ architecture Behavioral of FIT_GBT_project is
   signal ORBC_ID_from_RXdecoder           : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRUS
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
   signal trg_match_resp_mask              : std_logic;
+  signal errors_scl                       : std_logic_vector(15 downto 0);
 
 
 
@@ -113,6 +114,7 @@ architecture Behavioral of FIT_GBT_project is
   attribute mark_debug of Board_data_from_main_gen : signal is "true";
   attribute mark_debug of RX_Data_DataClk          : signal is "true";
   attribute mark_debug of RX_IsData_DataClk        : signal is "true";
+  attribute mark_debug of errors_scl               : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -131,7 +133,7 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
-  FIT_GBT_STATUS.fsm_errors(15 downto 8)  <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(15 downto 10) <= (others => '0');
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -139,6 +141,14 @@ begin
   IsData_from_FITrd_O       <= TX_IsData_from_txgen when (Control_register_I.Trigger_Gen.usage_generator /= gen_tx_out) else RX_IsData_from_orbcgen;
   RxData_rxclk_from_GBT_O   <= RX_Data_rxclk_from_GBT;
   IsRxData_rxclk_from_GBT_O <= RX_IsData_rxclk_from_GBT;
+
+  -- errors by sys clock for ila
+  process (SysClk_I)
+  begin
+    if(rising_edge(SysClk_I))then
+      errors_scl <= FIT_GBT_STATUS.fsm_errors;
+    end if;
+  end process;
 
 -- =============================================================
 
@@ -197,7 +207,7 @@ begin
       Start_run_O        => FIT_GBT_STATUS.Start_run,
       Stop_run_O         => FIT_GBT_STATUS.Stop_run,
       BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode,
-	  Data_enable_o      => FIT_GBT_STATUS.data_enable
+      Data_enable_o      => FIT_GBT_STATUS.data_enable
       );
 -- =============================================================
 
@@ -284,7 +294,7 @@ begin
       data_bcid_o  => data_bcid,
       data_bcen_o  => data_bcen,
 
-      errors_o => FIT_GBT_STATUS.fsm_errors(7 downto 5)
+      errors_o => FIT_GBT_STATUS.fsm_errors(9 downto 5)
       );
 -- ===========================================================
 
@@ -316,7 +326,7 @@ begin
       slct_fifo_cnt_o     => open,
       slct_fifo_cnt_max_o => FIT_GBT_STATUS.sel_fifo_max,
       packets_dropped_o   => FIT_GBT_STATUS.sel_drop_cnt,
-	  event_counter_o     => FIT_GBT_STATUS.event_counter,
+      event_counter_o     => FIT_GBT_STATUS.event_counter,
       errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1)
       );
 -- ===========================================================

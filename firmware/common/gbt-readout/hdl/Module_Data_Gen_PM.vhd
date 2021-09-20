@@ -181,8 +181,8 @@ begin
 
         -- not sending
         elsif word_counter = 16 then word_counter         <= 16;
-        -- stop event
-        elsif word_counter = event_size then word_counter <= 16;
+        -- stop event (event size -1 to send zero packets)
+        elsif word_counter = event_size-1 then word_counter <= 16;
         -- sending event
         else word_counter                                 <= word_counter +1; end if;
 
@@ -194,7 +194,7 @@ begin
         if Board_data_gen_pipe(3).is_header = '1' then
           datagen_report.orbit      <= func_FITDATAHD_orbit(Board_data_gen_pipe(3).data_word);
           datagen_report.bc         <= func_FITDATAHD_bc(Board_data_gen_pipe(3).data_word);
-          datagen_report.size       <= func_FITDATAHD_ndwords(Board_data_gen_pipe(3).data_word);
+          datagen_report.size       <= func_FITDATAHD_ndwords(Board_data_gen_pipe(3).data_word)+1; -- +1 for marking zero packets
           datagen_report.packet_num <= Board_data_gen_pipe(2).data_word(35 downto 0);
         else
           datagen_report.orbit      <= (others => '0');
@@ -209,7 +209,7 @@ begin
   end process;
 -- ***************************************************
   Board_data_data.data_word   <= std_logic_vector(to_unsigned((word_counter+1), tdwords_bitdepth)) & cnt_packet_counter & std_logic_vector(to_unsigned((word_counter+1), tdwords_bitdepth)) & cnt_packet_counter;
-  Board_data_header.data_word <= func_FITDATAHD_get_header(std_logic_vector(to_unsigned(event_size, n_pckt_wrds_bitdepth)), event_orbit_sc, event_bc_sc, event_rx_ph, event_rx_ph_err, '0');
+  Board_data_header.data_word <= func_FITDATAHD_get_header(std_logic_vector(to_unsigned(event_size-1, n_pckt_wrds_bitdepth)), event_orbit_sc, event_bc_sc, event_rx_ph, event_rx_ph_err, '0');
 
   data_gen_result <= Board_data_void when (word_counter = 16) else
                      Board_data_header when (word_counter = 0) else

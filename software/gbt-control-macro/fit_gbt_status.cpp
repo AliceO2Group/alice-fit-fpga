@@ -25,7 +25,7 @@ g++ -g -Wall fit_gbt_status.cpp -o fit_gbt_status.run &&  watch -c ./fit_gbt_sta
 using namespace std; 
 typedef chrono::high_resolution_clock Clock;
 
-bool do_adjust = 1;
+bool do_adjust = 0;
 float noise_rate_set = 20000.0; //kHz
 
 int main(int argc, char *argv[]) {
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 		bool rd_mode_corr = (rd_mode == rd_cru_mode) || is_force_idle;
 		uint16_t fsm_errs = (stat_reg[2]&0xFFFF0000)>>16;
 		uint32_t gbt_cnt0 = stat_reg[5];
-		uint16_t event_cnt0 = stat_reg[7] & 0xFFFF;
+		uint32_t event_cnt0 = stat_reg[9] & 0xFFFF;
 		uint16_t cnv_drop0 = stat_reg[3] & 0xFFFF;
 		uint16_t sel_drop0 = stat_reg[4] & 0xFFFF;
 		
@@ -95,14 +95,14 @@ int main(int argc, char *argv[]) {
 		printf("%04x %s  ", fsm_errs, fsm_errs!=0?"\x1b[31mER\x1b[0m":"\x1b[32mOK \x1b[0m");
 		
 		if(fsm_errs > 0){
-			for (int ibit = 0; ibit <8; ibit++) if((fsm_errs&(1<<ibit))>0) printf(" %i ", ibit);
+			for (int ibit = 0; ibit <15; ibit++) if((fsm_errs&(1<<ibit))>0) printf(" %i ", ibit);
 		}
 		
-		usleep(100000);
+		usleep(1000);
 		auto timer2 = Clock::now();
 		slow_control.read_registers(stat_reg, reg_size, curr_stat_addr);
 		uint32_t gbt_cnt1 = stat_reg[5];
-		uint16_t event_cnt1 = stat_reg[7] & 0xFFFF;
+		uint32_t event_cnt1 = stat_reg[9];
 		uint16_t cnv_drop1 = stat_reg[3] & 0xFFFF;
 		uint16_t sel_drop1 = stat_reg[4] & 0xFFFF;
 
@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
 		float event_rate_khz = (event_cnt1-event_cnt0)/read_time_s/1000.;
 		float cnv_drp_rate_khz = (cnv_drop1-cnv_drop0)/read_time_s/1000.;
 		float sel_drp_rate_khz = (sel_drop1-sel_drop0)/read_time_s/1000.;
-		//printf(" %8.2f ", event_rate_khz);
-		printf(" %8.2f ", gbt_rate_noHB_khz);
+		printf(" %8.2f ", event_rate_khz);
+		//printf(" %8.2f ", gbt_rate_noHB_khz);
 		printf(" %8.2f ", cnv_drp_rate_khz);
 		printf(" %8.2f ", sel_drp_rate_khz);
 		

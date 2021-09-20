@@ -315,6 +315,8 @@ signal hyst_a, hyst_t : std_logic_vector(11 downto 0);
 signal hyst_addr : std_logic_vector(16 downto 0);
 signal hyst_r_data : std_logic_vector(31 downto 0);
 
+
+
  
 component  PLL320
     port (  mclk_in         : in     std_logic;
@@ -1914,7 +1916,7 @@ tto<=tt;  tao<=ta;
 MCLK40_0<=MCLK40T; MCLK40_1<=MCLK40_0; if (MCLK40_0/=MCLK40_1) then mt_cou<="000"; else mt_cou<=mt_cou+1; end if;
 
 PM_data_toreadout.is_header  <=  wr_out_id;
-PM_data_toreadout.is_data    <=  Event_ready or wr_out_id;
+PM_data_toreadout.is_data    <=  Event_ready  or wr_out_id;
 
 if (wr_out_id='1') then DATA80_in<= x"F" & '0' & WRDS_NUM & x"000000" & rx_phase_status & EV_ID_out(55 downto 12);
    else DATA80_in<=EV_DATA80;
@@ -1922,13 +1924,13 @@ end if;
 if (Event_free='1') or (wr_out_id='1') then ev_tout_cnt<=(others=>'0');
        else  ev_tout_cnt<=ev_tout_cnt+1;
 end if;
-if (ev_tout_cnt=96) then  ev_tout<='1';  else ev_tout<='0'; end if;
+if (ev_tout_cnt=96) and (wr_out_id='0') then  ev_tout<='1';  else ev_tout<='0'; end if;
 ev_tout0 <= ev_tout;
 
 --if (wr_out_id='1') or (Event_ready='1') then WR_fifo_out<='1'; else WR_fifo_out<='0';  end if;
 
 if (Event_ready='0') then
- if (Event_ready_0='1') then Event_ready<='1'; end if;
+ if (Event_ready_0='1') and (ev_tout='0')  then Event_ready<='1'; end if;
  else
  if (CH_do=0) then Event_ready<='0'; end if;
 end if;

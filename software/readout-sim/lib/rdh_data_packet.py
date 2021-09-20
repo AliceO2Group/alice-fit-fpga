@@ -79,7 +79,7 @@ class detector_packet:
     def check_data(self):
         res = 0
         if self.magic != 0xf: res = "wrong magic: %i" % self.magic
-        if self.size > 0xf or self.size < 1: res = "wrong size: %i" % self.size
+        if self.size > 0xf: res = "wrong size: %i" % self.size
         if len(self.payload) != self.size * (1 if self.is_tcm else 2): res = "wrong payload %i, size %i" % (len(self.payload), self.size)
 
         if res != 0:
