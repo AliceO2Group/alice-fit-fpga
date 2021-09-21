@@ -73,7 +73,7 @@ begin
 
 T_out<=T_o;
 
-T_r <= T_in when (mode="100") else '0';
+T_r <= T_i;
 
 DO<=x"0000" & "00" & ts when (A='0') else '0' & rate;
 

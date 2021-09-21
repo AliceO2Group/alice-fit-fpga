@@ -1538,7 +1538,7 @@ if (Tmode(0)='1') then
 end if;
     
 if (bitcnt_A="010") then
- if ((tr_valid or laser_t)='1') then
+ if (trigs/=0) or (laser_t='1') then
  Rd_Word(159 downto 80) <= x"F" & Tmode(3) &"001" & x"000000" & rx_phase_status & Orbit_ID & BC_COU;
  Rd_word(79 downto 59) <= '0' & TimeC & '0' & TimeA  & '0';
  if (Tmode(9)='1') then  Rd_word(58 downto 42) <= AmplC; else Rd_word(58 downto 42) <= AmplAI(15) & AmplAI; end if;
