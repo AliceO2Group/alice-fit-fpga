@@ -120,15 +120,15 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/hdl/counter32.vhd" ]\
- [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
  [file normalize "${origin_dir}/hdl/tcm_proto.vhd" ]\
- [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
- [file normalize "${origin_dir}/hdl/cnt_ctrl.vhd" ]\
- [file normalize "${origin_dir}/hdl/trigger_out.vhd" ]\
- [file normalize "${origin_dir}/hdl/tcm_side.vhd" ]\
- [file normalize "${origin_dir}/hdl/HDMIRX.vhd" ]\
- [file normalize "${origin_dir}/hdl/BC_correlator.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/counter32.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/Flash_prog.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/pm-spi.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/cnt_ctrl.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/trigger_out.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/tcm_side.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/../TCM_v1/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\

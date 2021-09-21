@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 			for (int ibit = 0; ibit <15; ibit++) if((fsm_errs&(1<<ibit))>0) printf(" %i ", ibit);
 		}
 		
-		usleep(1000);
+		usleep(100000);
 		auto timer2 = Clock::now();
 		slow_control.read_registers(stat_reg, reg_size, curr_stat_addr);
 		uint32_t gbt_cnt1 = stat_reg[5];
