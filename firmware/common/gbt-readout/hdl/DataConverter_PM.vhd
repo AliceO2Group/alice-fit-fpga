@@ -178,6 +178,7 @@ begin
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= err_extra_header&err_extra_word&'0'&errors;
+      no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
     end if;
   end process;
 
@@ -259,9 +260,6 @@ begin
   data_fifo_din <= data_word;
   data_fifo_we  <= '0' when readout_bypass else
                   '1' when (is_data = '1' and is_header = '0') and (word_counter < header_pcklen_latch) and sending_event else '0';
-
--- all data sent in run
-  no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
 
 end Behavioral;
 

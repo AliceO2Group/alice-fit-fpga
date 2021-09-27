@@ -88,7 +88,7 @@ architecture Behavioral of FIT_GBT_project is
 -- data packager 
   signal raw_header_dout, raw_data_dout                  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_heaer_rden, raw_data_rden, raw_header_empty : std_logic;
-  signal no_raw_data                                     : boolean;
+  signal no_raw_data, no_sel_data                        : boolean;
 
   signal raw_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_isdata : std_logic;
@@ -133,7 +133,8 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
-  FIT_GBT_STATUS.fsm_errors(15 downto 10) <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(14 downto 10) <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(15) <= '1' when no_raw_data and no_sel_data else '0';
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -327,7 +328,8 @@ begin
       slct_fifo_cnt_max_o => FIT_GBT_STATUS.sel_fifo_max,
       packets_dropped_o   => FIT_GBT_STATUS.sel_drop_cnt,
       event_counter_o     => FIT_GBT_STATUS.event_counter,
-      errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1)
+      errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1),
+	  no_data_o           => no_sel_data
       );
 -- ===========================================================
 
