@@ -46,6 +46,8 @@ entity Event_selector is
     slct_fifo_cnt_max_o : out std_logic_vector(15 downto 0);
     packets_dropped_o   : out std_logic_vector(15 downto 0);
     event_counter_o     : out std_logic_vector(31 downto 0);
+	
+	no_data_o           : out boolean;
 
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - slct_fifo is not empty when run starts
@@ -161,7 +163,7 @@ begin
       FULL  => trgfifo_full
       );
 
-  trgfifo_we <= '1' when (((Control_register_I.trg_data_select or TRG_const_Orbit) and Status_register_I.Trigger_from_CRU) /= TRG_const_void)
+  trgfifo_we <= '1' when (((Control_register_I.trg_data_select or TRG_const_HB) and Status_register_I.Trigger_from_CRU) /= TRG_const_void)
                 and Status_register_I.Readout_Mode /= mode_IDLE else '0';
   trgfifo_din         <= Status_register_I.Trigger_from_CRU & Status_register_I.ORBIT_from_CRU & Status_register_I.BCID_from_CRU;
   trgfifo_out_trigger <= trgfifo_dout(75 downto BC_id_bitdepth + Orbit_id_bitdepth);
@@ -212,7 +214,7 @@ begin
       packets_dropped_o <= drop_counter;
       errors_o          <= trgfifo_full_latch & fifo_notempty_while_start;
       event_counter_o   <= event_counter;
-
+      no_data_o <= (trgfifo_empty = '1') and (cntpck_fifo_empty = '1') and (slct_fifo_empty = '1') and not send_gear_rdh and not send_last_rdh;
 
       is_readout_ff1 <= Status_register_I.Readout_Mode /= mode_IDLE;
       is_readout_ff2 <= is_readout_ff1;
