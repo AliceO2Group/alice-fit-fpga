@@ -337,6 +337,11 @@ set_property -name "steps.synth_design.args.shreg_min_size" -value "5" -objects 
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
+#launch_runs synth_1
+#wait_on_run synth_1
+#open_run synth_1
+#report_timing_summary -file synth_1_timing_summary.log
+
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
@@ -394,3 +399,6 @@ update_compile_order -fileset sources_1
 reset_run -quiet synth_1
 launch_runs impl_1 -to_step write_bitstream  -jobs 7
 wait_on_run impl_1
+
+open_run impl_1
+report_timing_summary -file impl_1_timing_summary.log

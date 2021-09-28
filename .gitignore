@@ -1,11 +1,11 @@
 *~
 *.jou
-*.log
 build
 *.xcix
 *.pb
 .Xil
 *.zip
+*.str
 
 __pycache__
 sim_data
