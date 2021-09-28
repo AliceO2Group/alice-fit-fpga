@@ -425,3 +425,5 @@ update_compile_order -fileset sources_1
 reset_run -quiet synth_1
 launch_runs impl_1 -to_step write_bitstream  -jobs 7
 wait_on_run impl_1
+open_run impl_1
+report_timing_summary -file impl_1_timing_summary.log
