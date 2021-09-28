@@ -108,7 +108,7 @@ class run_tester:
         for igen in copy.copy(gen_data_list):
             for ievent in copy.copy(read_data_list):
                 if ievent.orbit == igen['orbit'] and ievent.bc == igen['bc']:
-                    if ievent.pck_num != igen['pck_num'] or ievent.size != igen['size']:
+                    if ievent.pck_num != igen['pck_num'] or ievent.size != igen['size']+1:
                         self.log.info((pylog.c_FAIL) + "data missmatch: [gen pck_num %i; size %i] [read pck_num %i; size %i]" % (
                             igen['pck_num'], igen['size'], ievent.pck_num, ievent.size) + pylog.c_ENDC)
 

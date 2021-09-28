@@ -115,6 +115,7 @@ architecture Behavioral of FIT_GBT_project is
   attribute mark_debug of RX_Data_DataClk          : signal is "true";
   attribute mark_debug of RX_IsData_DataClk        : signal is "true";
   attribute mark_debug of errors_scl               : signal is "true";
+  attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -134,7 +135,7 @@ begin
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.fsm_errors(14 downto 10) <= (others => '0');
-  FIT_GBT_STATUS.fsm_errors(15) <= '1' when no_raw_data and no_sel_data else '0';
+  FIT_GBT_STATUS.fsm_errors(15)           <= '1' when no_raw_data and no_sel_data else '0';
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -208,7 +209,8 @@ begin
       Start_run_O        => FIT_GBT_STATUS.Start_run,
       Stop_run_O         => FIT_GBT_STATUS.Stop_run,
       BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode,
-      Data_enable_o      => FIT_GBT_STATUS.data_enable
+      Data_enable_o      => FIT_GBT_STATUS.data_enable,
+      apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply
       );
 -- =============================================================
 
@@ -329,7 +331,7 @@ begin
       packets_dropped_o   => FIT_GBT_STATUS.sel_drop_cnt,
       event_counter_o     => FIT_GBT_STATUS.event_counter,
       errors_o            => FIT_GBT_STATUS.fsm_errors(4 downto 1),
-	  no_data_o           => no_sel_data
+      no_data_o           => no_sel_data
       );
 -- ===========================================================
 
