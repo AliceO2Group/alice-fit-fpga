@@ -1,4 +1,4 @@
-![PM_TCM](https://repository-images.githubusercontent.com/238522341/aca2c500-48cf-11ea-95b5-4a498a732d8e?dl=0)
+![PM_TCM](https://github.com/dfinogee/alice-fit-fpga/blob/devel/photo/FT0_front.jpg?raw=true)
 
 ----
 # ALICE Fast Interaction Trigger (FIT) firmware repository
@@ -11,50 +11,48 @@ Authors: Dmitry.Serebryakov@cern.ch, Dmitry.Finogeev@cern.ch
 ### Clone the Git repository
 
     git clone https://github.com/AliceO2Group/alice-fit-fpga.git
-
-### Update to latest version
-
     git pull --recurse-submodules
 
 ----
-### Set up Vivado 2019.2.1 (NEW !!!)
-    source /opt/Xilinx/Vivado/2019.2/settings64.sh
+## Projects compilation
+'\<projec\>' = PM/TCM_v1/TCM_proto/FTM_PM/FTM_TCM
+
+### Vivado tcl mode (linux)
+
+     cd alice-fit-fpga/firmware/FT0/<projec>
+     vivado -mode batch -source make.tcl 
+
+### Macro (linux)
+
+Macro will compile project and copy bit + bin + logs files into firmware/FT0/bits/
+
+     cd alice-fit-fpga/
+     ./software/ci/build_local.sh <project>
+
+### Vivado GUI (win/linux)
+
+run vivado v2019.2.1/v2020.1
 	
-	used vivado version:
-	Vivado v2019.2.1 (64-bit)
-	SW Build: 2729669 on Thu Dec 5 04:49:17 MST 2019
-	IP Build: 2729494 on Thu Dec 5 07:38:25 MST 2019
+	(linux)
+	source /opt/Xilinx/Vivado/2019.2/settings64.sh
+	vivado
+	
+open tcl console and change directory to the project
 
-----
-## Generate bitstreams
+	(in tcl console)
+	cd /<path>/alice-fit-fpga/firmware/FT0/<projec>
+  
+remove build directory (if exist) and run compilation
 
-### FIT/FT0/PM
+	(in tcl console)
+	source ./make.tcl
 
-     cd alice-fit-fpga/firmware/FT0/PM
-     vivado -mode batch -source make.tcl 
 
-### FIT/FT0/TCM
-
-     cd alice-fit-fpga/firmware/FT0/TCM
-     vivado -mode batch -source make.tcl 
-
-### FIT/FT0/FTM
-
-     cd alice-fit-fpga/firmware/FT0/FTM
-     vivado -mode batch -source make.tcl 
-
-----
-## After any change to IP cores
+### Export IP cores to `ipcore_properties`
 
 Open the TCL console in the Vivado window and type in the following commands:
 
     source ../../tcl/fit.tcl
     fit::update_ip_properties
 
-Then git add/commit any new/changed files in the directory `ipcore_properties`
-
-----
-## After any change to IP cores and/or to VHDL source files
-
-git add/commit any new/changed VHDL files
 
