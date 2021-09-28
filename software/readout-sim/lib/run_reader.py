@@ -69,7 +69,7 @@ class run_reader:
             istatus = status_reg(line_regs[2:])
 
             # check fsm error
-            if istatus.fsm_errors > 0 and iline > 10:
+            if (istatus.fsm_errors & 0x7FFF) > 0 and iline > 10:
                 self.log.info("FSM ERROR in run found: %s" % istatus.get_fsm_err_msg())
                 return 0
 

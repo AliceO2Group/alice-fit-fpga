@@ -1473,7 +1473,7 @@ end if;
  end if;
 end process;
 
-New_BCID <= readout_status.Start_run when (readout_status.BCIDsync_Mode=mode_SYNC) else '0';
+New_BCID <= readout_status.bc_delay_apply;
 
 
 FIFO_in<= TDA(2)(15 downto 0) & TDA(1) & TDA(0) & TDA(4) & TDA(3) & TDA(2)(31 downto 16) when (bitcnt_A="100") and (gbt_wr='1')     

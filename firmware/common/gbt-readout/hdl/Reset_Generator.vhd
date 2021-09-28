@@ -40,7 +40,7 @@ architecture Behavioral of Reset_Generator is
   signal count_ready, count_ready_clk40 : std_logic;
   signal sysclk_count_ff                : std_logic_vector(2 downto 0);
   signal rd_bypass, rd_bypass_ff        : boolean;
-  signal bypass_reset_counter           : std_logic_vector(3 downto 0) := x"F";
+  signal bypass_reset_counter           : std_logic_vector(7 downto 0) := x"FF";
   signal reset_by_bypass                : std_logic;
 
   attribute mark_debug                    : string;
@@ -68,13 +68,13 @@ begin
       rd_bypass    <= Control_register_I.readout_bypass = '1';
       rd_bypass_ff <= rd_bypass;
 	  if (rd_bypass_ff and not rd_bypass) then
-	    bypass_reset_counter <= x"0";
+	    bypass_reset_counter <= x"00";
 		reset_by_bypass <= '1';
-	  elsif bypass_reset_counter /= x"F" then
+	  elsif bypass_reset_counter /= x"FF" then
 	    bypass_reset_counter <= bypass_reset_counter+1;
 		reset_by_bypass <= '1';
 	  else
-	    bypass_reset_counter <= x"F";
+	    bypass_reset_counter <= x"FF";
 		reset_by_bypass <= '0';
       end if;
 	  

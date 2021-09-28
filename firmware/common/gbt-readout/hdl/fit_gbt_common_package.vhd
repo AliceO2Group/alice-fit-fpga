@@ -216,6 +216,7 @@ package fit_gbt_common_package is
     Start_run        : std_logic;
     Stop_run         : std_logic;
     data_enable      : std_logic;
+    bc_delay_apply   : std_logic;
 
     Trigger_from_CRU         : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- Trigger ID from CRUS
     BCID_from_CRU            : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
@@ -249,6 +250,7 @@ package fit_gbt_common_package is
     -- 7 - [Converter] tcm_data_fifo is full (TCM only)
     -- 8 - [Converter] input packet corrupted: extra word (PM)
     -- 9 - [Converter] input packet corrupted: header too early (PM)
+    -- 15- [FRU]       0x1 = ready for run, all fifos are empty
     fsm_errors : std_logic_vector(15 downto 0);
   end record;
 

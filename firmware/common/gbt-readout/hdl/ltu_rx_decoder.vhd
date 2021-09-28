@@ -37,7 +37,8 @@ entity ltu_rx_decoder is
     CRU_Readout_Mode_O : out rdmode_t;
     Start_run_O        : out std_logic;
     Stop_run_O         : out std_logic;
-    Data_enable_o      : out std_logic
+    Data_enable_o      : out std_logic;
+    apply_bc_delay_o   : out std_logic
     );
 end ltu_rx_decoder;
 
@@ -50,12 +51,17 @@ architecture Behavioral of ltu_rx_decoder is
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
 
-  signal run_not_permit                                  : boolean;
+  signal run_not_permit, bc_apply_permit                 : boolean;
   signal orbc_sync_mode                                  : bcid_sync_t;
   signal readout_mode, readout_mode_ff, cru_readout_mode : rdmode_t;
 
   signal is_ORB, is_SOC, is_SOT, is_EOC, is_EOT, is_cru_run, is_cru_cnt : boolean;
-  signal bc_delay                                                       : std_logic_vector(BC_id_bitdepth-1 downto 0);
+
+  -- bc_delay should be changed out of run
+  signal bc_delay, bc_delay_in, bc_delay_in_ff : std_logic_vector(BC_id_bitdepth-1 downto 0);
+  type bc_apply_fsm_t is (s0_changed, s1_applied);
+  signal bc_apply_fsm                          : bc_apply_fsm_t;
+  signal apply_bc_delay, apply_bc_delay_ff     : std_logic;
 
   constant data_en_orbit_offset_cnt_max : natural := 1;
   signal data_en_orbit_offset_cnt       : natural range 0 to 15;
@@ -75,11 +81,18 @@ architecture Behavioral of ltu_rx_decoder is
   attribute MARK_DEBUG of is_EOC           : signal is "true";
   attribute MARK_DEBUG of is_EOT           : signal is "true";
 
+  attribute MARK_DEBUG of bc_apply_permit : signal is "true";
+  attribute MARK_DEBUG of bc_apply_fsm    : signal is "true";
+  attribute MARK_DEBUG of apply_bc_delay  : signal is "true";
+  attribute MARK_DEBUG of bc_delay_in     : signal is "true";
+  attribute MARK_DEBUG of bc_delay        : signal is "true";
+
 
 begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors(7 downto 0) > 0);
+  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '1' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC;
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
@@ -94,12 +107,15 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-      bc_delay <= Control_register_I.BCID_offset;
+      bc_delay_in    <= Control_register_I.BCID_offset;
+      bc_delay_in_ff <= bc_delay_in;
+	  apply_bc_delay_ff <= apply_bc_delay;
 
       ORBC_ID_from_CRU_O <= sync_orbit & sync_bc;
       BCIDsync_Mode_O    <= orbc_sync_mode;
       Readout_Mode_O     <= readout_mode;
       CRU_Readout_Mode_O <= cru_readout_mode;
+      apply_bc_delay_o   <= apply_bc_delay_ff;
 
       cru_orbit   <= RX_Data_I(79 downto 48);
       cru_bc      <= RX_Data_I(43 downto 32);
@@ -122,6 +138,8 @@ begin
 
         sync_orbit_corr <= (others => '0');
         sync_bc_corr    <= (others => '0');
+        bc_delay        <= (others => '0');
+        bc_apply_fsm    <= s0_changed;
 
       else
 
@@ -180,15 +198,30 @@ begin
             data_en_orbit_offset_cnt <= 0;
             Data_enable_o            <= '0';
           elsif is_ORB and (readout_mode /= mode_IDLE) then
-		  
+
             if data_en_orbit_offset_cnt < data_en_orbit_offset_cnt_max then
               data_en_orbit_offset_cnt <= data_en_orbit_offset_cnt + 1;
             else
               data_en_orbit_offset_cnt <= data_en_orbit_offset_cnt_max;
               Data_enable_o            <= '1';
             end if;
-			
+
           end if;
+
+          -- BC delay is applied only when out of run and with sync
+          if bc_apply_fsm = s0_changed and bc_apply_permit then
+            bc_apply_fsm   <= s1_applied;
+            bc_delay       <= bc_delay_in;
+            apply_bc_delay <= '1';
+          elsif bc_apply_fsm = s1_applied and ((bc_delay_in /= bc_delay_in_ff) or (orbc_sync_mode = mode_STR)) then
+            bc_apply_fsm   <= s0_changed;
+            apply_bc_delay <= '0';
+          else
+            apply_bc_delay <= '0';
+          end if;
+
+
+
 
         end if;
       end if;

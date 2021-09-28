@@ -2001,7 +2001,7 @@ if (mt_cou="001") then
 end if;
 end process;
 
-New_BCID <= readout_status.Start_run when (readout_status.BCIDsync_Mode=mode_SYNC) else '0';
+New_BCID <= readout_status.bc_delay_apply;
 
 CH_N0_0<= x"1" when  CH_do(0)='1'
    else   x"2" when  CH_do(1)='1'
