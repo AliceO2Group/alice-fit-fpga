@@ -32,6 +32,7 @@ entity DataConverter is
     header_fifo_rden_i  : in  std_logic;
     data_fifo_rden_i    : in  std_logic;
     header_fifo_empty_o : out std_logic;
+    data_fifo_empty_o   : out std_logic;
     no_data_o           : out boolean;
 
     drop_ounter_o  : out std_logic_vector(15 downto 0);
@@ -110,6 +111,7 @@ architecture Behavioral of DataConverter is
 begin
 
   header_fifo_empty_o <= header_fifo_empty;
+  data_fifo_empty_o   <= data_fifo_empty;
 
   header_pcklen <= func_PMHEADER_n_dwords(tcm_data_fifo_dout);
   header_orbit  <= func_PMHEADER_getORBIT(tcm_data_fifo_dout);
@@ -179,7 +181,7 @@ begin
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= "00"&errors;
-      no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
+      no_data_o      <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
     end if;
   end process;
 

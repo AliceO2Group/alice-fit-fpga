@@ -54,7 +54,7 @@ package fit_gbt_common_package is
   constant TRG_const_FErst : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00001000";  -- FEE reset
   constant TRG_const_RT    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00002000";  -- Run Type; 1=Cont, 0=Trig
   constant TRG_const_RS    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00004000";  --Running State; 1=Running
-  
+
   constant LHC_BCID_max : std_logic_vector(BC_id_bitdepth-1 downto 0) := x"deb";
 -- -------------------------------------------------------------
 
@@ -224,13 +224,13 @@ package fit_gbt_common_package is
     BCID_from_CRU_corrected  : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
     ORBIT_from_CRU_corrected : std_logic_vector(Orbit_id_bitdepth-1 downto 0);  -- ORBIT from CRUS
 
-    rx_phase     : std_logic_vector(rx_phase_bitdepth-1 downto 0);
-    cnv_fifo_max : std_logic_vector(15 downto 0);
-    cnv_drop_cnt : std_logic_vector(15 downto 0);
-    sel_fifo_max : std_logic_vector(15 downto 0);
-    sel_drop_cnt : std_logic_vector(15 downto 0);
-	event_counter: std_logic_vector(31 downto 0);
-    gbt_data_cnt : std_logic_vector(31 downto 0);
+    rx_phase      : std_logic_vector(rx_phase_bitdepth-1 downto 0);
+    cnv_fifo_max  : std_logic_vector(15 downto 0);
+    cnv_drop_cnt  : std_logic_vector(15 downto 0);
+    sel_fifo_max  : std_logic_vector(15 downto 0);
+    sel_drop_cnt  : std_logic_vector(15 downto 0);
+    event_counter : std_logic_vector(31 downto 0);
+    gbt_data_cnt  : std_logic_vector(31 downto 0);
 
     bcind_evt : bc_indicator_t;
     bcind_trg : bc_indicator_t;
@@ -248,10 +248,20 @@ package fit_gbt_common_package is
     -- 5 - [Converter] data_fifo is not empty while start of run
     -- 6 - [Converter] header_fifo is not empty while start of run
     -- 7 - [Converter] tcm_data_fifo is full (TCM only)
+	------
     -- 8 - [Converter] input packet corrupted: extra word (PM)
     -- 9 - [Converter] input packet corrupted: header too early (PM)
+    -- 10- [ltu_rx_decoder] bc_sync lost during the run
     -- 15- [FRU]       0x1 = ready for run, all fifos are empty
     fsm_errors : std_logic_vector(15 downto 0);
+
+    -- fifos empty bits
+    -- 0 - [Converter] raw_header
+    -- 1 - [Converter] raw_data
+    -- 2 - [Selector]  trg
+    -- 3 - [Selector]  select
+    -- 4 - [Selector]  cntpck
+    fifos_empty : std_logic_vector(7 downto 0);
   end record;
 
   constant test_gbt_status_void : gbt_status_t :=
@@ -471,7 +481,7 @@ package body fit_gbt_common_package is
 
     status_reg_addrreg(0)                     := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1)                     := status_reg.ORBIT_from_CRU;
-    status_reg_addrreg(2)                     := status_reg.fsm_errors & x"0" & status_reg.BCID_from_CRU;
+    status_reg_addrreg(2)                     := status_reg.fsm_errors & x"00" & status_reg.fifos_empty;
     status_reg_addrreg(3)                     := status_reg.cnv_fifo_max & status_reg.cnv_drop_cnt;
     status_reg_addrreg(4)                     := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
     status_reg_addrreg(5)                     := status_reg.gbt_data_cnt;
@@ -493,7 +503,7 @@ package body fit_gbt_common_package is
       status_reg_addrreg_sim(i) := status_reg_addrreg(i);
     end loop;
 
-    status_reg_addrreg_sim(stat_reg_size)  := status_reg.ORBIT_from_CRU_corrected;
+    status_reg_addrreg_sim(stat_reg_size)   := status_reg.ORBIT_from_CRU_corrected;
     status_reg_addrreg_sim(stat_reg_size+1) := x"00000" & status_reg.BCID_from_CRU_corrected;
     status_reg_addrreg_sim(stat_reg_size+2) := status_reg.Trigger_from_CRU;
     status_reg_addrreg_sim(stat_reg_size+3) := status_reg.datagen_report.orbit;

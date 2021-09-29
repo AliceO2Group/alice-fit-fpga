@@ -31,6 +31,7 @@ entity DataConverter is
     header_fifo_rden_i  : in  std_logic;
     data_fifo_rden_i    : in  std_logic;
     header_fifo_empty_o : out std_logic;
+    data_fifo_empty_o   : out std_logic;
     no_data_o           : out boolean;
 
     drop_ounter_o  : out std_logic_vector(15 downto 0);
@@ -93,33 +94,35 @@ architecture Behavioral of DataConverter is
 
 
 
-  attribute mark_debug                        : string;
-  attribute mark_debug of reset_drop_counters : signal is "true";
-  attribute mark_debug of header_fifo_din     : signal is "true";
-  attribute mark_debug of data_fifo_din       : signal is "true";
-  attribute mark_debug of header_fifo_we      : signal is "true";
-  attribute mark_debug of data_fifo_we        : signal is "true";
-  attribute mark_debug of word_counter        : signal is "true";
-  attribute mark_debug of sending_event       : signal is "true";
-  attribute mark_debug of header_word         : signal is "true";
-  attribute mark_debug of data_word           : signal is "true";
-  attribute mark_debug of is_data             : signal is "true";
-  attribute mark_debug of is_header           : signal is "true";
-  attribute mark_debug of header_pcklen_ff    : signal is "true";
-  attribute mark_debug of header_word_latch   : signal is "true";
-  attribute mark_debug of header_pcklen_latch : signal is "true";
-  attribute mark_debug of header_fifo_empty   : signal is "true";
-  attribute mark_debug of data_fifo_empty     : signal is "true";
-  attribute mark_debug of header_rawfifo_full : signal is "true";
-  attribute mark_debug of data_rawfifo_full   : signal is "true";
+  attribute mark_debug                      : string;
+  -- attribute mark_debug of reset_drop_counters : signal is "true";
+   attribute mark_debug of header_fifo_din     : signal is "true";
+   attribute mark_debug of data_fifo_din       : signal is "true";
+   attribute mark_debug of header_fifo_we      : signal is "true";
+   attribute mark_debug of data_fifo_we        : signal is "true";
+  -- attribute mark_debug of word_counter        : signal is "true";
+  attribute mark_debug of sending_event     : signal is "true";
+  -- attribute mark_debug of header_word         : signal is "true";
+  -- attribute mark_debug of data_word           : signal is "true";
+  -- attribute mark_debug of is_data             : signal is "true";
+  -- attribute mark_debug of is_header           : signal is "true";
+  -- attribute mark_debug of header_pcklen_ff    : signal is "true";
+  -- attribute mark_debug of header_word_latch   : signal is "true";
+  -- attribute mark_debug of header_pcklen_latch : signal is "true";
+  attribute mark_debug of header_fifo_empty : signal is "true";
+  attribute mark_debug of data_fifo_empty   : signal is "true";
+  -- attribute mark_debug of header_rawfifo_full : signal is "true";
+  -- attribute mark_debug of data_rawfifo_full   : signal is "true";
   attribute mark_debug of header_fifo_data    : signal is "true";
   attribute mark_debug of data_fifo_data      : signal is "true";
   attribute mark_debug of header_fifo_rden    : signal is "true";
   attribute mark_debug of data_fifo_rden      : signal is "true";
 
+
 begin
 
   header_fifo_empty_o <= header_fifo_empty;
+  data_fifo_empty_o   <= data_fifo_empty;
 
   header_pcklen <= func_PMHEADER_n_dwords(Board_data_I.data_word);
   header_orbit  <= func_PMHEADER_getORBIT(Board_data_I.data_word);
@@ -178,7 +181,7 @@ begin
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= err_extra_header&err_extra_word&'0'&errors;
-      no_data_o <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
+      no_data_o      <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
     end if;
   end process;
 
