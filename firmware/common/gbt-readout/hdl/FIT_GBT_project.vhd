@@ -86,9 +86,9 @@ architecture Behavioral of FIT_GBT_project is
 
 
 -- data packager 
-  signal raw_header_dout, raw_data_dout                  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal raw_heaer_rden, raw_data_rden, raw_header_empty : std_logic;
-  signal no_raw_data, no_sel_data                        : boolean;
+  signal raw_header_dout, raw_data_dout                                  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal raw_heaer_rden, raw_data_rden, raw_header_empty, raw_data_empty : std_logic;
+  signal no_raw_data, no_sel_data                                        : boolean;
 
   signal raw_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal raw_isdata : std_logic;
@@ -134,8 +134,8 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
-  FIT_GBT_STATUS.fsm_errors(14 downto 10) <= (others => '0');
-  FIT_GBT_STATUS.fsm_errors(15)           <= '1' when no_raw_data and no_sel_data else '0';
+  FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -149,6 +149,17 @@ begin
   begin
     if(rising_edge(SysClk_I))then
       errors_scl <= FIT_GBT_STATUS.fsm_errors;
+    end if;
+  end process;
+
+  -- fifos empty bits 320 -> 40 for status
+  process (DataClk_I)
+  begin
+    if(rising_edge(DataClk_I))then
+      FIT_GBT_STATUS.fifos_empty(0) <= raw_header_empty;
+      FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
+      FIT_GBT_STATUS.fifos_empty(3) <= slct_fifo_empty;
+      FIT_GBT_STATUS.fifos_empty(4) <= cntpck_fifo_empty;
     end if;
   end process;
 
@@ -210,7 +221,9 @@ begin
       Stop_run_O         => FIT_GBT_STATUS.Stop_run,
       BCIDsync_Mode_O    => FIT_GBT_STATUS.BCIDsync_Mode,
       Data_enable_o      => FIT_GBT_STATUS.data_enable,
-      apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply
+      apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply,
+
+      bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10)
       );
 -- =============================================================
 
@@ -287,6 +300,7 @@ begin
       header_fifo_rden_i  => raw_heaer_rden,
       data_fifo_rden_i    => raw_data_rden,
       header_fifo_empty_o => raw_header_empty,
+      data_fifo_empty_o   => raw_data_empty,
       no_data_o           => no_raw_data,
 
       drop_ounter_o  => FIT_GBT_STATUS.cnv_drop_cnt,
@@ -325,6 +339,8 @@ begin
       cntpck_fifo_dout_o  => cntpck_fifo_dout,
       cntpck_fifo_empty_o => cntpck_fifo_empty,
       cntpck_fifo_rden_i  => cntpck_fifo_rden,
+
+      trg_fifo_empty_o => FIT_GBT_STATUS.fifos_empty(2),
 
       slct_fifo_cnt_o     => open,
       slct_fifo_cnt_max_o => FIT_GBT_STATUS.sel_fifo_max,

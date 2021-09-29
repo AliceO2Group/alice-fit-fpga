@@ -38,7 +38,9 @@ entity ltu_rx_decoder is
     Start_run_O        : out std_logic;
     Stop_run_O         : out std_logic;
     Data_enable_o      : out std_logic;
-    apply_bc_delay_o   : out std_logic
+    apply_bc_delay_o   : out std_logic;
+
+    bcsync_lost_inrun_o : out std_logic
     );
 end ltu_rx_decoder;
 
@@ -50,6 +52,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
+  signal bcsync_lost_inrun                     : std_logic;
 
   signal run_not_permit, bc_apply_permit                 : boolean;
   signal orbc_sync_mode                                  : bcid_sync_t;
@@ -87,11 +90,13 @@ architecture Behavioral of ltu_rx_decoder is
   attribute MARK_DEBUG of bc_delay_in     : signal is "true";
   attribute MARK_DEBUG of bc_delay        : signal is "true";
 
+  attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
+
 
 begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
-  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or (Status_register_I.fsm_errors(7 downto 0) > 0);
+  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
   bc_apply_permit              <= Status_register_I.fsm_errors(15) = '1' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC;
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
@@ -107,15 +112,16 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
-      bc_delay_in    <= Control_register_I.BCID_offset;
-      bc_delay_in_ff <= bc_delay_in;
-	  apply_bc_delay_ff <= apply_bc_delay;
+      bc_delay_in       <= Control_register_I.BCID_offset;
+      bc_delay_in_ff    <= bc_delay_in;
+      apply_bc_delay_ff <= apply_bc_delay;
 
-      ORBC_ID_from_CRU_O <= sync_orbit & sync_bc;
-      BCIDsync_Mode_O    <= orbc_sync_mode;
-      Readout_Mode_O     <= readout_mode;
-      CRU_Readout_Mode_O <= cru_readout_mode;
-      apply_bc_delay_o   <= apply_bc_delay_ff;
+      ORBC_ID_from_CRU_O  <= sync_orbit & sync_bc;
+      BCIDsync_Mode_O     <= orbc_sync_mode;
+      Readout_Mode_O      <= readout_mode;
+      CRU_Readout_Mode_O  <= cru_readout_mode;
+      apply_bc_delay_o    <= apply_bc_delay_ff;
+      bcsync_lost_inrun_o <= bcsync_lost_inrun;
 
       cru_orbit   <= RX_Data_I(79 downto 48);
       cru_bc      <= RX_Data_I(43 downto 32);
@@ -141,6 +147,8 @@ begin
         bc_delay        <= (others => '0');
         bc_apply_fsm    <= s0_changed;
 
+        bcsync_lost_inrun <= '0';
+
       else
 
         if readout_mode /= mode_IDLE and readout_mode_ff = mode_IDLE then Start_run_O <= '1'; else Start_run_O <= '0'; end if;
@@ -157,7 +165,8 @@ begin
             orbc_sync_mode <= mode_SYNC;
           -- check syncronisation each trigger
           elsif orbc_sync_mode = mode_SYNC and cru_is_trg_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
-            orbc_sync_mode <= mode_LOST;
+            orbc_sync_mode                                      <= mode_LOST;
+            if readout_mode /= mode_IDLE then bcsync_lost_inrun <= '1'; end if;
           -- incrementing sync counter then sync
           elsif orbc_sync_mode = mode_SYNC then
             if sync_bc < LHC_BCID_max then sync_bc <= sync_bc + 1;

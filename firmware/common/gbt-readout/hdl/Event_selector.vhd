@@ -42,12 +42,14 @@ entity Event_selector is
     cntpck_fifo_empty_o : out std_logic;
     cntpck_fifo_rden_i  : in  std_logic;
 
+    trg_fifo_empty_o : out std_logic;
+
     slct_fifo_cnt_o     : out std_logic_vector(15 downto 0);
     slct_fifo_cnt_max_o : out std_logic_vector(15 downto 0);
     packets_dropped_o   : out std_logic_vector(15 downto 0);
     event_counter_o     : out std_logic_vector(31 downto 0);
-	
-	no_data_o           : out boolean;
+
+    no_data_o : out boolean;
 
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - slct_fifo is not empty when run starts
@@ -88,7 +90,9 @@ architecture Behavioral of Event_selector is
   signal cntpck_fifo_din, cntpck_fifo_din_ff                                        : std_logic_vector(127 downto 0);
   signal cntpck_fifo_wren, cntpck_fifo_wren_ff, cntpck_fifo_full, cntpck_fifo_empty : std_logic;
 
-  signal fifo_notempty_while_start : std_logic_vector(2 downto 0);
+  signal trgfifo_empty_dc, cntpck_fifo_empty_sc, slct_fifo_empty_sc : std_logic;
+  signal send_gear_rdh_dc, send_last_rdh_dc                         : boolean;
+  signal fifo_notempty_while_start                                  : std_logic_vector(2 downto 0);
 
   type FSM_STATE_T is (s0_idle, s1_select, s2_dread);
   signal FSM_STATE, FSM_STATE_ff, FSM_STATE_NEXT : FSM_STATE_T;
@@ -125,10 +129,27 @@ architecture Behavioral of Event_selector is
   signal reset_dt_counters_sc                                                                                   : boolean;
 
 
-  attribute mark_debug                               : string;
-  attribute mark_debug of event_counter              : signal is "true";
-  attribute mark_debug of event_counter_zero_counter : signal is "true";
+  attribute mark_debug                         : string;
+  -- attribute mark_debug of event_counter              : signal is "true";
+  -- attribute mark_debug of event_counter_zero_counter : signal is "true";
+  attribute mark_debug of trgfifo_empty        : signal is "true";
+  attribute mark_debug of cntpck_fifo_empty_sc : signal is "true";
+  attribute mark_debug of slct_fifo_empty_sc   : signal is "true";
+  attribute mark_debug of send_gear_rdh        : signal is "true";
+  attribute mark_debug of send_last_rdh        : signal is "true";
 
+  attribute mark_debug of FSM_STATE        : signal is "true";
+  attribute mark_debug of read_data_cmd        : signal is "true";
+  attribute mark_debug of read_trigger_cmd        : signal is "true";
+  attribute mark_debug of start_select        : signal is "true";
+
+  attribute mark_debug of trg_is_old        : signal is "true";
+  attribute mark_debug of data_later_trg        : signal is "true";
+  attribute mark_debug of trg_eq_data        : signal is "true";
+  attribute mark_debug of curr_orbit_sc        : signal is "true";
+  attribute mark_debug of curr_bc_sc        : signal is "true";
+  attribute mark_debug of trgfifo_out_orbit        : signal is "true";
+  attribute mark_debug of trgfifo_out_bc        : signal is "true";
 
 
 begin
@@ -145,6 +166,7 @@ begin
   slct_fifo_cnt_max_o <= '0'&fifo_cnt_max;
   slct_fifo_empty_o   <= slct_fifo_empty;
   cntpck_fifo_empty_o <= cntpck_fifo_empty;
+  trg_fifo_empty_o    <= trgfifo_empty_dc;
 
 
 
@@ -214,11 +236,15 @@ begin
       packets_dropped_o <= drop_counter;
       errors_o          <= trgfifo_full_latch & fifo_notempty_while_start;
       event_counter_o   <= event_counter;
-      no_data_o <= (trgfifo_empty = '1') and (cntpck_fifo_empty = '1') and (slct_fifo_empty = '1') and not send_gear_rdh and not send_last_rdh;
+      no_data_o         <= (trgfifo_empty_dc = '1') and (cntpck_fifo_empty = '1') and (slct_fifo_empty = '1') and not send_gear_rdh_dc and not send_last_rdh_dc;
 
       is_readout_ff1 <= Status_register_I.Readout_Mode /= mode_IDLE;
       is_readout_ff2 <= is_readout_ff1;
       is_readout_ff3 <= is_readout_ff2;
+
+      trgfifo_empty_dc <= trgfifo_empty;
+      send_gear_rdh_dc <= send_gear_rdh;
+      send_last_rdh_dc <= send_last_rdh;
 
       if Status_register_I.BCID_from_CRU >= bcid_delay then
         curr_orbit <= Status_register_I.ORBIT_from_CRU;
@@ -268,6 +294,8 @@ begin
       readout_bypass        <= Control_register_I.readout_bypass = '1';
       hb_reject             <= Control_register_I.is_hb_reject = '1';
       event_counter_ff      <= event_counter;
+      cntpck_fifo_empty_sc  <= cntpck_fifo_empty;
+      slct_fifo_empty_sc    <= slct_fifo_empty;
 
       -- put raw data in select fifo for readout bypass mode
       if readout_bypass then
