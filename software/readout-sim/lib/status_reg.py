@@ -93,7 +93,6 @@ class status_reg:
         self.cru_readout_mode = readout_cmd(int(line_regs[0][-8: -7], base=16))
         self.bcid_sync = bcid_smode(int(line_regs[0][-6: -5], base=16))
         self.cru_orbit = int(line_regs[1][-8:], base=16)
-        self.cru_bc = int(line_regs[2][-3:], base=16)
         self.fsm_errors = int(line_regs[2][-8: -4], base=16)
         self.cnv_drop_cnt = int(line_regs[3][-4:], base=16)
         self.cnv_fifo_max = int(line_regs[3][-8: -4], base=16)
@@ -103,6 +102,7 @@ class status_reg:
         self.event_counter = int(line_regs[9][-8:], base=16)
 
         self.cru_orbit_corr = int(line_regs[10][-8:], base=16)
+        self.cru_bc = int(line_regs[11][-7:-4], base=16)
         self.cru_bc_corr = int(line_regs[11][-3:], base=16)
         self.cru_trigger = int(line_regs[12][-3:], base=16)
         self.data_gen_orbit = int(line_regs[13][-8:], base=16)

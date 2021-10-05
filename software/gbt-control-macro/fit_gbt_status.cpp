@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 	uint32_t ctrl_reg[16] = {0};
 	uint32_t stat_reg[16] = {0};
 	
-	printf("\nIT FEEID  ADDR     BR_ON  RD_ON  BC_SYN  CRU    BRD    ERRORs      RATE_kHz   CNV_DRP    SEL_DRP");
+	printf("\nIT FEEID  ADDR     BR_ON  RD_ON  BC_SYN  CRU    BRD    ERRORs    FIFOs   RATE_kHz   CNV_DRP    SEL_DRP");
 	for(uint32_t pmtcm_iter = 0; pmtcm_iter < pmtcm_total; pmtcm_iter+=1){
 		
 		uint32_t curr_ctrl_addr = ctrl_addr + pmtcm_map[pmtcm_iter][1];
@@ -79,7 +79,8 @@ int main(int argc, char *argv[]) {
 		uint8_t rd_mode = (stat_reg[0]&0xF0000)>>16;
 		uint8_t rd_cru_mode = (stat_reg[0]&0xF0000000)>>28;
 		bool rd_mode_corr = (rd_mode == rd_cru_mode) || is_force_idle;
-		uint16_t fsm_errs = (stat_reg[2]&0xFFFF0000)>>16;
+		uint16_t fsm_errs = (stat_reg[2]&0x7FFF0000)>>16;
+		uint8_t fifos_empty = (stat_reg[2]&0xFF);
 		uint32_t gbt_cnt0 = stat_reg[5];
 		uint32_t event_cnt0 = stat_reg[9] & 0xFFFF;
 		uint16_t cnv_drop0 = stat_reg[3] & 0xFFFF;
@@ -97,6 +98,8 @@ int main(int argc, char *argv[]) {
 		if(fsm_errs > 0){
 			for (int ibit = 0; ibit <15; ibit++) if((fsm_errs&(1<<ibit))>0) printf(" %i ", ibit);
 		}
+		
+		printf("%04x  ", fifos_empty);
 		
 		usleep(100000);
 		auto timer2 = Clock::now();
