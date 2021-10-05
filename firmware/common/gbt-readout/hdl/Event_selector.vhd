@@ -448,7 +448,7 @@ begin
 
     -- SELECT from IDLE as start_select is delayed to avoid double select sel->idle->sel, idle twice is requaired
     s1_select when (FSM_STATE = s0_idle) and (FSM_STATE_ff = s0_idle) and start_select else
-    -- SELECT from DREAD
+    -- SELECT from DREAD (start_select is latched, so could be switched to 'fake' select state. read_data_cmd will be correct and idle will follow)
     s1_select when (FSM_STATE = s2_dread) and (FSM_STATE_ff = s2_dread) and reading_last_word and start_select else
 
     -- IDLE from DREAD

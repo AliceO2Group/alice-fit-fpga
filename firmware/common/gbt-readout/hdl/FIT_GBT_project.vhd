@@ -136,6 +136,7 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
+  FIT_GBT_STATUS.fifos_empty(7 downto 5) <= (others => '0');
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);

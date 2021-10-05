@@ -504,7 +504,7 @@ package body fit_gbt_common_package is
     end loop;
 
     status_reg_addrreg_sim(stat_reg_size)   := status_reg.ORBIT_from_CRU_corrected;
-    status_reg_addrreg_sim(stat_reg_size+1) := x"00000" & status_reg.BCID_from_CRU_corrected;
+    status_reg_addrreg_sim(stat_reg_size+1) := x"0" & status_reg.BCID_from_CRU & x"0" & status_reg.BCID_from_CRU_corrected;
     status_reg_addrreg_sim(stat_reg_size+2) := status_reg.Trigger_from_CRU;
     status_reg_addrreg_sim(stat_reg_size+3) := status_reg.datagen_report.orbit;
     status_reg_addrreg_sim(stat_reg_size+4) := x"0" & "000"&status_reg.data_enable & status_reg.datagen_report.size & x"0" & status_reg.datagen_report.bc;

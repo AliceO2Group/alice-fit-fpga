@@ -17,7 +17,7 @@ from lib.run_generator import run_generator as run_generator
 
 
 def generate_sim_inputs():
-    run_len = 10
+    run_len = 4
 
     # class instances
     test_ctrl_reg = ctrl_rec()
@@ -113,6 +113,31 @@ def generate_sim_inputs():
 
     # RENERATING RUN ========================================
     run_gen.run_comment = """
+        - CONTINIOUS RUN
+        - test simple run
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0x50
+    test_ctrl_reg.data_trg_respond_mask = 0
+    test_ctrl_reg.data_bunch_pattern = 0x11111111
+    test_ctrl_reg.data_bunch_freq = 0x100
+    test_ctrl_reg.data_bc_start = 0x100
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = 0x120
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = 0x10
+    test_ctrl_reg.is_hb_reject = 0
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(run_len)
+    run_list.append(copy.copy(run_gen))
+    test_ctrl_reg.is_hb_reject = 0
+    # =======================================================
+
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
         - RUN with force idle
         
         - HB could be missed
@@ -122,7 +147,7 @@ def generate_sim_inputs():
     test_ctrl_reg.bcid_offset = 0x100
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
     test_ctrl_reg.data_bunch_pattern = 0xFF011777
-    test_ctrl_reg.data_bunch_freq = cnst.orbit_size/2
+    test_ctrl_reg.data_bunch_freq = 0x16
     test_ctrl_reg.data_bc_start = 0x100
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
@@ -138,6 +163,40 @@ def generate_sim_inputs():
     run_gen.generate_ctrl_pattern(run_len, test_ctrl_reg_force_idle)
     run_list.append(copy.copy(run_gen))
     # =======================================================
+
+    # RENERATING RUN ========================================
+    run_gen.run_comment = """
+        - CONTINIOUS RUN
+        - HB reject
+        - DATA GEN TEST
+        - 2 packets per orbit
+           - no gaps
+           - lenght 16
+           - lenght 1
+        - 48 CLB triggers with data response
+           - without gaps
+           - gap = 1
+           - 0xFFAFFAA...
+        """
+    test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    test_ctrl_reg.bcid_offset = 0x50
+    test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    test_ctrl_reg.data_bunch_pattern = 0x11111111
+    test_ctrl_reg.data_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.data_bc_start = 0x100
+    test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size
+    test_ctrl_reg.trg_bc_start = 0x600
+    test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    test_ctrl_reg.is_hb_reject = 1
+    run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    run_gen.generate_ctrl_pattern(run_len)
+    run_list.append(copy.copy(run_gen))
+    test_ctrl_reg.is_hb_reject = 0
+    # =======================================================
+
 
     # RENERATING RUN ========================================
     run_gen.run_comment = """
