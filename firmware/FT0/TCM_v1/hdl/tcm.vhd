@@ -1463,7 +1463,7 @@ cc<=  '1' when (unsigned(AmplC(15 downto 0))>unsigned(C_C & '0')) and (AmplC(16)
 scb<= '1' when (unsigned(AmplS(16 downto 0))>unsigned(SC_A & '0')) and (AmplS(17)='0') else '0';
 cb<=  '1' when (unsigned(AmplS(16 downto 0))>unsigned(C_A & '0')) and (AmplS(17)='0') else '0';
 
-Nchan_S<= ("0" & Nchan_A) + ("0" & Nchan_A); 
+Nchan_S<= ("0" & Nchan_A) + ("0" & Nchan_C); 
 
 nsca <= '1' when (unsigned(Nchan_A) > unsigned(SC_A) )  else '0';
 nscc <= '1' when (unsigned(Nchan_C) > unsigned(SC_C) )  else '0';
