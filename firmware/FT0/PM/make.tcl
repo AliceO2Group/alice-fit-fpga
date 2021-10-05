@@ -231,6 +231,7 @@ if {[string equal $proj_create "yes"]} {
 			  [file normalize "$origin_dir/xdc/Timing.xdc"]\
 			  [file normalize "$origin_dir/xdc/fit.xdc"]\
 			  [file normalize "$origin_dir/xdc/ios.xdc"]\
+			  [file normalize "$origin_dir/xdc/chipscope.xdc"]\
 			 ]
     add_files -fileset constrs_1 ${constr_files}
 
@@ -248,7 +249,7 @@ if {[string equal $proj_create "yes"]} {
     
     # Set 'constrs_1' fileset properties
     set obj [get_filesets constrs_1]
-    set_property -name "target_constrs_file" -value "[get_files *xdc/ios.xdc]" -objects $obj
+    set_property -name "target_constrs_file" -value "[get_files *xdc/chipscope.xdc]" -objects $obj
 }
 
 
