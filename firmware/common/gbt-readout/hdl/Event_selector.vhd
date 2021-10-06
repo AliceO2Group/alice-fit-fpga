@@ -95,7 +95,8 @@ architecture Behavioral of Event_selector is
   signal fifo_notempty_while_start                                  : std_logic_vector(2 downto 0);
 
   type FSM_STATE_T is (s0_idle, s1_select, s2_dread);
-  signal FSM_STATE, FSM_STATE_ff, FSM_STATE_NEXT : FSM_STATE_T;
+  signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
+  signal select_timeout            : natural range 0 to 7;  -- min time between select states is 3 cycles to wait updated data from fifo.
 
   signal header_fifo_rd, data_fifo_rd         : std_logic;
   signal word_counter                         : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
@@ -139,17 +140,18 @@ architecture Behavioral of Event_selector is
   attribute mark_debug of send_last_rdh        : signal is "true";
 
   attribute mark_debug of FSM_STATE        : signal is "true";
-  attribute mark_debug of read_data_cmd        : signal is "true";
-  attribute mark_debug of read_trigger_cmd        : signal is "true";
-  attribute mark_debug of start_select        : signal is "true";
+  attribute mark_debug of read_data_cmd    : signal is "true";
+  attribute mark_debug of read_trigger_cmd : signal is "true";
+  attribute mark_debug of start_select     : signal is "true";
+  attribute mark_debug of select_timeout   : signal is "true";
 
   attribute mark_debug of trg_is_old        : signal is "true";
-  attribute mark_debug of data_later_trg        : signal is "true";
-  attribute mark_debug of trg_eq_data        : signal is "true";
-  attribute mark_debug of curr_orbit_sc        : signal is "true";
+  attribute mark_debug of data_later_trg    : signal is "true";
+  attribute mark_debug of trg_eq_data       : signal is "true";
+  attribute mark_debug of curr_orbit_sc     : signal is "true";
   attribute mark_debug of curr_bc_sc        : signal is "true";
-  attribute mark_debug of trgfifo_out_orbit        : signal is "true";
-  attribute mark_debug of trgfifo_out_bc        : signal is "true";
+  attribute mark_debug of trgfifo_out_orbit : signal is "true";
+  attribute mark_debug of trgfifo_out_bc    : signal is "true";
 
 
 begin
@@ -318,15 +320,17 @@ begin
         word_counter              <= (others => '0');
         drop_counter              <= (others => '0');
         fifo_notempty_while_start <= (others => '0');
+        select_timeout            <= 7;
 
 
       else
 
-        FSM_STATE    <= FSM_STATE_NEXT;
-        FSM_STATE_ff <= FSM_STATE;
+        FSM_STATE <= FSM_STATE_NEXT;
 
         -- latching readout commands
         if FSM_STATE_NEXT = s1_select then
+
+          select_timeout <= 0;
 
           read_data_cmd    <= read_data;
           read_trigger_cmd <= read_trigger;
@@ -341,7 +345,13 @@ begin
           if is_hb_r_trg and read_trigger then hb_reject_cmd <= true;
           elsif is_hbtrg and read_trigger then hb_reject_cmd <= false; end if;
 
+        else
+
+          -- counting select timeout
+          if select_timeout < 7 then select_timeout <= select_timeout + 1; end if;
+
         end if;
+
 
         if FSM_STATE = s1_select then
 
@@ -378,7 +388,6 @@ begin
 
 
         end if;
-
 
         -- counting rdh payload
         if slct_fifo_wren = '1' then rdh_size_counter                                                       <= rdh_size_counter + 1; end if;
@@ -446,16 +455,16 @@ begin
     -- IDLE after SELECT (trg read)
     s0_idle  when (FSM_STATE = s1_select) and not read_data_cmd else
 
-    -- SELECT from IDLE as start_select is delayed to avoid double select sel->idle->sel, idle twice is requaired
-    s1_select when (FSM_STATE = s0_idle) and (FSM_STATE_ff = s0_idle) and start_select else
-    -- SELECT from DREAD (start_select is latched, so could be switched to 'fake' select state. read_data_cmd will be correct and idle will follow)
-    s1_select when (FSM_STATE = s2_dread) and (FSM_STATE_ff = s2_dread) and reading_last_word and start_select else
+    -- SELECT from IDLE
+    s1_select when (FSM_STATE = s0_idle) and start_select and (select_timeout > 2) else
+    -- SELECT from DREAD
+    s1_select when (FSM_STATE = s2_dread) and reading_last_word and start_select and (select_timeout > 2) else
 
     -- IDLE from DREAD
     s0_idle when (FSM_STATE = s2_dread) and reading_last_word else
 
     -- SELECT last rdh
-    s1_select when (FSM_STATE = s0_idle) and send_last_rdh else
+    s1_select when (FSM_STATE = s0_idle) and send_last_rdh and (select_timeout > 2) else
 
     -- FSM state the same
     FSM_STATE;
