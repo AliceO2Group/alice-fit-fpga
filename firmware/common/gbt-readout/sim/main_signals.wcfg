@@ -14,12 +14,12 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="190050002fs"></ZoomEndTime>
-      <Cursor1Time time="67486210fs"></Cursor1Time>
+      <ZoomEndTime time="292492272fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="220"></NameColumnWidth>
-      <ValueColumnWidth column_width="121"></ValueColumnWidth>
+      <ValueColumnWidth column_width="117"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="11" />
    <wave_markers>
@@ -680,6 +680,7 @@
    <wvobject fp_name="group400" type="group">
       <obj_property name="label">SELECTOR</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/send_trg_mode_sc" type="other">
          <obj_property name="ElementShortName">send_trg_mode_sc</obj_property>
          <obj_property name="ObjectShortName">send_trg_mode_sc</obj_property>
@@ -879,6 +880,12 @@
          <obj_property name="ElementShortName">start_select</obj_property>
          <obj_property name="ObjectShortName">start_select</obj_property>
          <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/select_timeout" type="array">
+         <obj_property name="ElementShortName">select_timeout[3:0]</obj_property>
+         <obj_property name="ObjectShortName">select_timeout[3:0]</obj_property>
+         <obj_property name="CustomSignalColor">#800000</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/FSM_STATE" type="other">
