@@ -97,7 +97,7 @@ begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
-  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '1' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC;
+  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC;
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
@@ -154,8 +154,8 @@ begin
         if readout_mode /= mode_IDLE and readout_mode_ff = mode_IDLE then Start_run_O <= '1'; else Start_run_O <= '0'; end if;
         if readout_mode = mode_IDLE and readout_mode_ff /= mode_IDLE then Stop_run_O  <= '1'; else Stop_run_O <= '0'; end if;
 
-        if cru_is_trg_ff then Trigger_O <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
-        if (cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void then
+        if cru_is_trg_ff and (orbc_sync_mode = mode_SYNC) then Trigger_O <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
+        if ((cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) then
           trg_match_resp_mask_o <= '1'; else trg_match_resp_mask_o <= '0'; end if;
 
           -- syncronize orbc from cru to detector with first trigger

@@ -824,7 +824,7 @@ begin
          gbt_global_status(2) <=  '1';
         end if;
         
-        if ( readout_status.Trigger_from_CRU and readout_control.Data_Gen.trigger_resp_mask ) /= 0 then
+        if readout_status.trg_match_resp_mask = '1' then
          readout_laser_out <=  '1';
         else 
          readout_laser_out <=  '0';

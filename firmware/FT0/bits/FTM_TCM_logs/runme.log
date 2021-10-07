@@ -16,16 +16,16 @@ INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k325
 INFO: [Common 17-1540] The version limit for your license is '2020.04' and has expired for new software. A version limit expiration means that, although you may be able to continue to use the current version of tools or IP with this license, you will not be eligible for any updates or new releases.
 INFO: [Device 21-403] Loading part xc7k325tffg900-2
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 4079076 
+INFO: Helper process launched with PID 1326506 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:10 . Memory (MB): peak = 1979.035 ; gain = 200.715 ; free physical = 20497 ; free virtual = 56135
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:10 . Memory (MB): peak = 1979.035 ; gain = 200.715 ; free physical = 22138 ; free virtual = 57689
 ---------------------------------------------------------------------------------
-WARNING: [Synth 8-1565] actual for formal port rd_en is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:130]
+WARNING: [Synth 8-1565] actual for formal port rd_en is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:132]
 WARNING: [Synth 8-1565] actual for formal port divider_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_rsencode.vhd:95]
 WARNING: [Synth 8-1565] actual for formal port tx_common_frame_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder.vhd:151]
 WARNING: [Synth 8-1565] actual for formal port reset_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx.vhd:256]
 WARNING: [Synth 8-1565] actual for formal port soft_reset_rx_in is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd:211]
-WARNING: [Synth 8-1565] actual for formal port rx_data_rxclk_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:184]
+WARNING: [Synth 8-1565] actual for formal port rx_data_rxclk_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:195]
 WARNING: [Synth 8-1565] actual for formal port hdmi_fifo_datain_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/FIT_TESTMODULE_v2.vhd:541]
 WARNING: [Synth 8-1565] actual for formal port rst is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/FIT_TESTMODULE_v2.vhd:710]
 WARNING: [Synth 8-1565] actual for formal port rst is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/FIT_TESTMODULE_v2.vhd:720]
@@ -1449,6 +1449,7 @@ INFO: [Synth 8-6157] synthesizing module 'xpm_cdc_gray__parameterized4' [/opt/Xi
 INFO: [Synth 8-6155] done synthesizing module 'xpm_cdc_gray__parameterized4' (133#1) [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv:284]
 INFO: [Synth 8-256] done synthesizing module 'ipbus_data_fifo' (134#1) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/ipbus_data_fifo/synth/ipbus_data_fifo.vhd:76]
 INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ipbus_data_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:190]
+WARNING: [Synth 8-3848] Net readout_status[fifos_empty] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[event_counter] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[datagen_report][orbit] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[datagen_report][bc] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
@@ -1456,6 +1457,7 @@ WARNING: [Synth 8-3848] Net readout_status[datagen_report][size] in module/entit
 WARNING: [Synth 8-3848] Net readout_status[datagen_report][packet_num] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[data_enable] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[bc_delay_apply] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
+WARNING: [Synth 8-3848] Net readout_status[trg_match_resp_mask] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[BCID_from_CRU_corrected] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 WARNING: [Synth 8-3848] Net readout_status[ORBIT_from_CRU_corrected] in module/entity ipbus_face does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:71]
 INFO: [Synth 8-256] done synthesizing module 'ipbus_face' (135#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/ftm/hdl/ipbus_face.vhd:49]
@@ -1464,8 +1466,8 @@ INFO: [Synth 8-638] synthesizing module 'FIT_GBT_project' [/home/dfinogee/git/al
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:65]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:67]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:79]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:83]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:108]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:82]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:107]
 INFO: [Synth 8-638] synthesizing module 'Reset_Generator' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:32]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
@@ -1480,24 +1482,25 @@ INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/
 INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:46]
 INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:47]
 INFO: [Synth 8-256] done synthesizing module 'RXDATA_CLKSync' (137#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:38]
-INFO: [Synth 8-638] synthesizing module 'ltu_rx_decoder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:45]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:49]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:54]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'ltu_rx_decoder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:47]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:51]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:55]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:56]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:56]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:57]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:57]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:59]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:59]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:63]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:64]
-INFO: [Synth 8-256] done synthesizing module 'ltu_rx_decoder' (138#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:45]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:64]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:66]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:67]
+INFO: [Synth 8-256] done synthesizing module 'ltu_rx_decoder' (138#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:47]
 INFO: [Synth 8-638] synthesizing module 'bc_indicator' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:36]
 	Parameter USE_SYSCLK bound to: 1 - type: bool 
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:38]
@@ -1518,21 +1521,21 @@ WARNING: [Synth 8-5858] RAM Board_data_gen_pipe_reg from Abstract Data Type (rec
 INFO: [Synth 8-256] done synthesizing module 'Module_Data_Gen' (140#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd:39]
 INFO: [Synth 8-638] synthesizing module 'cru_ltu_emu' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/cru_ltu_emu.vhd:36]
 INFO: [Synth 8-256] done synthesizing module 'cru_ltu_emu' (141#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/cru_ltu_emu.vhd:36]
-INFO: [Synth 8-638] synthesizing module 'DataConverter' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:53]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:63]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:63]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
+INFO: [Synth 8-638] synthesizing module 'DataConverter' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:54]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:64]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:64]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:74]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:81]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:68]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:68]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:75]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:82]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:87]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:87]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:83]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:88]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:88]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:89]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:89]
 INFO: [Synth 8-638] synthesizing module 'tcm_data_160to80bit_fifo' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/tcm_data_160to80bit_fifo/synth/tcm_data_160to80bit_fifo.vhd:73]
 	Parameter C_COMMON_CLOCK bound to: 1 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
@@ -1943,13 +1946,14 @@ INFO: [Synth 8-638] synthesizing module 'raw_data_fifo' [/home/dfinogee/git/alic
 	Parameter C_REG_SLICE_MODE_AXIS bound to: 0 - type: integer 
 INFO: [Synth 8-3491] module 'fifo_generator_v13_2_5' declared at '/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/COUNTER_FIFO/hdl/fifo_generator_v13_2_vhsyn_rfs.vhd:38604' bound to instance 'U0' of component 'fifo_generator_v13_2_5' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/raw_data_fifo/synth/raw_data_fifo.vhd:544]
 INFO: [Synth 8-256] done synthesizing module 'raw_data_fifo' (149#1) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/raw_data_fifo/synth/raw_data_fifo.vhd:75]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_header_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:141]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_data_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:158]
-WARNING: [Synth 8-6014] Unused sequential element board_data_reg[is_header] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:129]
-INFO: [Synth 8-256] done synthesizing module 'DataConverter' (150#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:53]
-INFO: [Synth 8-638] synthesizing module 'Event_selector' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:61]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:83]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:84]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_header_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:143]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_data_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:160]
+WARNING: [Synth 8-6014] Unused sequential element board_data_reg[is_header] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:131]
+INFO: [Synth 8-256] done synthesizing module 'DataConverter' (150#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'Event_selector' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:63]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:72]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:73]
+INFO: [Common 17-14] Message 'Synth 8-5534' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-638] synthesizing module 'trg_fifo_comp' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/trg_fifo_comp/synth/trg_fifo_comp.vhd:77]
 	Parameter C_COMMON_CLOCK bound to: 0 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
@@ -2567,14 +2571,15 @@ INFO: [Synth 8-638] synthesizing module 'slct_data_fifo' [/home/dfinogee/git/ali
 	Parameter C_REG_SLICE_MODE_AXIS bound to: 0 - type: integer 
 INFO: [Synth 8-3491] module 'fifo_generator_v13_2_5' declared at '/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/COUNTER_FIFO/hdl/fifo_generator_v13_2_vhsyn_rfs.vhd:38604' bound to instance 'U0' of component 'fifo_generator_v13_2_5' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/slct_data_fifo/synth/slct_data_fifo.vhd:548]
 INFO: [Synth 8-256] done synthesizing module 'slct_data_fifo' (156#1) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/generated/slct_data_fifo/synth/slct_data_fifo.vhd:78]
-INFO: [Synth 8-256] done synthesizing module 'Event_selector' (157#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:61]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'trg_fifo_comp_c'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:173]
+WARNING: [Synth 8-6014] Unused sequential element event_counter_ff_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:295]
+WARNING: [Synth 8-6014] Unused sequential element event_counter_zero_counter_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:400]
+INFO: [Synth 8-256] done synthesizing module 'Event_selector' (157#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:63]
 INFO: [Synth 8-638] synthesizing module 'CRU_packet_Builder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/CRU_packet_Builder.vhd:55]
 INFO: [Synth 8-256] done synthesizing module 'CRU_packet_Builder' (158#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/CRU_packet_Builder.vhd:55]
 INFO: [Synth 8-638] synthesizing module 'TX_Data_Gen' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/TX_Data_Gen.vhd:36]
 INFO: [Synth 8-256] done synthesizing module 'TX_Data_Gen' (159#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/TX_Data_Gen.vhd:36]
 INFO: [Synth 8-638] synthesizing module 'GBT_TX_RX' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:57]
-INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:73]
-INFO: [Common 17-14] Message 'Synth 8-5534' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-638] synthesizing module 'gbt_rx_frameclk_phalgnr' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/core_sources/rxframeclk_phalgnr/gbt_rx_frameclk_phalgnr.vhd:71]
 	Parameter RX_OPTIMIZATION bound to: 1 - type: integer 
 	Parameter TX_OPTIMIZATION bound to: 0 - type: integer 
@@ -3267,17 +3272,17 @@ INFO: [Synth 8-256] done synthesizing module 'gbt_rx' (215#1) [/home/dfinogee/gi
 INFO: [Synth 8-256] done synthesizing module 'gbt_bank' (216#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd:113]
 WARNING: [Synth 8-3848] Net GBT_Status_O[Rx_Phase_error] in module/entity GBT_TX_RX does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:46]
 INFO: [Synth 8-256] done synthesizing module 'GBT_TX_RX' (217#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:57]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'RxData_ClkSync_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:176]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'cru_ltu_emu_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:259]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'gbt_bank_gen.gbtBankDsgn'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:384]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'TX_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:364]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'CRU_packet_Builder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:339]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Event_Selector_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:305]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'DataConverter_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:276]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Module_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:242]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ltu_rx_decoder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:193]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_trg_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:230]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_data_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:218]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'RxData_ClkSync_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:187]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'cru_ltu_emu_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:272]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'gbt_bank_gen.gbtBankDsgn'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:400]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'TX_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:380]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'CRU_packet_Builder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:355]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Event_Selector_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:319]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'DataConverter_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:289]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Module_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:255]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ltu_rx_decoder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:204]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_trg_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:243]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_data_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:231]
 INFO: [Synth 8-256] done synthesizing module 'FIT_GBT_project' (218#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:58]
 	Parameter DIFF_TERM bound to: 1 - type: bool 
 	Parameter DQS_BIAS bound to: FALSE - type: string 
@@ -4125,7 +4130,7 @@ WARNING: [Synth 8-3331] design wr_logic__parameterized6 has unconnected port PRO
 WARNING: [Synth 8-3331] design wr_logic__parameterized6 has unconnected port PROG_FULL_THRESH_ASSERT[7]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:03:06 ; elapsed = 00:03:16 . Memory (MB): peak = 2986.184 ; gain = 1207.863 ; free physical = 18776 ; free virtual = 54424
+Finished RTL Elaboration : Time (s): cpu = 00:03:06 ; elapsed = 00:03:16 . Memory (MB): peak = 2986.793 ; gain = 1208.473 ; free physical = 21687 ; free virtual = 57247
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -4138,12 +4143,12 @@ Report Check Netlist:
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:03:09 ; elapsed = 00:03:19 . Memory (MB): peak = 2986.184 ; gain = 1207.863 ; free physical = 18857 ; free virtual = 54504
+Finished Handling Custom Attributes : Time (s): cpu = 00:03:09 ; elapsed = 00:03:20 . Memory (MB): peak = 2986.793 ; gain = 1208.473 ; free physical = 21767 ; free virtual = 57328
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:03:09 ; elapsed = 00:03:19 . Memory (MB): peak = 2986.184 ; gain = 1207.863 ; free physical = 18857 ; free virtual = 54504
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:03:09 ; elapsed = 00:03:20 . Memory (MB): peak = 2986.793 ; gain = 1208.473 ; free physical = 21767 ; free virtual = 57328
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.43 ; elapsed = 00:00:00.43 . Memory (MB): peak = 2986.184 ; gain = 0.000 ; free physical = 19129 ; free virtual = 54783
+Netlist sorting complete. Time (s): cpu = 00:00:00.43 ; elapsed = 00:00:00.43 . Memory (MB): peak = 2986.793 ; gain = 0.000 ; free physical = 21695 ; free virtual = 57256
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCE' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
 INFO: [Netlist 29-17] Analyzing 752 Unisim elements for replacement
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCTRL' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
@@ -4320,7 +4325,7 @@ Sourcing Tcl File [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/tcl/xpm_cdc_syn
 Finished Sourcing Tcl File [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/tcl/xpm_cdc_sync_rst.tcl] for cell 'ipbus_face_comp/ipbus_data_fifo_comp/U0/inst_fifo_gen/gconvfifo.rf/grf.rf/rstblk/ngwrdrst.grst.g7serrst.gsckt_wrst.xpm_cdc_sync_rst_inst_wrst'
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3050.215 ; gain = 0.000 ; free physical = 18910 ; free virtual = 54565
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3050.824 ; gain = 0.000 ; free physical = 21529 ; free virtual = 57090
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 372 instances were transformed.
   BUFGCE => BUFGCTRL: 1 instance 
@@ -4330,9 +4335,9 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM64X1D => RAM64X1D (RAMD64E(x2)): 8 instances
   SRL16 => SRL16E: 4 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.27 ; elapsed = 00:00:00.27 . Memory (MB): peak = 3050.215 ; gain = 0.000 ; free physical = 18909 ; free virtual = 54564
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.25 ; elapsed = 00:00:00.26 . Memory (MB): peak = 3050.824 ; gain = 0.000 ; free physical = 21529 ; free virtual = 57089
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:03:25 ; elapsed = 00:03:35 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 19137 ; free virtual = 54792
+Finished Constraint Validation : Time (s): cpu = 00:03:25 ; elapsed = 00:03:35 . Memory (MB): peak = 3050.824 ; gain = 1272.504 ; free physical = 21740 ; free virtual = 57301
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5580] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-5544] ROM "output" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
@@ -4632,17 +4637,17 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'statusLatOpt_gen.state_reg' using encoding 'one-hot' in module 'gbt_rx_status'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:03:40 ; elapsed = 00:03:52 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 16232 ; free virtual = 51904
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:03:38 ; elapsed = 00:03:50 . Memory (MB): peak = 3050.824 ; gain = 1272.504 ; free physical = 19608 ; free virtual = 55177
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
 +------+------------------------+------------+----------+
 |      |RTL Partition           |Replication |Instances |
 +------+------------------------+------------+----------+
-|1     |FIT_GBT_project__GB0    |           1|     21844|
+|1     |FIT_GBT_project__GB0    |           1|     21769|
 |2     |FIT_GBT_project__GB1    |           1|     24656|
-|3     |FIT_TESTMODULE_v2__GCB0 |           1|     33569|
-|4     |FIT_TESTMODULE_v2__GCB1 |           1|     11544|
+|3     |FIT_TESTMODULE_v2__GCB0 |           1|     34062|
+|4     |FIT_TESTMODULE_v2__GCB1 |           1|     10997|
 +------+------------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -4882,17 +4887,17 @@ WARNING: [Synth 8-3332] Sequential element (flow/ppe_sync[3].sync_rx_pen/data_sy
 WARNING: [Synth 8-3332] Sequential element (flow/ppe_sync[3].sync_rx_pen/data_sync_reg3) is unused and will be removed from module tri_mode_ethernet_mac_v9_0_15.
 INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:04:42 ; elapsed = 00:05:03 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12775 ; free virtual = 48623
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:04:38 ; elapsed = 00:04:57 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18621 ; free virtual = 54281
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
 +------+------------------------+------------+----------+
 |      |RTL Partition           |Replication |Instances |
 +------+------------------------+------------+----------+
-|1     |FIT_GBT_project__GB0    |           1|     15951|
+|1     |FIT_GBT_project__GB0    |           1|     16010|
 |2     |FIT_GBT_project__GB1    |           1|      7716|
-|3     |FIT_TESTMODULE_v2__GCB0 |           1|     21613|
-|4     |FIT_TESTMODULE_v2__GCB1 |           1|     10216|
+|3     |FIT_TESTMODULE_v2__GCB0 |           1|     22228|
+|4     |FIT_TESTMODULE_v2__GCB1 |           1|      9837|
 +------+------------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start Applying XDC Timing Constraints
@@ -4901,23 +4906,23 @@ INFO: [Synth 8-5578] Moved timing constraint from pin 'ipbus_module/eth/mac/U0/t
 INFO: [Synth 8-5578] Moved timing constraint from pin 'ipbus_module/eth/mac/U0/tx_configuration_vector[13]' to pin '{ipbus_module/eth/phy/U0/gig_ethernet_pcs_pma_0_core/gpcs_pma_inst/HAS_AUTO_NEG.AN_RX_GMII_AT_TXOUTCLK.AUTO_NEGOTIATION/SGMII_SPEED_reg[1]/Q}'
 INFO: [Synth 8-5819] Moved 2 constraints on hierarchical pins to their respective driving/loading pins
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:04:47 ; elapsed = 00:05:09 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12828 ; free virtual = 48676
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:04:43 ; elapsed = 00:05:03 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18523 ; free virtual = 54184
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:04:53 ; elapsed = 00:05:14 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12702 ; free virtual = 48551
+Finished Timing Optimization : Time (s): cpu = 00:04:48 ; elapsed = 00:05:08 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18489 ; free virtual = 54150
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
 +------+------------------------+------------+----------+
 |      |RTL Partition           |Replication |Instances |
 +------+------------------------+------------+----------+
-|1     |FIT_GBT_project__GB0    |           1|     15951|
+|1     |FIT_GBT_project__GB0    |           1|     16064|
 |2     |FIT_GBT_project__GB1    |           1|      7716|
-|3     |FIT_TESTMODULE_v2__GCB0 |           1|     21613|
-|4     |FIT_TESTMODULE_v2__GCB1 |           1|     10216|
+|3     |FIT_TESTMODULE_v2__GCB0 |           1|     22228|
+|4     |FIT_TESTMODULE_v2__GCB1 |           1|      9837|
 +------+------------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start Technology Mapping
@@ -4940,7 +4945,7 @@ INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:05:01 ; elapsed = 00:05:24 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12713 ; free virtual = 48561
+Finished Technology Mapping : Time (s): cpu = 00:04:56 ; elapsed = 00:05:17 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18511 ; free virtual = 54172
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -4987,6 +4992,22 @@ INFO: [Synth 8-4163] Replicating register Laser_Signal_out_reg to handle IOB=TRU
 ---------------------------------------------------------------------------------
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[15] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[14] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[13] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[12] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[11] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[10] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[9] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[8] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[7] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[6] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[5] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[4] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[3] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[2] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[1] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[0] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[31] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[30] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[29] to constant 0
@@ -5019,32 +5040,16 @@ WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_infe
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[2] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[1] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_out]_inferred:in0[0] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[15] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[14] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[13] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[12] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[11] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[10] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[9] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[8] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[7] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[6] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[5] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[4] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[3] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[2] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[1] to constant 0
-WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_inferred:in0[0] to constant 0
 WARNING: [Synth 8-3295] tying undriven pin txgen/CRC_CE_inferred:in0 to constant 0
 WARNING: [Synth 8-3295] tying undriven pin rxgen/CRC_CE_inferred:in0 to constant 0
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:05:04 ; elapsed = 00:05:27 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12718 ; free virtual = 48566
+Finished IO Insertion : Time (s): cpu = 00:04:59 ; elapsed = 00:05:20 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18510 ; free virtual = 54171
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:05:04 ; elapsed = 00:05:27 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12718 ; free virtual = 48566
+Finished Renaming Generated Instances : Time (s): cpu = 00:04:59 ; elapsed = 00:05:20 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18510 ; free virtual = 54171
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -5063,25 +5068,25 @@ Report Check Netlist:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:05:06 ; elapsed = 00:05:28 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12716 ; free virtual = 48564
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:05:00 ; elapsed = 00:05:21 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18509 ; free virtual = 54169
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:05:06 ; elapsed = 00:05:28 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12716 ; free virtual = 48564
+Finished Renaming Generated Ports : Time (s): cpu = 00:05:00 ; elapsed = 00:05:21 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18509 ; free virtual = 54169
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:05:06 ; elapsed = 00:05:28 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12714 ; free virtual = 48562
+Finished Handling Custom Attributes : Time (s): cpu = 00:05:01 ; elapsed = 00:05:21 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18508 ; free virtual = 54169
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:05:06 ; elapsed = 00:05:28 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12714 ; free virtual = 48562
+Finished Renaming Generated Nets : Time (s): cpu = 00:05:01 ; elapsed = 00:05:22 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18508 ; free virtual = 54169
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -5101,7 +5106,7 @@ Report Cell Usage:
 |2     |BUFGCE          |     1|
 |3     |BUFH            |     6|
 |4     |BUFR            |     1|
-|5     |CARRY4          |   585|
+|5     |CARRY4          |   587|
 |6     |GTXE2_CHANNEL   |     1|
 |7     |GTXE2_CHANNEL_1 |     1|
 |8     |IBUFDS_GTE2     |     3|
@@ -5109,15 +5114,15 @@ Report Cell Usage:
 |10    |IDELAYE2        |     2|
 |11    |IDELAYE2_1      |     6|
 |12    |ISERDESE2       |     4|
-|13    |LUT1            |   687|
-|14    |LUT2            |  1826|
-|15    |LUT3            |  1867|
-|16    |LUT4            |  1960|
-|17    |LUT5            |  1866|
-|18    |LUT6            |  4232|
+|13    |LUT1            |   689|
+|14    |LUT2            |  1801|
+|15    |LUT3            |  1914|
+|16    |LUT4            |  2070|
+|17    |LUT5            |  1870|
+|18    |LUT6            |  4259|
 |19    |MMCME2_ADV      |     3|
 |20    |MUXCY           |   214|
-|21    |MUXF7           |    48|
+|21    |MUXF7           |    49|
 |22    |MUXF8           |    10|
 |23    |PLLE2_ADV       |     1|
 |24    |PLLE2_ADV_1     |     1|
@@ -5146,8 +5151,8 @@ Report Cell Usage:
 |47    |FDCE            |   816|
 |48    |FDP             |    48|
 |49    |FDPE            |    88|
-|50    |FDRE            | 14829|
-|51    |FDSE            |   628|
+|50    |FDRE            | 14778|
+|51    |FDSE            |   631|
 |52    |IBUF            |    15|
 |53    |IBUFDS          |     3|
 |54    |IBUFDS_DIFF_OUT |     5|
@@ -5156,22 +5161,22 @@ Report Cell Usage:
 |57    |OBUFT           |     1|
 +------+----------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:05:06 ; elapsed = 00:05:28 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 12714 ; free virtual = 48562
+Finished Writing Synthesis Report : Time (s): cpu = 00:05:01 ; elapsed = 00:05:22 . Memory (MB): peak = 3050.832 ; gain = 1272.512 ; free physical = 18508 ; free virtual = 54169
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 210 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:04:56 ; elapsed = 00:05:19 . Memory (MB): peak = 3050.215 ; gain = 1207.863 ; free physical = 15784 ; free virtual = 51632
-Synthesis Optimization Complete : Time (s): cpu = 00:05:08 ; elapsed = 00:05:31 . Memory (MB): peak = 3050.215 ; gain = 1271.895 ; free physical = 15784 ; free virtual = 51632
+Synthesis Optimization Runtime : Time (s): cpu = 00:04:50 ; elapsed = 00:05:11 . Memory (MB): peak = 3054.742 ; gain = 1212.391 ; free physical = 21583 ; free virtual = 57243
+Synthesis Optimization Complete : Time (s): cpu = 00:05:03 ; elapsed = 00:05:22 . Memory (MB): peak = 3054.742 ; gain = 1276.422 ; free physical = 21583 ; free virtual = 57244
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.29 ; elapsed = 00:00:00.29 . Memory (MB): peak = 3050.215 ; gain = 0.000 ; free physical = 18843 ; free virtual = 54691
+Netlist sorting complete. Time (s): cpu = 00:00:00.29 ; elapsed = 00:00:00.29 . Memory (MB): peak = 3054.742 ; gain = 0.000 ; free physical = 21568 ; free virtual = 57228
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCE' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
-INFO: [Netlist 29-17] Analyzing 1392 Unisim elements for replacement
+INFO: [Netlist 29-17] Analyzing 1395 Unisim elements for replacement
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCTRL' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-140] Inserted 2 IBUFs to IO ports without IO buffers.
 INFO: [Opt 31-141] Inserted 2 OBUFs to IO ports without IO buffers.
 INFO: [Opt 31-138] Pushed 2 inverter(s) to 8 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3050.215 ; gain = 0.000 ; free physical = 18790 ; free virtual = 54638
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3054.742 ; gain = 0.000 ; free physical = 21517 ; free virtual = 57177
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 428 instances were transformed.
   (MUXCY,XORCY) => CARRY4: 70 instances
@@ -5184,11 +5189,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   SRL16 => SRL16E: 4 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-950 Infos, 387 Warnings, 0 Critical Warnings and 0 Errors encountered.
+951 Infos, 391 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:05:16 ; elapsed = 00:05:40 . Memory (MB): peak = 3050.215 ; gain = 1562.629 ; free physical = 18973 ; free virtual = 54821
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3050.215 ; gain = 0.000 ; free physical = 18973 ; free virtual = 54821
+synth_design: Time (s): cpu = 00:05:11 ; elapsed = 00:05:31 . Memory (MB): peak = 3054.742 ; gain = 1567.156 ; free physical = 21702 ; free virtual = 57363
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3054.742 ; gain = 0.000 ; free physical = 21702 ; free virtual = 57363
 WARNING: [Constraints 18-5210] No constraints selected for write.
 Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
 INFO: [Common 17-1381] The checkpoint '/home/dfinogee/git/alice-fit-fpga/firmware/FT0/FTM_TCM/build/FTM_TCM.runs/synth_1/FIT_TESTMODULE_v2.dcp' has been generated.
-INFO: [Common 17-206] Exiting Vivado at Tue Sep 28 18:08:26 2021...
+INFO: [Common 17-206] Exiting Vivado at Thu Oct  7 14:10:40 2021...

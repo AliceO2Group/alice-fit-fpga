@@ -79,8 +79,9 @@ architecture Behavioral of FIT_GBT_project is
   signal FIT_GBT_STATUS                   : readout_status_t;
   signal ORBC_ID_from_RXdecoder           : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRUS
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
-  signal trg_match_resp_mask              : std_logic;
   signal errors_scl                       : std_logic_vector(15 downto 0);
+  signal readout_status_scl : readout_status_t;
+
 
 
 
@@ -114,8 +115,9 @@ architecture Behavioral of FIT_GBT_project is
   attribute mark_debug of Board_data_from_main_gen : signal is "true";
   attribute mark_debug of RX_Data_DataClk          : signal is "true";
   attribute mark_debug of RX_IsData_DataClk        : signal is "true";
-  attribute mark_debug of errors_scl               : signal is "true";
-  attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
+--  attribute mark_debug of errors_scl               : signal is "true";
+   attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
+  -- attribute mark_debug of readout_status_scl           : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -150,6 +152,7 @@ begin
   begin
     if(rising_edge(SysClk_I))then
       errors_scl <= FIT_GBT_STATUS.fsm_errors;
+	  readout_status_scl <= FIT_GBT_STATUS;
     end if;
   end process;
 
@@ -214,7 +217,7 @@ begin
       ORBC_ID_from_CRU_O           => ORBC_ID_from_RXdecoder,
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
-      trg_match_resp_mask_o        => trg_match_resp_mask,
+      trg_match_resp_mask_o        => FIT_GBT_STATUS.trg_match_resp_mask,
 
       Readout_Mode_O     => FIT_GBT_STATUS.Readout_Mode,
       CRU_Readout_Mode_O => FIT_GBT_STATUS.CRU_Readout_Mode,
@@ -247,7 +250,7 @@ begin
       FSM_Clocks_I       => FSM_Clocks,
       Control_register_I => Control_register_I,
       bcid_i             => FIT_GBT_STATUS.BCID_from_CRU,
-      bcen_i             => trg_match_resp_mask,
+      bcen_i             => FIT_GBT_STATUS.trg_match_resp_mask,
       indicator_o        => FIT_GBT_STATUS.bcind_trg
       );
 -- =====================================================

@@ -44,12 +44,12 @@ architecture Behavioral of Reset_Generator is
   signal reset_by_bypass                : std_logic;
 
   attribute mark_debug                    : string;
-  attribute mark_debug of reset_in        : signal is "true";
-  attribute mark_debug of reset_gbt       : signal is "true";
-  attribute mark_debug of reset_fsm       : signal is "true";
-  attribute mark_debug of reset_sclk      : signal is "true";
-  attribute mark_debug of sysclk_count_ff : signal is "true";
-  attribute mark_debug of count_ready     : signal is "true";
+--  attribute mark_debug of reset_in        : signal is "true";
+--  attribute mark_debug of reset_gbt       : signal is "true";
+--  attribute mark_debug of reset_fsm       : signal is "true";
+--  attribute mark_debug of reset_sclk      : signal is "true";
+--  attribute mark_debug of sysclk_count_ff : signal is "true";
+--  attribute mark_debug of count_ready     : signal is "true";
   -- attribute mark_debug of  : signal is "true";
 
 begin
