@@ -19,6 +19,6 @@ cd  firmware/FT0/${PROJECT} \
     && rm -fr build \
     && rm -f *.log *.jou \
     && vivado -mode batch -source make.tcl \
-    && mv $(find build -name "*.bit") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}.bit \
-    && mv $(find build -name "*.bin") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}.bin \
-    && mv $(find -name "*.log") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}_logs/
+    && cp $(find build -name "*.bit") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}.bit \
+    && cp $(find build -name "*.bin") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}.bin \
+    && cp $(find -name "*.log") /home/dfinogee/git/alice-fit-fpga/firmware/FT0/bits/${PROJECT}_logs/
