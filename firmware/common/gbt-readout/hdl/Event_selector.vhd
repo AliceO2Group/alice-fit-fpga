@@ -116,7 +116,7 @@ architecture Behavioral of Event_selector is
   -- data-trg comparison
   signal is_hbtrg, is_hb_r_trg, is_sox, is_eox, is_hbtrg_cmd, is_sel_trg, read_data, read_trigger, start_select : boolean;
   signal read_data_cmd, read_trigger_cmd, rdh_close_cmd, hb_reject_cmd                                          : boolean;
-  signal data_is_old, trg_is_old, trg_eq_data, trg_later_data, data_later_trg                                   : boolean;
+  signal data_not_actual, trg_not_actual, trg_eq_data, trg_later_data, data_later_trg                           : boolean;
   -- packet reading states
   signal reading_header, reading_last_word                                                                      : boolean;
   -- pushing data to select fifo by TRG/CNT mode
@@ -145,9 +145,6 @@ architecture Behavioral of Event_selector is
   attribute mark_debug of start_select     : signal is "true";
   attribute mark_debug of select_timeout   : signal is "true";
 
-  attribute mark_debug of trg_is_old        : signal is "true";
-  attribute mark_debug of data_later_trg    : signal is "true";
-  attribute mark_debug of trg_eq_data       : signal is "true";
   attribute mark_debug of curr_orbit_sc     : signal is "true";
   attribute mark_debug of curr_bc_sc        : signal is "true";
   attribute mark_debug of trgfifo_out_orbit : signal is "true";
@@ -417,21 +414,21 @@ begin
 --    | DATA = 0   | TRG /= 0    | read trigger          | no data for trigger
 --    | TRG = DATA |             | read trigger and data | data match trigger
 
-  is_hbtrg       <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
-  is_hb_r_trg    <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HBr) /= TRG_const_void;
-  is_sox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_SOT or TRG_const_SOC)) /= TRG_const_void;
-  is_eox         <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_EOT or TRG_const_EOC)) /= TRG_const_void;
-  is_sel_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
-  trg_eq_data    <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
-  data_is_old    <= (header_fifo_empty_i = '0') and ((data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
-  trg_is_old     <= (trgfifo_empty = '0') and ((trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
-  trg_later_data <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
-  data_later_trg <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
+  is_hbtrg        <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HB) /= TRG_const_void;
+  is_hb_r_trg     <= (trgfifo_empty = '0') and (trgfifo_out_trigger and TRG_const_HBr) /= TRG_const_void;
+  is_sox          <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_SOT or TRG_const_SOC)) /= TRG_const_void;
+  is_eox          <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_EOT or TRG_const_EOC)) /= TRG_const_void;
+  is_sel_trg      <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
+  trg_eq_data     <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
+  data_not_actual <= (header_fifo_empty_i = '0') and ((data_orbit > curr_orbit_sc+1) or(data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
+  trg_not_actual  <= (trgfifo_empty = '0') and ((trgfifo_out_orbit > curr_orbit_sc+1) or (trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
+  trg_later_data  <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
+  data_later_trg  <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
 
 -- no data in fifo
   read_data <= false when header_fifo_empty_i = '1' else
                -- no trigger for data
-               true when (trgfifo_empty = '1') and data_is_old else
+               true when (trgfifo_empty = '1') and data_not_actual else
                -- trigger equal data                                            
                true when trg_eq_data else
                -- no trigger for data
@@ -441,7 +438,7 @@ begin
 -- no trigger in fifo
   read_trigger <= false when trgfifo_empty = '1' else
                   -- no data for trigger
-                  true when header_fifo_empty_i = '1' and trg_is_old else
+                  true when header_fifo_empty_i = '1' and trg_not_actual else
                   true when data_later_trg else
                   -- trigger equal data 
                   true when trg_eq_data else
