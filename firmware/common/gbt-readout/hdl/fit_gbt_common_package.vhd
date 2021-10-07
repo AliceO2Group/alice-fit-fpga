@@ -210,13 +210,14 @@ package fit_gbt_common_package is
     GBT_status     : gbt_status_t;
     datagen_report : datagen_report_t;  -- header of generated data; used only in simulation
 
-    Readout_Mode     : rdmode_t;
-    CRU_Readout_Mode : rdmode_t;
-    BCIDsync_Mode    : bcid_sync_t;
-    Start_run        : std_logic;
-    Stop_run         : std_logic;
-    data_enable      : std_logic;
-    bc_delay_apply   : std_logic;
+    Readout_Mode        : rdmode_t;
+    CRU_Readout_Mode    : rdmode_t;
+    BCIDsync_Mode       : bcid_sync_t;
+    Start_run           : std_logic;
+    Stop_run            : std_logic;
+    data_enable         : std_logic;
+    bc_delay_apply      : std_logic;
+    trg_match_resp_mask : std_logic;
 
     Trigger_from_CRU         : std_logic_vector(Trigger_bitdepth-1 downto 0);  -- Trigger ID from CRUS
     BCID_from_CRU            : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
@@ -248,7 +249,7 @@ package fit_gbt_common_package is
     -- 5 - [Converter] data_fifo is not empty while start of run
     -- 6 - [Converter] header_fifo is not empty while start of run
     -- 7 - [Converter] tcm_data_fifo is full (TCM only)
-	------
+    ------
     -- 8 - [Converter] input packet corrupted: extra word (PM)
     -- 9 - [Converter] input packet corrupted: header too early (PM)
     -- 10- [ltu_rx_decoder] bc_sync lost during the run
@@ -400,15 +401,16 @@ package body fit_gbt_common_package is
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);
     -- reg3 is empty
-    cntr_reg.Trigger_Gen.trigger_pattern(63 downto 32) := cntrl_reg_addrreg(4);
-    cntr_reg.Trigger_Gen.trigger_pattern(31 downto 0)  := cntrl_reg_addrreg(5);
+    cntr_reg.Trigger_Gen.trigger_pattern(31 downto 0)  := cntrl_reg_addrreg(4);
+    cntr_reg.Trigger_Gen.trigger_pattern(63 downto 32) := cntrl_reg_addrreg(5);
     cntr_reg.Trigger_Gen.trigger_cont_value            := cntrl_reg_addrreg(6);
 
-    cntr_reg.Trigger_Gen.bunch_freq := cntrl_reg_addrreg(7)(31 downto 16);
     cntr_reg.Data_Gen.bunch_freq    := cntrl_reg_addrreg(7)(15 downto 0);
-    cntr_reg.Data_Gen.bc_start      := cntrl_reg_addrreg(8)(11 downto 0);
-    cntr_reg.Trigger_Gen.bc_start   := cntrl_reg_addrreg(8)(27 downto 16);
-    cntr_reg.Trigger_Gen.hbr_rate   := cntrl_reg_addrreg(8)(31 downto 28);
+    cntr_reg.Trigger_Gen.bunch_freq := cntrl_reg_addrreg(7)(31 downto 16);
+
+    cntr_reg.Data_Gen.bc_start    := cntrl_reg_addrreg(8)(11 downto 0);
+    cntr_reg.Trigger_Gen.bc_start := cntrl_reg_addrreg(8)(27 downto 16);
+    cntr_reg.Trigger_Gen.hbr_rate := cntrl_reg_addrreg(8)(31 downto 28);
 
     cntr_reg.RDH_data.FEE_ID  := cntrl_reg_addrreg(9)(15 downto 0);
     cntr_reg.RDH_data.SYS_ID  := cntrl_reg_addrreg(9)(23 downto 16);
@@ -434,17 +436,16 @@ package body fit_gbt_common_package is
   begin
 
 
-    gbt_status := "000000"
-                  & status_reg.GBT_status.Rx_Phase_error
-                  & status_reg.GBT_status.gbtRx_ErrorLatch
-                  & status_reg.GBT_status.gbtRx_ErrorDet
-                  & status_reg.GBT_status.gbtRx_Ready
-                  & status_reg.GBT_status.tx_fsmResetDone
-                  & status_reg.GBT_status.tx_resetDone
-                  & status_reg.GBT_status.mgtLinkReady
-                  & status_reg.GBT_status.rxFrameClkReady
-                  & status_reg.GBT_status.rxWordClkReady
-                  & status_reg.GBT_status.mgt_phalin_cplllock;
+    gbt_status := "0000000"
+                  & status_reg.GBT_status.Rx_Phase_error        -- 8
+                  & status_reg.GBT_status.gbtRx_ErrorLatch      -- 7
+                  & status_reg.GBT_status.gbtRx_Ready           -- 6
+                  & status_reg.GBT_status.tx_fsmResetDone       -- 5 
+                  & status_reg.GBT_status.tx_resetDone          -- 4
+                  & status_reg.GBT_status.mgtLinkReady          -- 3
+                  & status_reg.GBT_status.rxFrameClkReady       -- 2
+                  & status_reg.GBT_status.rxWordClkReady        -- 1
+                  & status_reg.GBT_status.mgt_phalin_cplllock;  -- 0
 
 
     if status_reg.Readout_Mode = mode_IDLE then

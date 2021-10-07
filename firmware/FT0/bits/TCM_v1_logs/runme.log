@@ -15,16 +15,16 @@ Attempting to get a license for feature 'Synthesis' and/or device 'xc7k160t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k160t'
 INFO: [Device 21-403] Loading part xc7k160tffg676-3
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 4048515 
+INFO: Helper process launched with PID 1594629 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:11 . Memory (MB): peak = 1954.809 ; gain = 203.684 ; free physical = 20644 ; free virtual = 55818
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:11 . Memory (MB): peak = 1954.805 ; gain = 203.684 ; free physical = 19677 ; free virtual = 55948
 ---------------------------------------------------------------------------------
-WARNING: [Synth 8-1565] actual for formal port rd_en is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:130]
+WARNING: [Synth 8-1565] actual for formal port rd_en is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:132]
 WARNING: [Synth 8-1565] actual for formal port divider_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_rsencode.vhd:95]
 WARNING: [Synth 8-1565] actual for formal port tx_common_frame_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder.vhd:151]
 WARNING: [Synth 8-1565] actual for formal port reset_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_tx/gbt_tx.vhd:256]
 WARNING: [Synth 8-1565] actual for formal port soft_reset_rx_in is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd:211]
-WARNING: [Synth 8-1565] actual for formal port rx_data_rxclk_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:184]
+WARNING: [Synth 8-1565] actual for formal port rx_data_rxclk_i is neither a static name nor a globally static expression [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:199]
 INFO: [Synth 8-638] synthesizing module 'tcm' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/hdl/tcm.vhd:152]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/hdl/tcm.vhd:365]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/hdl/tcm.vhd:366]
@@ -2159,15 +2159,8 @@ INFO: [Synth 8-638] synthesizing module 'FIT_GBT_project' [/home/dfinogee/git/al
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:65]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:67]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:79]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:83]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:108]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:109]
 INFO: [Synth 8-638] synthesizing module 'Reset_Generator' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:32]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:35]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:40]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:41]
 INFO: [Synth 8-256] done synthesizing module 'Reset_Generator' (123#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Reset_Generator.vhd:32]
 INFO: [Synth 8-638] synthesizing module 'RXDATA_CLKSync' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:38]
 INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:41]
@@ -2175,35 +2168,27 @@ INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/
 INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:46]
 INFO: [Synth 8-5534] Detected attribute (* keep = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:47]
 INFO: [Synth 8-256] done synthesizing module 'RXDATA_CLKSync' (124#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/RXDataClkSync.vhd:38]
-INFO: [Synth 8-638] synthesizing module 'ltu_rx_decoder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:45]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:49]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:54]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'ltu_rx_decoder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:47]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:51]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:55]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:56]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:56]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:57]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:57]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:58]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:59]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:59]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:63]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:61]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:64]
-INFO: [Synth 8-256] done synthesizing module 'ltu_rx_decoder' (125#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:45]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:64]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:66]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:67]
+INFO: [Synth 8-256] done synthesizing module 'ltu_rx_decoder' (125#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/ltu_rx_decoder.vhd:47]
 INFO: [Synth 8-638] synthesizing module 'bc_indicator' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:36]
 	Parameter USE_SYSCLK bound to: 1 - type: bool 
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:38]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:38]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:39]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:39]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:39]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:40]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:40]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:41]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:41]
 INFO: [Synth 8-256] done synthesizing module 'bc_indicator' (126#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:36]
 INFO: [Synth 8-638] synthesizing module 'bc_indicator__parameterized0' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/bc_indicator.vhd:36]
 	Parameter USE_SYSCLK bound to: 0 - type: bool 
@@ -2213,21 +2198,21 @@ WARNING: [Synth 8-5858] RAM Board_data_gen_pipe_reg from Abstract Data Type (rec
 INFO: [Synth 8-256] done synthesizing module 'Module_Data_Gen' (127#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd:39]
 INFO: [Synth 8-638] synthesizing module 'cru_ltu_emu' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/cru_ltu_emu.vhd:36]
 INFO: [Synth 8-256] done synthesizing module 'cru_ltu_emu' (128#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/cru_ltu_emu.vhd:36]
-INFO: [Synth 8-638] synthesizing module 'DataConverter' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:53]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:63]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:63]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:66]
+INFO: [Synth 8-638] synthesizing module 'DataConverter' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:54]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:64]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:64]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:74]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:81]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:67]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:68]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:68]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:75]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:82]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:87]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:87]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:83]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:88]
 INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:88]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:89]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:89]
 INFO: [Synth 8-638] synthesizing module 'tcm_data_160to80bit_fifo' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/tcm_data_160to80bit_fifo/synth/tcm_data_160to80bit_fifo.vhd:73]
 	Parameter C_COMMON_CLOCK bound to: 1 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
@@ -2638,13 +2623,14 @@ INFO: [Synth 8-638] synthesizing module 'raw_data_fifo' [/home/dfinogee/git/alic
 	Parameter C_REG_SLICE_MODE_AXIS bound to: 0 - type: integer 
 INFO: [Synth 8-3491] module 'fifo_generator_v13_2_5' declared at '/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/COUNTER_FIFO/hdl/fifo_generator_v13_2_vhsyn_rfs.vhd:38604' bound to instance 'U0' of component 'fifo_generator_v13_2_5' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/raw_data_fifo/synth/raw_data_fifo.vhd:544]
 INFO: [Synth 8-256] done synthesizing module 'raw_data_fifo' (134#1) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/raw_data_fifo/synth/raw_data_fifo.vhd:75]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_header_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:141]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_data_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:158]
-WARNING: [Synth 8-6014] Unused sequential element board_data_reg[is_header] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:129]
-INFO: [Synth 8-256] done synthesizing module 'DataConverter' (135#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:53]
-INFO: [Synth 8-638] synthesizing module 'Event_selector' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:61]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:83]
-INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:84]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_header_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:143]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'raw_data_fifo_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:160]
+WARNING: [Synth 8-6014] Unused sequential element board_data_reg[is_header] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:131]
+INFO: [Synth 8-256] done synthesizing module 'DataConverter' (135#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/DataConverter_TCM.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'Event_selector' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:63]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:72]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:73]
+INFO: [Synth 8-5534] Detected attribute (* mark_debug = "true" *) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:98]
 INFO: [Synth 8-638] synthesizing module 'trg_fifo_comp' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/trg_fifo_comp/synth/trg_fifo_comp.vhd:77]
 	Parameter C_COMMON_CLOCK bound to: 0 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
@@ -3273,7 +3259,11 @@ INFO: [Synth 8-3491] module 'fifo_generator_v13_2_5' declared at '/home/dfinogee
 INFO: [Synth 8-6157] synthesizing module 'xpm_cdc_gray__parameterized4' [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv:284]
 INFO: [Synth 8-6155] done synthesizing module 'xpm_cdc_gray__parameterized4' (145#1) [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv:284]
 INFO: [Synth 8-256] done synthesizing module 'slct_data_fifo' (148#1) [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/slct_data_fifo/synth/slct_data_fifo.vhd:78]
-INFO: [Synth 8-256] done synthesizing module 'Event_selector' (149#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:61]
+WARNING: [Synth 8-6014] Unused sequential element event_counter_ff_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:295]
+WARNING: [Synth 8-6014] Unused sequential element cntpck_fifo_empty_sc_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:296]
+WARNING: [Synth 8-6014] Unused sequential element slct_fifo_empty_sc_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:297]
+WARNING: [Synth 8-6014] Unused sequential element event_counter_zero_counter_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:400]
+INFO: [Synth 8-256] done synthesizing module 'Event_selector' (149#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/Event_selector.vhd:63]
 INFO: [Synth 8-638] synthesizing module 'CRU_packet_Builder' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/CRU_packet_Builder.vhd:55]
 INFO: [Synth 8-256] done synthesizing module 'CRU_packet_Builder' (150#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/CRU_packet_Builder.vhd:55]
 INFO: [Synth 8-638] synthesizing module 'TX_Data_Gen' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/TX_Data_Gen.vhd:36]
@@ -3970,17 +3960,36 @@ INFO: [Synth 8-256] done synthesizing module 'gbt_rx' (207#1) [/home/dfinogee/gi
 INFO: [Synth 8-256] done synthesizing module 'gbt_bank' (208#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd:113]
 WARNING: [Synth 8-3848] Net GBT_Status_O[Rx_Phase_error] in module/entity GBT_TX_RX does not have driver. [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:46]
 INFO: [Synth 8-256] done synthesizing module 'GBT_TX_RX' (209#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/GBT_TXRX5.vhd:57]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'RxData_ClkSync_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:176]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'cru_ltu_emu_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:259]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'gbt_bank_gen.gbtBankDsgn'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:384]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'TX_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:364]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'CRU_packet_Builder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:339]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Event_Selector_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:305]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'DataConverter_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:276]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Module_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:242]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ltu_rx_decoder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:193]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_trg_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:230]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_data_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:218]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'RxData_ClkSync_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:191]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'cru_ltu_emu_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:276]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'gbt_bank_gen.gbtBankDsgn'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:404]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'TX_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:384]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'CRU_packet_Builder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:359]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Event_Selector_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:323]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'DataConverter_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:293]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'Module_Data_Gen_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:259]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ltu_rx_decoder_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:208]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_trg_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:247]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'bc_indicator_data_comp'. This will prevent further optimization [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:235]
+WARNING: [Synth 8-6014] Unused sequential element errors_scl_reg was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:154]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][mgt_phalin_cplllock] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][rxWordClkReady] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][rxFrameClkReady] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][mgtLinkReady] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][tx_resetDone] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][tx_fsmResetDone] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][gbtRx_Ready] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][gbtRx_ErrorDet] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][gbtRx_ErrorLatch] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[GBT_status][Rx_Phase_error] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[datagen_report][orbit] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[datagen_report][bc] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[datagen_report][size] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[datagen_report][packet_num] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[Readout_Mode] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[CRU_Readout_Mode] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+WARNING: [Synth 8-6014] Unused sequential element readout_status_scl_reg[BCIDsync_Mode] was removed.  [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:155]
+INFO: [Common 17-14] Message 'Synth 8-6014' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-256] done synthesizing module 'FIT_GBT_project' (210#1) [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:58]
 INFO: [Synth 8-638] synthesizing module 'pm_spi' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/hdl/pm-spi.vhd:56]
 INFO: [Synth 8-638] synthesizing module 'COUNTER_FIFO' [/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/generated/COUNTER_FIFO/synth/COUNTER_FIFO.vhd:73]
@@ -4974,7 +4983,7 @@ WARNING: [Synth 8-3331] design blk_mem_gen_v8_4_4_synth__parameterized10 has unc
 WARNING: [Synth 8-3331] design blk_mem_gen_v8_4_4_synth__parameterized10 has unconnected port S_AXI_AWADDR[3]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:03:46 ; elapsed = 00:03:57 . Memory (MB): peak = 3133.707 ; gain = 1382.582 ; free physical = 19170 ; free virtual = 54376
+Finished RTL Elaboration : Time (s): cpu = 00:03:46 ; elapsed = 00:03:56 . Memory (MB): peak = 3133.703 ; gain = 1382.582 ; free physical = 15438 ; free virtual = 51901
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -4987,12 +4996,12 @@ Report Check Netlist:
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:03:49 ; elapsed = 00:04:01 . Memory (MB): peak = 3133.707 ; gain = 1382.582 ; free physical = 19253 ; free virtual = 54460
+Finished Handling Custom Attributes : Time (s): cpu = 00:03:49 ; elapsed = 00:04:00 . Memory (MB): peak = 3133.703 ; gain = 1382.582 ; free physical = 15534 ; free virtual = 51991
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:03:49 ; elapsed = 00:04:01 . Memory (MB): peak = 3133.707 ; gain = 1382.582 ; free physical = 19253 ; free virtual = 54460
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:03:49 ; elapsed = 00:04:00 . Memory (MB): peak = 3133.703 ; gain = 1382.582 ; free physical = 15534 ; free virtual = 51991
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.78 ; elapsed = 00:00:00.78 . Memory (MB): peak = 3133.707 ; gain = 0.000 ; free physical = 19140 ; free virtual = 54347
+Netlist sorting complete. Time (s): cpu = 00:00:00.76 ; elapsed = 00:00:00.76 . Memory (MB): peak = 3133.703 ; gain = 0.000 ; free physical = 15571 ; free virtual = 52028
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCE' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
 INFO: [Netlist 29-17] Analyzing 1436 Unisim elements for replacement
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCTRL' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
@@ -5171,7 +5180,7 @@ Sourcing Tcl File [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/tcl/xpm_cdc_syn
 Finished Sourcing Tcl File [/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_cdc/tcl/xpm_cdc_sync_rst.tcl] for cell 'FitGbtPrg/Event_Selector_comp/trg_fifo_comp_c/U0/inst_fifo_gen/gconvfifo.rf/grf.rf/rstblk/ngwrdrst.grst.g7serrst.gsckt_wrst.xpm_cdc_sync_rst_inst_wrst'
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 3197.738 ; gain = 0.000 ; free physical = 18936 ; free virtual = 54143
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3197.734 ; gain = 0.000 ; free physical = 15361 ; free virtual = 51894
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 447 instances were transformed.
   BUFGCE => BUFGCTRL: 1 instance 
@@ -5181,21 +5190,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM64X1D => RAM64X1D (RAMD64E(x2)): 8 instances
   SRL16 => SRL16E: 4 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.51 ; elapsed = 00:00:00.53 . Memory (MB): peak = 3197.738 ; gain = 0.000 ; free physical = 18935 ; free virtual = 54142
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.51 ; elapsed = 00:00:00.51 . Memory (MB): peak = 3197.734 ; gain = 0.000 ; free physical = 15304 ; free virtual = 51836
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:04:12 ; elapsed = 00:04:24 . Memory (MB): peak = 3197.738 ; gain = 1446.613 ; free physical = 19213 ; free virtual = 54420
+Finished Constraint Validation : Time (s): cpu = 00:04:12 ; elapsed = 00:04:23 . Memory (MB): peak = 3197.734 ; gain = 1446.613 ; free physical = 15516 ; free virtual = 52051
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5580] Multithreading enabled for synth_design using a maximum of 4 processes.
----------------------------------------------------------------------------------
-Start Loading Part and Timing Information
----------------------------------------------------------------------------------
-Loading part: xc7k160tffg676-3
----------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:04:12 ; elapsed = 00:04:24 . Memory (MB): peak = 3197.738 ; gain = 1446.613 ; free physical = 19213 ; free virtual = 54420
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Applying 'set_property' XDC Constraints
----------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'phaseShift_FSM_reg' in module 'phaligner_mmcm_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'phalgnr_FSM_reg' in module 'phaligner_phase_comparator'
 INFO: [Synth 8-802] inferred FSM for state register 'general_state_reg' in module 'gbt_bank_reset'
@@ -5532,7 +5531,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'statusLatOpt_gen.state_reg' using encoding 'one-hot' in module 'gbt_rx_status'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:04:34 ; elapsed = 00:04:50 . Memory (MB): peak = 3197.738 ; gain = 1446.613 ; free physical = 16257 ; free virtual = 51479
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:04:35 ; elapsed = 00:04:49 . Memory (MB): peak = 3197.734 ; gain = 1446.613 ; free physical = 11962 ; free virtual = 48531
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -5540,12 +5539,12 @@ Report RTL Partitions:
 |      |RTL Partition        |Replication |Instances |
 +------+---------------------+------------+----------+
 |1     |FLASH__GC0           |           1|      3962|
-|2     |FIT_GBT_project__GB0 |           1|     21844|
+|2     |FIT_GBT_project__GB0 |           1|     21589|
 |3     |FIT_GBT_project__GB1 |           1|     24656|
-|4     |tcm__GCB0            |           1|     39310|
-|5     |tcm__GCB1            |           1|      8174|
-|6     |tcm__GCB2            |           1|     29203|
-|7     |tcm__GCB3            |           1|     32069|
+|4     |tcm__GCB0            |           1|     39883|
+|5     |tcm__GCB1            |           1|     10291|
+|6     |tcm__GCB2            |           1|     28539|
+|7     |tcm__GCB3            |           1|     29980|
 +------+---------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -5571,6 +5570,7 @@ Finished Part Resource Summary
 ---------------------------------------------------------------------------------
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
+WARNING: [Synth 8-3917] design FIT_GBT_project__GB0 has port SysClk_count_O[3] driven by constant 0
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_reg[size][4] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_reg[size][5] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_reg[size][6] )
@@ -5594,37 +5594,7 @@ INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Sel
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[107] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[108] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[109] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[110] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[111] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[112] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[113] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[114] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[115] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[116] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[117] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[118] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[119] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[120] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[121] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[122] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[123] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[124] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[125] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[126] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Event_Selector_comp/\cntpck_fifo_din_ff_reg[127] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (DataConverter_comp/\errors_o_reg[3] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (DataConverter_comp/\errors_o_reg[4] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (DataConverter_comp/\fifo_cnt_max_o_reg[13] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (DataConverter_comp/\fifo_cnt_max_o_reg[14] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (DataConverter_comp/\fifo_cnt_max_o_reg[15] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_ff_reg[size][4] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_ff_reg[size][5] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_ff_reg[size][6] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_ff_reg[size][7] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_o_reg[size][4] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_o_reg[size][5] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_o_reg[size][6] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (Module_Data_Gen_comp/\datagen_report_o_reg[size][7] )
+INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gbt_bank_gen.gbtBankDsgn /\gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_rxresetfsm_i/recclk_mon_restart_count_reg[0] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gbt_bank_gen.gbtBankDsgn /\gbtBank/mgt_param_package_src_gen.mgt/mgtLatOpt_gen.mgtLatOpt/gtxLatOpt_gen[1].xlx_k7v7_mgt_std_i/U0/gt0_rxresetfsm_i/recclk_mon_restart_count_reg[1] )
@@ -5677,57 +5647,92 @@ INFO: [Synth 8-5546] ROM "spi_wr_rdy" won't be mapped to RAM because it is too s
 INFO: [Synth 8-5546] ROM "spibuf_wr" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "ldr" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "ipb_stp" won't be mapped to RAM because it is too sparse
+INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+DSP Report: Generating DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg, operation Mode is: (A*B)'.
+DSP Report: register gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
+DSP Report: operator gDSP.gDSP_only.iDSP/multOp is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
+DSP Report: Generating DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg, operation Mode is: (A*B)'.
+DSP Report: register gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
+DSP Report: operator gDSP.gDSP_only.iDSP/multOp is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
+INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[9].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[8].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[7].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[6].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[5].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[4].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[3].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[2].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[1].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[0].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[9].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[8].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[7].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[6].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[5].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[4].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[3].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[2].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[1].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcma/\HDMIA[0].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[9].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[8].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[7].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[6].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[5].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[4].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[3].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[2].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[1].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[0].HDMI_RX /\status_bits_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[9].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[8].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[7].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[6].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[5].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[4].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[3].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[2].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[1].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tcmc/\HDMIA[0].HDMI_RX /\status_bits_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[23] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[41] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[59] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[69] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[79] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[128] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[129] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[130] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[131] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[132] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[133] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[134] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[135] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[136] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[137] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[138] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[139] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[140] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[141] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[142] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[143] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[144] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[145] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[146] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[147] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[148] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[149] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[150] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\Rd_word_reg[151] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (\Rd_word_reg[152] )
+INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-5587] ROM size for "addr_to_set_int" is below threshold of ROM address width. It will be mapped to LUTs
 INFO: [Synth 8-5587] ROM size for "addr_to_set_int" is below threshold of ROM address width. It will be mapped to LUTs
 INFO: [Synth 8-5544] ROM "event_data" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5546] ROM "ldr" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "spibuf_wr" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "spi_wr_rdy" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "ipb_stp" won't be mapped to RAM because it is too sparse
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-4652] Swapped enable and write-enable on 1 RAM instances of RAM internal_ram/ram_reg to conserve power
 INFO: [Synth 8-4652] Swapped enable and write-enable on 8 RAM instances of RAM ram_reg to conserve power
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[6]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[7]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[0]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[1]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[3]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[4]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /rx_packet_parser/\pkt_data_reg[5]__1 )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[0] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[1] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[2] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[3] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[24] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[25] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[26] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[27] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[28] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[30] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[31] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[32] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[33] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[34] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[35] )
-INFO: [Synth 8-3333] propagating constant 1 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[36] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[37] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[38] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[39] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[40] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[41] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[42] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[43] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[44] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[45] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[46] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[47] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[48] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[49] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[50] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[51] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[52] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (ipbus_module/\ipbus/udp_if /status_buffer/\header_reg[53] )
-INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 WARNING: [Synth 8-3332] Sequential element (flow/sync_rx_duplex/data_sync_reg0) is unused and will be removed from module tri_mode_ethernet_mac_v9_0_15.
 WARNING: [Synth 8-3332] Sequential element (flow/sync_rx_duplex/data_sync_reg1) is unused and will be removed from module tri_mode_ethernet_mac_v9_0_15.
@@ -5790,16 +5795,8 @@ WARNING: [Synth 8-3332] Sequential element (flow/ppe_sync[3].sync_rx_pen/data_sy
 WARNING: [Synth 8-3332] Sequential element (flow/ppe_sync[3].sync_rx_pen/data_sync_reg3) is unused and will be removed from module tri_mode_ethernet_mac_v9_0_15.
 INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
-DSP Report: Generating DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg, operation Mode is: (A*B)'.
-DSP Report: register gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
-DSP Report: operator gDSP.gDSP_only.iDSP/multOp is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
-DSP Report: Generating DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg, operation Mode is: (A*B)'.
-DSP Report: register gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
-DSP Report: operator gDSP.gDSP_only.iDSP/multOp is absorbed into DSP gDSP.gDSP_only.iDSP/inferred_dsp.reg_mult.m_reg_reg.
-INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
-INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:05:00 ; elapsed = 00:05:23 . Memory (MB): peak = 3197.738 ; gain = 1446.613 ; free physical = 15457 ; free virtual = 50865
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:04:54 ; elapsed = 00:05:22 . Memory (MB): peak = 3197.734 ; gain = 1446.613 ; free physical = 15703 ; free virtual = 52183
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -5807,12 +5804,12 @@ Report RTL Partitions:
 |      |RTL Partition        |Replication |Instances |
 +------+---------------------+------------+----------+
 |1     |FLASH__GC0           |           1|      1834|
-|2     |FIT_GBT_project__GB0 |           1|     16130|
+|2     |FIT_GBT_project__GB0 |           1|     16005|
 |3     |FIT_GBT_project__GB1 |           1|      7714|
-|4     |tcm__GCB0            |           1|     25128|
-|5     |tcm__GCB1            |           1|      6122|
-|6     |tcm__GCB2            |           1|     27508|
-|7     |tcm__GCB3            |           1|     21824|
+|4     |tcm__GCB0            |           1|     31022|
+|5     |tcm__GCB1            |           1|      7534|
+|6     |tcm__GCB2            |           1|     26664|
+|7     |tcm__GCB3            |           1|     19053|
 +------+---------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start Applying XDC Timing Constraints
@@ -5821,13 +5818,14 @@ INFO: [Synth 8-5578] Moved timing constraint from pin 'ipbus_module/eth/mac/U0/t
 INFO: [Synth 8-5578] Moved timing constraint from pin 'ipbus_module/eth/mac/U0/tx_configuration_vector[13]' to pin '{ipbus_module/eth/phy/U0/gig_ethernet_pcs_pma_0_core/gpcs_pma_inst/HAS_AUTO_NEG.AN_RX_GMII_AT_TXOUTCLK.AUTO_NEGOTIATION/SGMII_SPEED_reg[1]/Q}'
 INFO: [Synth 8-5819] Moved 2 constraints on hierarchical pins to their respective driving/loading pins
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:05:07 ; elapsed = 00:05:31 . Memory (MB): peak = 3197.738 ; gain = 1446.613 ; free physical = 15192 ; free virtual = 50692
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:05:01 ; elapsed = 00:05:29 . Memory (MB): peak = 3197.734 ; gain = 1446.613 ; free physical = 16608 ; free virtual = 53178
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
+info: optimization accepted worst group hill climbing move (-5346.0/oG. 510.0ps)
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:05:40 ; elapsed = 00:06:04 . Memory (MB): peak = 3200.590 ; gain = 1449.465 ; free physical = 15093 ; free virtual = 50594
+Finished Timing Optimization : Time (s): cpu = 00:05:53 ; elapsed = 00:06:23 . Memory (MB): peak = 3199.133 ; gain = 1448.012 ; free physical = 14499 ; free virtual = 51071
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -5835,36 +5833,35 @@ Report RTL Partitions:
 |      |RTL Partition        |Replication |Instances |
 +------+---------------------+------------+----------+
 |1     |FLASH__GC0           |           1|      1834|
-|2     |FIT_GBT_project__GB0 |           1|     16130|
+|2     |FIT_GBT_project__GB0 |           1|     16005|
 |3     |FIT_GBT_project__GB1 |           1|      7714|
-|4     |tcm__GCB3            |           1|     21824|
-|5     |tcm_GT0              |           1|         1|
-|6     |IPBUS_basex_infra    |           1|     18764|
-|7     |tcm_GT2              |           1|     39989|
+|4     |tcm__GCB3            |           1|     19053|
+|5     |tcm_GT0              |           1|     11849|
+|6     |tcm_GT0__1           |           1|     40519|
+|7     |tcm_GT1              |           1|     10528|
 +------+---------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
-INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/internal_ram/ram_reg (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram2_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram2_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram3_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram3_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram4_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram4_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/internal_ram/ram_reg (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram2_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram2_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram3_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram3_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram4_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram4_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7053] The timing for the instance i_3/ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:05:48 ; elapsed = 00:06:21 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14403 ; free virtual = 49927
+Finished Technology Mapping : Time (s): cpu = 00:06:04 ; elapsed = 00:06:42 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 14151 ; free virtual = 50756
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -5872,12 +5869,12 @@ Report RTL Partitions:
 |      |RTL Partition        |Replication |Instances |
 +------+---------------------+------------+----------+
 |1     |FLASH__GC0           |           1|       896|
-|2     |FIT_GBT_project__GB0 |           1|     10899|
+|2     |FIT_GBT_project__GB0 |           1|     10811|
 |3     |FIT_GBT_project__GB1 |           1|      3664|
-|4     |tcm__GCB3            |           1|     10794|
-|5     |tcm_GT0              |           1|         1|
-|6     |IPBUS_basex_infra    |           1|     10420|
-|7     |tcm_GT2              |           1|     19041|
+|4     |tcm__GCB3            |           1|     10513|
+|5     |tcm_GT0              |           1|      4752|
+|6     |tcm_GT0__1           |           1|     20651|
+|7     |tcm_GT1              |           1|      4222|
 +------+---------------------+------------+----------+
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -5891,9 +5888,9 @@ Finished Flattening Before IO Insertion
 ---------------------------------------------------------------------------------
 Start Final Netlist Cleanup
 ---------------------------------------------------------------------------------
-CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin CLK_PH_ERROR_O with 1st driver pin 'FitGbtPrg/RxData_ClkSync_comp/CLK_PH_ERROR_O' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:176]
-CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin CLK_PH_ERROR_O with 2nd driver pin 'GND' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:176]
-CRITICAL WARNING: [Synth 8-6858] multi-driven net CLK_PH_ERROR_O is connected to at least one constant driver which has been preserved, other driver is ignored [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:176]
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin CLK_PH_ERROR_O with 1st driver pin 'FitGbtPrg/RxData_ClkSync_comp/CLK_PH_ERROR_O' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:191]
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin CLK_PH_ERROR_O with 2nd driver pin 'GND' [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:191]
+CRITICAL WARNING: [Synth 8-6858] multi-driven net CLK_PH_ERROR_O is connected to at least one constant driver which has been preserved, other driver is ignored [/home/dfinogee/git/alice-fit-fpga/firmware/common/gbt-readout/hdl/FIT_GBT_project.vhd:191]
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/internal_ram/ram_reg (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_rx_ram/ram1_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
@@ -5911,8 +5908,8 @@ INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7053] The timing for the instance ipbus_module/ipbus/udp_if/ipbus_tx_ram/ram_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-5777] Ignored max_fanout on net Reset_SClk_O because some of its loads are not in same hierarchy as its driver   
 INFO: [Synth 8-5365] Flop gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/frameAligner/rxBitSlipCounter/RX_BITSLIP_OVERFLOW_CMD_O_reg is being inverted and renamed to gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/frameAligner/rxBitSlipCounter/RX_BITSLIP_OVERFLOW_CMD_O_reg_inv.
+INFO: [Synth 8-5777] Ignored max_fanout on net \Reset_Generator_comp/Reset_SClk_O_reg_n_0  because some of its loads are not in same hierarchy as its driver   
 INFO: [Synth 8-4618] Found max_fanout attribute set to 20 on net \addr_filter_top/address_filter_inst/counter [1]. Fanout reduced from 21 to 8 by creating 2 replicas.
 INFO: [Synth 8-4618] Found max_fanout attribute set to 20 on net \addr_filter_top/address_filter_inst/counter [0]. Fanout reduced from 22 to 8 by creating 2 replicas.
 INFO: [Synth 8-4618] Found max_fanout attribute set to 6 on net \no_avb_tx_axi_intf.tx_axi_shim/two_byte_tx . Fanout reduced from 7 to 4 by creating 1 replicas.
@@ -6005,8 +6002,9 @@ INFO: [Synth 8-4163] Replicating register \tcma/HDMIA[0].HDMI_RX/TDi_reg[0]  to 
 INFO: [Synth 8-4163] Replicating register \tcma/HDMIA[0].HDMI_RX/TDi_reg[1]  to handle IOB=TRUE attribute
 INFO: [Synth 8-4163] Replicating register \tcma/HDMIA[0].HDMI_RX/TDi_reg[2]  to handle IOB=TRUE attribute
 INFO: [Synth 8-4163] Replicating register \tcma/HDMIA[0].HDMI_RX/TDi_reg[3]  to handle IOB=TRUE attribute
+INFO: [Synth 8-5778] max_fanout handling on net ipb_addr[7] is sub-optimal because some of its loads are not in same hierarchy as its driver   
 INFO: [Synth 8-5778] max_fanout handling on net ipb_addr[6] is sub-optimal because some of its loads are not in same hierarchy as its driver   
-INFO: [Synth 8-5778] max_fanout handling on net ipb_addr[2] is sub-optimal because some of its loads are not in same hierarchy as its driver   
+INFO: [Synth 8-5778] max_fanout handling on net ipb_addr[1] is sub-optimal because some of its loads are not in same hierarchy as its driver   
 INFO: [Synth 8-5777] Ignored max_fanout on net ipb_rst because some of its loads are not in same hierarchy as its driver   
 INFO: [Synth 8-4163] Replicating register lasi_reg to handle IOB=TRUE attribute
 INFO: [Synth 8-4163] Replicating register \C_FC/T_o_reg  to handle IOB=TRUE attribute
@@ -6068,13 +6066,13 @@ WARNING: [Synth 8-3295] tying undriven pin FIT_GBT_STATUS[ipbusrd_fifo_cnt]_infe
 WARNING: [Synth 8-3295] tying undriven pin txgen/CRC_CE_inferred:in0 to constant 0
 WARNING: [Synth 8-3295] tying undriven pin rxgen/CRC_CE_inferred:in0 to constant 0
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:05:55 ; elapsed = 00:06:28 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14298 ; free virtual = 49916
+Finished IO Insertion : Time (s): cpu = 00:06:12 ; elapsed = 00:06:50 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13958 ; free virtual = 50697
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:05:55 ; elapsed = 00:06:28 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14295 ; free virtual = 49913
+Finished Renaming Generated Instances : Time (s): cpu = 00:06:12 ; elapsed = 00:06:50 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13993 ; free virtual = 50732
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -6093,25 +6091,25 @@ Report Check Netlist:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:05:57 ; elapsed = 00:06:30 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14271 ; free virtual = 49889
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:06:14 ; elapsed = 00:06:52 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13993 ; free virtual = 50732
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:05:57 ; elapsed = 00:06:31 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14265 ; free virtual = 49883
+Finished Renaming Generated Ports : Time (s): cpu = 00:06:14 ; elapsed = 00:06:52 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13981 ; free virtual = 50720
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:05:57 ; elapsed = 00:06:31 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14315 ; free virtual = 49933
+Finished Handling Custom Attributes : Time (s): cpu = 00:06:14 ; elapsed = 00:06:53 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13983 ; free virtual = 50723
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:05:58 ; elapsed = 00:06:31 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14316 ; free virtual = 49934
+Finished Renaming Generated Nets : Time (s): cpu = 00:06:15 ; elapsed = 00:06:53 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13983 ; free virtual = 50722
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -6132,7 +6130,7 @@ Report Cell Usage:
 |3     |BUFH            |    10|
 |4     |BUFIO           |     1|
 |5     |BUFR            |     1|
-|6     |CARRY4          |   907|
+|6     |CARRY4          |   909|
 |7     |DSP48E1_1       |     1|
 |8     |DSP48E1_2       |     2|
 |9     |GTXE2_CHANNEL   |     1|
@@ -6142,34 +6140,34 @@ Report Cell Usage:
 |13    |IDELAYCTRL      |     1|
 |14    |IDELAYE2        |   160|
 |15    |ISERDESE2       |    80|
-|16    |LUT1            |  1246|
-|17    |LUT2            |  2657|
-|18    |LUT3            |  4108|
-|19    |LUT4            |  4756|
-|20    |LUT5            |  5096|
-|21    |LUT6            |  8384|
+|16    |LUT1            |  1264|
+|17    |LUT2            |  2930|
+|18    |LUT3            |  3734|
+|19    |LUT4            |  5076|
+|20    |LUT5            |  5107|
+|21    |LUT6            |  8282|
 |22    |MMCME2_ADV      |     4|
 |23    |MUXCY           |   586|
-|24    |MUXF7           |   374|
-|25    |MUXF8           |    88|
+|24    |MUXF7           |   166|
+|25    |MUXF8           |    22|
 |26    |PLLE2_ADV       |     1|
 |27    |PLLE2_ADV_1     |     1|
 |28    |RAM64M          |    10|
 |29    |RAM64X1D        |     8|
 |30    |RAMB18E1        |     1|
 |31    |RAMB18E1_1      |     1|
-|32    |RAMB18E1_2      |     1|
-|33    |RAMB18E1_3      |    21|
+|32    |RAMB18E1_2      |    21|
+|33    |RAMB18E1_3      |     1|
 |34    |RAMB18E1_4      |     2|
 |35    |RAMB36E1        |    16|
 |36    |RAMB36E1_1      |     9|
 |37    |RAMB36E1_2      |    62|
 |38    |RAMB36E1_3      |     2|
 |39    |RAMB36E1_4      |     2|
-|40    |RAMB36E1_5      |     1|
-|41    |RAMB36E1_6      |    16|
+|40    |RAMB36E1_5      |    12|
+|41    |RAMB36E1_6      |     1|
 |42    |RAMB36E1_7      |     1|
-|43    |RAMB36E1_8      |    12|
+|43    |RAMB36E1_8      |    16|
 |44    |SRL16           |     4|
 |45    |SRL16E          |   199|
 |46    |SRLC32E         |    20|
@@ -6180,8 +6178,8 @@ Report Cell Usage:
 |51    |FDCE            |   716|
 |52    |FDP             |    48|
 |53    |FDPE            |    72|
-|54    |FDRE            | 23336|
-|55    |FDSE            |   975|
+|54    |FDRE            | 23255|
+|55    |FDSE            |   982|
 |56    |IBUF            |    31|
 |57    |IBUFDS          |     3|
 |58    |IBUFDS_DIFF_OUT |    80|
@@ -6190,22 +6188,22 @@ Report Cell Usage:
 |61    |OBUFT           |     3|
 +------+----------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:05:58 ; elapsed = 00:06:31 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 14316 ; free virtual = 49934
+Finished Writing Synthesis Report : Time (s): cpu = 00:06:15 ; elapsed = 00:06:53 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 13987 ; free virtual = 50727
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 3 critical warnings and 592 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:05:40 ; elapsed = 00:06:14 . Memory (MB): peak = 3212.516 ; gain = 1397.359 ; free physical = 18419 ; free virtual = 54037
-Synthesis Optimization Complete : Time (s): cpu = 00:06:00 ; elapsed = 00:06:33 . Memory (MB): peak = 3212.516 ; gain = 1461.391 ; free physical = 18467 ; free virtual = 54037
+Synthesis finished with 0 errors, 3 critical warnings and 593 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:05:57 ; elapsed = 00:06:39 . Memory (MB): peak = 3211.059 ; gain = 1395.906 ; free physical = 18052 ; free virtual = 54791
+Synthesis Optimization Complete : Time (s): cpu = 00:06:17 ; elapsed = 00:06:58 . Memory (MB): peak = 3211.059 ; gain = 1459.938 ; free physical = 18100 ; free virtual = 54792
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.50 ; elapsed = 00:00:00.50 . Memory (MB): peak = 3212.516 ; gain = 0.000 ; free physical = 18438 ; free virtual = 54008
+Netlist sorting complete. Time (s): cpu = 00:00:00.53 ; elapsed = 00:00:00.53 . Memory (MB): peak = 3211.059 ; gain = 0.000 ; free physical = 18064 ; free virtual = 54756
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCE' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
-INFO: [Netlist 29-17] Analyzing 2796 Unisim elements for replacement
+INFO: [Netlist 29-17] Analyzing 2524 Unisim elements for replacement
 WARNING: [Netlist 29-345] The value of SIM_DEVICE on instance 'FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.mmcm_inst/pll/inst/clkout1_buf' of type 'BUFGCTRL' is 'ULTRASCALE'; it is being changed to match the current FPGA architecture, '7SERIES'. For functional simulation to match hardware behavior, the value of SIM_DEVICE should be changed in the source netlist. 
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-140] Inserted 2 IBUFs to IO ports without IO buffers.
 INFO: [Opt 31-141] Inserted 2 OBUFs to IO ports without IO buffers.
 INFO: [Opt 31-138] Pushed 4 inverter(s) to 160 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3212.516 ; gain = 0.000 ; free physical = 18372 ; free virtual = 53943
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 3255.160 ; gain = 0.000 ; free physical = 18008 ; free virtual = 54699
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 653 instances were transformed.
   (MUXCY,XORCY) => CARRY4: 220 instances
@@ -6218,12 +6216,12 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   SRL16 => SRL16E: 4 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-1057 Infos, 374 Warnings, 3 Critical Warnings and 0 Errors encountered.
+1041 Infos, 397 Warnings, 3 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:06:11 ; elapsed = 00:06:46 . Memory (MB): peak = 3212.516 ; gain = 1719.203 ; free physical = 18585 ; free virtual = 54156
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3212.516 ; gain = 0.000 ; free physical = 18584 ; free virtual = 54154
+synth_design: Time (s): cpu = 00:06:29 ; elapsed = 00:07:12 . Memory (MB): peak = 3255.160 ; gain = 1761.852 ; free physical = 18220 ; free virtual = 54911
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3255.160 ; gain = 0.000 ; free physical = 18220 ; free virtual = 54911
 WARNING: [Constraints 18-5210] No constraints selected for write.
 Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
 INFO: [Common 17-1381] The checkpoint '/home/dfinogee/git/alice-fit-fpga/firmware/FT0/TCM_v1/build/TCM_v1.runs/synth_1/tcm.dcp' has been generated.
-write_checkpoint: Time (s): cpu = 00:00:09 ; elapsed = 00:00:06 . Memory (MB): peak = 3224.602 ; gain = 12.086 ; free physical = 18586 ; free virtual = 54166
-INFO: [Common 17-206] Exiting Vivado at Tue Sep 28 17:21:35 2021...
+write_checkpoint: Time (s): cpu = 00:00:09 ; elapsed = 00:00:06 . Memory (MB): peak = 3279.172 ; gain = 24.012 ; free physical = 18214 ; free virtual = 54915
+INFO: [Common 17-206] Exiting Vivado at Mon Oct 11 20:32:09 2021...
