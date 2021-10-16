@@ -111,12 +111,12 @@ architecture Behavioral of FIT_GBT_project is
 
 
 
-  attribute mark_debug                             : string;
-  attribute mark_debug of Board_data_from_main_gen : signal is "true";
-  attribute mark_debug of RX_Data_DataClk          : signal is "true";
-  attribute mark_debug of RX_IsData_DataClk        : signal is "true";
---  attribute mark_debug of errors_scl               : signal is "true";
-   attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
+  -- attribute mark_debug                             : string;
+  -- attribute mark_debug of Board_data_from_main_gen : signal is "true";
+  -- attribute mark_debug of RX_Data_DataClk          : signal is "true";
+  -- attribute mark_debug of RX_IsData_DataClk        : signal is "true";
+  -- attribute mark_debug of errors_scl               : signal is "true";
+  -- attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
   -- attribute mark_debug of readout_status_scl           : signal is "true";
 
 begin

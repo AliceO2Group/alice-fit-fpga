@@ -156,11 +156,11 @@ architecture Behavioral of FIT_TESTMODULE_v2 is
   signal readout_control         : readout_control_t;
   signal Laser_Signal_out        : std_logic;
 
-  attribute mark_debug                            : string;
-  attribute mark_debug of RxData_rxclk_from_GBT   : signal is "true";
-  attribute mark_debug of IsRxData_rxclk_from_GBT : signal is "true";
-  attribute mark_debug of Data_from_FITrd         : signal is "true";
-  attribute mark_debug of IsData_from_FITrd       : signal is "true";
+  -- attribute mark_debug                            : string;
+  -- attribute mark_debug of RxData_rxclk_from_GBT   : signal is "true";
+  -- attribute mark_debug of IsRxData_rxclk_from_GBT : signal is "true";
+  -- attribute mark_debug of Data_from_FITrd         : signal is "true";
+  -- attribute mark_debug of IsData_from_FITrd       : signal is "true";
 
 
 -- IP-BUS signals

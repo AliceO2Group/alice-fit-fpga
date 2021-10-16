@@ -94,29 +94,29 @@ architecture Behavioral of DataConverter is
 
 
 
-  attribute mark_debug                      : string;
-  -- attribute mark_debug of reset_drop_counters : signal is "true";
-   attribute mark_debug of header_fifo_din     : signal is "true";
-   attribute mark_debug of data_fifo_din       : signal is "true";
-   attribute mark_debug of header_fifo_we      : signal is "true";
-   attribute mark_debug of data_fifo_we        : signal is "true";
-  -- attribute mark_debug of word_counter        : signal is "true";
-  attribute mark_debug of sending_event     : signal is "true";
-  -- attribute mark_debug of header_word         : signal is "true";
-  -- attribute mark_debug of data_word           : signal is "true";
-  -- attribute mark_debug of is_data             : signal is "true";
-  -- attribute mark_debug of is_header           : signal is "true";
-  -- attribute mark_debug of header_pcklen_ff    : signal is "true";
-  -- attribute mark_debug of header_word_latch   : signal is "true";
-  -- attribute mark_debug of header_pcklen_latch : signal is "true";
-  attribute mark_debug of header_fifo_empty : signal is "true";
-  attribute mark_debug of data_fifo_empty   : signal is "true";
-  -- attribute mark_debug of header_rawfifo_full : signal is "true";
-  -- attribute mark_debug of data_rawfifo_full   : signal is "true";
-  attribute mark_debug of header_fifo_data    : signal is "true";
-  attribute mark_debug of data_fifo_data      : signal is "true";
-  attribute mark_debug of header_fifo_rden    : signal is "true";
-  attribute mark_debug of data_fifo_rden      : signal is "true";
+	-- attribute mark_debug                      : string;
+	-- attribute mark_debug of reset_drop_counters : signal is "true";
+	-- attribute mark_debug of header_fifo_din     : signal is "true";
+	-- attribute mark_debug of data_fifo_din       : signal is "true";
+	-- attribute mark_debug of header_fifo_we      : signal is "true";
+	-- attribute mark_debug of data_fifo_we        : signal is "true";
+	-- attribute mark_debug of word_counter        : signal is "true";
+	-- attribute mark_debug of sending_event     : signal is "true";
+	-- attribute mark_debug of header_word         : signal is "true";
+	-- attribute mark_debug of data_word           : signal is "true";
+	-- attribute mark_debug of is_data             : signal is "true";
+	-- attribute mark_debug of is_header           : signal is "true";
+	-- attribute mark_debug of header_pcklen_ff    : signal is "true";
+	-- attribute mark_debug of header_word_latch   : signal is "true";
+	-- attribute mark_debug of header_pcklen_latch : signal is "true";
+	-- attribute mark_debug of header_fifo_empty : signal is "true";
+	-- attribute mark_debug of data_fifo_empty   : signal is "true";
+	-- attribute mark_debug of header_rawfifo_full : signal is "true";
+	-- attribute mark_debug of data_rawfifo_full   : signal is "true";
+	-- attribute mark_debug of header_fifo_data    : signal is "true";
+	-- attribute mark_debug of data_fifo_data      : signal is "true";
+	-- attribute mark_debug of header_fifo_rden    : signal is "true";
+	-- attribute mark_debug of data_fifo_rden      : signal is "true";
 
 
 begin

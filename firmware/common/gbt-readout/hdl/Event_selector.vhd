@@ -130,25 +130,25 @@ architecture Behavioral of Event_selector is
   signal reset_dt_counters_sc                                                                                   : boolean;
 
 
-  attribute mark_debug                         : string;
-  -- attribute mark_debug of event_counter              : signal is "true";
-  -- attribute mark_debug of event_counter_zero_counter : signal is "true";
---  attribute mark_debug of trgfifo_empty        : signal is "true";
---  attribute mark_debug of cntpck_fifo_empty_sc : signal is "true";
---  attribute mark_debug of slct_fifo_empty_sc   : signal is "true";
---  attribute mark_debug of send_gear_rdh        : signal is "true";
---  attribute mark_debug of send_last_rdh        : signal is "true";
+-- attribute mark_debug                         : string;
+-- attribute mark_debug of event_counter              : signal is "true";
+-- attribute mark_debug of event_counter_zero_counter : signal is "true";
+-- attribute mark_debug of trgfifo_empty        : signal is "true";
+-- attribute mark_debug of cntpck_fifo_empty_sc : signal is "true";
+-- attribute mark_debug of slct_fifo_empty_sc   : signal is "true";
+-- attribute mark_debug of send_gear_rdh        : signal is "true";
+-- attribute mark_debug of send_last_rdh        : signal is "true";
 
-  attribute mark_debug of FSM_STATE        : signal is "true";
---  attribute mark_debug of read_data_cmd    : signal is "true";
---  attribute mark_debug of read_trigger_cmd : signal is "true";
---  attribute mark_debug of start_select     : signal is "true";
---  attribute mark_debug of select_timeout   : signal is "true";
+-- attribute mark_debug of FSM_STATE        : signal is "true";
+-- attribute mark_debug of read_data_cmd    : signal is "true";
+-- attribute mark_debug of read_trigger_cmd : signal is "true";
+-- attribute mark_debug of start_select     : signal is "true";
+-- attribute mark_debug of select_timeout   : signal is "true";
 
-  attribute mark_debug of curr_orbit_sc     : signal is "true";
-  attribute mark_debug of curr_bc_sc        : signal is "true";
---  attribute mark_debug of trgfifo_out_orbit : signal is "true";
---  attribute mark_debug of trgfifo_out_bc    : signal is "true";
+-- attribute mark_debug of curr_orbit_sc     : signal is "true";
+-- attribute mark_debug of curr_bc_sc        : signal is "true";
+-- attribute mark_debug of trgfifo_out_orbit : signal is "true";
+-- attribute mark_debug of trgfifo_out_bc    : signal is "true";
 
 
 begin

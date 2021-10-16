@@ -33,13 +33,13 @@ architecture Behavioral of PLL_Reset_Generator is
   signal reset_cnt : natural range 0 to 15 := 0;
   signal pll_ready : std_logic;
 
-  attribute mark_debug              : string;
-  attribute mark_debug of reset_in  : signal is "true";
-  attribute mark_debug of reset_cnt : signal is "true";
-  attribute mark_debug of fsm_state : signal is "true";
-  attribute mark_debug of reset_pll : signal is "true";
-  attribute mark_debug of reset_lgc : signal is "true";
-  attribute mark_debug of pll_ready : signal is "true";
+  -- attribute mark_debug              : string;
+  -- attribute mark_debug of reset_in  : signal is "true";
+  -- attribute mark_debug of reset_cnt : signal is "true";
+  -- attribute mark_debug of fsm_state : signal is "true";
+  -- attribute mark_debug of reset_pll : signal is "true";
+  -- attribute mark_debug of reset_lgc : signal is "true";
+  -- attribute mark_debug of pll_ready : signal is "true";
 
 begin
 
