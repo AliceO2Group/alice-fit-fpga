@@ -85,25 +85,25 @@ architecture Behavioral of ipbus_face is
   signal debug_ipb_data_I : std_logic_vector (31 downto 0);
   signal debug_ipb_addr   : std_logic_vector (11 downto 0);
 
-  attribute mark_debug                           : string;
-  attribute MARK_DEBUG of debug_ipb_rst          : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_iswr         : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_isrd         : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_ack          : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_data_O       : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_data_I       : signal is "true";
-  attribute MARK_DEBUG of debug_ipb_addr         : signal is "true";
-  attribute MARK_DEBUG of readout_control        : signal is "true";
-  attribute MARK_DEBUG of readout_status_ff      : signal is "true";
-  attribute MARK_DEBUG of data_fifo_dout         : signal is "true";
-  attribute MARK_DEBUG of data_fifo_rden         : signal is "true";
-  attribute MARK_DEBUG of data_map_counter       : signal is "true";
-  attribute MARK_DEBUG of fifo_to_ipbus_data_out : signal is "true";
-  attribute MARK_DEBUG of data_fifo_count        : signal is "true";
-  attribute MARK_DEBUG of ipbus_addr_int         : signal is "true";
-  attribute MARK_DEBUG of stat_reg_ipbclk        : signal is "true";
-  attribute MARK_DEBUG of ctrl_reg               : signal is "true";
-  attribute MARK_DEBUG of ipbus_base_addr_int    : signal is "true";
+  -- attribute mark_debug                           : string;
+  -- attribute MARK_DEBUG of debug_ipb_rst          : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_iswr         : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_isrd         : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_ack          : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_data_O       : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_data_I       : signal is "true";
+  -- attribute MARK_DEBUG of debug_ipb_addr         : signal is "true";
+  -- attribute MARK_DEBUG of readout_control        : signal is "true";
+  -- attribute MARK_DEBUG of readout_status_ff      : signal is "true";
+  -- attribute MARK_DEBUG of data_fifo_dout         : signal is "true";
+  -- attribute MARK_DEBUG of data_fifo_rden         : signal is "true";
+  -- attribute MARK_DEBUG of data_map_counter       : signal is "true";
+  -- attribute MARK_DEBUG of fifo_to_ipbus_data_out : signal is "true";
+  -- attribute MARK_DEBUG of data_fifo_count        : signal is "true";
+  -- attribute MARK_DEBUG of ipbus_addr_int         : signal is "true";
+  -- attribute MARK_DEBUG of stat_reg_ipbclk        : signal is "true";
+  -- attribute MARK_DEBUG of ctrl_reg               : signal is "true";
+  -- attribute MARK_DEBUG of ipbus_base_addr_int    : signal is "true";
 
 
 begin

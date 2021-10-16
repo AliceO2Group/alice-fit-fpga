@@ -71,26 +71,26 @@ architecture Behavioral of ltu_rx_decoder is
 
 
 
-  attribute mark_debug                     : string;
-  attribute MARK_DEBUG of orbc_sync_mode   : signal is "true";
-  attribute MARK_DEBUG of readout_mode     : signal is "true";
-  attribute MARK_DEBUG of cru_readout_mode : signal is "true";
-  attribute MARK_DEBUG of run_not_permit   : signal is "true";
-  attribute MARK_DEBUG of is_cru_run       : signal is "true";
-  attribute MARK_DEBUG of is_cru_cnt       : signal is "true";
-  attribute MARK_DEBUG of cru_trigger      : signal is "true";
-  attribute MARK_DEBUG of is_SOC           : signal is "true";
-  attribute MARK_DEBUG of is_SOT           : signal is "true";
-  attribute MARK_DEBUG of is_EOC           : signal is "true";
-  attribute MARK_DEBUG of is_EOT           : signal is "true";
+  -- attribute mark_debug                     : string;
+  -- attribute MARK_DEBUG of orbc_sync_mode   : signal is "true";
+  -- attribute MARK_DEBUG of readout_mode     : signal is "true";
+  -- attribute MARK_DEBUG of cru_readout_mode : signal is "true";
+  -- attribute MARK_DEBUG of run_not_permit   : signal is "true";
+  -- attribute MARK_DEBUG of is_cru_run       : signal is "true";
+  -- attribute MARK_DEBUG of is_cru_cnt       : signal is "true";
+  -- attribute MARK_DEBUG of cru_trigger      : signal is "true";
+  -- attribute MARK_DEBUG of is_SOC           : signal is "true";
+  -- attribute MARK_DEBUG of is_SOT           : signal is "true";
+  -- attribute MARK_DEBUG of is_EOC           : signal is "true";
+  -- attribute MARK_DEBUG of is_EOT           : signal is "true";
 
-  attribute MARK_DEBUG of bc_apply_permit : signal is "true";
-  attribute MARK_DEBUG of bc_apply_fsm    : signal is "true";
-  attribute MARK_DEBUG of apply_bc_delay  : signal is "true";
-  attribute MARK_DEBUG of bc_delay_in     : signal is "true";
-  attribute MARK_DEBUG of bc_delay        : signal is "true";
+  -- attribute MARK_DEBUG of bc_apply_permit : signal is "true";
+  -- attribute MARK_DEBUG of bc_apply_fsm    : signal is "true";
+  -- attribute MARK_DEBUG of apply_bc_delay  : signal is "true";
+  -- attribute MARK_DEBUG of bc_delay_in     : signal is "true";
+  -- attribute MARK_DEBUG of bc_delay        : signal is "true";
 
-  attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
+  -- attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
 
 
 begin

@@ -554,9 +554,9 @@ END COMPONENT;
 attribute IODELAY_GROUP : STRING;
 attribute IODELAY_GROUP of IDL1: label is "TCM_DLY";
 
-   attribute mark_debug                        : string;
-  attribute mark_debug of Data_from_FITrd : signal is "true";
-  attribute mark_debug of IsData_from_FITrd     : signal is "true";
+-- attribute mark_debug                        : string;
+-- attribute mark_debug of Data_from_FITrd : signal is "true";
+-- attribute mark_debug of IsData_from_FITrd     : signal is "true";
 
 begin
 

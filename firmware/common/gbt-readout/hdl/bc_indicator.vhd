@@ -40,7 +40,7 @@ architecture Behavioral of bc_indicator is
   signal bc_count, bc_rate         : std_logic_vector(3 downto 0);
   signal count_tot, count_sel      : std_logic_vector(5 downto 0);
 
-  attribute mark_debug              : string;
+--  attribute mark_debug              : string;
 --  attribute mark_debug of reset     : signal is "true";
 --  attribute mark_debug of bcid_en   : signal is "true";
 --  attribute mark_debug of bcid_in   : signal is "true";
