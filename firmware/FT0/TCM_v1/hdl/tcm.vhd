@@ -554,9 +554,9 @@ END COMPONENT;
 attribute IODELAY_GROUP : STRING;
 attribute IODELAY_GROUP of IDL1: label is "TCM_DLY";
 
--- attribute mark_debug                        : string;
--- attribute mark_debug of Data_from_FITrd : signal is "true";
--- attribute mark_debug of IsData_from_FITrd     : signal is "true";
+--   attribute mark_debug                        : string;
+--  attribute mark_debug of Data_from_FITrd : signal is "true";
+--  attribute mark_debug of IsData_from_FITrd     : signal is "true";
 
 begin
 
@@ -1538,10 +1538,10 @@ if (Tmode(0)='1') then
 end if;
     
 if (bitcnt_A="010") then
- if (trigs/=0) or (laser_t='1') then
+ if (trigs/=0) or (laser_t='1') or (tr_valid='1') then
  Rd_Word(159 downto 80) <= x"F" & Tmode(3) &"001" & x"000000" & rx_phase_status & Orbit_ID & BC_COU;
  Rd_word(79 downto 59) <= '0' & TimeC & '0' & TimeA  & '0';
- if (Tmode(9)='1') then  Rd_word(58 downto 42) <= AmplC; else Rd_word(58 downto 42) <= AmplAI(15) & AmplAI; end if;
+ if (Tmode(9)='0') then  Rd_word(58 downto 42) <= AmplC; else Rd_word(58 downto 42) <= AmplAI(15) & AmplAI; end if;
  Rd_word(41 downto 0) <= '0' & AmplA & '0' & Nchan_C & '0' & Nchan_A & tr_valid & (not t_blk) & laser_t & trigs;
  gbt_wr<='1';
  end if;
