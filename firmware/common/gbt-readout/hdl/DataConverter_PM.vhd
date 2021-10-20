@@ -77,12 +77,12 @@ architecture Behavioral of DataConverter is
   signal header_rawfifo_full, data_rawfifo_full, rawfifo_full : std_logic;
 
 
-  signal sending_event : boolean;
+  signal sending_event, sending_event_dc  : boolean;
   signal word_counter  : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
   signal header_fifo_din, data_fifo_din     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_we, data_fifo_we       : std_logic;
-  signal header_fifo_empty, data_fifo_empty : std_logic;
+  signal header_fifo_empty, header_fifo_empty_dc, data_fifo_empty, data_fifo_empty_dc : std_logic;
 
   signal errors                           : std_logic_vector(1 downto 0);
   signal err_extra_word, err_extra_header : std_logic;
@@ -177,11 +177,15 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
+	  header_fifo_empty_dc <= header_fifo_empty;
+	  data_fifo_empty_dc <= data_fifo_empty;
+	  sending_event_dc <= sending_event;
+	
       data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= err_extra_header&err_extra_word&'0'&errors;
-      no_data_o      <= header_fifo_empty = '1' and data_fifo_empty = '1' and not sending_event and not data_enabled_sclk;
+      no_data_o      <= header_fifo_empty_dc = '1' and data_fifo_empty_dc = '1' and not sending_event_dc and not data_enabled;
     end if;
   end process;
 
@@ -238,7 +242,8 @@ begin
 
         end if;
 
-
+        -- turning off sending_event while idle without data for clear error 'ready for run'		
+		if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' then sending_event <= false; end if;
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
 
