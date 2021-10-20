@@ -81,6 +81,7 @@ architecture Behavioral of FIT_GBT_project is
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
   signal errors_scl                       : std_logic_vector(15 downto 0);
   signal readout_status_scl : readout_status_t;
+  signal readout_control_db : readout_control_t;
 
 
 
@@ -118,6 +119,7 @@ architecture Behavioral of FIT_GBT_project is
   -- attribute mark_debug of errors_scl               : signal is "true";
   -- attribute mark_debug of FIT_GBT_STATUS           : signal is "true";
   -- attribute mark_debug of readout_status_scl           : signal is "true";
+  -- attribute mark_debug of readout_control_db           : signal is "true";
 
 begin
 -- WIRING ======================================================
@@ -160,6 +162,8 @@ begin
   process (DataClk_I)
   begin
     if(rising_edge(DataClk_I))then
+	  readout_control_db <= Control_register_I;
+	  
       FIT_GBT_STATUS.fifos_empty(0) <= raw_header_empty;
       FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
       FIT_GBT_STATUS.fifos_empty(3) <= slct_fifo_empty;
