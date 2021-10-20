@@ -1270,7 +1270,7 @@ if (lpatt0_sel='1') and (ipb_iswr='1') then l_patt0<=ipb_data_out(31 downto 0); 
 if (lpatt1_sel='1') and (ipb_iswr='1') then l_patt1<=ipb_data_out(31 downto 0); end if;
 if (pmena_sel='1') and (ipb_iswr='1') then pm_ena<=ipb_data_out(19 downto 0); end if;
 
-if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_control_reg(0)(22)<='1';
+if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_control_reg(0)(14)<='1';
  else
   if (rdoutc_sel='1') and (ipb_iswr='1') then
   if  (ipb_addr(7 downto 0)=16#D8#) then readout_control_reg(0)<= ipb_data_out(31 downto 23) & (ipb_data_out(22) or not GBTRX_ready1) & ipb_data_out(21 downto 0);

@@ -1678,7 +1678,7 @@ end if;
   else if (stat_clr1='1') and (stat_clr='0') then dcs_irq<='0'; end if;
  end if;
 
-if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(22)<='1';
+if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(14)<='1';
   else  
      if (reg32_wr2='0') and (reg32_wr1='1') and (hspi_addr(7 downto 0)<=16#E7#)  then
         if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32(31 downto 23) & (hspid_w32(22) or not GBTRX_ready) & hspid_w32(21 downto 0);
