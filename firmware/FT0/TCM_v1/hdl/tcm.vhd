@@ -824,7 +824,7 @@ begin
          gbt_global_status(2) <=  '1';
         end if;
         
-        if readout_status.trg_match_resp_mask = '1' then
+        if readout_status.laser_start = '1' then
          readout_laser_out <=  '1';
         else 
          readout_laser_out <=  '0';
@@ -1079,7 +1079,9 @@ readout_laser_out_ff1 <= readout_laser_out_ff0;
 end if;
 end process;
 
-l_st<= readout_laser_out_ff1 when (l_mode(31)='0') else lpatt_sreg(63);
+l_st<= '0' when  (l_mode(30)='0') else 
+     readout_laser_out_ff1 when (l_mode(31)='0') else 
+     lpatt_sreg(63);
 
 tblock_mux(0)<= tblock_dly(to_integer(unsigned(tblock_md(5 downto 0))));
 tblock_mux(1)<= tblock_dly(to_integer(unsigned(tblock_md(5 downto 0)))+1);

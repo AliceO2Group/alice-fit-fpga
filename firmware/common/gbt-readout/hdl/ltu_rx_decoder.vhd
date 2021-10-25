@@ -31,6 +31,7 @@ entity ltu_rx_decoder is
     ORBC_ID_from_CRU_corrected_O : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
     Trigger_O                    : out std_logic_vector(Trigger_bitdepth-1 downto 0);
     trg_match_resp_mask_o        : out std_logic;
+    laser_start_o                : out std_logic;
 
     BCIDsync_Mode_O    : out bcid_sync_t;
     Readout_Mode_O     : out rdmode_t;
@@ -54,6 +55,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun                     : std_logic;
 
+  signal gbt_ready : boolean;
   signal run_not_permit, bc_apply_permit                 : boolean;
   signal orbc_sync_mode                                  : bcid_sync_t;
   signal readout_mode, readout_mode_ff, cru_readout_mode : rdmode_t;
@@ -112,6 +114,8 @@ begin
 
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
+      gbt_ready <= Status_register_I.GBT_status.gbtRx_Ready = '1';
+	  
       bc_delay_in       <= Control_register_I.BCID_offset;
       bc_delay_in_ff    <= bc_delay_in;
       apply_bc_delay_ff <= apply_bc_delay;
@@ -157,6 +161,9 @@ begin
         if cru_is_trg_ff and (orbc_sync_mode = mode_SYNC) then Trigger_O <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
         if ((cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) then
           trg_match_resp_mask_o <= '1'; else trg_match_resp_mask_o <= '0'; end if;
+		  
+        if ((cru_trigger_ff and TRG_LASER_STR) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) and gbt_ready then
+          laser_start_o <= '1'; else laser_start_o <= '0'; end if;
 
           -- syncronize orbc from cru to detector with first trigger
           if orbc_sync_mode = mode_STR and cru_is_trg then

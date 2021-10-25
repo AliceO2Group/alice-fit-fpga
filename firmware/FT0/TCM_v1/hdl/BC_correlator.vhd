@@ -71,10 +71,8 @@ begin
 m0 : BC_corr_mem PORT MAP (clka => clk320, wea(0) => wea, addra => BC_cou, dina => m_wr, douta => m_rd, clkb => ipb_clk, web => "0", addrb => addr, dinb => (others=>'0'), doutb => data);
 
 
-m_wr<= x"0000000" & "000" & inc_i when (clr_mem='1') 
-else m_rd+1 when (m_rd/=x"FFFFFFFF") else x"FFFFFFFF";
 
-wea<= '1' when ((clr_mem='1') or (inc='1')) and (mt_cou="100") else '0';
+wea<= '1' when ((clr_mem='1') or (inc='1')) and (mt_cou="110") else '0';
 
 process(clk320)
 begin
@@ -87,6 +85,11 @@ if (clk320'event and clk320='1') then
 if  (BC_cou=0) and (mt_cou="010") then clr_mem<=clr_req; end if;
 
 if (mt_cou="011") then   inc_i<= inc; end if;
+
+if (clr_mem='1') then m_wr<= x"0000000" & "000" & inc_i;
+    else 
+    if  (m_rd/=x"FFFFFFFF") then m_wr<= m_rd+1; end if;
+   end if;
 
 end if;
 end process;
