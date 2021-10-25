@@ -222,6 +222,7 @@ begin
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
       trg_match_resp_mask_o        => FIT_GBT_STATUS.trg_match_resp_mask,
+	  laser_start_o                => FIT_GBT_STATUS.laser_start,
 
       Readout_Mode_O     => FIT_GBT_STATUS.Readout_Mode,
       CRU_Readout_Mode_O => FIT_GBT_STATUS.CRU_Readout_Mode,

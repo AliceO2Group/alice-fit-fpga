@@ -1645,7 +1645,7 @@ reg_wr_addr<= spi_addr when  (spi_wr_req='1') else  hspi_addr;
 
 process(TX_CLK, sreset)
 begin
-if sreset='1' then buf_vector<=x"000000000000000"; buf_cou<=x"A0"; dcs_irq<='0'; vect_clr_req<='0'; ipbus_control_reg(0)<= x"0040_0000";
+if sreset='1' then buf_vector<=x"000000000000000"; buf_cou<=x"A0"; dcs_irq<='0'; vect_clr_req<='0'; 
 else 
 if (TX_CLK'event and TX_CLK='1') then
 

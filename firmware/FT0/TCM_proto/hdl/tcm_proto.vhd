@@ -814,7 +814,7 @@ begin
          gbt_global_status(2) <=  '1';
         end if;
         
-        if readout_status.trg_match_resp_mask = '1' then
+        if readout_status.laser_start = '1' then
          readout_laser_out <=  '1';
         else 
          readout_laser_out <=  '0';
