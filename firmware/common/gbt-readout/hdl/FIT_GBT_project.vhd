@@ -80,8 +80,8 @@ architecture Behavioral of FIT_GBT_project is
   signal ORBC_ID_from_RXdecoder           : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRUS
   signal ORBC_ID_corrected_from_RXdecoder : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
   signal errors_scl                       : std_logic_vector(15 downto 0);
-  signal readout_status_scl : readout_status_t;
-  signal readout_control_db : readout_control_t;
+  signal readout_status_scl               : readout_status_t;
+  signal readout_control_db               : readout_control_t;
 
 
 
@@ -140,7 +140,7 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
-  FIT_GBT_STATUS.fifos_empty(7 downto 5) <= (others => '0');
+  FIT_GBT_STATUS.fifos_empty(7 downto 5)  <= (others => '0');
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -153,8 +153,8 @@ begin
   process (SysClk_I)
   begin
     if(rising_edge(SysClk_I))then
-      errors_scl <= FIT_GBT_STATUS.fsm_errors;
-	  readout_status_scl <= FIT_GBT_STATUS;
+      errors_scl         <= FIT_GBT_STATUS.fsm_errors;
+      readout_status_scl <= FIT_GBT_STATUS;
     end if;
   end process;
 
@@ -162,8 +162,8 @@ begin
   process (DataClk_I)
   begin
     if(rising_edge(DataClk_I))then
-	  readout_control_db <= Control_register_I;
-	  
+      readout_control_db <= Control_register_I;
+
       FIT_GBT_STATUS.fifos_empty(0) <= raw_header_empty;
       FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
       FIT_GBT_STATUS.fifos_empty(3) <= slct_fifo_empty;
@@ -222,7 +222,7 @@ begin
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
       trg_match_resp_mask_o        => FIT_GBT_STATUS.trg_match_resp_mask,
-	  laser_start_o                => FIT_GBT_STATUS.laser_start,
+      laser_start_o                => FIT_GBT_STATUS.laser_start,
 
       Readout_Mode_O     => FIT_GBT_STATUS.Readout_Mode,
       CRU_Readout_Mode_O => FIT_GBT_STATUS.CRU_Readout_Mode,

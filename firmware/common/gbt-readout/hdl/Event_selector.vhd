@@ -93,7 +93,7 @@ architecture Behavioral of Event_selector is
   signal trgfifo_empty_dc, cntpck_fifo_empty_sc, slct_fifo_empty_sc : std_logic;
   signal send_gear_rdh_dc, send_last_rdh_dc                         : boolean;
   signal fifo_notempty_while_start                                  : std_logic_vector(2 downto 0);
-  signal trgfifo_wr_busy								: std_logic;
+  signal trgfifo_wr_busy                                            : std_logic;
 
   type FSM_STATE_T is (s0_idle, s1_select, s2_dread);
   signal FSM_STATE, FSM_STATE_NEXT : FSM_STATE_T;
@@ -186,13 +186,13 @@ begin
       DOUT  => trgfifo_dout,
       EMPTY => trgfifo_empty,
       FULL  => trgfifo_full,
-	  
-      wr_rst_busy   => trgfifo_wr_busy,
-      rd_rst_busy   => open
+
+      wr_rst_busy => trgfifo_wr_busy,
+      rd_rst_busy => open
       );
 
   trgfifo_we <= '1' when (((Control_register_I.trg_data_select or TRG_const_HB) and Status_register_I.Trigger_from_CRU) /= TRG_const_void)
-                and Status_register_I.Readout_Mode /= mode_IDLE  and trgfifo_wr_busy = '0' else '0';
+                and Status_register_I.Readout_Mode /= mode_IDLE and trgfifo_wr_busy = '0' else '0';
   trgfifo_din         <= Status_register_I.Trigger_from_CRU & Status_register_I.ORBIT_from_CRU & Status_register_I.BCID_from_CRU;
   trgfifo_out_trigger <= trgfifo_dout(75 downto BC_id_bitdepth + Orbit_id_bitdepth);
   trgfifo_out_orbit   <= trgfifo_dout(BC_id_bitdepth + Orbit_id_bitdepth -1 downto BC_id_bitdepth);
@@ -394,13 +394,13 @@ begin
         end if;
 
         -- counting rdh payload
-        if slct_fifo_wren = '1' then rdh_size_counter                                                       <= rdh_size_counter + 1; end if;
+        if slct_fifo_wren = '1' then rdh_size_counter                                        <= rdh_size_counter + 1; end if;
         -- dropping packets counter
-        if reading_header and dropping_data_cmd and drop_counter < x"ffff" then drop_counter                <= drop_counter + 1; end if;
-        if slct_fifo_wren = '1' and header_fifo_rd = '1' then event_counter <= event_counter + 1; end if;
-        if reset_dt_counters_sc then drop_counter                                                           <= (others => '0'); event_counter <= (others => '0'); end if;
+        if reading_header and dropping_data_cmd and drop_counter < x"ffff" then drop_counter <= drop_counter + 1; end if;
+        if slct_fifo_wren = '1' and header_fifo_rd = '1' then event_counter                  <= event_counter + 1; end if;
+        if reset_dt_counters_sc then drop_counter                                            <= (others => '0'); event_counter <= (others => '0'); end if;
         -- errors if fifos are not empty while run starts
-        if start_of_run then fifo_notempty_while_start                                                      <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
+        if start_of_run then fifo_notempty_while_start                                       <= (not trgfifo_empty) & (not cntpck_fifo_empty) & (not slct_fifo_empty); end if;
 
 
         -- zero event rate counter for ila triggering
