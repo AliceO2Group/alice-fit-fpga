@@ -83,7 +83,7 @@ class run_reader:
                 # select data by data_enabled
                 if istatus.data_enabled: self.gen_data.append(
                     # size is +1 for zero packets indication
-                    {'size': istatus.data_gen_size-1, 'pck_num': istatus.data_gen_packnum, 'bc': istatus.data_gen_bc, 'orbit': istatus.data_gen_orbit})
+                    {'size': istatus.data_gen_size, 'pck_num': istatus.data_gen_packnum, 'bc': istatus.data_gen_bc, 'orbit': istatus.data_gen_orbit})
 
             # collecting trigger data
             if istatus.cru_trigger > 0:

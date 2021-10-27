@@ -250,7 +250,8 @@ begin
         end if;
 
         -- turning off sending_event while idle without data for clear error 'ready for run'            
-        if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' then sending_event <= false; end if;
+        if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' and is_data = '0' then
+          sending_event <= false; end if;
 
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;

@@ -13,17 +13,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="292492272fs"></ZoomEndTime>
+      <ZoomStartTime time="787333fs"></ZoomStartTime>
+      <ZoomEndTime time="1042534fs"></ZoomEndTime>
       <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="220"></NameColumnWidth>
-      <ValueColumnWidth column_width="117"></ValueColumnWidth>
+      <ValueColumnWidth column_width="113"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="11" />
    <wave_markers>
       <marker time="763950237" label="" />
+      <marker time="10962511186" label="" />
    </wave_markers>
    <wvobject fp_name="group395" type="group">
       <obj_property name="label">TESTBENCH</obj_property>
@@ -52,6 +53,7 @@
       <wvobject fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic" type="array">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
          <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/GBT_status" type="array">
          <obj_property name="ElementShortName">GBT_status</obj_property>
@@ -545,11 +547,16 @@
    <wvobject fp_name="group460" type="group">
       <obj_property name="label">CONVERTER</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/Board_data_I" type="array">
          <obj_property name="ElementShortName">Board_data_I</obj_property>
          <obj_property name="ObjectShortName">Board_data_I</obj_property>
          <obj_property name="CustomSignalColor">#00FFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/data_enabled_sclk" type="other">
+         <obj_property name="ElementShortName">data_enabled_sclk</obj_property>
+         <obj_property name="ObjectShortName">data_enabled_sclk</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/DataConverter_comp/sending_event" type="other">
          <obj_property name="ElementShortName">sending_event</obj_property>
@@ -838,18 +845,6 @@
          <obj_property name="CustomSignalColor">#00FF7F</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/data_is_old" type="other">
-         <obj_property name="ElementShortName">data_is_old</obj_property>
-         <obj_property name="ObjectShortName">data_is_old</obj_property>
-         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trg_is_old" type="other">
-         <obj_property name="ElementShortName">trg_is_old</obj_property>
-         <obj_property name="ObjectShortName">trg_is_old</obj_property>
-         <obj_property name="CustomSignalColor">#00FF7F</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/trg_eq_data" type="other">
          <obj_property name="ElementShortName">trg_eq_data</obj_property>
          <obj_property name="ObjectShortName">trg_eq_data</obj_property>
@@ -882,11 +877,9 @@
          <obj_property name="CustomSignalColor">#FF0000</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/select_timeout" type="array">
-         <obj_property name="ElementShortName">select_timeout[3:0]</obj_property>
-         <obj_property name="ObjectShortName">select_timeout[3:0]</obj_property>
-         <obj_property name="CustomSignalColor">#800000</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/select_timeout" type="other">
+         <obj_property name="ElementShortName">select_timeout</obj_property>
+         <obj_property name="ObjectShortName">select_timeout</obj_property>
       </wvobject>
       <wvobject fp_name="/testbench_readout/FitGbtPrg/Event_Selector_comp/FSM_STATE" type="other">
          <obj_property name="ElementShortName">FSM_STATE</obj_property>

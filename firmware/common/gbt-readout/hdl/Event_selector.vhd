@@ -192,7 +192,7 @@ begin
       );
 
   trgfifo_we <= '1' when (((Control_register_I.trg_data_select or TRG_const_HB) and Status_register_I.Trigger_from_CRU) /= TRG_const_void)
-                and Status_register_I.Readout_Mode /= mode_IDLE and trgfifo_wr_busy = '0' else '0';
+                and Status_register_I.Readout_Mode /= mode_IDLE else '0';
   trgfifo_din         <= Status_register_I.Trigger_from_CRU & Status_register_I.ORBIT_from_CRU & Status_register_I.BCID_from_CRU;
   trgfifo_out_trigger <= trgfifo_dout(75 downto BC_id_bitdepth + Orbit_id_bitdepth);
   trgfifo_out_orbit   <= trgfifo_dout(BC_id_bitdepth + Orbit_id_bitdepth -1 downto BC_id_bitdepth);

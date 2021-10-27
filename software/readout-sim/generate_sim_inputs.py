@@ -160,7 +160,7 @@ def generate_sim_inputs():
     test_ctrl_reg_force_idle.force_idle = 1
 
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(run_len, test_ctrl_reg_force_idle)
+    run_gen.generate_ctrl_pattern(6, test_ctrl_reg_force_idle)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 
