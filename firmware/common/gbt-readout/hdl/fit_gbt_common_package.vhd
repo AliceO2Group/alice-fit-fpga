@@ -54,8 +54,8 @@ package fit_gbt_common_package is
   constant TRG_const_FErst : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00001000";  -- FEE reset
   constant TRG_const_RT    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00002000";  -- Run Type; 1=Cont, 0=Trig
   constant TRG_const_RS    : std_logic_vector(Trigger_bitdepth-1 downto 0) := x"00004000";  --Running State; 1=Running
- 
-  constant TRG_LASER_STR   : std_logic_vector(Trigger_bitdepth-1 downto 0) := TRG_const_Cal;
+
+  constant TRG_LASER_STR : std_logic_vector(Trigger_bitdepth-1 downto 0) := TRG_const_Cal;
 
   constant LHC_BCID_max : std_logic_vector(BC_id_bitdepth-1 downto 0) := x"deb";
 -- -------------------------------------------------------------

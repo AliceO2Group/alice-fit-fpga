@@ -79,14 +79,14 @@ architecture Behavioral of DataConverter is
   signal header_rawfifo_full, data_rawfifo_full, rawfifo_full : std_logic;
 
 
-  signal sending_event, sending_event_dc  : boolean;
-  signal word_counter  : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+  signal sending_event, sending_event_dc : boolean;
+  signal word_counter                    : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
   signal tcm_data_fifo_empty, tcm_data_fifo_full : std_logic;
   signal tcm_data_fifo_dout                      : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
-  signal header_fifo_din, data_fifo_din     : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal header_fifo_we, data_fifo_we       : std_logic;
+  signal header_fifo_din, data_fifo_din                                               : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
+  signal header_fifo_we, data_fifo_we                                                 : std_logic;
   signal header_fifo_empty, header_fifo_empty_dc, data_fifo_empty, data_fifo_empty_dc : std_logic;
 
   signal errors : std_logic_vector(2 downto 0);
@@ -177,10 +177,10 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
-	  header_fifo_empty_dc <= header_fifo_empty;
-	  data_fifo_empty_dc <= data_fifo_empty;
-	  sending_event_dc <= sending_event;
-	
+      header_fifo_empty_dc <= header_fifo_empty;
+      data_fifo_empty_dc   <= data_fifo_empty;
+      sending_event_dc     <= sending_event;
+
       data_enabled   <= Status_register_I.data_enable = '1';
       drop_ounter_o  <= drop_counter;
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
@@ -249,8 +249,8 @@ begin
 
         end if;
 
-        -- turning off sending_event while idle without data for clear error 'ready for run'		
-		if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' then sending_event <= false; end if;
+        -- turning off sending_event while idle without data for clear error 'ready for run'            
+        if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' then sending_event <= false; end if;
 
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
