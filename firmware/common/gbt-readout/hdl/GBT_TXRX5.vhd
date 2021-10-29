@@ -309,6 +309,7 @@ begin  --========####   Architecture Body   ####========--
       GBT_Status_O.mgtLinkReady    <= from_gbtBank_mgt.mgtLink(1).ready;
       GBT_Status_O.tx_resetDone    <= from_gbtBank_mgt.mgtLink(1).tx_resetDone;
       GBT_Status_O.tx_fsmResetDone <= from_gbtBank_mgt.mgtLink(1).tx_fsmResetDone;
+	  GBT_Status_O.Rx_Phase_error  <= '0';
 
       if reset_rx_errors = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '0';
       elsif gbtRx_ErrorDet_ff = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '1'; end if;

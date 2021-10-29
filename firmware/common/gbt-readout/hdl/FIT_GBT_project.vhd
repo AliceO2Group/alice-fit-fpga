@@ -17,7 +17,7 @@ use work.fit_gbt_board_package.all;
 
 entity FIT_GBT_project is
   generic (
-    GENERATE_GBT_BANK : integer := 1
+    IS_SIMULATION : integer := 0
     );
 
   port (
@@ -73,6 +73,7 @@ architecture Behavioral of FIT_GBT_project is
   signal RX_Data_rxclk_from_GBT       : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal data_from_cru_constructor    : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal is_data_from_cru_constructor : std_logic;
+  signal RxData_rxclk_to_FITrd_ext    : std_logic_vector(GBT_data_word_bitdepth+4-1 downto 0);
 
 -- status
   signal from_gbt_bank_prj_GBT_status     : gbt_status_t;
@@ -141,6 +142,8 @@ begin
   FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
   FIT_GBT_STATUS.fifos_empty(7 downto 5)  <= (others => '0');
+  FIT_GBT_STATUS.ipbusrd_fifo_cnt <= (others => '0');
+  FIT_GBT_STATUS.ipbusrd_fifo_out <= (others => '0');
 
 
   RX_Data_DataClk           <= RX_exData_from_RXsync(GBT_data_word_bitdepth-1 downto 0);
@@ -153,8 +156,8 @@ begin
   process (SysClk_I)
   begin
     if(rising_edge(SysClk_I))then
-      errors_scl         <= FIT_GBT_STATUS.fsm_errors;
-      readout_status_scl <= FIT_GBT_STATUS;
+      -- errors_scl         <= FIT_GBT_STATUS.fsm_errors;
+      -- readout_status_scl <= FIT_GBT_STATUS;
     end if;
   end process;
 
@@ -162,7 +165,7 @@ begin
   process (DataClk_I)
   begin
     if(rising_edge(DataClk_I))then
-      readout_control_db <= Control_register_I;
+      -- readout_control_db <= Control_register_I;
 
       FIT_GBT_STATUS.fifos_empty(0) <= raw_header_empty;
       FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
@@ -200,12 +203,13 @@ begin
       RX_CLK_I => RxDataClk_I,
 
       RX_IS_DATA_RXCLK_I   => IsRxData_rxclk_to_FITrd_I,
-      RX_DATA_RXCLK_I      => x"0" & RxData_rxclk_to_FITrd_I,
+      RX_DATA_RXCLK_I      => RxData_rxclk_to_FITrd_ext,
       RX_IS_DATA_DATACLK_O => RX_IsData_DataClk,
       RX_DATA_DataClk_O    => RX_exData_from_RXsync,
       CLK_PH_CNT_O         => FIT_GBT_STATUS.rx_phase,
       CLK_PH_ERROR_O       => FIT_GBT_STATUS.GBT_status.Rx_Phase_error
       );
+  RxData_rxclk_to_FITrd_ext <= x"0" & RxData_rxclk_to_FITrd_I;
 -- =============================================================
 
 -- RX Data Decoder ============================================
@@ -405,7 +409,7 @@ begin
 
 
 -- =============================================================
-  gbt_bank_gen : if GENERATE_GBT_BANK = 1 generate
+  gbt_bank_gen : if IS_SIMULATION = 0 generate
     gbtBankDsgn : entity work.GBT_TX_RX
       port map (
         RESET           => gbt_reset,
@@ -427,7 +431,7 @@ begin
         );
   end generate gbt_bank_gen;
 
-  gbt_bank_gen_sim : if GENERATE_GBT_BANK = 0 generate
+  gbt_bank_gen_sim : if IS_SIMULATION = 1 generate
     MGT_TX_P_O                   <= '0';
     MGT_TX_N_O                   <= '0';
     GBT_RxFrameClk_O             <= DataClk_I;

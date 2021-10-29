@@ -299,9 +299,9 @@ begin
       hb_rdh_response       <= Control_register_I.is_hb_response = '1';
       readout_bypass        <= Control_register_I.readout_bypass = '1';
       hb_reject             <= Control_register_I.is_hb_reject = '1';
-      event_counter_ff      <= event_counter;
-      cntpck_fifo_empty_sc  <= cntpck_fifo_empty;
-      slct_fifo_empty_sc    <= slct_fifo_empty;
+      -- event_counter_ff      <= event_counter;
+      -- cntpck_fifo_empty_sc  <= cntpck_fifo_empty;
+      -- slct_fifo_empty_sc    <= slct_fifo_empty;
 
       -- put raw data in select fifo for readout bypass mode
       if readout_bypass then
@@ -404,9 +404,9 @@ begin
 
 
         -- zero event rate counter for ila triggering
-        if reset_dt_counters_sc then event_counter_zero_counter                 <= (others => '0');
-        elsif event_counter = event_counter_ff then event_counter_zero_counter  <= event_counter_zero_counter+1;
-        elsif event_counter /= event_counter_ff then event_counter_zero_counter <= (others => '0'); end if;
+        -- if reset_dt_counters_sc then event_counter_zero_counter                 <= (others => '0');
+        -- elsif event_counter = event_counter_ff then event_counter_zero_counter  <= event_counter_zero_counter+1;
+        -- elsif event_counter /= event_counter_ff then event_counter_zero_counter <= (others => '0'); end if;
 
 
       end if;

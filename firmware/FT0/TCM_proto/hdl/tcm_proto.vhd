@@ -380,7 +380,7 @@ end component;
 
    component FIT_GBT_project is
        generic (
-           GENERATE_GBT_BANK    : integer := 1
+           IS_SIMULATION    : integer := 0
        );
    
        Port (        
@@ -744,7 +744,7 @@ fl_upg: FLASH generic map (clk_freq => 31250 )
 -- FIT GBT project =====================================
 FitGbtPrg: FIT_GBT_project
 	generic map(
-		GENERATE_GBT_BANK	=> 1
+		IS_SIMULATION	=> 0
 	)
 	
 	Port map(

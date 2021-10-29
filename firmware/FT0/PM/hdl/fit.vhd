@@ -448,7 +448,7 @@ component TDCCHAN is
 
    component FIT_GBT_project is
        generic (
-           GENERATE_GBT_BANK    : integer := 1
+           IS_SIMULATION    : integer := 0
        );
    
        Port (        
@@ -458,6 +458,7 @@ component TDCCHAN is
            MgtRefClk_I         : in  STD_LOGIC; -- 200MHz ref clock
            RxDataClk_I            : in STD_LOGIC; -- 40MHz data clock in RX domain
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
+           FSM_Clocks_O        : out rdclocks_t;
            
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
@@ -914,7 +915,7 @@ at0<=tao(0); at1<=tao(1); tt0<=tto(0); tt1<=tto(1);
 -- FIT GBT project =====================================
 FitGbtPrg: FIT_GBT_project
 	generic map(
-		GENERATE_GBT_BANK	=> 1
+		IS_SIMULATION	=> 0
 	)
 	
 	Port map(
@@ -924,6 +925,7 @@ FitGbtPrg: FIT_GBT_project
 		MgtRefClk_I			=>	MGTCLK,
 		RxDataClk_I			=> RX_CLK, -- 40MHz data clock in RX domain (loop back)
 		GBT_RxFrameClk_O	=> RX_CLK,
+		FSM_Clocks_O        => open,
 		
 		Board_data_I		=> PM_data_toreadout,
 		Control_register_I	=> readout_control,
