@@ -207,7 +207,7 @@ begin
       RX_IS_DATA_DATACLK_O => RX_IsData_DataClk,
       RX_DATA_DataClk_O    => RX_exData_from_RXsync,
       CLK_PH_CNT_O         => FIT_GBT_STATUS.rx_phase,
-      CLK_PH_ERROR_O       => FIT_GBT_STATUS.GBT_status.Rx_Phase_error
+      CLK_PH_ERROR_O       => FIT_GBT_STATUS.Rx_Phase_error
       );
   RxData_rxclk_to_FITrd_ext <= x"0" & RxData_rxclk_to_FITrd_I;
 -- =============================================================

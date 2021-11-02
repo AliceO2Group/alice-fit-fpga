@@ -191,8 +191,6 @@ package fit_gbt_common_package is
     gbtRx_Ready         : std_logic;    --reg bit 6
     gbtRx_ErrorDet      : std_logic;    --reg bit 7
     gbtRx_ErrorLatch    : std_logic;    --reg bit 8
-
-    Rx_Phase_error : std_logic;         --reg bit 9
   end record;
 
   type datagen_report_t is record
@@ -258,6 +256,7 @@ package fit_gbt_common_package is
     -- 10- [ltu_rx_decoder] bc_sync lost during the run
     -- 15- [FRU]       0x1 = ready for run, all fifos are empty
     fsm_errors : std_logic_vector(15 downto 0);
+    Rx_Phase_error : std_logic;         --reg bit 9
 
     -- fifos empty bits
     -- 0 - [Converter] raw_header
@@ -281,9 +280,7 @@ package fit_gbt_common_package is
 
       gbtRx_Ready      => '0',
       gbtRx_ErrorDet   => '0',
-      gbtRx_ErrorLatch => '0',
-
-      Rx_Phase_error => '0'
+      gbtRx_ErrorLatch => '0'
       );
 -- =============================================================
 
@@ -440,7 +437,7 @@ package body fit_gbt_common_package is
 
 
     gbt_status := "0000000"
-                  & status_reg.GBT_status.Rx_Phase_error        -- 8
+                  & status_reg.Rx_Phase_error        -- 8
                   & status_reg.GBT_status.gbtRx_ErrorLatch      -- 7
                   & status_reg.GBT_status.gbtRx_Ready           -- 6
                   & status_reg.GBT_status.tx_fsmResetDone       -- 5 

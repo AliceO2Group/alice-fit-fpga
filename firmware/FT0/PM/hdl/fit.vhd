@@ -963,7 +963,7 @@ RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 readout_control <= func_CNTRREG_getcntrreg(ipbus_control_reg);
 ipbus_status_reg <= func_STATREG_getaddrreg(readout_status);
 
-gbt_global_status(0) <=  readout_status.GBT_status.Rx_Phase_error;
+gbt_global_status(0) <=  readout_status.Rx_Phase_error;
 gbt_global_status(1) <=  '1' when readout_status.BCIDsync_Mode = mode_LOST else '0';
 --gbt_global_status(2) <=  '1' when readout_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
 gbt_global_status(3) <=  '0';
@@ -1910,7 +1910,7 @@ begin
 if (clk320'event and clk320='1') then
 
 rx_phase_status(2 downto 0) <= readout_status.rx_phase;
-rx_phase_status(3) <= readout_status.GBT_status.Rx_Phase_error;
+rx_phase_status(3) <= readout_status.Rx_Phase_error;
 
 spi_lock320<=spi_lock320_0;  spi_lock320_0<= rd_lock;
 hspi_lock320<=hspi_lock320_0;  hspi_lock320_0<= rd_lock_hspi;

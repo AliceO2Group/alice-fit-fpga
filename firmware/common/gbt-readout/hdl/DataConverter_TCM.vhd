@@ -201,7 +201,7 @@ begin
       start_of_run        <= Status_register_I.Start_run = '1';
       readout_bypass      <= Control_register_I.readout_bypass = '1';
 
-      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
+      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.Rx_Phase_error, '1');
       data_word                                                 <= tcm_data_fifo_dout;
       is_data                                                   <= not tcm_data_fifo_empty;
       if tcm_data_fifo_dout(79 downto 76) = x"f" then is_header <= '1'; else is_header <= '0'; end if;

@@ -179,7 +179,7 @@ begin
           event_orbit_sc     <= event_orbit;
           event_bc_sc        <= event_bc;
           event_rx_ph        <= Status_register_I.rx_phase;
-          event_rx_ph_err    <= Status_register_I.GBT_status.Rx_Phase_error;
+          event_rx_ph_err    <= Status_register_I.Rx_Phase_error;
           word_counter       <= 0;
           cnt_packet_counter <= cnt_packet_counter + 1;
 

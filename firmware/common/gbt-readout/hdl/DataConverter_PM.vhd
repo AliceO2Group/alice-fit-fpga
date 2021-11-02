@@ -200,7 +200,7 @@ begin
       readout_bypass      <= Control_register_I.readout_bypass = '1';
 
 
-      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
+      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.Rx_Phase_error, '0');
       data_word        <= Board_data_I.data_word;
       is_data          <= Board_data_I.is_data;
       is_header        <= Board_data_I.is_header;
