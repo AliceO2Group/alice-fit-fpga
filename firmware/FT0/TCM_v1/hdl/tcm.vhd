@@ -225,7 +225,7 @@ signal readout_control_reg :  ctrl_reg_t;
 signal readout_status_reg :  stat_reg_t;
 signal New_BCID : STD_LOGIC;
 signal las_o, l_st, flshreg_sel, NoiseA, NoiseC, NoiseC0, NoiseC1, NoiseC2, NoiseA_inc, NoiseC_inc, NoiseAll, orA_str, Interact, OrA_T, OrC_T, Interact_T, V_T, sca, scc, ca, cc, scb, cb, BG_A, BG_C : STD_LOGIC;
-signal tstamp_sel, d_rd, d_rdy, adc_sel, adc_sel1, rout_lock0, rout_lock1, rout_lock2, PM_rst, cctrl_rst, clk_src, clk_l, clk_frs, mcuts_sel, pmena_sel, pm_err, bccorr_sel, bccorr_ack, corr_inc, SC_str, CC_str, V_str : STD_LOGIC;
+signal tstamp_sel, d_rd, d_rdy, adc_sel, adc_sel1, rout_lock0, rout_lock1, rout_lock2, PM_rst, cctrl_rst, clk_src, clk_l, clk_frs, mcuts_sel, pmena_sel, pm_err, bccorr_sel, bccorr_ack, corr_inc, SC_str, CC_str, V_str, inRst : STD_LOGIC;
 signal bccorrA_sel, bccorrC_sel, bccorr_ack0, bccorr_rd, bc_mask_sel : STD_LOGIC; 
 signal d_addr : STD_LOGIC_VECTOR(6 DOWNTO 0);
 signal d_sns : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -240,6 +240,7 @@ signal tblock_mux : STD_LOGIC_VECTOR (2 downto 0);
 signal AmplAI, AmplAO :  STD_LOGIC_VECTOR (15 downto 0);
 signal nsca, nscc, nscb, sct, nt, irt, ort, ovtx, orct, sc_i, c_i :  STD_LOGIC;
 signal Nchan_S :  STD_LOGIC_VECTOR (7 downto 0);
+
 
 component tcm_side is
  Port (CLKA : in STD_LOGIC;
@@ -945,7 +946,7 @@ bccorrA_sel<= ipb_str when (ipb_addr(31 downto 12)= x"00004") and (ipb_isrd='1')
 bccorrC_sel<= ipb_str when (ipb_addr(31 downto 12)= x"00005") and (ipb_isrd='1') else '0';
 
 PM_sel: for i in 0 to 19 generate
-pm_select(i)<= (pm_adr_sel and pm_ena(i)) when (ipb_addr(13 downto 9)= i+1) else '0';  
+pm_select(i)<= (pm_adr_sel and pm_ena(i) and (not inRst)) when (ipb_addr(13 downto 9)= i+1) else '0';  
 
 end generate; 
 
@@ -961,7 +962,7 @@ ipb_iswr<=ipb_out.ipb_write and ipb_out.ipb_strobe; ipb_isrd<=(not ipb_out.ipb_w
 ipb_str<=ipb_out.ipb_strobe; ipb_wr<= ipb_out.ipb_write; 
 
 pm_rdy<=pm_rdy_a(to_integer(unsigned(ipb_addr(14 downto 9)))-1);
-pm_err<=not pm_ena(to_integer(unsigned(ipb_addr(14 downto 9)))-1);
+pm_err<=(not pm_ena(to_integer(unsigned(ipb_addr(14 downto 9)))-1)) or inRst;
 
 ipb_in.ipb_ack<= tcmx_ack when (tcmx_select='1') 
 else tcmr_ack when (tcmr_select='1')
@@ -1022,7 +1023,7 @@ local_reg_rd<= x"0000" & std_logic_vector(resize(signed(Tlow),16)) when "000",
                x"0000" & C_A when "100",
                x"0000" & C_C when "101",
                x"0000" & "000000" & Tmode when "110",
-               PM_rq & RST_req & clk_l & gbt_global_status & GBTRXerr_ipb & GBTRX_ready & clk_src & rst_fl & pll_lock_c & pll_lock_a when "111";
+               PM_rq & inRst & clk_l & gbt_global_status & GBTRXerr_ipb & GBTRX_ready & clk_src & rst_fl & pll_lock_c & pll_lock_a when "111";
  
 Tcnt_clr<= ipb_str when (ipb_addr(31 downto 0)= x"0000000F") and (ipb_iswr='1') and (ipb_data_out(9)='1') else '0';
 
@@ -1269,9 +1270,11 @@ end if;
 if (ipb_rst='1') then hdmia_config<=(others=>'0'); hdmic_config<=(others=>'0');
   else
    hdmi_to<=hdmi_to0;
-   if (PM_rst='1') then PM_tcou<=(others=>'0');
+   if (PM_rst='1') then PM_tcou<=(others=>'0'); inRst<='1';
      else
-   if (hdmi_to0='1') then PM_tcou<=PM_tcou+1; end if;  
+   if (hdmi_to0='1') then PM_tcou<=PM_tcou+1;
+     else inRst<='0';
+    end if;  
    end if;
    if (hdmiac_select='1') and (ipb_iswr='1') then hdmia_config<=ipb_data_out; as_chg<='1'; end if;
    if (hdmicc_select='1') and (ipb_iswr='1') then hdmic_config<=ipb_data_out; cs_chg<='1'; end if;
@@ -1285,7 +1288,7 @@ end if;
 if (as_chg='1') then as_chg<='0'; end if; if (cs_chg='1') then cs_chg<='0'; end if;
 
 if (Tmode_sel='1') and (ipb_iswr='1') then trig_mod<=ipb_data_out(14 downto 0); end if;
-if (rst_spi1='1') then l_mode<=(others=>'0');
+if (rst_spi1='1') then l_mode(30)<='0';
   else
        if (lmode_sel='1') and (ipb_iswr='1') then l_mode<=ipb_data_out(31 downto 0); end if;
 end if;

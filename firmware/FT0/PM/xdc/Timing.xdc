@@ -1,9 +1,9 @@
-set_multicycle_path -setup -start -from [get_clocks CLK600_1] -to [get_cells {{BC_PER1_reg[?]} {TDC1_CH?/C_PER_reg[?]} }] 2
-set_multicycle_path -hold -start -from [get_clocks CLK600_1] -to [get_cells {{BC_PER1_reg[?]}  {TDC1_CH?/C_PER_reg[?]} }] 1
-set_multicycle_path -setup -start -from [get_clocks CLK600_2] -to [get_cells {{BC_PER2_reg[?]} {TDC2_CH?/C_PER_reg[?]} }] 2
-set_multicycle_path -hold -start -from [get_clocks CLK600_2] -to [get_cells {{BC_PER2_reg[?]}  {TDC2_CH?/C_PER_reg[?]} }] 1
-set_multicycle_path -setup -start -from [get_clocks CLK600_3] -to [get_cells {{BC_PER3_reg[?]} {TDC3_CH?/C_PER_reg[?]} }] 2
-set_multicycle_path -hold -start -from [get_clocks CLK600_3] -to [get_cells {{BC_PER3_reg[?]}  {TDC3_CH?/C_PER_reg[?]} }] 1
+set_multicycle_path -setup -start -from [get_clocks CLK600_1] -to [get_cells {{BC_PER1_reg[?]} {TDC1_CH?/C_PER_reg[?]} {TDC1_CH?/C_STR1_reg} BC_STR11_reg}] 2
+set_multicycle_path -hold -start -from [get_clocks CLK600_1] -to [get_cells {{BC_PER1_reg[?]}  {TDC1_CH?/C_PER_reg[?]} {TDC1_CH?/C_STR1_reg} BC_STR11_reg }] 1
+set_multicycle_path -setup -start -from [get_clocks CLK600_2] -to [get_cells {{BC_PER2_reg[?]} {TDC2_CH?/C_PER_reg[?]} {TDC2_CH?/C_STR1_reg} BC_STR21_reg }] 2
+set_multicycle_path -hold -start -from [get_clocks CLK600_2] -to [get_cells {{BC_PER2_reg[?]}  {TDC2_CH?/C_PER_reg[?]} {TDC2_CH?/C_STR1_reg} BC_STR21_reg }] 1
+set_multicycle_path -setup -start -from [get_clocks CLK600_3] -to [get_cells {{BC_PER3_reg[?]} {TDC3_CH?/C_PER_reg[?]} {TDC3_CH?/C_STR1_reg} BC_STR31_reg }] 2
+set_multicycle_path -hold -start -from [get_clocks CLK600_3] -to [get_cells {{BC_PER3_reg[?]}  {TDC3_CH?/C_PER_reg[?]} {TDC3_CH?/C_STR1_reg} BC_STR31_reg }] 1
 
 set_max_delay -datapath_only -from [get_clocks CLK320] -to [get_ports {TT* AT*}] 1.800
 
@@ -11,9 +11,9 @@ set_max_delay -datapath_only -from [get_clocks {TDCCLK1 CLK300_1}] -to [get_cell
 set_max_delay -datapath_only -from [get_clocks {TDCCLK2 CLK300_2}] -to [get_cells {TDC2_CH?/tdc_raw_i_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks {TDCCLK3 CLK300_3}] -to [get_cells {TDC3_CH?/tdc_raw_i_reg[*]}] 3.000
 
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK1 CLK300_1}] -to [get_cells {{CHANNEL1?/CH_TIME1_reg[*]} CHANNEL1?/CH_t_trig1_reg CHANNEL1?/CH_trig_f_reg CHANNEL1?/ch_tc1_reg[?]}] 3.700
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK2 CLK300_2}] -to [get_cells {{CHANNEL2?/CH_TIME1_reg[*]} CHANNEL2?/CH_t_trig1_reg CHANNEL2?/CH_trig_f_reg CHANNEL2?/ch_tc1_reg[?]}] 3.700
-set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK3 CLK300_3}] -to [get_cells {{CHANNEL3?/CH_TIME1_reg[*]} CHANNEL3?/CH_t_trig1_reg CHANNEL3?/CH_trig_f_reg CHANNEL3?/ch_tc1_reg[?]}] 3.700
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK1 CLK300_1}] -to [get_cells {{CHANNEL1?/CH_TIME1_reg[*]} CHANNEL1?/CH_t_trig1_reg CHANNEL1?/CH_trig_f_reg CHANNEL1?/ch_tc1_reg[?]}] 3.800
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK2 CLK300_2}] -to [get_cells {{CHANNEL2?/CH_TIME1_reg[*]} CHANNEL2?/CH_t_trig1_reg CHANNEL2?/CH_trig_f_reg CHANNEL2?/ch_tc1_reg[?]}] 3.800
+set_max_delay -datapath_only -from [get_clocks -include_generated_clocks {TDCCLK3 CLK300_3}] -to [get_cells {{CHANNEL3?/CH_TIME1_reg[*]} CHANNEL3?/CH_t_trig1_reg CHANNEL3?/CH_trig_f_reg CHANNEL3?/ch_tc1_reg[?]}] 3.800
 
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK1] -to [get_cells CHANNEL1?/TDC_rdy320_0_reg] 1.000
 set_max_delay -datapath_only -from [get_clocks -include_generated_clocks TDCCLK2] -to [get_cells CHANNEL2?/TDC_rdy320_0_reg] 1.000
@@ -51,6 +51,10 @@ set_false_path -to [get_pins all_locked_reg/D]
 
 set_multicycle_path -setup -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 2
 set_multicycle_path -hold -from [get_clocks CLK320] -through [get_cells CHANNEL??/Ampl_corr] 1
+
+
+set_multicycle_path -setup -from [get_clocks TX_CLK] -to [get_cells {BC_cou_reg[*] Orbit_ID_reg[*] TR_to_reg[*]}] 2
+set_multicycle_path -hold -end -from [get_clocks TX_CLK] -to [get_cells {BC_cou_reg[*] Orbit_ID_reg[*] TR_to_reg[*]}] 1
 
 #set_multicycle_path -setup -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 2
 #set_multicycle_path -hold -from [get_cells {CHANNEL??/CH_0_reg[*]}] -to [get_cells {{CHANNEL??/CH_R0_reg[*]} {CHANNEL??/CH_R1_reg[*]}}] 1
