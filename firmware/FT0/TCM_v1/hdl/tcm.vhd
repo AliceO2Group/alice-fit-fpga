@@ -1262,19 +1262,22 @@ IPB_rdy0<=ipb_leds(0);
 if (rst_spi1='1') then RST_req<='0'; clk_frs<='0';
   else
    if (tcmr_select='1') and (ipb_iswr='1') and (ipb_addr(2 downto 0)=7) then 
-        if (ipb_data_out(11)='1') then RST_req<='1'; end if;
+        if (ipb_data_out(11)='1') then RST_req<='1'; inRst<='1'; end if;
         if (ipb_data_out(10)='1') and (ipb_data_out(11)='1') then clk_frs<='1'; end if;
    end if;
 end if;
 
+
+
 if (ipb_rst='1') then hdmia_config<=(others=>'0'); hdmic_config<=(others=>'0');
   else
    hdmi_to<=hdmi_to0;
-   if (PM_rst='1') then PM_tcou<=(others=>'0'); inRst<='1';
+   if (rst_spi1='1') or (RST_req='1') then PM_tcou<=(others=>'0'); 
      else
-   if (hdmi_to0='1') then PM_tcou<=PM_tcou+1;
-     else inRst<='0';
-    end if;  
+    if (hdmi_to0='1') then PM_tcou<=PM_tcou+1;
+    else 
+     if (inRst='1')  then inRst<='0'; end if; 
+    end if; 
    end if;
    if (hdmiac_select='1') and (ipb_iswr='1') then hdmia_config<=ipb_data_out; as_chg<='1'; end if;
    if (hdmicc_select='1') and (ipb_iswr='1') then hdmic_config<=ipb_data_out; cs_chg<='1'; end if;
