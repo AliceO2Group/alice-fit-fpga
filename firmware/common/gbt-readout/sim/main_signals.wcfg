@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="787333fs"></ZoomStartTime>
-      <ZoomEndTime time="1042534fs"></ZoomEndTime>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="255400001fs"></ZoomEndTime>
       <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="220"></NameColumnWidth>
-      <ValueColumnWidth column_width="113"></ValueColumnWidth>
+      <ValueColumnWidth column_width="109"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="11" />
    <wave_markers>
@@ -379,6 +379,12 @@
       <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/bc_delay" type="array">
          <obj_property name="ElementShortName">bc_delay[11:0]</obj_property>
          <obj_property name="ObjectShortName">bc_delay[11:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/orbits_stb_counter" type="array">
+         <obj_property name="ElementShortName">orbits_stb_counter[3:0]</obj_property>
+         <obj_property name="ObjectShortName">orbits_stb_counter[3:0]</obj_property>
          <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
