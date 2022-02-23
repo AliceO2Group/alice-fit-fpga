@@ -125,7 +125,7 @@ history_block:  process (mac_clk)
 	event_data := x"01";
       end if;
       if my_rx_last = '1' then
-        rarp_arp_ping_ipbus := pkt_drop_rarp & pkt_drop_arp & 
+        rarp_arp_ping_ipbus := '1' & pkt_drop_arp & 
 	pkt_drop_ping & pkt_drop_ipbus;
 	payload_status_resend := pkt_drop_payload & pkt_drop_status & 
 	pkt_drop_resend;

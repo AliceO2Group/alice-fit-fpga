@@ -74,6 +74,8 @@ set_property IOB TRUE [get_cells lasi_reg]
 set_property ASYNC_REG true [get_cells {laser_t0_reg laser_t_reg}]
 set_property ASYNC_REG true [get_cells {tblock1_reg tblock2_reg}]
 
+set_property ASYNC_REG true [get_cells {avgt_lk0_reg avgt_lk_reg}]
+
 set_property ASYNC_REG true [get_cells B_rdy0_reg]
 set_property ASYNC_REG true [get_cells B_rdy1_reg]
 
