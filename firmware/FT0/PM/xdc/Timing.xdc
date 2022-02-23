@@ -104,8 +104,7 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
 #set_multicycle_path -hold -end -from [get_cells {FitGbtPrg/Data_Packager_comp/Event_Selector_comp/fromcru_dec_orbit_ff_reg[*]}] -to [get_cells FitGbtPrg/Data_Packager_comp/Event_Selector_comp/is_sending_packet_ff_reg] 6
 
 # RX Sync comp -------------------------------------
-set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_reg[*]}] 3.000
-set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_reg*}] 3.000
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_reg[*] FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_reg}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg] 2.000
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]

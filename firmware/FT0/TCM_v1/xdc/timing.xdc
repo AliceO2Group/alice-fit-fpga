@@ -63,5 +63,8 @@ set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from
 
 set_false_path -from [get_clocks -include_generated_clocks MCLKA] -to [get_clocks RXDataCLK]
 
-set_false_path -from [get_clocks RXDataCLK] -to [get_cells rout_buf_reg[*]]
+#set_false_path -from [get_clocks CLKA320] -to [get_cells {rout_buf_reg[*]}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[*] IsRXData0_reg}]
+
+
 

@@ -200,7 +200,7 @@ signal SC_A, C_A, SC_C, C_C, Treg_data : STD_LOGIC_VECTOR (15 downto 0);
 signal AmplA, AmplC, AmplC0, AmplC1, AmplC2 : STD_LOGIC_VECTOR (16 downto 0);
 signal AmplS : STD_LOGIC_VECTOR (17 downto 0);
 signal Treg_addr : STD_LOGIC_VECTOR (2 downto 0);
-signal TimeC, TimeC0, TimeC1, TimeC2, TimeA : STD_LOGIC_VECTOR (8 downto 0);
+signal TimeC, TimeC0, TimeC1, TimeC2, TimeA, TimeA_rd, TimeC_rd : STD_LOGIC_VECTOR (8 downto 0);
 signal TimeA_o, TimeC_o :  STD_LOGIC_VECTOR (15 downto 0);
 signal AvgA, AvgC : STD_LOGIC_VECTOR (13 downto 0);
 signal TresbM, TdiffM : STD_LOGIC_VECTOR (23 downto 0);
@@ -238,8 +238,9 @@ signal tblock_dly : STD_LOGIC_VECTOR (65 downto 0);
 signal tblock_mux : STD_LOGIC_VECTOR (2 downto 0);
 
 signal AmplAI, AmplAO :  STD_LOGIC_VECTOR (15 downto 0);
-signal nsca, nscc, nscb, sct, nt, irt, ort, ovtx, orct, sc_i, c_i :  STD_LOGIC;
-signal Nchan_S :  STD_LOGIC_VECTOR (7 downto 0);
+signal nsca, nscc, nscb, sct, nt, irt, ort, ovtx, orct, sc_i, c_i, avgt_sel, avgt_lk0, avgt_lk, RX_err_ipb, GBT_rdy_ipb :  STD_LOGIC;
+signal Nchan_S : STD_LOGIC_VECTOR (7 downto 0);
+signal TimeAavg, TimeCavg : STD_LOGIC_VECTOR (18 downto 0);
 
 
 component tcm_side is
@@ -924,6 +925,7 @@ lpatt0_sel<= ipb_str when ipb_addr(31 downto 0)= x"0000001C"  else '0';
 lpatt1_sel<= ipb_str when ipb_addr(31 downto 0)= x"0000001D"  else '0';
 pmena_sel<= ipb_str when ipb_addr(31 downto 0)= x"0000001E"  else '0';
 tblock_sel<= ipb_str when ipb_addr(31 downto 0)= x"0000001F"  else '0';
+avgt_sel <= ipb_str when ipb_addr(31 downto 0)= x"00000020" and (ipb_isrd='1') else '0';
 hdmics_select <= ipb_str when (ipb_addr(31 downto 4)= x"0000003") and (ipb_addr(3 downto 0)<x"A")  else '0';
 hdmicc_select  <= ipb_str when ipb_addr(31 downto 0)= x"0000003A"  else '0';
 cnt_ctrl_sel  <= ipb_str when ipb_addr(31 downto 4)= x"0000005"  else '0';
@@ -961,8 +963,8 @@ ipb_iswr<=ipb_out.ipb_write and ipb_out.ipb_strobe; ipb_isrd<=(not ipb_out.ipb_w
 
 ipb_str<=ipb_out.ipb_strobe; ipb_wr<= ipb_out.ipb_write; 
 
-pm_rdy<=pm_rdy_a(to_integer(unsigned(ipb_addr(14 downto 9)))-1);
-pm_err<=(not pm_ena(to_integer(unsigned(ipb_addr(14 downto 9)))-1)) or inRst;
+pm_rdy<=pm_rdy_a(to_integer(unsigned(ipb_addr(13 downto 9)))-1);
+pm_err<=(not pm_ena(to_integer(unsigned(ipb_addr(13 downto 9)))-1)) or inRst;
 
 ipb_in.ipb_ack<= tcmx_ack when (tcmx_select='1') 
 else tcmr_ack when (tcmr_select='1')
@@ -974,7 +976,7 @@ else '1' when ((Tout_sel or Tmode_sel)='1')
 else Tcnt_ack when (Tcnt_sel='1')
 else '1' when  (rdoutc_sel='1')
 else rdouts_rdy when  (rdouts_sel='1')
-else '1' when (fifo_sel or fifo_csel or lmode_sel or lpatt0_sel or lpatt1_sel or tstamp_sel or mcuts_sel or pmena_sel or tblock_sel) ='1'
+else '1' when (fifo_sel or fifo_csel or lmode_sel or lpatt0_sel or lpatt1_sel or tstamp_sel or mcuts_sel or pmena_sel or tblock_sel or avgt_sel) ='1'
 else d_rdy when (adc_sel='1')
 else bccorr_ack when (bccorr_rd='1')
 else '1' when (ipb_wr='1') and (bc_mask_sel='1')
@@ -995,6 +997,7 @@ else l_patt0 when  (lpatt0_sel='1') and (ipb_isrd='1')
 else l_patt1 when  (lpatt1_sel='1') and (ipb_isrd='1')
 else x"000" & pm_ena when  (pmena_sel='1') and (ipb_isrd='1')
 else x"000000" & tblock_md when  (tblock_sel='1') and (ipb_isrd='1')
+else std_logic_vector(resize(signed(TimeC_rd),16)) &  std_logic_vector(resize(signed(TimeA_rd),16)) when (avgt_sel='1')
 else Status_C when  ((hdmics_select='1') or (hdmicc_select='1')) and (ipb_isrd='1')
 else cnt_ctrl_data when (cnt_ctrl_sel='1') and (ipb_isrd='1')
 else trg_r(to_integer(unsigned(ipb_addr(3 downto 1)))) when  (Tout_sel='1') and (ipb_isrd='1') and (ipb_addr(3 downto 0)<x"A")
@@ -1299,14 +1302,13 @@ if (lpatt0_sel='1') and (ipb_iswr='1') then l_patt0<=ipb_data_out(31 downto 0); 
 if (lpatt1_sel='1') and (ipb_iswr='1') then l_patt1<=ipb_data_out(31 downto 0); end if;
 if (pmena_sel='1') and (ipb_iswr='1') then pm_ena<=ipb_data_out(19 downto 0); end if;
 
-if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_control_reg(0)(14)<='1';
- else
-  if (rdoutc_sel='1') and (ipb_iswr='1') then
-  if  (ipb_addr(7 downto 0)=16#D8#) then readout_control_reg(0)<= ipb_data_out(31 downto 23) & (ipb_data_out(22) or not GBTRX_ready1) & ipb_data_out(21 downto 0);
+if (rdoutc_sel='1') and (ipb_iswr='1') then
+  if  (ipb_addr(7 downto 0)=16#D8#) then readout_control_reg(0)<= ipb_data_out(31 downto 15) & (ipb_data_out(14) or not GBTRX_ready1) & ipb_data_out(13 downto 0);
     else  
      readout_control_reg(to_integer(unsigned(ipb_addr(7 downto 0)))-16#D8#)<=ipb_data_out(31 downto 0);
-  end if; 
- end if;
+   end if;
+  else
+   if (rst_spi1='1') or ((GBTRX_ready2='1') and (GBTRX_ready1='0')) then readout_control_reg(0)(14)<='1';  end if;
 end if;
 
 if (ipb_leds(0)/=IPB_rdy0) then IPB_chg<='1';
@@ -1314,12 +1316,14 @@ if (ipb_leds(0)/=IPB_rdy0) then IPB_chg<='1';
    if (stat_clr1='1') and (stat_clr='0') then IPB_chg<='0'; end if;
 end if;
 
-if (GBTRX_ready/=GBTRX_ready0) then GBT_chg<='1';
+if (GBTRX_ready1/=GBTRX_ready2) then GBT_chg<='1';
   else 
    if (stat_clr1='1') and (stat_clr='0') then GBT_chg<='0'; end if;
 end if;
 
-if (GBTRX_ready='1') and (RX_err='1') and (GBT_rdy='1') then GBTRXerr<='1'; GBTRXerr_ipb<='1';
+RX_err_ipb <=RX_err;  GBT_rdy_ipb <= GBT_rdy;
+
+if (GBTRX_ready1='1') and (RX_err_ipb='1') and (GBT_rdy_ipb='1') then GBTRXerr<='1'; GBTRXerr_ipb<='1';
   else 
     if (stat_clr1='1') and (stat_clr='0') then GBTRXerr<='0'; end if;
     if (ipb_stat_rd='1') then GBTRXerr_ipb<='0'; end if;
@@ -1490,7 +1494,7 @@ SC_i<= (not C_0) and sct when (Tmode(8)='0') else  nt and t_blk; SC_0<= SC_i and
 C_i<=  '1'  when   (((ca='1') or (Tmode(1)='1')) and ((cc='1') or (Tmode(2)='1') or (Tmode(9)='1')) and ((Tmode(2 downto 1)/="11") or (Tmode(9)='1'))) or ((cb='1') and (Tmode(2 downto 1)="11") and (Tmode(9)='0')) else '0'; 
 C_0<= C_i and t_blk;
                
-tr_valid <= OrA_B or ORC_t or SC_i or C_i or (Tmode(9) and (ort or irt));
+tr_valid <= OrA_B or ORCt or SC_i or C_i or (Tmode(9) and (ort or irt));
          
 cnt_lock<=(cnt_lock1 and (not cnt_lock2)) or cnt_rd; cnt_clr<=cnt_clr1 and (not cnt_clr2);                            
     
@@ -1502,7 +1506,9 @@ laser_t0<=l_on0; laser_t<=laser_t0;   tblock2<=tblock1;  tblock1<=tblock;
 	rx_phase_status(2 downto 0) <= readout_status.rx_phase;
     rx_phase_status(3) <= readout_status.Rx_Phase_error;
 
-cnt_lock2<=cnt_lock1; cnt_lock1<=cnt_lock0; cnt_lock0<=Tcnt_0_rd; cnt_clr2<=cnt_clr1; cnt_clr1<=cnt_clr0; cnt_clr0<=Tcnt_clr; 
+cnt_lock2<=cnt_lock1; cnt_lock1<=cnt_lock0; cnt_lock0<=Tcnt_0_rd; cnt_clr2<=cnt_clr1; cnt_clr1<=cnt_clr0; cnt_clr0<=Tcnt_clr;
+
+avgt_lk<= avgt_lk0; avgt_lk0<= avgt_sel;   
  
 B_rdy3<=B_rdy2; B_rdy2<=B_rdy1; B_rdy1<=B_rdy0; B_rdy0<=B_rdy;
 
@@ -1561,6 +1567,12 @@ if (bitcnt_A="010") then
 end if;    
 
 if (bitcnt_A="011") then
+ if (orA_str='1') and (OrCt='1') and (t_blk='1') and (Tmode(9)='0') then
+    TimeAavg<= TimeAavg - std_logic_vector(resize(signed(TimeAavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(78 downto 70)),19)); 
+    TimeCavg<= TimeCavg - std_logic_vector(resize(signed(TimeCavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(68 downto 60)),19));
+ end if;
+ if (avgt_lk='0') then TimeA_rd<= TimeAavg(18 downto 10); TimeC_rd<= TimeCavg(18 downto 10); end if; 
+
  if (Tmode(3)='0') then gbt_wr<='0'; end if;
 end if;
 
