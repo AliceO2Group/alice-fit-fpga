@@ -294,7 +294,7 @@ signal xadc_a: STD_LOGIC_VECTOR (6 downto 0);
 signal EV_ID_in, EV_ID_out : STD_LOGIC_VECTOR (55 downto 0);
 signal EV_DATA80, DATA80_in : STD_LOGIC_VECTOR (79 downto 0);
 --signal  mux_out, str_la : STD_LOGIC;
-signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0, gs1, rdo_sel : STD_LOGIC;
+signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0_0, gs1_0, gs0_1, gs1_1, rdo_sel : STD_LOGIC;
 
 signal DATA_out : data_vector;
 
@@ -448,7 +448,7 @@ component TDCCHAN is
 
    component FIT_GBT_project is
        generic (
-           GENERATE_GBT_BANK    : integer := 1
+           IS_SIMULATION    : integer := 0
        );
    
        Port (        
@@ -458,6 +458,7 @@ component TDCCHAN is
            MgtRefClk_I         : in  STD_LOGIC; -- 200MHz ref clock
            RxDataClk_I            : in STD_LOGIC; -- 40MHz data clock in RX domain
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
+           FSM_Clocks_O        : out rdclocks_t;
            
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
@@ -914,7 +915,7 @@ at0<=tao(0); at1<=tao(1); tt0<=tto(0); tt1<=tto(1);
 -- FIT GBT project =====================================
 FitGbtPrg: FIT_GBT_project
 	generic map(
-		GENERATE_GBT_BANK	=> 1
+		IS_SIMULATION	=> 0
 	)
 	
 	Port map(
@@ -924,6 +925,7 @@ FitGbtPrg: FIT_GBT_project
 		MgtRefClk_I			=>	MGTCLK,
 		RxDataClk_I			=> RX_CLK, -- 40MHz data clock in RX domain (loop back)
 		GBT_RxFrameClk_O	=> RX_CLK,
+		FSM_Clocks_O        => open,
 		
 		Board_data_I		=> PM_data_toreadout,
 		Control_register_I	=> readout_control,
@@ -948,8 +950,8 @@ FitGbtPrg: FIT_GBT_project
 		);		
 -- =====================================================
 
-GBT_is_RXD <= IsRxData_rxclk_from_GBT;
 GBTRX_ready <= readout_status.GBT_status.gbtRx_Ready;
+GBT_is_RXD <= IsRxData_rxclk_from_GBT;
 RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 
 --PM_data_toreadout.is_header  <=  GBT_is_TXD;
@@ -961,7 +963,7 @@ RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 readout_control <= func_CNTRREG_getcntrreg(ipbus_control_reg);
 ipbus_status_reg <= func_STATREG_getaddrreg(readout_status);
 
-gbt_global_status(0) <=  readout_status.GBT_status.Rx_Phase_error;
+gbt_global_status(0) <=  readout_status.Rx_Phase_error;
 gbt_global_status(1) <=  '1' when readout_status.BCIDsync_Mode = mode_LOST else '0';
 --gbt_global_status(2) <=  '1' when readout_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
 gbt_global_status(3) <=  '0';
@@ -1678,13 +1680,12 @@ end if;
   else if (stat_clr1='1') and (stat_clr='0') then dcs_irq<='0'; end if;
  end if;
 
-if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(14)<='1';
-  else  
-     if (reg32_wr2='0') and (reg32_wr1='1') and (hspi_addr(7 downto 0)<=16#E7#)  then
-        if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32(31 downto 23) & (hspid_w32(22) or not GBTRX_ready) & hspid_w32(21 downto 0);
-           else  ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)<= hspid_w32;
-        end if;
-   end if; 
+ if (reg32_wr2='0') and (reg32_wr1='1') and (hspi_addr(7 downto 0)<=16#E7#)  then
+    if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32(31 downto 15) & (hspid_w32(14) or (not GBTRX_ready)) & hspid_w32(13 downto 0);
+       else  ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)<= hspid_w32;
+     end if;
+    else 
+     if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(14)<='1'; end if;
  end if; 
            
 
@@ -1701,7 +1702,7 @@ sbuf_ena<=sbuf_wrena or sbuf_rdena; hbuf_ena<=hbuf_wrena or hbuf_rdena;
 
 Xmegamem : Xmega_buf PORT MAP (clka => TX_CLK, ena => hbuf_ena, wea(0) => hbuf_wrena, addra => hspi_addr(5 downto 0), dina => hspi_wr_data, douta=>hspi_buf_out, clkb => TX_CLK, enb => sbuf_ena, web(0) => sbuf_wrena, addrb => spi_addr(5 downto 0), dinb => spi_wr_data, doutb => spi_buf_out); 
 
-tcm_req <= ((not tcm_req2) and tcm_req1) or ((not gs0) and gbt_global_status(0)) or ((not gs1) and gbt_global_status(1));
+tcm_req <= ((not tcm_req2) and tcm_req1) or ((not gs0_1) and gs0_0) or ((not gs1_1) and gs1_0);
 
 reg32_320_wr<= reg32_320_wr1 and (not reg32_320_wr2); reg32_320_str<= reg32_320_str1 and (not reg32_320_str2);
 
@@ -1711,7 +1712,7 @@ if (clk320'event and clk320='1') then
 
 reg32_320_wr2 <=reg32_320_wr1; reg32_320_wr1 <=reg32_320_wr0; reg32_320_wr0 <=reg32_wr; reg32_320_str2 <=reg32_320_str1; reg32_320_str1 <=reg32_320_str0; reg32_320_str0 <=reg32_str;  
 
-gs0<=gbt_global_status(0); gs1<=gbt_global_status(1);
+gs0_1<=gs0_0; gs0_0<=gbt_global_status(0); gs1_1<=gs1_0; gs1_0<=gbt_global_status(1);
 
 spi_wr2<=spi_wr1; spi_wr1<=spi_wr0; spi_wr0<=spi_wr_rdy; hspi_wr2<=hspi_wr1; hspi_wr1<=hspi_wr0; hspi_wr0<=hspi_wr_rdy;
 
@@ -1908,7 +1909,7 @@ begin
 if (clk320'event and clk320='1') then
 
 rx_phase_status(2 downto 0) <= readout_status.rx_phase;
-rx_phase_status(3) <= readout_status.GBT_status.Rx_Phase_error;
+rx_phase_status(3) <= readout_status.Rx_Phase_error;
 
 spi_lock320<=spi_lock320_0;  spi_lock320_0<= rd_lock;
 hspi_lock320<=hspi_lock320_0;  hspi_lock320_0<= rd_lock_hspi;

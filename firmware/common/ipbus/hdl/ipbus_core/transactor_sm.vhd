@@ -99,8 +99,6 @@ begin
 						else
 							state <= ST_HDR;
 						end if;
-					elsif timer = TIMEOUT then
-						state <= ST_HDR;
 					end if;
 -- RMW operations
 				when ST_RMW_1 =>
@@ -190,7 +188,7 @@ begin
 		or rmw_write = '1' else '0';
 	rx_next <= '1' when state = ST_HDR or state = ST_RMW_1 or state = ST_RMW_2 or 
 				(state = ST_ADDR and (write='1' or words_todo = X"00")) or
-				(state = ST_BUS_CYCLE and (ack and (strobe or cfg_cyc) and (write or last_wd) and not rmw_write) = '1')
+				(state = ST_BUS_CYCLE and (((ack and strobe) or cfg_cyc) and (write or last_wd) and not rmw_write) = '1')
 				else '0';
 	rmw_cyc <= '1' when trans_type = TRANS_RMWB or trans_type = TRANS_RMWS else '0';
 	cfg_cyc <= '1' when trans_type = TRANS_RD_CFG or trans_type = TRANS_WR_CFG else '0';
@@ -211,7 +209,7 @@ begin
 		end if;
 	end process;
 
-	ack <= ipb_in.ipb_ack or ipb_in.ipb_err or cfg_cyc;
+	ack <= ipb_in.ipb_ack;
 	
 	ipb_out.ipb_addr <= std_logic_vector(addr);
 	ipb_out.ipb_write <= write;

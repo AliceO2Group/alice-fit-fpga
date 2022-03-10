@@ -150,34 +150,34 @@ end generate primary_mode;
 -- SPA(4)
 -- THA(6) = My_MAC_addr
 -- TPA(4) = MY_IP(4)
-rarp:  process (mac_clk)
-  variable pkt_data: std_logic_vector(127 downto 0);
-  variable pkt_mask: std_logic_vector(21 downto 0);
-  variable pkt_drop: std_logic;
-  begin
-    if rising_edge(mac_clk) then
-      if rx_reset = '1' then
-        pkt_mask := "000000" & "111111" & "00" & "00" & "00" & "00" & "00";
-        pkt_data := My_MAC_addr & x"8035" & x"0001" & x"0800" & x"0604" & x"0004";
-        pkt_drop := not enable_125;
-      elsif my_rx_last = '1' then
-        pkt_drop := '1';
-      elsif my_rx_valid = '1' then
-        if pkt_mask(21) = '0' then
-          if pkt_data(127 downto 120) /= my_rx_data then
-            pkt_drop := '1';
-          end if;
-          pkt_data := pkt_data(119 downto 0) & x"00";
-        end if;
-        pkt_mask := pkt_mask(20 downto 0) & '1';
-      end if;
-      pkt_drop_rarp_sig <= pkt_drop
--- pragma translate_off
-      after 4 ns
--- pragma translate_on
-      ;
-    end if;
-  end process;
+--rarp:  process (mac_clk)
+--  variable pkt_data: std_logic_vector(127 downto 0);
+--  variable pkt_mask: std_logic_vector(21 downto 0);
+--  variable pkt_drop: std_logic;
+--  begin
+--    if rising_edge(mac_clk) then
+--      if rx_reset = '1' then
+--        pkt_mask := "000000" & "111111" & "00" & "00" & "00" & "00" & "00";
+--        pkt_data := My_MAC_addr & x"8035" & x"0001" & x"0800" & x"0604" & x"0004";
+--        pkt_drop := not enable_125;
+--      elsif my_rx_last = '1' then
+--        pkt_drop := '1';
+--      elsif my_rx_valid = '1' then
+--        if pkt_mask(21) = '0' then
+--          if pkt_data(127 downto 120) /= my_rx_data then
+--            pkt_drop := '1';
+--          end if;
+--          pkt_data := pkt_data(119 downto 0) & x"00";
+--        end if;
+--        pkt_mask := pkt_mask(20 downto 0) & '1';
+--      end if;
+--      pkt_drop_rarp_sig <= pkt_drop
+---- pragma translate_off
+--      after 4 ns
+---- pragma translate_on
+--      ;
+--    end if;
+--  end process;
 
 -- IP packet:
 -- Ethernet DST_MAC(6) = My_MAC_addr, SRC_MAC(6), Ether_Type = x"0800"
@@ -294,36 +294,42 @@ ipbus_mask: process(mac_clk)
 -- IPBus packet header x"20nnnnF0" or x"200000F0"
 -- IPBus data...
 bigendian:  process (mac_clk)
-  variable reliable_data: std_logic_vector(31 downto 0);
-  variable unreliable_data: std_logic_vector(31 downto 0);
+  variable pkt_mask: std_logic_vector(3 downto 0);
+--  variable reliable_data: std_logic_vector(31 downto 0);
+  variable unreliable_data: std_logic_vector(15 downto 0);
   variable pkt_drop_reliable_i, pkt_drop_unreliable: std_logic;
   begin
     if rising_edge(mac_clk) then
       if rx_reset = '1' then
-        reliable_data := x"20" & next_pkt_id & x"F0";
-        unreliable_data := x"200000F0";
-        pkt_drop_reliable_i := not enable_125;
+        pkt_mask := "0110";
+ --       reliable_data := x"20" & next_pkt_id & x"F0";
+        unreliable_data := x"20F0";
+--        pkt_drop_reliable_i := not enable_125;
         pkt_drop_unreliable := not enable_125;
       elsif my_rx_last = '1' then
-	pkt_drop_reliable_i := '1';
+--	pkt_drop_reliable_i := '1';
 	pkt_drop_unreliable := '1';
       elsif my_rx_valid = '1' then
         if pkt_drop_ipbus_sig = '1' then
-	  pkt_drop_reliable_i := '1';
+--	  pkt_drop_reliable_i := '1';
 	  pkt_drop_unreliable := '1';
-        elsif ipbus_hdr_mask = '0' then
-          if reliable_data(31 downto 24) /= my_rx_data then
-            pkt_drop_reliable_i := '1';
-          end if;
-          if unreliable_data(31 downto 24) /= my_rx_data then
+        elsif ipbus_hdr_mask = '0'  then
+        
+--          if reliable_data(31 downto 24) /= my_rx_data then
+--            pkt_drop_reliable_i := '1';
+--          end if;
+         if pkt_mask(3) = '0' then
+          if unreliable_data(15 downto 8) /= my_rx_data then
             pkt_drop_unreliable := '1';
           end if;
-          reliable_data := reliable_data(23 downto 0) & x"00";
-          unreliable_data := unreliable_data(23 downto 0) & x"00";
+--          reliable_data := reliable_data(23 downto 0) & x"00";
+          unreliable_data := unreliable_data(7 downto 0) & x"00";
+          end if;
+          pkt_mask := pkt_mask(2 downto 0) & '1';
         end if;
-      end if;
-      pkt_drop_reliable_sig <= pkt_drop_reliable_i;
-      pkt_drop_payload_sig <= pkt_drop_reliable_i and pkt_drop_unreliable;
+       end if;
+      pkt_drop_reliable_sig <= '1';
+      pkt_drop_payload_sig <=  pkt_drop_unreliable;
     end if;
   end process;
 
@@ -331,37 +337,42 @@ bigendian:  process (mac_clk)
 -- IPBus packet header x"F0nnnn20" or x"F0000020"
 -- IPBus data...
 littleendian:  process (mac_clk)
-  variable reliable_data: std_logic_vector(31 downto 0);
-  variable unreliable_data: std_logic_vector(31 downto 0);
+   variable pkt_mask: std_logic_vector(3 downto 0);
+-- variable reliable_data: std_logic_vector(31 downto 0);
+  variable unreliable_data: std_logic_vector(15 downto 0);
   variable pkt_drop_reliable_i, pkt_drop_unreliable: std_logic;
   begin
     if rising_edge(mac_clk) then
       if rx_reset = '1' then
-        reliable_data := x"F0" & next_pkt_id(7 downto 0) &
-	next_pkt_id(15 downto 8)  & x"20";
-        unreliable_data := x"F0000020";
-        pkt_drop_reliable_i := not enable_125;
+       pkt_mask := "0110";
+--        reliable_data := x"F0" & next_pkt_id(7 downto 0) &
+--	next_pkt_id(15 downto 8)  & x"20";
+        unreliable_data := x"F020";
+ --       pkt_drop_reliable_i := not enable_125;
         pkt_drop_unreliable := not enable_125;
       elsif my_rx_last = '1' then
-	pkt_drop_reliable_i := '1';
+--	pkt_drop_reliable_i := '1';
 	pkt_drop_unreliable := '1';
       elsif my_rx_valid = '1' then
         if pkt_drop_ipbus_sig = '1' then
-	  pkt_drop_reliable_i := '1';
+--	  pkt_drop_reliable_i := '1';
 	  pkt_drop_unreliable := '1';
         elsif ipbus_hdr_mask = '0' then
-          if reliable_data(31 downto 24) /= my_rx_data then
-            pkt_drop_reliable_i := '1';
-          end if;
-          if unreliable_data(31 downto 24) /= my_rx_data then
+--          if reliable_data(31 downto 24) /= my_rx_data then
+--            pkt_drop_reliable_i := '1';
+--          end if;
+         if pkt_mask(3) = '0' then
+          if unreliable_data(15 downto 8) /= my_rx_data then
             pkt_drop_unreliable := '1';
           end if;
-          reliable_data := reliable_data(23 downto 0) & x"00";
-          unreliable_data := unreliable_data(23 downto 0) & x"00";
+--          reliable_data := reliable_data(23 downto 0) & x"00";
+          unreliable_data := unreliable_data(7 downto 0) & x"00";
+        end if;
+        pkt_mask := pkt_mask(2 downto 0) & '1';
         end if;
       end if;
-      pkt_reliable_drop_sig <= pkt_drop_reliable_i;
-      pkt_payload_drop_sig <= pkt_drop_reliable_i and pkt_drop_unreliable;
+      pkt_reliable_drop_sig <= '1';
+      pkt_payload_drop_sig <=  pkt_drop_unreliable;
     end if;
   end process;
 

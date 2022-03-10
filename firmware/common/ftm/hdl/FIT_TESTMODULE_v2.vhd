@@ -559,7 +559,7 @@ begin
 -- FIT GBT project =====================================
   FitGbtPrg : entity work.FIT_GBT_project
     generic map(
-      GENERATE_GBT_BANK => 1
+      IS_SIMULATION => 0
       )
 
     port map(

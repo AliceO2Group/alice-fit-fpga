@@ -47,7 +47,7 @@ end BC_correlator;
 
 architecture RTL of BC_correlator is
 
-signal ack0, clr_mem, clr_req, inc_i, wea : STD_LOGIC;
+signal ack0, clr_mem, clr_req, wea : STD_LOGIC;
 signal m_rd, m_wr : STD_LOGIC_vector (31 downto 0);
 
 COMPONENT BC_corr_mem
@@ -78,13 +78,16 @@ process(clk320)
 begin
 if (clk320'event and clk320='1') then
 
- if (clr='1') then clr_req<='1'; else 
-  if (clr_req='1') and (BC_cou=0) and (mt_cou="010") then clr_req<='0'; end if; 
- end if;
+if (clr='1') then clr_req<='1'; clr_mem<='0'; 
+ elsif  (BC_cou=0) and (mt_cou="010") then  
+    clr_req<='0'; clr_mem<=clr_req;  
+end if;
 
-if  (BC_cou=0) and (mt_cou="010") then clr_mem<=clr_req; end if;
-
-if (mt_cou="011") then   inc_i<= inc; end if;
+if (mt_cou="101") then   
+  if (clr_mem='1') then m_wr<= x"0000000" & "000" & inc;
+    elsif  (m_rd/=x"FFFFFFFF") then m_wr<= m_rd+1; 
+  end if;
+end if;
 
 if (clr_mem='1') then m_wr<= x"0000000" & "000" & inc_i;
     else 

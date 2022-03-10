@@ -67,6 +67,7 @@ architecture Behavioral of ltu_rx_decoder is
   type bc_apply_fsm_t is (s0_changed, s1_applied);
   signal bc_apply_fsm                          : bc_apply_fsm_t;
   signal apply_bc_delay, apply_bc_delay_ff     : std_logic;
+  signal orbits_stb_counter : std_logic_vector(3 downto 0); -- bc_apply switched after 16 stable (HB in cync) orbits 
 
   constant data_en_orbit_offset_cnt_max : natural := 1;
   signal data_en_orbit_offset_cnt       : natural range 0 to 15;
@@ -99,7 +100,7 @@ begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
-  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC;
+  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
@@ -150,6 +151,7 @@ begin
         sync_bc_corr    <= (others => '0');
         bc_delay        <= (others => '0');
         bc_apply_fsm    <= s0_changed;
+		orbits_stb_counter <= (others => '0');
 
         bcsync_lost_inrun <= '0';
 
@@ -231,12 +233,18 @@ begin
             apply_bc_delay <= '1';
           elsif bc_apply_fsm = s1_applied and ((bc_delay_in /= bc_delay_in_ff) or (orbc_sync_mode = mode_STR)) then
             bc_apply_fsm   <= s0_changed;
+			orbits_stb_counter <= (others => '0');
             apply_bc_delay <= '0';
           else
             apply_bc_delay <= '0';
           end if;
-
-
+		  
+		  -- counting orbits while stable sync
+		  if is_ORB and (orbc_sync_mode = mode_SYNC) and (bc_apply_fsm = s0_changed) and orbits_stb_counter /= x"F" then
+			  orbits_stb_counter <= orbits_stb_counter+1;
+		  elsif (orbc_sync_mode /= mode_SYNC) then
+		      orbits_stb_counter <= (others => '0');
+		  end if;
 
 
         end if;

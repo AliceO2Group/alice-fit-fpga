@@ -380,7 +380,7 @@ end component;
 
    component FIT_GBT_project is
        generic (
-           GENERATE_GBT_BANK    : integer := 1
+           IS_SIMULATION    : integer := 0
        );
    
        Port (        
@@ -744,7 +744,7 @@ fl_upg: FLASH generic map (clk_freq => 31250 )
 -- FIT GBT project =====================================
 FitGbtPrg: FIT_GBT_project
 	generic map(
-		GENERATE_GBT_BANK	=> 1
+		IS_SIMULATION	=> 0
 	)
 	
 	Port map(
@@ -792,7 +792,7 @@ RX_err <= readout_status.GBT_status.gbtRx_ErrorDet;
 readout_control <= func_CNTRREG_getcntrreg(readout_control_reg);
 readout_status_reg <= func_STATREG_getaddrreg(readout_status);
 
-gbt_global_status(0) <=  readout_status.GBT_status.Rx_Phase_error;
+gbt_global_status(0) <=  readout_status.Rx_Phase_error;
 --gbt_global_status(1) <=  '1' when readout_status.BCIDsync_Mode = mode_LOST else '0';
 --gbt_global_status(2) <=  '1' when readout_status.hits_rd_counter_selector.hits_skipped /= x"0000_0000" else '0';
 gbt_global_status(3) <=  '0';
@@ -1472,7 +1472,7 @@ if (CLK320A'event and CLK320A='1') then
 laser_t0<=l_on0; laser_t<=laser_t0;   tblock2<=tblock1;  tblock1<=tblock; 
    
 rx_phase_status(2 downto 0) <= readout_status.rx_phase;
-rx_phase_status(3) <= readout_status.GBT_status.Rx_Phase_error;
+rx_phase_status(3) <= readout_status.Rx_Phase_error;
 
  cnt_lock2<=cnt_lock1; cnt_lock1<=cnt_lock0; cnt_lock0<=Tcnt_0_rd; cnt_clr2<=cnt_clr1; cnt_clr1<=cnt_clr0; cnt_clr0<=Tcnt_clr; 
  

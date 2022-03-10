@@ -84,7 +84,7 @@ begin
 -- FIT GBT project =====================================
   FitGbtPrg : entity work.FIT_GBT_project
     generic map(
-      GENERATE_GBT_BANK => 0
+      IS_SIMULATION => 1
       )
 
     port map(

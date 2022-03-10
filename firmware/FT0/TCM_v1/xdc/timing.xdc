@@ -22,7 +22,7 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
 #set_false_path -hold -from [get_clocks RXDataCLK] -to [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}]
 #et_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_pins {FitGbtPrg/gbtBankDsgn/gbtBank_rxFrmClkPhAlgnr/latOpt_phalgnr_gen.phase_computing_inst/serialToParallel_reg[0]/D}] 1.000
 
-set_max_delay -datapath_only -from [get_clocks CLKsys40] -to [get_pins readout_laser_out_ff0_reg/D] 3.000
+set_max_delay -datapath_only -from [get_clocks TX_CLK] -to [get_pins readout_laser_out_ff0_reg/D] 3.000
 set_max_delay -datapath_only -from [get_clocks MCLKA] -to [get_clocks CLKA320] 3.000
 
 set_multicycle_path -setup -from [get_clocks CLKA320] -to [get_cells {{*/T_?_reg} *_str_reg gbt_wr_reg}] 2
@@ -30,6 +30,9 @@ set_multicycle_path -hold -from [get_clocks CLKA320] -to [get_cells {{*/T_?_reg}
 
 set_multicycle_path -setup -from [get_cells {{tcma/Ampl_o_reg[*]} {tcma/AmplI_o_reg[*]} {tcma/Nchan_A_reg[*]} {tcma/Time_o_reg[*]} {tcma/Avg_reg[*]} {AmplC_reg[*]} {Nchan_C_reg[*]} {TimeC_reg[*]} t_blk_reg}] -to [get_cells  {Rd_word_reg[*]}] 2
 set_multicycle_path -hold -from [get_cells {{tcma/Ampl_o_reg[*]} {tcma/AmplI_o_reg[*]} {tcma/Nchan_A_reg[*]}  {tcma/Time_o_reg[*]} {tcma/Avg_reg[*]} {AmplC_reg[*]} {Nchan_C_reg[*]} {TimeC_reg[*]} t_blk_reg}] -to [get_cells {Rd_word_reg[*]}] 1
+
+set_multicycle_path -setup -from [get_clocks TX_CLK] -to [get_cells {BC_cou_reg[*] Orbit_ID_reg[*]}] 2
+set_multicycle_path -hold -end -from [get_clocks TX_CLK] -to [get_cells {BC_cou_reg[*] Orbit_ID_reg[*]}] 1
 
 set_multicycle_path -setup -from [get_cells {tcma/NC_reg[?][?]}] -to [get_clocks CLKA320] 2
 set_multicycle_path -hold -from [get_cells {tcma/NC_reg[?][?]}] -to [get_clocks CLKA320] 1
@@ -60,5 +63,8 @@ set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from
 
 set_false_path -from [get_clocks -include_generated_clocks MCLKA] -to [get_clocks RXDataCLK]
 
-set_false_path -from [get_clocks RXDataCLK] -to [get_cells rout_buf_reg[*]]
+#set_false_path -from [get_clocks CLKA320] -to [get_cells {rout_buf_reg[*]}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[*] IsRXData0_reg}]
+
+
 

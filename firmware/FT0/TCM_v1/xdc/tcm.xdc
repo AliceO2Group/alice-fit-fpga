@@ -63,7 +63,7 @@ set_property ASYNC_REG true [get_cells {rout_lock0_reg rout_lock1_reg}]
 create_generated_clock -name CLKA320 -source [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLKA [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKOUT0]
 create_generated_clock -name CLKC320 -source [get_pins tcmc/PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLKC [get_pins tcmc/PLL1/inst/mmcm_adv_inst/CLKOUT0]
 
-create_generated_clock -name CLKsys40 -source [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLKA [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKOUT2]
+create_generated_clock -name TX_CLK -source [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLKA [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKOUT2]
 #readout_laser_out_ff
 set_property ASYNC_REG true [get_cells readout_laser_out_ff?_reg]
 
@@ -73,6 +73,8 @@ set_property IOB TRUE [get_cells lasi_reg]
 #set_property ASYNC_REG true [get_cells {l_on0_reg l_on1_reg}]
 set_property ASYNC_REG true [get_cells {laser_t0_reg laser_t_reg}]
 set_property ASYNC_REG true [get_cells {tblock1_reg tblock2_reg}]
+
+set_property ASYNC_REG true [get_cells {avgt_lk0_reg avgt_lk_reg}]
 
 set_property ASYNC_REG true [get_cells B_rdy0_reg]
 set_property ASYNC_REG true [get_cells B_rdy1_reg]

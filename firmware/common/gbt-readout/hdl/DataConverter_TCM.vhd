@@ -82,7 +82,7 @@ architecture Behavioral of DataConverter is
   signal sending_event, sending_event_dc : boolean;
   signal word_counter                    : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
 
-  signal tcm_data_fifo_empty, tcm_data_fifo_full : std_logic;
+  signal tcm_data_fifo_empty, tcm_data_fifo_full, tcm_data_fifo_rden : std_logic;
   signal tcm_data_fifo_dout                      : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
   signal header_fifo_din, data_fifo_din                                               : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -129,13 +129,14 @@ begin
       clk           => FSM_Clocks_I.System_Clk,
       srst          => FSM_Clocks_I.Reset_sclk,
       WR_EN         => board_data.is_data,
-      RD_EN         => not tcm_data_fifo_empty,
+      RD_EN         => tcm_data_fifo_rden,
       DIN           => board_data.data_word,
       DOUT          => tcm_data_fifo_dout,
       FULL          => tcm_data_fifo_full,
       EMPTY         => tcm_data_fifo_empty,
       rd_data_count => open
       );
+  tcm_data_fifo_rden <= not tcm_data_fifo_empty;
 -- ===========================================================
 
 
@@ -200,7 +201,7 @@ begin
       start_of_run        <= Status_register_I.Start_run = '1';
       readout_bypass      <= Control_register_I.readout_bypass = '1';
 
-      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '1');
+      header_word                                               <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.Rx_Phase_error, '1');
       data_word                                                 <= tcm_data_fifo_dout;
       is_data                                                   <= not tcm_data_fifo_empty;
       if tcm_data_fifo_dout(79 downto 76) = x"f" then is_header <= '1'; else is_header <= '0'; end if;

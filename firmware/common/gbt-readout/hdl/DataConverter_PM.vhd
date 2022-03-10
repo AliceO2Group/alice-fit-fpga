@@ -200,7 +200,7 @@ begin
       readout_bypass      <= Control_register_I.readout_bypass = '1';
 
 
-      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.GBT_status.Rx_Phase_error, '0');
+      header_word      <= func_FITDATAHD_get_header(header_pcklen, header_orbit, header_bc, Status_register_I.rx_phase, Status_register_I.Rx_Phase_error, '0');
       data_word        <= Board_data_I.data_word;
       is_data          <= Board_data_I.is_data;
       is_header        <= Board_data_I.is_header;
@@ -244,7 +244,7 @@ begin
 
         -- turning off sending_event while idle without data for clear error 'ready for run'            
         if not data_enabled_sclk and header_fifo_empty = '1' and data_fifo_empty = '1' and is_data = '0' then
-		  sending_event <= false; end if;
+          sending_event <= false; end if;
 
         if rawfifo_cnt_max < data_rawfifo_cnt then rawfifo_cnt_max <= data_rawfifo_cnt; end if;
 
