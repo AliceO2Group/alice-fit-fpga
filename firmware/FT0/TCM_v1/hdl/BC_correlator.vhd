@@ -89,11 +89,6 @@ if (mt_cou="101") then
   end if;
 end if;
 
-if (clr_mem='1') then m_wr<= x"0000000" & "000" & inc_i;
-    else 
-    if  (m_rd/=x"FFFFFFFF") then m_wr<= m_rd+1; end if;
-   end if;
-
 end if;
 end process;
 
