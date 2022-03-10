@@ -126,7 +126,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_trans_decl.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_ping.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_ipaddr_block.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_payload.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_resend.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_status.vhd" ]\
@@ -147,7 +146,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_if_flat.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_if.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_sm.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_cfg.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_ctrl.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_package.vhd" ]\
