@@ -42,7 +42,7 @@ pipeline {
       }
     }
     stage('Build FIT bitstreams') {
-      parallel {
+      stages {
         stage('FTM_PM') {
           steps {
             sh('./software/ci/build.sh FTM_PM')
