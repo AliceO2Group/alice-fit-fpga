@@ -52,7 +52,7 @@ architecture Behavioral of RXDATA_CLKSync is
 
 
   signal is_phase_changed                            : std_logic;
-  signal reset_ph_chng, rx_clk_tg, c_locked          : std_logic;
+  signal reset_ph_chng, rx_clk_tg, c_locked          : std_logic := '0';
   signal rx_error_reset                              : std_logic;
   signal rx_error_reset_sclk, rx_error_reset_sclk_ff : boolean;
 
@@ -101,6 +101,8 @@ begin
 
         is_phase_changed <= '0';
         c_locked         <= '0';
+		CLK_PH_counter_stop <= (others => '0');
+		CLK_PH_counter_dc <= (others => '0');
 
       else
 
