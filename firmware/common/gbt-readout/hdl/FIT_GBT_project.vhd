@@ -184,6 +184,7 @@ begin
       DataClk_I => DataClk_I,
 
       Control_register_I => Control_register_I,
+	  gbt_not_ready_I => from_gbt_bank_prj_GBT_status.gbt_not_ready,
 
       SysClk_count_O => FSM_Clocks.System_Counter,
 
@@ -427,6 +428,7 @@ begin
         RXData_SC       => open,
         IsRXData        => RX_IsData_rxclk_from_GBT,
         reset_rx_errors => Control_register_I.reset_gbt_rxerror,
+		reset_fsm       => FSM_Clocks.Reset_dclk,
         GBT_Status_O    => from_gbt_bank_prj_GBT_status
         );
   end generate gbt_bank_gen;

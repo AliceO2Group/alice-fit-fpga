@@ -188,9 +188,11 @@ package fit_gbt_common_package is
     mgtLinkReady        : std_logic;    --reg bit 3
     tx_resetDone        : std_logic;    --reg bit 4
     tx_fsmResetDone     : std_logic;    --reg bit 5
-    gbtRx_Ready         : std_logic;    --reg bit 6
+    gbtRx_Ready         : std_logic;
     gbtRx_ErrorDet      : std_logic;    --reg bit 7
     gbtRx_ErrorLatch    : std_logic;    --reg bit 8
+	gbt_not_ready       : std_logic;    --reg bit 9
+	gbt_was_ready       : std_logic;    --reg bit 6
   end record;
 
   type datagen_report_t is record
@@ -280,7 +282,9 @@ package fit_gbt_common_package is
 
       gbtRx_Ready      => '0',
       gbtRx_ErrorDet   => '0',
-      gbtRx_ErrorLatch => '0'
+      gbtRx_ErrorLatch => '0',
+	  gbt_not_ready    => '0',
+	  gbt_was_ready    => '0'
       );
 -- =============================================================
 
@@ -436,10 +440,11 @@ package body fit_gbt_common_package is
   begin
 
 
-    gbt_status := "0000000"
-                  & status_reg.Rx_Phase_error        -- 8
+    gbt_status := "000000"
+                  & status_reg.GBT_status.gbt_not_ready         -- 9
+                  & status_reg.Rx_Phase_error                   -- 8
                   & status_reg.GBT_status.gbtRx_ErrorLatch      -- 7
-                  & status_reg.GBT_status.gbtRx_Ready           -- 6
+                  & status_reg.GBT_status.gbt_was_ready         -- 6
                   & status_reg.GBT_status.tx_fsmResetDone       -- 5 
                   & status_reg.GBT_status.tx_resetDone          -- 4
                   & status_reg.GBT_status.mgtLinkReady          -- 3

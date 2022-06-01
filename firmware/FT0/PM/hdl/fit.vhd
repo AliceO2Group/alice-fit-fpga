@@ -1681,11 +1681,9 @@ end if;
  end if;
 
  if (reg32_wr2='0') and (reg32_wr1='1') and (hspi_addr(7 downto 0)<=16#E7#)  then
-    if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32(31 downto 15) & (hspid_w32(14) or (not GBTRX_ready)) & hspid_w32(13 downto 0);
+    if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32;
        else  ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)<= hspid_w32;
      end if;
-    else 
-     if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(14)<='1'; end if;
  end if; 
            
 

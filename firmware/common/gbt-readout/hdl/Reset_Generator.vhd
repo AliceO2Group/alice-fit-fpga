@@ -20,6 +20,7 @@ entity Reset_Generator is
     DataClk_I : in std_logic;
 
     Control_register_I : in readout_control_t;
+	gbt_not_ready_I : in std_logic;
 
     SysClk_count_O : out std_logic_vector(3 downto 0);
 
@@ -74,7 +75,7 @@ begin
       count_ready_clk40 <= count_ready;
       DataClk_q_dataclk <= not DataClk_q_dataclk;
       reset_gbt         <= reset_in or Control_register_I.reset_gbt;
-      reset_fsm_cmd     <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40 or reset_by_bypass;
+      reset_fsm_cmd     <= reset_gbt or Control_register_I.reset_readout or gbt_not_ready_I or not count_ready_clk40 or reset_by_bypass;
 
       if reset_fsm_cmd = '1' then
         reset_counter <= (others => '0');
