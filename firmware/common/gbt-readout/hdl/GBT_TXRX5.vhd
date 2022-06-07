@@ -106,6 +106,13 @@ architecture structural of GBT_TX_RX is
   signal gbtRx_ErrorDet_ff, Rx_Ready_ff  : std_logic;
   signal gbt_not_ready                   : std_logic;
   signal gbt_ready_cnt                   : std_logic_vector(27 downto 0);
+  
+  -- attribute mark_debug : string;
+  -- attribute mark_debug of gbt_not_ready        : signal is "true";
+  -- attribute mark_debug of gbt_ready_cnt       : signal is "true";
+  -- attribute mark_debug of gbtRx_ErrorDet_ff       : signal is "true";
+  -- attribute mark_debug of Rx_Ready_ff       : signal is "true";
+
 
 --=================================================================================================--
 begin  --========####   Architecture Body   ####========-- 

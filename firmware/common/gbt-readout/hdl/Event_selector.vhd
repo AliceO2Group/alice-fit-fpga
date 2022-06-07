@@ -131,10 +131,12 @@ architecture Behavioral of Event_selector is
   signal reset_dt_counters_sc                                                                                   : boolean;
 
 
--- attribute mark_debug                         : string;
+--  attribute mark_debug                         : string;
 -- attribute mark_debug of event_counter              : signal is "true";
 -- attribute mark_debug of event_counter_zero_counter : signal is "true";
 -- attribute mark_debug of trgfifo_empty        : signal is "true";
+-- attribute mark_debug of trgfifo_full        : signal is "true";
+-- attribute mark_debug of trgfifo_full_latch : signal is "true";
 -- attribute mark_debug of cntpck_fifo_empty_sc : signal is "true";
 -- attribute mark_debug of slct_fifo_empty_sc   : signal is "true";
 -- attribute mark_debug of send_gear_rdh        : signal is "true";

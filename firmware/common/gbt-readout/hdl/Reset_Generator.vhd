@@ -42,12 +42,17 @@ architecture Behavioral of Reset_Generator is
   signal sysclk_count_ff                : std_logic_vector(2 downto 0);
   signal rd_bypass, rd_bypass_ff        : boolean;
   signal reset_counter                  : std_logic_vector(7 downto 0) := x"FF";
+  signal resetin_cnt_db                  : std_logic_vector(31 downto 0); -- counter after reset_i for ila triggering
   signal reset_by_bypass                : std_logic;
+  
+  
 
-  attribute mark_debug : string;
---  attribute mark_debug of reset_in        : signal is "true";
---  attribute mark_debug of reset_gbt       : signal is "true";
---  attribute mark_debug of reset_fsm       : signal is "true";
+  -- attribute mark_debug : string;
+  -- attribute mark_debug of reset_in        : signal is "true";
+  -- attribute mark_debug of reset_gbt       : signal is "true";
+  -- attribute mark_debug of reset_fsm       : signal is "true";
+  -- attribute mark_debug of resetin_cnt_db  : signal is "true";
+  
 --  attribute mark_debug of reset_fsm_cmd       : signal is "true";
 --  attribute mark_debug of reset_sclk      : signal is "true";
 --  attribute mark_debug of reset_counter      : signal is "true";
@@ -87,6 +92,9 @@ begin
         reset_counter <= x"ff";
         reset_fsm     <= '0';
       end if;
+	  
+	  -- counter after reset_i for ila triggering
+	  if reset_in = '1' then resetin_cnt_db <= (others => '0'); else resetin_cnt_db <= resetin_cnt_db + 1; end if;
 
 
     end if;
