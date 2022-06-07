@@ -46,10 +46,10 @@ end autophase;
 architecture RTL of autophase is
 
 signal ms_cou  : STD_LOGIC_VECTOR (18 downto 0);
-signal t1ms, tstr, dir, done_i, lock_i, z : STD_LOGIC;
+signal t1ms, tstr, dir, done_i, lock_i, z, dl_dn : STD_LOGIC;
 signal state  : STD_LOGIC_VECTOR (2 downto 0);
 signal j_cou  : STD_LOGIC_VECTOR (3 downto 0);
-signal m0, ml, mh0  : STD_LOGIC_VECTOR (5 downto 0);
+signal m0, ml, mh0, dly  : STD_LOGIC_VECTOR (5 downto 0);
 
 begin
 
@@ -67,11 +67,16 @@ if (clk'event and clk='1') then lock_i<='1';
 
 tstr<=t1ms; psen<=tstr and (not done_i);
 
-if (lock_i='0') then ms_cou <=(others=>'0'); state <=(others=>'0'); j_cou <=(others=>'0'); done_i<='0'; dir<='0'; m0 <=(others=>'0'); z<='0';
+if (lock_i='0') then ms_cou <=(others=>'0'); state <=(others=>'0'); j_cou <=(others=>'0'); done_i<='0'; dir<='0'; m0 <=(others=>'0'); z<='0'; dly <=(others=>'0'); dl_dn<='0';
   else
- if (done_i='0') then
-   if (tstr='1') then 
+
+  if (done_i='0') then
+   if (tstr='1') then
+     if (dl_dn='1') then 
       if (dir='0') then  m0<=m0-1; else m0<=m0+1; end if;
+     else
+       if (dly=50) then dl_dn<='1'; else dly<=dly+1; end if;
+     end if;
    end if;
     
 if (t1ms='1') then ms_cou <=(others=>'0'); j_cou <=(others=>'0'); 
@@ -95,9 +100,8 @@ if (t1ms='1') then ms_cou <=(others=>'0'); j_cou <=(others=>'0');
 
 else 
   ms_cou<=ms_cou+1; 
-  if (jump='1') and (j_cou/=15) then j_cou <=j_cou+1; end if; 
+  if (jump='1') and (j_cou/=15) and (dl_dn='1') then j_cou <=j_cou+1; end if; 
 end if;
-
 
 end if;
 end if;
