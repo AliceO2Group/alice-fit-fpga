@@ -1227,7 +1227,7 @@ PM_rst <= rst_spi2 and (not rst_spi1);
 
 bccorr_rd<= bccorr_sel or bccorrA_sel or bccorrC_sel or (bc_mask_sel and ipb_isrd); bccorr_ack<=bccorr_ack0 and bccorr_rd;
 
-hdmi_to0<='1' when (PM_tcou/=31250000) else '0';
+hdmi_to0<='1' when (PM_tcou/=31250000) else '0'; 
 as_blk<=as_chg or hdmi_to; cs_blk<=cs_chg or hdmi_to;
 
 rdouts_rdy<='1' when (rdouts_cnt="10") else '0';
@@ -1566,8 +1566,8 @@ end if;
 
 if (bitcnt_A="011") then
  if (orA_str='1') and (OrCt='1') and (t_blk='1') and (Tmode(9)='0') then
-    TimeAavg<= TimeAavg - std_logic_vector(resize(signed(TimeAavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(78 downto 70)),19)); 
-    TimeCavg<= TimeCavg - std_logic_vector(resize(signed(TimeCavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(68 downto 60)),19));
+    TimeAavg<= TimeAavg - std_logic_vector(resize(signed(TimeAavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(68 downto 60)),19)); 
+    TimeCavg<= TimeCavg - std_logic_vector(resize(signed(TimeCavg(18 downto 10)),19)) + std_logic_vector(resize(signed(Rd_Word(78 downto 70)),19));
  end if;
  if (avgt_lk='0') then TimeA_rd<= TimeAavg(18 downto 10); TimeC_rd<= TimeCavg(18 downto 10); end if; 
 
