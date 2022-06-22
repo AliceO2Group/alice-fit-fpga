@@ -61,15 +61,16 @@ set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/DataClk_qff00_sysclk_reg/D]
 
 # RXDATA_CLKSync ----------------------------------
-set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_DATACLK_reg[*] FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_reg}] 3.000
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_sysclk_reg[*]}] 3.000
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_sysclk_reg*}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg] 2.000
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]
+set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
+set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
 
 set_false_path -from [get_clocks -include_generated_clocks MCLK1] -to [get_clocks RXDataCLK]
 
-set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
-set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
 
 # Module_Data_Gen ----------------------------------
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/using_generator_sc_reg/D]

@@ -108,11 +108,12 @@ package fit_gbt_common_package is
     Trigger_Gen : ctrl_trggen_t;
     RDH_data    : rdh_ctrl_t;
 
-    readout_bypass  : std_logic;
-    is_hb_response  : std_logic;
-    is_hb_reject    : std_logic;
-    force_idle      : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
-    trg_data_select : std_logic_vector(Trigger_bitdepth-1 downto 0);
+    readout_bypass   : std_logic;
+    is_hb_response   : std_logic;
+    is_hb_reject     : std_logic;
+    rxclk_sync_shift : std_logic;
+    force_idle       : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
+    trg_data_select  : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
     BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
@@ -152,10 +153,11 @@ package fit_gbt_common_package is
         PRT_BIT => x"00"
         ),
 
-      readout_bypass  => '0',
-      is_hb_response  => '1',
-      is_hb_reject    => '1',
-      trg_data_select => x"00000000",
+      readout_bypass   => '0',
+      is_hb_response   => '1',
+      is_hb_reject     => '1',
+      rxclk_sync_shift => '0',
+      trg_data_select  => x"00000000",
 
       BCID_offset => x"000",
 
@@ -191,8 +193,8 @@ package fit_gbt_common_package is
     gbtRx_Ready         : std_logic;
     gbtRx_ErrorDet      : std_logic;    --reg bit 7
     gbtRx_ErrorLatch    : std_logic;    --reg bit 8
-	gbt_not_ready       : std_logic;    --reg bit 9
-	gbt_was_ready       : std_logic;    --reg bit 6
+    gbt_not_ready       : std_logic;    --reg bit 9
+    gbt_was_ready       : std_logic;    --reg bit 6
   end record;
 
   type datagen_report_t is record
@@ -257,7 +259,7 @@ package fit_gbt_common_package is
     -- 9 - [Converter] input packet corrupted: header too early (PM)
     -- 10- [ltu_rx_decoder] bc_sync lost during the run
     -- 15- [FRU]       0x1 = ready for run, all fifos are empty
-    fsm_errors : std_logic_vector(15 downto 0);
+    fsm_errors     : std_logic_vector(15 downto 0);
     Rx_Phase_error : std_logic;         --reg bit 9
 
     -- fifos empty bits
@@ -283,8 +285,8 @@ package fit_gbt_common_package is
       gbtRx_Ready      => '0',
       gbtRx_ErrorDet   => '0',
       gbtRx_ErrorLatch => '0',
-	  gbt_not_ready    => '0',
-	  gbt_was_ready    => '0'
+      gbt_not_ready    => '0',
+      gbt_was_ready    => '0'
       );
 -- =============================================================
 
@@ -396,11 +398,12 @@ package body fit_gbt_common_package is
       cntr_reg.Trigger_Gen.Readout_command := idle;
     end if;
 
-    cntr_reg.is_hb_response := cntrl_reg_addrreg(0)(20);
-    cntr_reg.readout_bypass := cntrl_reg_addrreg(0)(21);
-    cntr_reg.force_idle     := cntrl_reg_addrreg(0)(22);
-    cntr_reg.is_hb_reject   := cntrl_reg_addrreg(0)(23);
-    -- reg [0](23 - 31) is empty
+    cntr_reg.is_hb_response   := cntrl_reg_addrreg(0)(20);
+    cntr_reg.readout_bypass   := cntrl_reg_addrreg(0)(21);
+    cntr_reg.force_idle       := cntrl_reg_addrreg(0)(22);
+    cntr_reg.is_hb_reject     := cntrl_reg_addrreg(0)(23);
+    cntr_reg.rxclk_sync_shift := cntrl_reg_addrreg(0)(24);
+    -- reg [0](25 - 31) is empty
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);

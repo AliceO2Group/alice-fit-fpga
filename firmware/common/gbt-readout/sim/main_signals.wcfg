@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="539.166 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,092.167 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="13,845.001 ns"></ZoomEndTime>
+      <Cursor1Time time="275.019 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="216"></NameColumnWidth>
-      <ValueColumnWidth column_width="105"></ValueColumnWidth>
+      <ValueColumnWidth column_width="101"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="12" />
    <wave_markers>
@@ -133,9 +133,13 @@
          <obj_property name="ElementShortName">RX_IS_DATA_RXCLK_I</obj_property>
          <obj_property name="ObjectShortName">RX_IS_DATA_RXCLK_I</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK">
-         <obj_property name="ElementShortName">RX_IS_DATA_DATACLK</obj_property>
-         <obj_property name="ObjectShortName">RX_IS_DATA_DATACLK</obj_property>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_sysclk">
+         <obj_property name="ElementShortName">RX_IS_DATA_sysclk</obj_property>
+         <obj_property name="ObjectShortName">RX_IS_DATA_sysclk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_to_dclk">
+         <obj_property name="ElementShortName">RX_IS_DATA_to_dclk</obj_property>
+         <obj_property name="ObjectShortName">RX_IS_DATA_to_dclk</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_DATACLK_O">
          <obj_property name="ElementShortName">RX_IS_DATA_DATACLK_O</obj_property>

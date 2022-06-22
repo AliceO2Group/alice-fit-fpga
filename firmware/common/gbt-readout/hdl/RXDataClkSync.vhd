@@ -43,8 +43,8 @@ architecture Behavioral of RXDATA_CLKSync is
 --  -- I data ff by rx clk
 
 --  -- data ff by sysclk
-  signal RX_IS_DATA_DATACLK : std_logic;
-  signal RX_DATA_DATACLK    : std_logic_vector (GBT_data_word_bitdepth+GBT_slowcntr_bitdepth-1 downto 0);
+  signal RX_IS_DATA_sysclk, RX_IS_DATA_to_dclk : std_logic;
+  signal RX_DATA_sysclk, RX_DATA_to_dclk    : std_logic_vector (GBT_data_word_bitdepth+GBT_slowcntr_bitdepth-1 downto 0);
 
 --  -- data ff by data clk
   signal CLK_PH_counter_stop                                       : std_logic_vector (2 downto 0) := "000";
@@ -52,13 +52,14 @@ architecture Behavioral of RXDATA_CLKSync is
 
 
   signal is_phase_changed                            : std_logic;
+  signal rxclk_sync_shift                            : std_logic;
   signal reset_ph_chng, rx_clk_tg, c_locked          : std_logic := '0';
   signal rx_error_reset                              : std_logic;
   signal rx_error_reset_sclk, rx_error_reset_sclk_ff : boolean;
 
   attribute keep                       : string;
-  attribute keep of RX_IS_DATA_DATACLK : signal is "true";
-  attribute keep of RX_DATA_DATACLK    : signal is "true";
+  attribute keep of RX_IS_DATA_sysclk : signal is "true";
+  attribute keep of RX_DATA_sysclk    : signal is "true";
   attribute keep of RX_CLK_from00      : signal is "true";
   attribute keep of RX_CLK_from01      : signal is "true";
 
@@ -80,8 +81,8 @@ begin
   begin
     if(FSM_Clocks_I.Data_Clk'event and FSM_Clocks_I.Data_Clk = '1') then
       CLK_PH_ERROR_O       <= is_phase_changed;
-      RX_DATA_DATACLK_O    <= RX_DATA_DATACLK;
-      RX_IS_DATA_DATACLK_O <= RX_IS_DATA_DATACLK;
+      RX_DATA_DATACLK_O    <= RX_DATA_to_dclk;
+      RX_IS_DATA_DATACLK_O <= RX_IS_DATA_to_dclk;
       CLK_PH_CNT_O         <= CLK_PH_counter_stop;
 
       rx_error_reset <= Control_register_I.force_idle or Control_register_I.reset_rxph_error;
@@ -96,6 +97,7 @@ begin
       RX_CLK_from00          <= rx_clk_tg; RX_CLK_from01 <= RX_CLK_from00; RX_CLK_from02 <= RX_CLK_from01;
       rx_error_reset_sclk    <= rx_error_reset = '1';
       rx_error_reset_sclk_ff <= rx_error_reset_sclk;
+	  rxclk_sync_shift <= Control_register_I.rxclk_sync_shift;
 
       if (FSM_Clocks_I.Reset_sclk = '1') or (not rx_error_reset_sclk and rx_error_reset_sclk_ff) then
 
@@ -125,9 +127,16 @@ begin
         end if;
 
         if (FSM_Clocks_I.System_Counter(2 downto 0) = CLK_PH_counter_dcp) then
-          RX_IS_DATA_DATACLK <= RX_IS_DATA_RXCLK_I;
-          RX_DATA_DATACLK    <= RX_DATA_RXCLK_I;
+          RX_IS_DATA_sysclk <= RX_IS_DATA_RXCLK_I;
+          RX_DATA_sysclk    <= RX_DATA_RXCLK_I;
         end if;
+		
+		if rxclk_sync_shift = '0' then
+		  if FSM_Clocks_I.System_Counter = x"6" then RX_IS_DATA_to_dclk <= RX_IS_DATA_sysclk; RX_DATA_to_dclk <= RX_DATA_sysclk; end if;
+		else
+		  if FSM_Clocks_I.System_Counter = x"2" then RX_IS_DATA_to_dclk <= RX_IS_DATA_sysclk; RX_DATA_to_dclk <= RX_DATA_sysclk; end if;
+		end if;
+		
 
 
       end if;
