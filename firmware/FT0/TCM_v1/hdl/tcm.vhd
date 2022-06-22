@@ -226,7 +226,7 @@ signal readout_status_reg :  stat_reg_t;
 signal New_BCID : STD_LOGIC;
 signal las_o, l_st, flshreg_sel, NoiseA, NoiseC, NoiseC0, NoiseC1, NoiseC2, NoiseA_inc, NoiseC_inc, NoiseAll, orA_str, Interact, OrA_T, OrC_T, Interact_T, V_T, sca, scc, ca, cc, scb, cb, BG_A, BG_C : STD_LOGIC;
 signal tstamp_sel, d_rd, d_rdy, adc_sel, adc_sel1, rout_lock0, rout_lock1, rout_lock2, PM_rst, cctrl_rst, clk_src, clk_l, clk_frs, mcuts_sel, pmena_sel, pm_err, bccorr_sel, bccorr_ack, corr_inc, SC_str, CC_str, V_str, inRst : STD_LOGIC;
-signal bccorrA_sel, bccorrC_sel, bccorr_ack0, bccorr_rd, bc_mask_sel : STD_LOGIC; 
+signal bccorrA_sel, bccorrC_sel, bccorr_ack0, bccorr_rd, bc_mask_sel, corr_inc0 : STD_LOGIC; 
 signal d_addr : STD_LOGIC_VECTOR(6 DOWNTO 0);
 signal d_sns : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
@@ -1418,25 +1418,25 @@ Interact<= '1' when (orA_str='1') and (OrCt='1') and (bitcnt_A="011") else '0';
 cou_NA: counter32  port map (clk320=> clk320A, cout=> count_r(5), rd=> cnt_lock, clr=> cnt_clr, inc=> NoiseA_inc);
 cou_NC: counter32  port map (clk320=> clk320A, cout=> count_r(6), rd=> cnt_lock, clr=> cnt_clr, inc=> NoiseC_inc);
 cou_NAll: counter32  port map (clk320=> clk320A, cout=> count_r(7), rd=> cnt_lock, clr=> cnt_clr, inc=> NoiseAll);
-cou_int: counter32  port map (clk320=> clk320A, cout=> count_r(10), rd=> cnt_lock, clr=> cnt_clr, inc=> Interact);
 
 bc_m: Mask_mem PORT MAP (clka => clk320A, wea => "0", addra => BC_cou, dina => (others=>'0'), douta => bc_mask, clkb => ipb_clk, enb => bc_mask_sel, web(0) => ipb_wr, addrb => ipb_addr(7 downto 0), dinb => ipb_data_out, doutb => bc_maskO);
 
-OrA_T<= '1' when (OrA_str='1') and (bc_mask="11") and (bitcnt_A="011") else '0';
-OrC_T<= '1' when (OrCt='1') and (bc_mask="11") and (bitcnt_A="011") else '0';
-Interact_T<= '1' when (OrCt='1') and (OrA_str='1') and (bc_mask="11") and (bitcnt_A="011") else '0';
-V_T<= '1' when (V_str='1') and (bc_mask="11") and (bitcnt_A="011") else '0';
-BG_A<= '1' when (OrCt='1') and (bc_mask="01") and (bitcnt_A="011") else '0';
-BG_C<= '1' when (OrA_str='1') and (bc_mask="10") and (bitcnt_A="011") else '0';
+OrA_T<= '1' when (OrA_str='1') and (bc_mask="11") and (bitcnt_A="100") else '0';
+OrC_T<= '1' when (OrCt='1') and (bc_mask="11") and (bitcnt_A="100") else '0';
+Interact_T<= '1' when (OrCt='1') and (OrA_str='1') and (bc_mask="11") and (bitcnt_A="100") else '0';
+V_T<= '1' when (V_str='1') and (bc_mask="11") and (bitcnt_A="100") else '0';
+BG_A<= '1' when (OrCt='1') and (bc_mask="01") and (bitcnt_A="100") else '0';
+BG_C<= '1' when (OrA_str='1') and (bc_mask="10") and (bitcnt_A="100") else '0';
 
 AT: counter32  port map (clk320=> clk320A, cout=> count_r(8), rd=> cnt_lock, clr=> cnt_clr, inc=> OrA_T);
 CT: counter32  port map (clk320=> clk320A, cout=> count_r(9), rd=> cnt_lock, clr=> cnt_clr, inc=> OrC_T);
+cou_int: counter32  port map (clk320=> clk320A, cout=> count_r(10), rd=> cnt_lock, clr=> cnt_clr, inc=> Interact);
 IT: counter32  port map (clk320=> clk320A, cout=> count_r(11), rd=> cnt_lock, clr=> cnt_clr, inc=> Interact_T);
 VT: counter32  port map (clk320=> clk320A, cout=> count_r(12), rd=> cnt_lock, clr=> cnt_clr, inc=> V_T);
 BGA: counter32  port map (clk320=> clk320A, cout=> count_r(13), rd=> cnt_lock, clr=> cnt_clr, inc=> BG_A);
 BGC: counter32  port map (clk320=> clk320A, cout=> count_r(14), rd=> cnt_lock, clr=> cnt_clr, inc=> BG_C);
 
-with Tmode(7 downto 4) select corr_inc<=
+with Tmode(7 downto 4) select corr_inc0<=
    '0'                                                 when x"0",
    orA_str                                             when x"1",
    orC_i                                               when x"2",
@@ -1446,9 +1446,9 @@ with Tmode(7 downto 4) select corr_inc<=
    NoiseA                                              when x"6",
    NoiseC                                              when x"7",
    NoiseA or NoiseC                                    when x"8",
-   orA_str and  OrCt                                   when x"9",
-   orA_str and  bc_mask(0) and bc_mask(1)              when x"A",
-   orCt and bc_mask(0) and bc_mask(1)                  when x"B",
+   orA_str and  bc_mask(0) and bc_mask(1)              when x"9",
+   orCt and bc_mask(0) and bc_mask(1)                  when x"A",
+   orA_str and  OrCt                                   when x"B",
    orA_str and  orCt and bc_mask(0) and bc_mask(1)     when x"C",
    V_str and bc_mask(0) and bc_mask(1)                 when x"D",
    orCt and bc_mask(0) and (not bc_mask(1))            when x"E",
@@ -1499,6 +1499,8 @@ cnt_lock<=(cnt_lock1 and (not cnt_lock2)) or cnt_rd; cnt_clr<=cnt_clr1 and (not 
 process (CLK320A)
     begin
     if (CLK320A'event and CLK320A='1') then
+    
+corr_inc<=corr_inc0;
     
 laser_t0<=l_on0; laser_t<=laser_t0;   tblock2<=tblock1;  tblock1<=tblock; 
 	rx_phase_status(2 downto 0) <= readout_status.rx_phase;
