@@ -80,7 +80,7 @@ architecture Behavioral of Event_selector is
   signal trgfifo_out_bc                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   signal slct_fifo_din, slct_fifo_din_ff  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
+  signal slct_fifo_count_rd, slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
   signal drop_counter                     : std_logic_vector(15 downto 0);
   signal event_counter, event_counter_ff  : std_logic_vector(31 downto 0);
   signal event_counter_zero_counter       : std_logic_vector(31 downto 0);
@@ -167,7 +167,7 @@ begin
   -- outputs
   header_fifo_rden_o  <= header_fifo_rd;
   data_fifo_rden_o    <= data_fifo_rd;
-  slct_fifo_cnt_o     <= '0'&slct_fifo_count_wr;
+  slct_fifo_cnt_o     <= '0'&slct_fifo_count_rd;
   slct_fifo_cnt_max_o <= '0'&fifo_cnt_max;
   slct_fifo_empty_o   <= slct_fifo_empty;
   cntpck_fifo_empty_o <= cntpck_fifo_empty;
@@ -222,7 +222,7 @@ begin
     port map(
       wr_clk        => FSM_Clocks_I.System_Clk,
       rd_clk        => FSM_Clocks_I.Data_Clk,
-      rd_data_count => open,
+      rd_data_count => slct_fifo_count_rd,
       wr_data_count => slct_fifo_count_wr,
       rst           => FSM_Clocks_I.Reset_sclk,
       WR_EN         => slct_fifo_wren_ff,
@@ -273,7 +273,7 @@ begin
         if Control_register_I.reset_data_counters = '1' then
           fifo_cnt_max <= (others => '0');
         else
-          if fifo_cnt_max < slct_fifo_count_wr then fifo_cnt_max <= slct_fifo_count_wr; end if;
+          if fifo_cnt_max < slct_fifo_count_rd then fifo_cnt_max <= slct_fifo_count_rd; end if;
         end if;
 
         -- trigger fifo full latching

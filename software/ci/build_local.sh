@@ -20,7 +20,7 @@ echo "Start time: "  "$sD" "$sT"
 
 
 source /opt/Xilinx/Vivado/2019.2/settings64.sh
-cd  firmware/FT0/${PROJECT} \
+cd firmware/FT0/${PROJECT} \
     && rm -rf ../bits/${PROJECT}* \
     && mkdir ../bits/${PROJECT}_logs \
     && rm -fr build \
@@ -28,7 +28,8 @@ cd  firmware/FT0/${PROJECT} \
     && vivado -mode batch -source make.tcl \
     && cp $(find build -name "*.bit") ../bits/${PROJECT}.bit \
     && cp $(find build -name "*.bin") ../bits/${PROJECT}.bin \
-    && cp $(find -name "*.log") ../bits/${PROJECT}_logs/
+    && cp $(find -name "*.log") ../bits/${PROJECT}_logs/ \
+    && cp $(find -name "tight_setup_hold_pins.txt") ../bits/${PROJECT}_logs/
 	
 	
 echo
@@ -51,7 +52,13 @@ dm=$(echo "$dt3/60" | bc)
 ds=$(echo "$dt3-60*$dm" | bc)
 LC_NUMERIC=C printf "Runtime: %02d:%02d:%02.4f\n" $dh $dm $ds
 echo
-echo "cernbox parsing command line:"
+echo "parsing bits command line:"
 echo "scp -r ./firmware/FT0/bits dfinogee@lxplus.cern.ch:/eos/user/d/dfinogee/alice-fit-fpga-artifacts/"
 echo
-
+echo "parsing repo command line"
+echo "rsync -avz -delete --exclude={'build','nppBackup','__pycache__','.git','.Xil','bits','*.bak','*.jou','*.log','*.tmp','*.coe'} ../alice-fit-fpga dfinogee@lxplus.cern.ch:/eos/user/d/dfinogee/alice-fit-fpga-artifacts/"
+echo
+echo "Timing summary log:"
+echo
+grep -A10 "Design Timing Summary" ../bits/${PROJECT}_logs/impl_1_timing_summary.log
+echo

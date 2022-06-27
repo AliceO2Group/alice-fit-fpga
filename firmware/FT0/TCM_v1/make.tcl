@@ -290,6 +290,9 @@ if {[string equal $proj_create "yes"]} {
 }
 #-------------------------------------------------------------------------------
 
+#timing report strategy
+config_webtalk -user off
+
 # upgrade_ip [get_ips]
 generate_target synthesis [get_ips] -force
 
@@ -370,7 +373,7 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {Timing Closure Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Performance_NetDelay_low" [get_runs impl_1]
   set_property flow "Vivado Implementation 2019" [get_runs impl_1]
