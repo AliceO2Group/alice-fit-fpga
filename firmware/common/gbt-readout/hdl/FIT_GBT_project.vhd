@@ -267,7 +267,7 @@ begin
 
 -- DATA GENERATOR =====================================
   Module_Data_Gen_comp : entity work.Module_Data_Gen
-
+	generic map(IS_SIMULATION	=> IS_SIMULATION)
     port map(
       FSM_Clocks_I => FSM_Clocks,
 

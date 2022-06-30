@@ -202,7 +202,7 @@ begin
         if gen_sync_reset_sc then cnt_packet_counter <= (others => '0'); end if;
 
         -- datagenreport sync to output data. pipe(6) is the last 320 cycle before 40 cycle
-        if IS_SIMULATION = 0 then
+        if IS_SIMULATION = 1 then
           if Board_data_gen_pipe(11).is_header = '1' then
             datagen_report.orbit      <= func_FITDATAHD_orbit(Board_data_gen_pipe(11).data_word(159 downto 80));
             datagen_report.bc         <= func_FITDATAHD_bc(Board_data_gen_pipe(11).data_word(159 downto 80));
