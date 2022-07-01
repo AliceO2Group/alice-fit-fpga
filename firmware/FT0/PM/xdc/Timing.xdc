@@ -7,6 +7,14 @@ set_multicycle_path -hold -start -from [get_clocks CLK600_3] -to [get_cells {{BC
 
 set_max_delay -datapath_only -from [get_clocks CLK320] -to [get_ports {TT* AT*}] 1.800
 
+#set_multicycle_path -setup -from [get_pins {af1/m0_reg[?]/C af1/ml_reg[?]/C}] -to [get_cells {af1/ml_reg[?]}] 2
+#set_multicycle_path -hold  -from [get_pins {af1/m0_reg[?]/C af1/ml_reg[?]/C}] -to [get_cells {af1/ml_reg[?]}] 1
+#set_multicycle_path -setup -from [get_pins {af2/m0_reg[?]/C af2/ml_reg[?]/C}] -to [get_cells {af2/ml_reg[?]}] 2
+#set_multicycle_path -hold  -from [get_pins {af2/m0_reg[?]/C af2/ml_reg[?]/C}] -to [get_cells {af2/ml_reg[?]}] 1
+#set_multicycle_path -setup -from [get_pins {af3/m0_reg[?]/C af3/ml_reg[?]/C}] -to [get_cells {af3/ml_reg[?]}] 2
+#set_multicycle_path -hold  -from [get_pins {af3/m0_reg[?]/C af3/ml_reg[?]/C}] -to [get_cells {af3/ml_reg[?}}] 1
+
+
 set_max_delay -datapath_only -from [get_clocks {TDCCLK1 CLK300_1}] -to [get_cells {TDC1_CH?/tdc_raw_i_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks {TDCCLK2 CLK300_2}] -to [get_cells {TDC2_CH?/tdc_raw_i_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks {TDCCLK3 CLK300_3}] -to [get_cells {TDC3_CH?/tdc_raw_i_reg[*]}] 3.000
@@ -105,6 +113,8 @@ set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins {rx_pha
 # Reset_Generator ----------------------------------
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/reset_sclk_reg/D]
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/reset_sclk_reg/D]
+set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/DataClk_qff00_sysclk_reg/D]
+set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/DataClk_qff00_sysclk_reg/D]
 set_false_path -from [get_clocks TX_CLK] -to [get_pins {FitGbtPrg/Reset_Generator_comp/Reset_SClk_O*/D}]
 set_false_path -from [get_clocks TX_CLK] -to [get_pins {FitGbtPrg/Reset_Generator_comp/count_ready_reg*/D}]
 
@@ -112,8 +122,7 @@ set_false_path -from [get_clocks TX_CLK] -to [get_pins {FitGbtPrg/Reset_Generato
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_sysclk_reg[*]}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_sysclk_reg*}] 3.000
 set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg] 2.000
-set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
-set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]
+
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
 
@@ -127,8 +136,6 @@ set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/event_bc_sc_reg[*]/D]
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/event_rx_ph_err_reg/D]
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/event_rx_ph_err_reg/D]
-set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/DataClk_qff00_sysclk_reg/D]
-set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Reset_Generator_comp/DataClk_qff00_sysclk_reg/D]
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/event_rx_ph_reg[*]/D]
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/Module_Data_Gen_comp/event_rx_ph_reg[*]/D]
 
