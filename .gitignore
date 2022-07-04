@@ -19,3 +19,5 @@ venv
 nppBackup
 *.run
 *.pyc
+*.log
+firmware/FT0/bits

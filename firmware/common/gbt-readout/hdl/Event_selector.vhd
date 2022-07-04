@@ -70,6 +70,7 @@ architecture Behavioral of Event_selector is
   signal data_orbit                     : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal data_bc                        : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal curr_orbit, curr_orbit_sc      : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal curr_orbit_p1, curr_orbit_p1_sc: std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal curr_bc, curr_bc_sc            : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal trigger_select_val_sc          : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
@@ -80,7 +81,7 @@ architecture Behavioral of Event_selector is
   signal trgfifo_out_bc                                                          : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   signal slct_fifo_din, slct_fifo_din_ff  : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
-  signal slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
+  signal slct_fifo_count_rd, slct_fifo_count_wr, fifo_cnt_max : std_logic_vector(14 downto 0);
   signal drop_counter                     : std_logic_vector(15 downto 0);
   signal event_counter, event_counter_ff  : std_logic_vector(31 downto 0);
   signal event_counter_zero_counter       : std_logic_vector(31 downto 0);
@@ -131,10 +132,12 @@ architecture Behavioral of Event_selector is
   signal reset_dt_counters_sc                                                                                   : boolean;
 
 
--- attribute mark_debug                         : string;
+--  attribute mark_debug                         : string;
 -- attribute mark_debug of event_counter              : signal is "true";
 -- attribute mark_debug of event_counter_zero_counter : signal is "true";
 -- attribute mark_debug of trgfifo_empty        : signal is "true";
+-- attribute mark_debug of trgfifo_full        : signal is "true";
+-- attribute mark_debug of trgfifo_full_latch : signal is "true";
 -- attribute mark_debug of cntpck_fifo_empty_sc : signal is "true";
 -- attribute mark_debug of slct_fifo_empty_sc   : signal is "true";
 -- attribute mark_debug of send_gear_rdh        : signal is "true";
@@ -165,7 +168,7 @@ begin
   -- outputs
   header_fifo_rden_o  <= header_fifo_rd;
   data_fifo_rden_o    <= data_fifo_rd;
-  slct_fifo_cnt_o     <= '0'&slct_fifo_count_wr;
+  slct_fifo_cnt_o     <= '0'&slct_fifo_count_rd;
   slct_fifo_cnt_max_o <= '0'&fifo_cnt_max;
   slct_fifo_empty_o   <= slct_fifo_empty;
   cntpck_fifo_empty_o <= cntpck_fifo_empty;
@@ -220,7 +223,7 @@ begin
     port map(
       wr_clk        => FSM_Clocks_I.System_Clk,
       rd_clk        => FSM_Clocks_I.Data_Clk,
-      rd_data_count => open,
+      rd_data_count => slct_fifo_count_rd,
       wr_data_count => slct_fifo_count_wr,
       rst           => FSM_Clocks_I.Reset_sclk,
       WR_EN         => slct_fifo_wren_ff,
@@ -254,9 +257,11 @@ begin
 
       if Status_register_I.BCID_from_CRU >= bcid_delay then
         curr_orbit <= Status_register_I.ORBIT_from_CRU;
+        curr_orbit_p1 <= Status_register_I.ORBIT_from_CRU+1;
         curr_bc    <= (Status_register_I.BCID_from_CRU - bcid_delay);
       else
         curr_orbit <= Status_register_I.ORBIT_from_CRU - 1;
+        curr_orbit_p1 <= Status_register_I.ORBIT_from_CRU;
         curr_bc    <= Status_register_I.BCID_from_CRU - bcid_delay + LHC_BCID_max + 1;
       end if;
 
@@ -271,7 +276,7 @@ begin
         if Control_register_I.reset_data_counters = '1' then
           fifo_cnt_max <= (others => '0');
         else
-          if fifo_cnt_max < slct_fifo_count_wr then fifo_cnt_max <= slct_fifo_count_wr; end if;
+          if fifo_cnt_max < slct_fifo_count_rd then fifo_cnt_max <= slct_fifo_count_rd; end if;
         end if;
 
         -- trigger fifo full latching
@@ -289,6 +294,7 @@ begin
     if(rising_edge(FSM_Clocks_I.System_Clk))then
 
       curr_orbit_sc         <= curr_orbit;
+      curr_orbit_p1_sc      <= curr_orbit_p1;
       curr_bc_sc            <= curr_bc;
       data_enabled_sc       <= Status_register_I.data_enable = '1';
       is_readout_sc         <= Status_register_I.Readout_Mode /= mode_IDLE;
@@ -427,8 +433,8 @@ begin
   is_eox          <= (trgfifo_empty = '0') and (trgfifo_out_trigger and (TRG_const_EOT or TRG_const_EOC)) /= TRG_const_void;
   is_sel_trg      <= (trgfifo_empty = '0') and (trgfifo_out_trigger and trigger_select_val_sc) /= TRG_const_void;
   trg_eq_data     <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and (data_orbit = trgfifo_out_orbit) and (data_bc = trgfifo_out_bc) and (trgfifo_empty = '0') and (header_fifo_empty_i = '0');
-  data_not_actual <= (header_fifo_empty_i = '0') and ((data_orbit > curr_orbit_sc+1) or(data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
-  trg_not_actual  <= (trgfifo_empty = '0') and ((trgfifo_out_orbit > curr_orbit_sc+1) or (trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
+  data_not_actual <= (header_fifo_empty_i = '0') and ((data_orbit > curr_orbit_p1_sc) or(data_orbit < curr_orbit_sc) or ((data_orbit = curr_orbit_sc) and (data_bc < curr_bc_sc)));
+  trg_not_actual  <= (trgfifo_empty = '0') and ((trgfifo_out_orbit > curr_orbit_p1_sc) or (trgfifo_out_orbit < curr_orbit_sc) or ((trgfifo_out_orbit = curr_orbit_sc) and (trgfifo_out_bc < curr_bc_sc)));
   trg_later_data  <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit < trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc < trgfifo_out_bc)));
   data_later_trg  <= (trgfifo_empty = '0') and (header_fifo_empty_i = '0') and ((data_orbit > trgfifo_out_orbit) or ((data_orbit = trgfifo_out_orbit) and (data_bc > trgfifo_out_bc)));
 

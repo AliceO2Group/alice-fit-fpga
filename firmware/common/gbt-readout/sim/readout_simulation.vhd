@@ -44,17 +44,21 @@ end testbench_readout;
 architecture behavior of testbench_readout is
 
   -- inputs file --------------------------------------
-  file input_reg_file               : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_in_ctrlreg.txt";
-  file output_dat_file               : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_out_data.txt";
+--  file input_reg_file               : text open read_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_in_ctrlreg.txt";
+--  file output_dat_file               : text open write_mode is "..\..\..\..\..\..\..\..\software\readout-sim\sim_data\sim_out_data.txt";
+  file input_reg_file               : text open read_mode is "../../../../../../../../software/readout-sim/sim_data/sim_in_ctrlreg.txt";
+  file output_dat_file               : text open write_mode is "../../../../../../../../software/readout-sim/sim_data/sim_out_data.txt";
   signal Control_register_from_file : ctrl_reg_t;
   -- ---------------------------------------------------
 
   --clocks
+  constant rxclk_shift         : time      := 4 ns;
   constant Sys_period          : time      := 3.125 ns;
   constant ipbus_clock_period  : time      := 33.333 ns;
   signal RESET                 : std_logic := '0';
   signal SYS_CLK               : std_logic := '0';
   signal DATA_CLK              : std_logic := '0';
+  signal RX_CLK                : std_logic := '0';
   signal IPBUS_CLK             : std_logic := '0';
   signal GBT_RxFrameClk        : std_logic := '0';
   signal FSM_Clocks_signal     : rdclocks_t;
@@ -69,6 +73,7 @@ architecture behavior of testbench_readout is
   signal IsData_from_FITrd       : std_logic;
   signal RxData_rxclk_from_GBT   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal IsRxData_rxclk_from_GBT : std_logic;
+  signal IsRxData_rxclk_from_GBT_sim : std_logic := '0';
 
   -- debub
   signal sim_iter_num : std_logic_vector(63 downto 0);
@@ -92,7 +97,8 @@ begin
       SysClk_I         => FSM_Clocks_signal.System_Clk,
       DataClk_I        => FSM_Clocks_signal.Data_Clk,
       MgtRefClk_I      => FSM_Clocks_signal.Data_Clk,
-      RxDataClk_I      => GBT_RxFrameClk,  -- 40MHz data clock in RX domain (loop back)
+--      RxDataClk_I      => GBT_RxFrameClk,  -- 40MHz data clock in RX domain (loop back)
+      RxDataClk_I      => RX_CLK,
       GBT_RxFrameClk_O => GBT_RxFrameClk,
 
       Board_data_I       => board_data_test_const,
@@ -105,7 +111,8 @@ begin
       MGT_TX_dsbl_O => open,
 
       RxData_rxclk_to_FITrd_I   => RxData_rxclk_from_GBT,    --loop back data
-      IsRxData_rxclk_to_FITrd_I => IsRxData_rxclk_from_GBT,  --loop back data
+--      IsRxData_rxclk_to_FITrd_I => IsRxData_rxclk_from_GBT,  --loop back data
+      IsRxData_rxclk_to_FITrd_I => IsRxData_rxclk_from_GBT_sim,  --loop back data
       Data_from_FITrd_O         => Data_from_FITrd,
       IsData_from_FITrd_O       => IsData_from_FITrd,
       Data_to_GBT_I             => Data_from_FITrd,          --loop back data
@@ -150,6 +157,33 @@ begin
 
     SYS_CLK <= '1';
     wait for Sys_period/2;
+
+  end process;
+-- =====================================================
+
+
+
+
+
+-- RX clock from CRU ===================================        
+  Sys2_process : process
+    variable was_reset : boolean := false;
+
+  begin
+
+    -- reset counter
+    if( not was_reset) then
+      was_reset := true;
+	  IsRxData_rxclk_from_GBT_sim <= '0';
+	  wait for rxclk_shift;
+    end if;
+
+    RX_CLK <= '0';
+    wait for Sys_period*4;
+
+    RX_CLK <= '1';
+	IsRxData_rxclk_from_GBT_sim <= not IsRxData_rxclk_from_GBT_sim;
+    wait for Sys_period*4;
 
   end process;
 -- =====================================================

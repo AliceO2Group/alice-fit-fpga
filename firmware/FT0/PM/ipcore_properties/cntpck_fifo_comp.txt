@@ -102,7 +102,7 @@ CONFIG.M_AXIS.INSERT_VIP                            string  false      0
 CONFIG.Master_interface_Clock_enable_memory_mapped  string  false      false
 CONFIG.Output_Data_Width                            string  false      128
 CONFIG.Output_Depth                                 string  false      256
-CONFIG.Output_Register_Type                         string  false      Embedded_Reg
+CONFIG.Output_Register_Type                         string  false      Fabric_Reg
 CONFIG.Overflow_Flag                                string  false      false
 CONFIG.Overflow_Flag_AXI                            string  false      false
 CONFIG.Overflow_Sense                               string  false      Active_High
@@ -155,7 +155,7 @@ CONFIG.Underflow_Flag_AXI                           string  false      false
 CONFIG.Underflow_Sense                              string  false      Active_High
 CONFIG.Underflow_Sense_AXI                          string  false      Active_High
 CONFIG.Use_Dout_Reset                               string  false      true
-CONFIG.Use_Embedded_Registers                       string  false      false
+CONFIG.Use_Embedded_Registers                       string  false      true
 CONFIG.Use_Embedded_Registers_axis                  string  false      false
 CONFIG.Use_Extra_Logic                              string  false      false
 CONFIG.Valid_Flag                                   string  false      false

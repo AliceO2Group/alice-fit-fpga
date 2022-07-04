@@ -13,6 +13,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
 
 -- Xilinx devices library:
 library unisim;
@@ -43,6 +45,7 @@ entity GBT_TX_RX is
         RXData_SC       : out std_logic_vector (3 downto 0);
         IsRXData        : out std_logic;
         reset_rx_errors : in  std_logic;
+        reset_fsm       : in  std_logic;
         GBT_Status_O    : out gbt_status_t
         );
 end GBT_TX_RX;
@@ -100,7 +103,16 @@ architecture structural of GBT_TX_RX is
   signal mgt_outclkfabric : std_logic_vector(1 to GBT_BANKS_USER_SETUP(1).NUM_LINKS);
   signal header_flag      : std_logic_vector(1 to GBT_BANKS_USER_SETUP(1).NUM_LINKS);
   
-  signal gbtRx_ErrorDet_ff : std_logic;
+  signal gbtRx_ErrorDet_ff, Rx_Ready_ff  : std_logic;
+  signal gbt_not_ready                   : std_logic;
+  signal gbt_ready_cnt                   : std_logic_vector(27 downto 0);
+  
+  -- attribute mark_debug : string;
+  -- attribute mark_debug of gbt_not_ready        : signal is "true";
+  -- attribute mark_debug of gbt_ready_cnt       : signal is "true";
+  -- attribute mark_debug of gbtRx_ErrorDet_ff       : signal is "true";
+  -- attribute mark_debug of Rx_Ready_ff       : signal is "true";
+
 
 --=================================================================================================--
 begin  --========####   Architecture Body   ####========-- 
@@ -298,8 +310,9 @@ begin  --========####   Architecture Body   ####========--
 
     if TXDataClk'event and (TXDataClk = '1') then
       gbtRx_ErrorDet_ff <=  from_gbtBank_gbtRx(1).rxErrorDetected;
+	  Rx_Ready_ff <= from_gbtBank_gbtRx(1).ready;
+	  
       GBT_Status_O.gbtRx_ErrorDet <= gbtRx_ErrorDet_ff;
-      GBT_Status_O.gbtRx_Ready    <= from_gbtBank_gbtRx(1).ready;
 
       GBT_Status_O.mgt_phalin_cplllock <= pllLocked_from_gbtBank_rxFrmClkPhAlgnr(1);
 
@@ -309,9 +322,24 @@ begin  --========####   Architecture Body   ####========--
       GBT_Status_O.mgtLinkReady    <= from_gbtBank_mgt.mgtLink(1).ready;
       GBT_Status_O.tx_resetDone    <= from_gbtBank_mgt.mgtLink(1).tx_resetDone;
       GBT_Status_O.tx_fsmResetDone <= from_gbtBank_mgt.mgtLink(1).tx_fsmResetDone;
+	  GBT_Status_O.gbt_not_ready   <= gbt_not_ready;
+	  GBT_Status_O.gbtRx_Ready     <= Rx_Ready_ff;
 
-      if reset_rx_errors = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '0';
+
+      -- rx_err_det reset done by command, gbt_reset, after each gbt sync procedure
+      if reset_rx_errors = '1' or RESET = '1' or gbt_not_ready = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '0';
       elsif gbtRx_ErrorDet_ff = '1' then GBT_Status_O.gbtRx_ErrorLatch <= '1'; end if;
+
+	  -- rx_ready cleared by command or gbt_reset only
+      if reset_rx_errors = '1' or RESET = '1' then GBT_Status_O.gbt_was_ready <= '1'; end if;
+	  
+	  if RESET = '1' then gbt_not_ready <= '1'; gbt_ready_cnt <= (others => '0');
+	  -- if gbt failed then wait sinc and set rx_ready_err flag
+	  elsif gbt_not_ready = '0' and Rx_Ready_ff = '0' then  gbt_not_ready <= '1'; gbt_ready_cnt <= (others => '0'); GBT_Status_O.gbt_was_ready <= '0';
+	  -- go to ready after 500ms
+	  elsif gbt_ready_cnt = x"121_2d00" then  gbt_not_ready <= '0';
+	  elsif Rx_Ready_ff = '0' or gbtRx_ErrorDet_ff = '1' then gbt_ready_cnt <= (others => '0');
+	  else gbt_ready_cnt <= gbt_ready_cnt + 1; end if;
 
     end if;
   end process;

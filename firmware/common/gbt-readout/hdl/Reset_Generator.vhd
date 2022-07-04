@@ -20,6 +20,7 @@ entity Reset_Generator is
     DataClk_I : in std_logic;
 
     Control_register_I : in readout_control_t;
+	gbt_not_ready_I : in std_logic;
 
     SysClk_count_O : out std_logic_vector(3 downto 0);
 
@@ -41,12 +42,17 @@ architecture Behavioral of Reset_Generator is
   signal sysclk_count_ff                : std_logic_vector(2 downto 0);
   signal rd_bypass, rd_bypass_ff        : boolean;
   signal reset_counter                  : std_logic_vector(7 downto 0) := x"FF";
+  signal resetin_cnt_db                  : std_logic_vector(31 downto 0); -- counter after reset_i for ila triggering
   signal reset_by_bypass                : std_logic;
+  
+  
 
-  attribute mark_debug : string;
---  attribute mark_debug of reset_in        : signal is "true";
---  attribute mark_debug of reset_gbt       : signal is "true";
---  attribute mark_debug of reset_fsm       : signal is "true";
+  -- attribute mark_debug : string;
+  -- attribute mark_debug of reset_in        : signal is "true";
+  -- attribute mark_debug of reset_gbt       : signal is "true";
+  -- attribute mark_debug of reset_fsm       : signal is "true";
+  -- attribute mark_debug of resetin_cnt_db  : signal is "true";
+  
 --  attribute mark_debug of reset_fsm_cmd       : signal is "true";
 --  attribute mark_debug of reset_sclk      : signal is "true";
 --  attribute mark_debug of reset_counter      : signal is "true";
@@ -74,7 +80,7 @@ begin
       count_ready_clk40 <= count_ready;
       DataClk_q_dataclk <= not DataClk_q_dataclk;
       reset_gbt         <= reset_in or Control_register_I.reset_gbt;
-      reset_fsm_cmd     <= reset_gbt or Control_register_I.reset_readout or not count_ready_clk40 or reset_by_bypass;
+      reset_fsm_cmd     <= reset_gbt or Control_register_I.reset_readout or gbt_not_ready_I or not count_ready_clk40 or reset_by_bypass;
 
       if reset_fsm_cmd = '1' then
         reset_counter <= (others => '0');
@@ -86,6 +92,9 @@ begin
         reset_counter <= x"ff";
         reset_fsm     <= '0';
       end if;
+	  
+	  -- counter after reset_i for ila triggering
+	  if reset_in = '1' then resetin_cnt_db <= (others => '0'); else resetin_cnt_db <= resetin_cnt_db + 1; end if;
 
 
     end if;

@@ -91,7 +91,6 @@ set proj_dir [get_property directory [current_project]]
 set obj [current_project]
 set_property \
     -dict [list \
-	       "board_part"            "xilinx.com:kc705:part0:1.5" \
 	       "corecontainer.enable"  "1" \
 	       "default_lib"           "xil_defaultlib" \
 	       "ip_cache_permissions"  "read write" \

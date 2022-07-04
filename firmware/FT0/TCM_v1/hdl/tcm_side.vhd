@@ -249,8 +249,11 @@ mdl_err<= (mast_dl_low(to_integer(unsigned(master_n))) or mast_dl_high(to_intege
        end if;   
        if mdl_err='1' then mdl_err_s<='1';
          else if (stat_clr2='1') and (stat_clr1='0') then mdl_err_s<='0'; end if;
-       end if;   
+       end if;
        
+ if (srst='1') then sync_err_s<=(others=>'0'); 
+ 
+ else       
  for i in 0 to 9 loop
 
 link_ena(i)<=config(i) and not stat_chg ;
@@ -258,7 +261,8 @@ link_ena(i)<=config(i) and not stat_chg ;
        if sync_err(i)='1' then sync_err_s(i)<='1';
          else if (stat_clr2='1') and (stat_clr1='0') then sync_err_s(i)<='0'; end if;
        end if;   
- end loop;       
+ end loop;
+ end if;       
 
    if (idle_cou="111111") and (done='0') and (side_on='1') then mt_cou<="111"-bitpos(to_integer(unsigned(master_n))); idle_cou<="000000"; 
        else mt_cou<=mt_cou+1; end if;

@@ -292,8 +292,8 @@ signal Orbit_ID, hspid_w32, hspid_r32, tstamp, hspib_32, mcu_tstamp : STD_LOGIC_
 signal xadc_r, xadc_out : STD_LOGIC_VECTOR (15 downto 0);
 signal xadc_a: STD_LOGIC_VECTOR (6 downto 0);
 signal EV_ID_in, EV_ID_out : STD_LOGIC_VECTOR (55 downto 0);
-signal EV_DATA80, DATA80_in : STD_LOGIC_VECTOR (79 downto 0);
---signal  mux_out, str_la : STD_LOGIC;
+signal EV_DATA80, DATA80_in, data_word : STD_LOGIC_VECTOR (79 downto 0);
+signal  is_data, is_header : STD_LOGIC;
 signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0_0, gs1_0, gs0_1, gs1_1, rdo_sel : STD_LOGIC;
 
 signal DATA_out : data_vector;
@@ -308,7 +308,7 @@ signal pshift1, pshift2, pshift3 :  STD_LOGIC_VECTOR (5 downto 0);
 signal rx_phase_status : std_logic_vector(3 downto 0);
 
 signal hyst_md : std_logic_vector(15 downto 0);
-signal start_hyst, h_busy, wr_hyst_a, rd_hyst_d, hysta_sel, hystd_sel, hyst_stp : std_logic;
+signal start_hyst, h_busy, wr_hyst_a, rd_hyst_d, hysta_sel, hystd_sel, hyst_stp, hyst_rst, hyst_clr : std_logic;
 signal cnt_md : std_logic := '0'; 
 signal hyst_data : hyst_vector;
 signal hyst_a, hyst_t : std_logic_vector(11 downto 0);
@@ -1431,10 +1431,10 @@ end if;
 end if;
 end process;
 
-h0: hyst Port map(clk320 =>clk320,  hyst_inp_data  =>hyst_data, hyst_a =>hyst_a, hyst_t =>hyst_t, hyst_st =>start_hyst, cnt_clr =>cnt_rst, busy =>h_busy, hyst_addr_i =>hspid_w32(16 downto 0), hyst_addr_o =>hyst_addr,
+h0: hyst Port map(clk320 =>clk320,  hyst_inp_data  =>hyst_data, hyst_a =>hyst_a, hyst_t =>hyst_t, hyst_st =>start_hyst, cnt_clr =>hyst_clr, busy =>h_busy, hyst_addr_i =>hspid_w32(16 downto 0), hyst_addr_o =>hyst_addr,
                   wr_addr =>wr_hyst_a, hyst_data_o =>hyst_r_data, n_addr =>rd_hyst_d, lock320 =>hspi_lock320, stp=> hyst_stp);
                   
-wr_hyst_a <= reg32_320_wr and hysta_sel; rd_hyst_d<= reg32_320_str and hystd_sel;
+wr_hyst_a <= reg32_320_wr and hysta_sel; rd_hyst_d<= reg32_320_str and hystd_sel; hyst_clr<=cnt_rst or hyst_rst;
                   
 h1:  for i in 0 to 11 generate
     hyst_data(i) <= DATA_out(i)(25 downto 0);
@@ -1681,11 +1681,9 @@ end if;
  end if;
 
  if (reg32_wr2='0') and (reg32_wr1='1') and (hspi_addr(7 downto 0)<=16#E7#)  then
-    if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32(31 downto 15) & (hspid_w32(14) or (not GBTRX_ready)) & hspid_w32(13 downto 0);
+    if  (hspi_addr(7 downto 0)=16#D8#) then ipbus_control_reg(0)<= hspid_w32;
        else  ipbus_control_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#D8#)<= hspid_w32;
      end if;
-    else 
-     if (GBTRX_ready='0') and (GBTRX_ready0='1') then ipbus_control_reg(0)(14)<='1'; end if;
  end if; 
            
 
@@ -1721,7 +1719,7 @@ tcm_req2<=tcm_req1; tcm_req1<=tcm_req0;  tcm_req0<=tcm_reqh;
 if (spi_wr2='0') and (spi_wr1='1') then spi_wr_req<='1'; end if;
 if (hspi_wr2='0') and (hspi_wr1='1') then hspi_wr_req<='1'; end if;
 
-if (cnt_rst='1') then cnt_rst<='0'; end if;
+if (cnt_rst='1') then cnt_rst<='0'; end if; if (hyst_rst='1') then hyst_rst<='0'; end if;
 
    if (sreset='1') then chans_block <= '0'; hyst_md(15)<='0'; is_rst<='1';
      else
@@ -1770,7 +1768,8 @@ if (cnt_rst='1') then cnt_rst<='0'; end if;
             
             when x"7C" => chans_ena_r <=reg_wr_data(11 downto 0);
             
-            when x"7E" => hyst_md(14 downto 0) <=reg_wr_data(14 downto 0);
+            when x"7E" => hyst_md(14 downto 0) <=reg_wr_data(14) & '0' & reg_wr_data(12 downto 0) ;
+                          if (hyst_rst='0') and (reg_wr_data(13)='1') then hyst_rst<='1'; end if;
                         
             when x"7F" => if (cnt_rst='0') and (reg_wr_data(9)='1') then cnt_rst<='1'; end if;
                           if (hspi_wr_req='1') and (spi_wr_req='0') then cnt_md <= reg_wr_data(10); end if;
@@ -1901,7 +1900,7 @@ hclr30<=Hs_rd; hclr31<=hclr30; h_clr3<=hclr31;
 end if;
 end process;
 
-PM_data_toreadout.data_word  <=  DATA80_in;
+PM_data_toreadout.data_word  <=  data_word;
 
 
 process (clk320)
@@ -1916,8 +1915,9 @@ hspi_lock320<=hspi_lock320_0;  hspi_lock320_0<= rd_lock_hspi;
 tto<=tt;  tao<=ta;  
 MCLK40_0<=MCLK40T; MCLK40_1<=MCLK40_0; if (MCLK40_0/=MCLK40_1) then mt_cou<="000"; else mt_cou<=mt_cou+1; end if;
 
-PM_data_toreadout.is_header  <=  wr_out_id;
-PM_data_toreadout.is_data    <=  Event_ready  or wr_out_id;
+PM_data_toreadout.is_header  <= is_header; is_header<= wr_out_id;
+PM_data_toreadout.is_data    <= is_data; is_data<= Event_ready  or wr_out_id;
+data_word <=DATA80_in;
 
 if (wr_out_id='1') then DATA80_in<= x"F" & '0' & WRDS_NUM & x"000000" & rx_phase_status & EV_ID_out(55 downto 12);
    else DATA80_in<=EV_DATA80;

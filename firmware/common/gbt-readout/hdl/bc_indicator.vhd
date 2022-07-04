@@ -77,7 +77,7 @@ begin
 
     if(rising_edge(clock))then
 
-      reset   <= Control_register_I.reset_data_counters;
+      reset   <= Control_register_I.reset_data_counters or FSM_Clocks_I.Reset_dclk;
       bcid_en <= bcen_i;
       bcid_in <= bcid_i;
 

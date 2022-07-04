@@ -61,7 +61,7 @@ architecture Behavioral of DataConverter is
       );
 
   signal board_data                                           : board_data_type;
-  signal header_pcklen, header_pcklen_ff, header_pcklen_latch : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
+  signal header_pcklen, header_pcklen_ff, header_pcklen_latch, header_pcklen_latch_m1 : std_logic_vector(n_pckt_wrds_bitdepth-1 downto 0);
   signal header_orbit                                         : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal header_bc                                            : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal header_word, header_word_latch, data_word            : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
@@ -236,11 +236,12 @@ begin
 
           header_word_latch   <= header_word;
           header_pcklen_latch <= header_pcklen_ff;
+          header_pcklen_latch_m1 <= header_pcklen_ff-1;
           word_counter        <= (others => '0');
 
           sending_event <= (rawfifo_full = '0') and data_enabled_sclk;
 
-          if (rawfifo_full = '1') and data_enabled_sclk and drop_counter < x"ffff" then
+          if (rawfifo_full = '1') and data_enabled_sclk and drop_counter /= x"ffff" then
             drop_counter <= drop_counter + 1;
           end if;
 
@@ -275,7 +276,7 @@ begin
 -- ****************************************************
   header_fifo_din <= header_word_latch;
   header_fifo_we  <= '0' when readout_bypass else
-                    '1' when word_counter = header_pcklen_latch-1 and sending_event else '0';
+                    '1' when word_counter = header_pcklen_latch_m1 and sending_event else '0';
 
   data_fifo_din <= data_word;
   data_fifo_we  <= '0' when readout_bypass else
