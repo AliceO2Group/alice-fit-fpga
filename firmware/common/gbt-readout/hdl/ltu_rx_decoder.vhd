@@ -53,6 +53,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
+  signal cru_is_trg_bcidsync, cru_is_trg_bcidsync_ff        : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun                     : std_logic;
@@ -104,6 +105,7 @@ architecture Behavioral of ltu_rx_decoder is
   -- attribute MARK_DEBUG of cru_bc      : signal is "true";
   -- attribute MARK_DEBUG of cru_trigger : signal is "true";
   -- attribute MARK_DEBUG of cru_is_trg  : signal is "true";
+  -- attribute MARK_DEBUG of cru_is_trg_bcidsync  : signal is "true";
 
 
 
@@ -143,11 +145,13 @@ begin
       cru_bc      <= RX_Data_I(43 downto 32);
       cru_trigger <= RX_Data_I(31 downto 0);
       cru_is_trg  <= (x"FFFF9FFF" and RX_Data_I(31 downto 0)) /= TRG_const_void;
+      cru_is_trg_bcidsync  <= (x"00000017" and RX_Data_I(31 downto 0)) /= TRG_const_void; -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
 
       cru_orbit_ff   <= cru_orbit;
       cru_bc_ff      <= cru_bc;
       cru_trigger_ff <= cru_trigger;
       cru_is_trg_ff  <= cru_is_trg;
+      cru_is_trg_bcidsync_ff  <= cru_is_trg_bcidsync;
 
       readout_mode_ff   <= readout_mode;
       orbc_sync_mode_ff <= orbc_sync_mode;  -- ila triggering
@@ -192,7 +196,7 @@ begin
               sync_bc        <= cru_bc;
               orbc_sync_mode <= mode_SYNC;
             -- check syncronisation each trigger
-            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
+            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
               orbc_sync_mode                                      <= mode_LOST;
               if readout_mode /= mode_IDLE then bcsync_lost_inrun <= '1'; end if;
             -- incrementing sync counter then sync
