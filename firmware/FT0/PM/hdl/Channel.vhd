@@ -47,6 +47,7 @@ entity Channel is
            gate_time_low :  in STD_LOGIC_VECTOR (7 downto 0);
            gate_time_high :  in STD_LOGIC_VECTOR (7 downto 0);
            Ampl_sat :   in STD_LOGIC_VECTOR (11 downto 0);
+           ampl_low :   in STD_LOGIC_VECTOR (3 downto 0);
            CH0_zero : out STD_LOGIC_VECTOR (11 downto 0);
            CH1_zero : out STD_LOGIC_VECTOR (11 downto 0);
            CH_trig_outt : out STD_LOGIC;
@@ -389,7 +390,7 @@ Ampl_corr<= std_logic_vector(signed(CH_BS) * signed('0'& R_corr));
 
 Ampl_fin<= Ampl_corr(23 downto 11) when (signed(Ampl_corr(25 downto 23))<1) else '0' & x"FFF";
 
-Ampl_OK<='1' when (signed(C_FOUT(21 downto 9)) < signed('0' & Ampl_sat)) else '0';
+Ampl_OK<='1' when (C_FOUT(21)='0') and (C_FOUT(20 downto 9) <= Ampl_sat) and (C_FOUT(20 downto 9) > x"00" & Ampl_low) else '0';
  
 
 end RTL;

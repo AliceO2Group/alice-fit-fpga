@@ -217,7 +217,7 @@ signal lpatt_cnt, Nchan_A, Nchan_C, Nchan_C0, Nchan_C1, Nchan_C2 : STD_LOGIC_VEC
 signal lpatt_sreg : STD_LOGIC_VECTOR (63 downto 0);
 signal lfreq_cnt : STD_LOGIC_VECTOR (23 downto 0);
 signal BC_cou : STD_LOGIC_VECTOR(11 downto 0);
-signal ldr : STD_LOGIC_VECTOR(3 downto 0);
+signal ldr, ldrm : STD_LOGIC_VECTOR(3 downto 0);
 signal Tmode : STD_LOGIC_VECTOR(9 downto 0);
 signal Rd_word, FIFO_in : STD_LOGIC_VECTOR(159 downto 0);
 signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_rdy, RST_req : STD_LOGIC;
@@ -1105,6 +1105,7 @@ a_t<=not a_t; l_on1<=l_on0; l_on0 <= l_st1; l_st1 <= l_st0; l_st0 <= laser_t;
 end if;
 end process;
 
+ldrm<=ldr-1;
 
 process (LCLK160)
 begin
@@ -1123,7 +1124,7 @@ a0_t<=an_t; l_tg1<=l_tg;
  if (a0_t XOR an_t)='1' then l_cnt<="10"; else l_cnt<=l_cnt+1; end if;
 
  if (ldr(1 downto 0)=l_cnt) then
-    case ldr(3 downto 2) is
+    case ldrm(3 downto 2) is
     when "00" => l_on<= l_st1;
     when "01" => l_on<= l_on0;
     when "10" => l_on<= l_on1;
