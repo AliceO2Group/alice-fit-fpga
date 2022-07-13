@@ -101,6 +101,9 @@ begin
       RxDataClk_I      => RX_CLK,
       GBT_RxFrameClk_O => GBT_RxFrameClk,
 
+	  IPbusClk_I          => IPBUS_CLK,
+	  err_report_fifo_rden_i => '1',
+
       Board_data_I       => board_data_test_const,
       Control_register_I => testbench_CONTROL_REG_dynamic,
 
@@ -188,6 +191,21 @@ begin
   end process;
 -- =====================================================
 
+
+
+-- IPbus clock =========================================        
+  Sys3_process : process
+
+  begin
+
+    IPBUS_CLK <= '0';
+    wait for ipbus_clock_period/2;
+
+    IPBUS_CLK <= '1';
+    wait for ipbus_clock_period/2;
+
+  end process;
+-- =====================================================
 
 
 

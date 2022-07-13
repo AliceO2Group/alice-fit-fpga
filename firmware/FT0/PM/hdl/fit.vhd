@@ -447,6 +447,7 @@ component TDCCHAN is
    signal    ipbus_status_reg: stat_reg_t;
 
    signal    gbt_global_status : std_logic_vector(3 downto 0);
+   signal err_report_fifo_rden : std_logic;
 
    component FIT_GBT_project is
        generic (
@@ -461,6 +462,9 @@ component TDCCHAN is
            RxDataClk_I            : in STD_LOGIC; -- 40MHz data clock in RX domain
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
            FSM_Clocks_O        : out rdclocks_t;
+
+	       IPbusClk_I       : in  std_logic;   -- IPbus clock for error fifo read
+      	   err_report_fifo_rden_i : in std_logic; -- IPbus error report fifo read enable
            
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
@@ -928,6 +932,9 @@ FitGbtPrg: FIT_GBT_project
 		RxDataClk_I			=> RX_CLK, -- 40MHz data clock in RX domain (loop back)
 		GBT_RxFrameClk_O	=> RX_CLK,
 		FSM_Clocks_O        => open,
+		
+		IPbusClk_I          => TX_CLK,
+		err_report_fifo_rden_i => err_report_fifo_rden,
 		
 		Board_data_I		=> PM_data_toreadout,
 		Control_register_I	=> readout_control,
@@ -1662,8 +1669,12 @@ buf_lock2<=buf_lock1; buf_lock1<=buf_lock0; buf_lock0<=buf_lock;
 hbuf_req <= (not hspibuf_wr2) and hspibuf_wr1 and sbuf_wrena; 
 
 if (rd_hspi32='1') then 
-   if (rdo_sel='1') then hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
-       else if (flsh_sel='1') then hspib_32 <=hspid_r32; end if;
+   
+   if (rdo_sel='1') then
+     hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
+	 if (to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#) = 10 then err_report_fifo_rden <= '1'; else err_report_fifo_rden <= '0'; end if;
+   else if (flsh_sel='1') then hspib_32 <=hspid_r32; end if;
+   
    end if;
 end if;   
    

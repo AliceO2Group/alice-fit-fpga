@@ -29,6 +29,7 @@ entity ltu_rx_decoder is
 
     ORBC_ID_from_CRU_O           : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID from CRU
     ORBC_ID_from_CRU_corrected_O : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID to PM/TCM
+    ORBC_ID_from_CRU_sync_O      : out std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- EVENT ID sync compared for err report
     Trigger_O                    : out std_logic_vector(Trigger_bitdepth-1 downto 0);
     trg_match_resp_mask_o        : out std_logic;
     laser_start_o                : out std_logic;
@@ -135,6 +136,7 @@ begin
       apply_bc_delay_ff <= apply_bc_delay;
 
       ORBC_ID_from_CRU_O  <= sync_orbit & sync_bc;
+	  ORBC_ID_from_CRU_sync_O <= cru_orbit_ff & cru_bc_ff;
       BCIDsync_Mode_O     <= orbc_sync_mode;
       Readout_Mode_O      <= readout_mode;
       CRU_Readout_Mode_O  <= cru_readout_mode;

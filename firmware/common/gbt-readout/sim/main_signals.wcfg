@@ -13,18 +13,17 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="13,845.001 ns"></ZoomEndTime>
-      <Cursor1Time time="275.019 ns"></Cursor1Time>
+      <ZoomStartTime time="540,075.850 ns"></ZoomStartTime>
+      <ZoomEndTime time="545,621.851 ns"></ZoomEndTime>
+      <Cursor1Time time="540,615.850 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="216"></NameColumnWidth>
-      <ValueColumnWidth column_width="101"></ValueColumnWidth>
+      <ValueColumnWidth column_width="97"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
+   <WVObjectSize size="13" />
    <wave_markers>
-      <marker label="" time="763950237" />
-      <marker label="" time="10962511186" />
+      <marker label="" time="541115850" />
    </wave_markers>
    <wvobject type="group" fp_name="group395">
       <obj_property name="label">TESTBENCH</obj_property>
@@ -62,6 +61,79 @@
       <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
          <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
+         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Data_Gen">
+            <obj_property name="ElementShortName">.Data_Gen</obj_property>
+            <obj_property name="ObjectShortName">.Data_Gen</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen">
+            <obj_property name="ElementShortName">.Trigger_Gen</obj_property>
+            <obj_property name="ObjectShortName">.Trigger_Gen</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.RDH_data">
+            <obj_property name="ElementShortName">.RDH_data</obj_property>
+            <obj_property name="ObjectShortName">.RDH_data</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.readout_bypass">
+            <obj_property name="ElementShortName">.readout_bypass</obj_property>
+            <obj_property name="ObjectShortName">.readout_bypass</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_response">
+            <obj_property name="ElementShortName">.is_hb_response</obj_property>
+            <obj_property name="ObjectShortName">.is_hb_response</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_reject">
+            <obj_property name="ElementShortName">.is_hb_reject</obj_property>
+            <obj_property name="ObjectShortName">.is_hb_reject</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.rxclk_sync_shift">
+            <obj_property name="ElementShortName">.rxclk_sync_shift</obj_property>
+            <obj_property name="ObjectShortName">.rxclk_sync_shift</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.force_idle">
+            <obj_property name="ElementShortName">.force_idle</obj_property>
+            <obj_property name="ObjectShortName">.force_idle</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.trg_data_select">
+            <obj_property name="ElementShortName">.trg_data_select[31:0]</obj_property>
+            <obj_property name="ObjectShortName">.trg_data_select[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.BCID_offset">
+            <obj_property name="ElementShortName">.BCID_offset[11:0]</obj_property>
+            <obj_property name="ObjectShortName">.BCID_offset[11:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_orbc_sync">
+            <obj_property name="ElementShortName">.reset_orbc_sync</obj_property>
+            <obj_property name="ObjectShortName">.reset_orbc_sync</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_data_counters">
+            <obj_property name="ElementShortName">.reset_data_counters</obj_property>
+            <obj_property name="ObjectShortName">.reset_data_counters</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gensync">
+            <obj_property name="ElementShortName">.reset_gensync</obj_property>
+            <obj_property name="ObjectShortName">.reset_gensync</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt_rxerror">
+            <obj_property name="ElementShortName">.reset_gbt_rxerror</obj_property>
+            <obj_property name="ObjectShortName">.reset_gbt_rxerror</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_rxph_error">
+            <obj_property name="ElementShortName">.reset_rxph_error</obj_property>
+            <obj_property name="ObjectShortName">.reset_rxph_error</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_readout">
+            <obj_property name="ElementShortName">.reset_readout</obj_property>
+            <obj_property name="ObjectShortName">.reset_readout</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt">
+            <obj_property name="ElementShortName">.reset_gbt</obj_property>
+            <obj_property name="ObjectShortName">.reset_gbt</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_err_report">
+            <obj_property name="ElementShortName">.reset_err_report</obj_property>
+            <obj_property name="ObjectShortName">.reset_err_report</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/GBT_status">
          <obj_property name="ElementShortName">GBT_status</obj_property>
@@ -76,7 +148,6 @@
    <wvobject type="group" fp_name="group235">
       <obj_property name="label">ClkSync</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/RxData_ClkSync_comp/FSM_Clocks_I.System_Counter">
          <obj_property name="ElementShortName">.System_Counter[3:0]</obj_property>
          <obj_property name="ObjectShortName">.System_Counter[3:0]</obj_property>
@@ -182,6 +253,18 @@
          <obj_property name="CustomSignalColor">#FF00FF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_jump">
+         <obj_property name="ElementShortName">orbit_jump</obj_property>
+         <obj_property name="ObjectShortName">orbit_jump</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_jump_ff">
+         <obj_property name="ElementShortName">orbit_jump_ff</obj_property>
+         <obj_property name="ObjectShortName">orbit_jump_ff</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_jump_active">
+         <obj_property name="ElementShortName">orbit_jump_active</obj_property>
+         <obj_property name="ObjectShortName">orbit_jump_active</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_gen">
          <obj_property name="ElementShortName">orbit_gen[31:0]</obj_property>
          <obj_property name="ObjectShortName">orbit_gen[31:0]</obj_property>
@@ -194,6 +277,10 @@
          <obj_property name="CustomSignalColor">#FFD700</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/orbit_gen_mod">
+         <obj_property name="ElementShortName">orbit_gen_mod[31:0]</obj_property>
+         <obj_property name="ObjectShortName">orbit_gen_mod[31:0]</obj_property>
       </wvobject>
       <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/cru_ltu_emu_comp/run_command">
          <obj_property name="ElementShortName">run_command</obj_property>
@@ -1165,12 +1252,86 @@
          <obj_property name="ObjectShortName">Data_O[79:0]</obj_property>
       </wvobject>
    </wvobject>
+   <wvobject type="group" fp_name="group316">
+      <obj_property name="label">ERROR_REPORT</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/RX_Data_I">
+         <obj_property name="ElementShortName">RX_Data_I[79:0]</obj_property>
+         <obj_property name="ObjectShortName">RX_Data_I[79:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/RX_IsData_I">
+         <obj_property name="ElementShortName">RX_IsData_I</obj_property>
+         <obj_property name="ObjectShortName">RX_IsData_I</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/gbt_data_shreg">
+         <obj_property name="ElementShortName">gbt_data_shreg[0:5][79:0]</obj_property>
+         <obj_property name="ObjectShortName">gbt_data_shreg[0:5][79:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/rxphase_shreg">
+         <obj_property name="ElementShortName">rxphase_shreg[63:0]</obj_property>
+         <obj_property name="ObjectShortName">rxphase_shreg[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/Status_register_I.ORBIT_from_CRU">
+         <obj_property name="ElementShortName">.ORBIT_from_CRU[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.ORBIT_from_CRU[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/Status_register_I.BCID_from_CRU">
+         <obj_property name="ElementShortName">.BCID_from_CRU[11:0]</obj_property>
+         <obj_property name="ObjectShortName">.BCID_from_CRU[11:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/Status_register_I.ORBC_from_CRU_sync">
+         <obj_property name="ElementShortName">.ORBC_from_CRU_sync[43:0]</obj_property>
+         <obj_property name="ObjectShortName">.ORBC_from_CRU_sync[43:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/err_rep">
+         <obj_property name="ElementShortName">err_rep[639:0]</obj_property>
+         <obj_property name="ObjectShortName">err_rep[639:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/err_trigger">
+         <obj_property name="ElementShortName">err_trigger</obj_property>
+         <obj_property name="ObjectShortName">err_trigger</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/report_fifo_o">
+         <obj_property name="ElementShortName">report_fifo_o[31:0]</obj_property>
+         <obj_property name="ObjectShortName">report_fifo_o[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/err_report_fifo_rden_i">
+         <obj_property name="ElementShortName">err_report_fifo_rden_i</obj_property>
+         <obj_property name="ObjectShortName">err_report_fifo_rden_i</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/error_rep_fifo_cmp/is_empty_wrclk">
+         <obj_property name="ElementShortName">is_empty_wrclk</obj_property>
+         <obj_property name="ObjectShortName">is_empty_wrclk</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/error_rep_fifo_cmp/is_empty_rdclk">
+         <obj_property name="ElementShortName">is_empty_rdclk</obj_property>
+         <obj_property name="ObjectShortName">is_empty_rdclk</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/error_rep_fifo_cmp/rd_cnt">
+         <obj_property name="ElementShortName">rd_cnt</obj_property>
+         <obj_property name="ObjectShortName">rd_cnt</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/error_rep_fifo_cmp/end_reached_rdclk">
+         <obj_property name="ElementShortName">end_reached_rdclk</obj_property>
+         <obj_property name="ObjectShortName">end_reached_rdclk</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/error_rep_fifo_cmp/end_reached_wrclk">
+         <obj_property name="ElementShortName">end_reached_wrclk</obj_property>
+         <obj_property name="ObjectShortName">end_reached_wrclk</obj_property>
+      </wvobject>
+   </wvobject>
    <wvobject type="group" fp_name="group455">
       <obj_property name="label">OUTPUTS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <wvobject type="array" fp_name="/testbench_readout/GBT_status_reg">
-         <obj_property name="ElementShortName">GBT_status_reg[0:15][31:0]</obj_property>
-         <obj_property name="ObjectShortName">GBT_status_reg[0:15][31:0]</obj_property>
+         <obj_property name="ElementShortName">GBT_status_reg[0:16][31:0]</obj_property>
+         <obj_property name="ObjectShortName">GBT_status_reg[0:16][31:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/GBT_status">
          <obj_property name="ElementShortName">GBT_status</obj_property>

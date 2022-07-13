@@ -49,6 +49,7 @@ class control_reg:
         self.data_bunch_pattern = 0
         self.data_bunch_freq = 0
         self.data_bc_start = 0
+        self.data_orbit_jump = 0
 
         self.trg_gen = gen_mode.no_gen
         self.trg_rd_command = readout_cmd.idle
@@ -64,8 +65,10 @@ class control_reg:
         self.is_hb_reject = 0
         self.trg_data_select = 0
         self.force_idle = 0
+        self.rxclk_sync_shift = 0
 
         self.bcid_offset = 0
+
 
         self.reset_orbc_sync = 0
         self.reset_data_counters = 0
@@ -129,10 +132,10 @@ class control_reg:
         reset_field = bitstring.pack('uint:1=0, 7*uint:1', self.reset_readout, self.reset_rxph_error, self.reset_gbt,
                                      self.reset_gbt_rxerror,
                                      self.reset_gensync, self.reset_data_counters, self.reset_orbc_sync)
-        rd_mode = bitstring.pack('4*uint:1', self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)
+        rd_mode = bitstring.pack('6*uint:1', self.data_orbit_jump, self.rxclk_sync_shift, self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)
 
         bitarray.append(
-            bitstring.pack('uint:8=0, 2*uint:4,  uint:8, 2*uint:4', rd_mode.uint, self.trg_rd_command.value,
+            bitstring.pack('uint:6=0, uint:6, uint:4,  uint:8, 2*uint:4', rd_mode.uint, self.trg_rd_command.value,
                            reset_field.uint, self.trg_gen.value, self.data_gen.value))
         bitarray.append(bitstring.pack('uint:32', self.data_trg_respond_mask))
         bitarray.append(bitstring.pack('uint:32', self.data_bunch_pattern))
@@ -165,6 +168,9 @@ class control_reg:
         self.is_hb_response = bitarray[0][-21:-20].uint
         self.rd_bypass = bitarray[0][-22:-21].uint
         self.force_idle = bitarray[0][-23:-22].uint
+        self.is_hb_reject = bitarray[0][-24:-23].uint
+        self.rxclk_sync_shift = bitarray[0][-25:-24].uint
+        self.data_orbit_jump = bitarray[0][-26:-25].uint
 
         self.data_trg_respond_mask = bitarray[1][:].uint
         self.data_bunch_pattern = bitarray[2][:].uint
