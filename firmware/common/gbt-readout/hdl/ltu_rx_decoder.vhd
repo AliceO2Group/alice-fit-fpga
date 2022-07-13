@@ -49,6 +49,7 @@ architecture Behavioral of ltu_rx_decoder is
 
   signal post_reset_cnt : integer range 0 to 255 := 0;
 
+  signal rx_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal cru_orbit, cru_orbit_ff, sync_orbit, sync_orbit_corr : std_logic_vector(Orbit_id_bitdepth - 1 downto 0);
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
   signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
@@ -118,6 +119,8 @@ begin
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
   bc_max_int   <= to_integer(unsigned(LHC_BCID_max));
+  
+  rx_data <= RX_Data_I when RX_IsData_I = '1' else (others => '0');
 
 
 
@@ -141,11 +144,11 @@ begin
       apply_bc_delay_o    <= apply_bc_delay_ff;
       bcsync_lost_inrun_o <= bcsync_lost_inrun;
 
-      cru_orbit   <= RX_Data_I(79 downto 48);
-      cru_bc      <= RX_Data_I(43 downto 32);
-      cru_trigger <= RX_Data_I(31 downto 0);
-      cru_is_trg  <= (x"FFFF9FFF" and RX_Data_I(31 downto 0)) /= TRG_const_void;
-      cru_is_trg_bcidsync  <= (x"00000017" and RX_Data_I(31 downto 0)) /= TRG_const_void; -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
+      cru_orbit   <= rx_data(79 downto 48);
+      cru_bc      <= rx_data(43 downto 32);
+      cru_trigger <= rx_data(31 downto 0);
+      cru_is_trg  <= (x"FFFF9FFF" and rx_data(31 downto 0)) /= TRG_const_void;
+      cru_is_trg_bcidsync  <= (x"00000017" and rx_data(31 downto 0)) /= TRG_const_void; -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
 
       cru_orbit_ff   <= cru_orbit;
       cru_bc_ff      <= cru_bc;
