@@ -48,6 +48,14 @@ architecture Behavioral of error_report is
   -- trigger for error
   signal err_trigger                             : std_logic;
   signal bcsync_lost_inrun, bcsync_lost_inrun_ff : std_logic;
+  
+  attribute mark_debug              : string;
+  attribute mark_debug of gbt_data_shreg     : signal is "true";
+  attribute mark_debug of rxphase_shreg     : signal is "true";
+  attribute mark_debug of err_rep     : signal is "true";
+  attribute mark_debug of report_fifo_do     : signal is "true";
+  attribute mark_debug of err_trigger     : signal is "true";
+
 
 begin
 
@@ -63,10 +71,6 @@ begin
 -- mapping rx_phase shift register to error report bus [543 : 480]
   err_rep(543 downto 480) <= rxphase_shreg;
 
--- mapping bcid sync to error report bus BC [575 : 544] ORBIT [607:576], [639:608]
-  err_rep(575 downto 544) <= x"0"&Status_register_I.BCID_from_CRU & x"0"&Status_register_I.ORBC_from_CRU_sync(11 downto 0);
-  err_rep(607 downto 576) <= Status_register_I.ORBIT_from_CRU;
-  err_rep(639 downto 608) <= Status_register_I.ORBC_from_CRU_sync(32+12-1 downto 12);
 
 -- triggering bcid sync lost error snapshot
   err_trigger <= '1' when bcsync_lost_inrun = '1' and bcsync_lost_inrun_ff = '0' else '0';
@@ -100,6 +104,12 @@ begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
 
       bcsync_lost_inrun_ff <= bcsync_lost_inrun;
+	  
+	  -- mapping bcid sync to error report bus BC [575 : 544] ORBIT [607:576], [639:608] (delayed)
+      err_rep(575 downto 544) <= x"0"&Status_register_I.BCID_from_CRU & x"0"&Status_register_I.ORBC_from_CRU_sync(11 downto 0);
+      err_rep(607 downto 576) <= Status_register_I.ORBIT_from_CRU;
+      err_rep(639 downto 608) <= Status_register_I.ORBC_from_CRU_sync(32+12-1 downto 12);
+
 
       if (Control_register_I.reset_err_report = '1') then
 
@@ -111,11 +121,17 @@ begin
 
         -- shift registers for error reporting
         if RX_IsData_I = '1' then
+		  -- for some reason it doesn't work:
+          -- gbt_data_shreg(5 to 1) <= gbt_data_shreg(4 to 0);
+          -- gbt_data_shreg(0)      <= RX_Data_I;
           gbt_data_shreg(0)      <= RX_Data_I;
-          gbt_data_shreg(5 to 1) <= gbt_data_shreg(4 to 0);
+          gbt_data_shreg(1)      <= gbt_data_shreg(0);
+          gbt_data_shreg(2)      <= gbt_data_shreg(1);
+          gbt_data_shreg(3)      <= gbt_data_shreg(2);
+          gbt_data_shreg(4)      <= gbt_data_shreg(3);
+          gbt_data_shreg(5)      <= gbt_data_shreg(4);
         end if;
-        rxphase_shreg(3 downto 0)  <= '0'&Status_register_I.rx_phase;
-        rxphase_shreg(63 downto 4) <= rxphase_shreg(59 downto 0);
+        rxphase_shreg(63 downto 0) <= rxphase_shreg(59 downto 0) & '0'&Status_register_I.rx_phase;
 
       end if;
 

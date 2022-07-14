@@ -617,6 +617,16 @@ component hyst
   );
 end component;       
 
+
+
+  attribute mark_debug              : string;
+  attribute mark_debug of rd_hspi32     : signal is "true";
+  attribute mark_debug of hspib_32     : signal is "true";
+  attribute mark_debug of hspi_addr     : signal is "true";
+  attribute mark_debug of err_report_fifo_rden     : signal is "true";
+
+
+
 begin
 
 TCLK1: IBUFDS
@@ -1666,13 +1676,14 @@ spibuf_rd2<=spibuf_rd1; spibuf_rd1<=spibuf_rd0; spibuf_rd0<=spibuf_rd; hspibuf_r
 
 buf_lock2<=buf_lock1; buf_lock1<=buf_lock0; buf_lock0<=buf_lock;
 
-hbuf_req <= (not hspibuf_wr2) and hspibuf_wr1 and sbuf_wrena; 
-
+hbuf_req <= (not hspibuf_wr2) and hspibuf_wr1 and sbuf_wrena;
+ 
+err_report_fifo_rden <= '0';
 if (rd_hspi32='1') then 
    
    if (rdo_sel='1') then
      hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
-	 if (to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#) = 10 then err_report_fifo_rden <= '1'; else err_report_fifo_rden <= '0'; end if;
+	 if (to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#) = 10 then err_report_fifo_rden <= '1';  end if;
    else if (flsh_sel='1') then hspib_32 <=hspid_r32; end if;
    
    end if;
