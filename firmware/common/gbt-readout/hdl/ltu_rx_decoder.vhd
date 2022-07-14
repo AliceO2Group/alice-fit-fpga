@@ -52,9 +52,9 @@ architecture Behavioral of ltu_rx_decoder is
   signal rx_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal cru_orbit, cru_orbit_ff, sync_orbit, sync_orbit_corr : std_logic_vector(Orbit_id_bitdepth - 1 downto 0);
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal cru_trigger, cru_trigger_ff, cru_trigger_source      : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
-  signal cru_is_trg_bcidsync, cru_is_trg_bcidsync_ff        : boolean;
+  signal cru_is_trg_bcidsync, cru_is_trg_bcidsync_ff          : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun                     : std_logic;
@@ -147,6 +147,7 @@ begin
       cru_orbit   <= rx_data(79 downto 48);
       cru_bc      <= rx_data(43 downto 32);
       cru_trigger <= rx_data(31 downto 0);
+	  cru_trigger_source <= RX_Data_I(31 downto 0);
       cru_is_trg  <= (x"FFFF9FFF" and rx_data(31 downto 0)) /= TRG_const_void;
       cru_is_trg_bcidsync  <= (x"00000017" and rx_data(31 downto 0)) /= TRG_const_void; -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
 
@@ -194,7 +195,7 @@ begin
             -- wait time after fsm reset to skip trash
             if post_reset_cnt /= 255 then orbc_sync_mode <= mode_STR;
             -- syncronize orbc from cru to detector with first trigger
-            elsif orbc_sync_mode = mode_STR and cru_is_trg then
+            elsif orbc_sync_mode = mode_STR and cru_is_trg_bcidsync then
               sync_orbit     <= cru_orbit;
               sync_bc        <= cru_bc;
               orbc_sync_mode <= mode_SYNC;
@@ -284,8 +285,8 @@ begin
       is_SOT     <= ((cru_trigger and TRG_const_SOT) /= TRG_const_void);
       is_EOC     <= ((cru_trigger_ff and TRG_const_EOC) /= TRG_const_void);
       is_EOT     <= ((cru_trigger_ff and TRG_const_EOT) /= TRG_const_void);
-      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void);
-      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void);
+      is_cru_run <= ((cru_trigger_source and TRG_const_RS) /= TRG_const_void);
+      is_cru_cnt <= ((cru_trigger_source and TRG_const_RT) /= TRG_const_void);
 
 
     end Behavioral;
