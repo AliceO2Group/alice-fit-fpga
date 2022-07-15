@@ -391,6 +391,9 @@ end component;
            RxDataClk_I            : in STD_LOGIC; -- 40MHz data clock in RX domain
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
            
+	       IPbusClk_I       : in  std_logic;   -- IPbus clock for error fifo read
+      	   err_report_fifo_rden_i : in std_logic; -- IPbus error report fifo read enable
+		   
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
            
@@ -754,6 +757,10 @@ FitGbtPrg: FIT_GBT_project
 		MgtRefClk_I			=>	MGTCLK,
 		RxDataClk_I			=> RX_CLK, -- 40MHz data clock in RX domain (loop back)
 		GBT_RxFrameClk_O	=> RX_CLK,
+		
+		-- not connected
+		IPbusClk_I          => '0',
+		err_report_fifo_rden_i => '0',
 		
 		Board_data_I		=> TCM_data_toreadout,
 		Control_register_I	=> readout_control,

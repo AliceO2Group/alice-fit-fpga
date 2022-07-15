@@ -571,6 +571,10 @@ begin
       GBT_RxFrameClk_O => GBT_RxFrameClk,
       FSM_Clocks_O     => fsm_clocks,
 
+	  -- not connected
+	  IPbusClk_I          => '0',
+	  err_report_fifo_rden_i => '0',
+
       Board_data_I       => board_data_test_const,
       Control_register_I => readout_control,
 

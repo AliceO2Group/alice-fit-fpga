@@ -43,6 +43,8 @@ class status_reg:
         self.gbt_counter = 0
         self.event_counter = 0
 
+        self.ipbusrd_err_report = 0x0
+
         self.fsm_error_msg = {1 << 0: '[RDH builder] reading empty fifo',
                               1 << 1: '[Selector] slct fifo is not empty',
                               1 << 2: '[Selector] cntpck fifo is not empty',
@@ -100,13 +102,14 @@ class status_reg:
         self.sel_fifo_max = int(line_regs[4][-8: -4], base=16)
         self.gbt_counter = int(line_regs[5][-8:], base=16)
         self.event_counter = int(line_regs[9][-8:], base=16)
+        self.ipbusrd_err_report = int(line_regs[10][-8:], base=16)
 
-        self.cru_orbit_corr = int(line_regs[10][-8:], base=16)
-        self.cru_bc = int(line_regs[11][-7:-4], base=16)
-        self.cru_bc_corr = int(line_regs[11][-3:], base=16)
-        self.cru_trigger = int(line_regs[12][-3:], base=16)
-        self.data_gen_orbit = int(line_regs[13][-8:], base=16)
-        self.data_gen_bc = int(line_regs[14][-3:], base=16)
-        self.data_gen_size = int(line_regs[14][-5:-4], base=16)
-        self.data_enabled = int(line_regs[14][-7:-6], base=16)
-        self.data_gen_packnum = int(line_regs[15][-8:], base=16)
+        self.cru_orbit_corr = int(line_regs[11][-8:], base=16)
+        self.cru_bc = int(line_regs[12][-7:-4], base=16)
+        self.cru_bc_corr = int(line_regs[12][-3:], base=16)
+        self.cru_trigger = int(line_regs[13][-3:], base=16)
+        self.data_gen_orbit = int(line_regs[14][-8:], base=16)
+        self.data_gen_bc = int(line_regs[15][-3:], base=16)
+        self.data_gen_size = int(line_regs[15][-5:-4], base=16)
+        self.data_enabled = int(line_regs[15][-7:-6], base=16)
+        self.data_gen_packnum = int(line_regs[16][-8:], base=16)

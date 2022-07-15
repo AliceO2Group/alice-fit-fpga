@@ -29,6 +29,9 @@ entity FIT_GBT_project is
     GBT_RxFrameClk_O : out std_logic;   --Rx GBT frame clk 40MHz
     FSM_Clocks_O     : out rdclocks_t;
 
+	IPbusClk_I       : in  std_logic;   -- IPbus clock for error fifo read
+	err_report_fifo_rden_i : in std_logic; -- IPbus error report fifo read enable
+
     Board_data_I       : in board_data_type;    --PM or TCM data @320MHz
     Control_register_I : in readout_control_t;  -- control registers @DataClk
 
@@ -127,7 +130,8 @@ begin
   FSM_Clocks_O          <= FSM_Clocks;
   FSM_Clocks.System_Clk <= SysClk_I;
   FSM_Clocks.Data_Clk   <= DataClk_I;
-  FSM_Clocks.GBT_RX_Clk <= RxDataClk_I;
+  FSM_Clocks.Data_Clk   <= DataClk_I;
+  FSM_Clocks.ipbus_clk <= IPbusClk_I;
 
   -- SFP turned ON
   MGT_TX_dsbl_O <= '0';
@@ -225,6 +229,8 @@ begin
 
       ORBC_ID_from_CRU_O           => ORBC_ID_from_RXdecoder,
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
+	  ORBC_ID_from_CRU_sync_O      => FIT_GBT_STATUS.ORBC_from_CRU_sync,
+	  
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
       trg_match_resp_mask_o        => FIT_GBT_STATUS.trg_match_resp_mask,
       laser_start_o                => FIT_GBT_STATUS.laser_start,
@@ -407,6 +413,22 @@ begin
       gbt_data_counter_o => FIT_GBT_STATUS.gbt_data_cnt
       );
 -- ===========================================================
+
+-- ERRORs REPORT ========================================
+  error_report_comp : entity work.error_report
+    port map(
+      FSM_Clocks_I       => FSM_Clocks,
+
+      Control_register_I => Control_register_I,
+      Status_register_I  => FIT_GBT_STATUS,
+
+      RX_IsData_I => RX_IsData_from_orbcgen,
+      RX_Data_I   => RX_Data_from_orbcgen,
+
+	  err_report_fifo_rden_i => err_report_fifo_rden_i,
+      report_fifo_o => FIT_GBT_STATUS.ipbusrd_err_report
+      );
+-- =====================================================
 
 
 -- =============================================================

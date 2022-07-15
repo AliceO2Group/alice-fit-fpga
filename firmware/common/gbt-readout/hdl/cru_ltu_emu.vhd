@@ -40,7 +40,7 @@ architecture Behavioral of cru_ltu_emu is
   signal hbr_rate, hbr_count : std_logic_vector(3 downto 0);
 
   -- Event ID
-  signal orbit_gen : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
+  signal orbit_gen, orbit_gen_mod : std_logic_vector(Orbit_id_bitdepth-1 downto 0);
   signal bc_gen    : std_logic_vector(BC_id_bitdepth-1 downto 0);
 
   -- fsm signals
@@ -48,6 +48,7 @@ architecture Behavioral of cru_ltu_emu is
   signal bunch_counter                                       : natural range 0 to 65535;
   signal bunch_in_sync                                       : boolean;
   signal send_trgcnt, send_soc, send_eoc, send_sot, send_eot : boolean;
+  signal orbit_jump, orbit_jump_ff, orbit_jump_active : boolean;
 
   signal trggen_cnt, trggen_sox, trggen_hb, trggen_rdstate : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
@@ -67,11 +68,15 @@ begin
               Control_register_I.Trigger_Gen.bc_start - 1;
   hbr_rate <= Control_register_I.Trigger_Gen.hbr_rate;
 
+  orbit_jump <= Control_register_I.Data_Gen.orbit_jump = '1';
+  orbit_gen_mod <= orbit_gen + 1 when orbit_jump_active else orbit_gen;
 
 -- Data ff data clk **********************************
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
+	
+	  orbit_jump_ff <= orbit_jump;
 
       if (FSM_Clocks_I.Reset_dclk = '1') then
 
@@ -83,6 +88,10 @@ begin
         bunch_in_sync <= false;
 
       else
+	    -- orbit jump option for rx_sync_lost debugging in simulation
+		if orbit_jump and not orbit_jump_ff then orbit_jump_active <= true; end if;
+		if orbit_jump_active and bc_gen = x"000" then orbit_jump_active <= false; end if;
+	  
         -- last cycle with EOR trigger is also with RS/RT
         run_state_ff <= run_state;
 
@@ -159,7 +168,7 @@ begin
                     TRG_const_RS or TRG_const_RT when (run_state = continious) or (run_state_ff = continious) else
                     (others => '0');
 
-  rx_data_gen   <= orbit_gen & x"0"&bc_gen & (trggen_hb or trggen_sox or trggen_rdstate or trggen_cnt);
+  rx_data_gen   <= orbit_gen_mod & x"0"&bc_gen & (trggen_hb or trggen_sox or trggen_rdstate or trggen_cnt);
   rx_isdata_gen <= '1' when (trggen_hb or trggen_sox or trggen_cnt) /= TRG_const_void else '0';
 
 end Behavioral;
