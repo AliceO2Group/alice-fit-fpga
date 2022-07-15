@@ -49,12 +49,12 @@ architecture Behavioral of error_report is
   signal err_trigger                             : std_logic;
   signal bcsync_lost_inrun, bcsync_lost_inrun_ff : std_logic;
   
-  attribute mark_debug              : string;
-  attribute mark_debug of gbt_data_shreg     : signal is "true";
-  attribute mark_debug of rxphase_shreg     : signal is "true";
-  attribute mark_debug of err_rep     : signal is "true";
-  attribute mark_debug of report_fifo_do     : signal is "true";
-  attribute mark_debug of err_trigger     : signal is "true";
+  -- attribute mark_debug              : string;
+  -- attribute mark_debug of gbt_data_shreg     : signal is "true";
+  -- attribute mark_debug of rxphase_shreg     : signal is "true";
+  -- attribute mark_debug of err_rep     : signal is "true";
+  -- attribute mark_debug of report_fifo_do     : signal is "true";
+  -- attribute mark_debug of err_trigger     : signal is "true";
 
 
 begin

@@ -619,11 +619,11 @@ end component;
 
 
 
-  attribute mark_debug              : string;
-  attribute mark_debug of rd_hspi32     : signal is "true";
-  attribute mark_debug of hspib_32     : signal is "true";
-  attribute mark_debug of hspi_addr     : signal is "true";
-  attribute mark_debug of err_report_fifo_rden     : signal is "true";
+  -- attribute mark_debug              : string;
+  -- attribute mark_debug of rd_hspi32     : signal is "true";
+  -- attribute mark_debug of hspib_32     : signal is "true";
+  -- attribute mark_debug of hspi_addr     : signal is "true";
+  -- attribute mark_debug of err_report_fifo_rden     : signal is "true";
 
 
 

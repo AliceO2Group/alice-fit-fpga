@@ -78,8 +78,8 @@ architecture Behavioral of ltu_rx_decoder is
 
 
 
-   attribute mark_debug                      : string;
-   attribute MARK_DEBUG of orbc_sync_mode    : signal is "true";
+   -- attribute mark_debug                      : string;
+   -- attribute MARK_DEBUG of orbc_sync_mode    : signal is "true";
   -- attribute MARK_DEBUG of orbc_sync_mode_ff : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
   -- attribute MARK_DEBUG of post_reset_cnt    : signal is "true";
@@ -108,11 +108,11 @@ architecture Behavioral of ltu_rx_decoder is
   -- attribute MARK_DEBUG of cru_is_trg  : signal is "true";
   -- attribute MARK_DEBUG of cru_is_trg_bcidsync  : signal is "true";
 
-   attribute MARK_DEBUG of sync_orbit  : signal is "true";
-   attribute MARK_DEBUG of sync_bc  : signal is "true";
-   attribute MARK_DEBUG of cru_orbit_ff  : signal is "true";
-   attribute MARK_DEBUG of cru_bc_ff  : signal is "true";
-   attribute MARK_DEBUG of cru_is_trg_bcidsync_ff  : signal is "true";
+   -- attribute MARK_DEBUG of sync_orbit  : signal is "true";
+   -- attribute MARK_DEBUG of sync_bc  : signal is "true";
+   -- attribute MARK_DEBUG of cru_orbit_ff  : signal is "true";
+   -- attribute MARK_DEBUG of cru_bc_ff  : signal is "true";
+   -- attribute MARK_DEBUG of cru_is_trg_bcidsync_ff  : signal is "true";
 
 
 begin

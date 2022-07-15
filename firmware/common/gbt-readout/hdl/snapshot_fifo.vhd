@@ -42,14 +42,14 @@ architecture Behavioral of snapshot_fifo is
   signal end_reached_rdclk, end_reached_wrclk : boolean;
   signal rd_cnt                               : integer range 0 to n32_size-1 := 0;
 
-  attribute mark_debug              : string;
-  attribute mark_debug of ireg_wrclk     : signal is "true";
-  attribute mark_debug of ireg_rdclk     : signal is "true";
-  attribute mark_debug of is_empty_wrclk     : signal is "true";
-  attribute mark_debug of is_empty_rdclk     : signal is "true";
-  attribute mark_debug of end_reached_rdclk     : signal is "true";
-  attribute mark_debug of end_reached_wrclk     : signal is "true";
-  attribute mark_debug of rd_cnt     : signal is "true";
+  -- attribute mark_debug              : string;
+  -- attribute mark_debug of ireg_wrclk     : signal is "true";
+  -- attribute mark_debug of ireg_rdclk     : signal is "true";
+  -- attribute mark_debug of is_empty_wrclk     : signal is "true";
+  -- attribute mark_debug of is_empty_rdclk     : signal is "true";
+  -- attribute mark_debug of end_reached_rdclk     : signal is "true";
+  -- attribute mark_debug of end_reached_wrclk     : signal is "true";
+  -- attribute mark_debug of rd_cnt     : signal is "true";
 
 
 begin
