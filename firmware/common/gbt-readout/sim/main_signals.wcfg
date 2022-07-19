@@ -13,17 +13,17 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="540,213.874 ns"></ZoomStartTime>
-      <ZoomEndTime time="545,175.875 ns"></ZoomEndTime>
-      <Cursor1Time time="541,115.850 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
+      <ZoomEndTime time="31.920000001 ms"></ZoomEndTime>
+      <Cursor1Time time="0.719208842 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="217"></NameColumnWidth>
-      <ValueColumnWidth column_width="128"></ValueColumnWidth>
+      <NameColumnWidth column_width="212"></NameColumnWidth>
+      <ValueColumnWidth column_width="138"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="13" />
    <wave_markers>
-      <marker label="" time="541115850" />
+      <marker label="" time="719183850" />
    </wave_markers>
    <wvobject type="group" fp_name="group395">
       <obj_property name="label">TESTBENCH</obj_property>
@@ -61,151 +61,7 @@
       <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic">
          <obj_property name="ElementShortName">testbench_CONTROL_REG_dynamic</obj_property>
          <obj_property name="ObjectShortName">testbench_CONTROL_REG_dynamic</obj_property>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Data_Gen">
-            <obj_property name="ElementShortName">.Data_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Data_Gen</obj_property>
-            <obj_property name="isExpanded"></obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen">
-            <obj_property name="ElementShortName">.Trigger_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Trigger_Gen</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.RDH_data">
-            <obj_property name="ElementShortName">.RDH_data</obj_property>
-            <obj_property name="ObjectShortName">.RDH_data</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.readout_bypass">
-            <obj_property name="ElementShortName">.readout_bypass</obj_property>
-            <obj_property name="ObjectShortName">.readout_bypass</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_response">
-            <obj_property name="ElementShortName">.is_hb_response</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_response</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_reject">
-            <obj_property name="ElementShortName">.is_hb_reject</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_reject</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.rxclk_sync_shift">
-            <obj_property name="ElementShortName">.rxclk_sync_shift</obj_property>
-            <obj_property name="ObjectShortName">.rxclk_sync_shift</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.force_idle">
-            <obj_property name="ElementShortName">.force_idle</obj_property>
-            <obj_property name="ObjectShortName">.force_idle</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.trg_data_select">
-            <obj_property name="ElementShortName">.trg_data_select[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.trg_data_select[31:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.BCID_offset">
-            <obj_property name="ElementShortName">.BCID_offset[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.BCID_offset[11:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_orbc_sync">
-            <obj_property name="ElementShortName">.reset_orbc_sync</obj_property>
-            <obj_property name="ObjectShortName">.reset_orbc_sync</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_data_counters">
-            <obj_property name="ElementShortName">.reset_data_counters</obj_property>
-            <obj_property name="ObjectShortName">.reset_data_counters</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gensync">
-            <obj_property name="ElementShortName">.reset_gensync</obj_property>
-            <obj_property name="ObjectShortName">.reset_gensync</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt_rxerror">
-            <obj_property name="ElementShortName">.reset_gbt_rxerror</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt_rxerror</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_rxph_error">
-            <obj_property name="ElementShortName">.reset_rxph_error</obj_property>
-            <obj_property name="ObjectShortName">.reset_rxph_error</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_readout">
-            <obj_property name="ElementShortName">.reset_readout</obj_property>
-            <obj_property name="ObjectShortName">.reset_readout</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt">
-            <obj_property name="ElementShortName">.reset_gbt</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_err_report">
-            <obj_property name="ElementShortName">.reset_err_report</obj_property>
-            <obj_property name="ObjectShortName">.reset_err_report</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Data_Gen">
-            <obj_property name="ElementShortName">.Data_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Data_Gen</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.Trigger_Gen">
-            <obj_property name="ElementShortName">.Trigger_Gen</obj_property>
-            <obj_property name="ObjectShortName">.Trigger_Gen</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.RDH_data">
-            <obj_property name="ElementShortName">.RDH_data</obj_property>
-            <obj_property name="ObjectShortName">.RDH_data</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.readout_bypass">
-            <obj_property name="ElementShortName">.readout_bypass</obj_property>
-            <obj_property name="ObjectShortName">.readout_bypass</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_response">
-            <obj_property name="ElementShortName">.is_hb_response</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_response</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.is_hb_reject">
-            <obj_property name="ElementShortName">.is_hb_reject</obj_property>
-            <obj_property name="ObjectShortName">.is_hb_reject</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.rxclk_sync_shift">
-            <obj_property name="ElementShortName">.rxclk_sync_shift</obj_property>
-            <obj_property name="ObjectShortName">.rxclk_sync_shift</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.force_idle">
-            <obj_property name="ElementShortName">.force_idle</obj_property>
-            <obj_property name="ObjectShortName">.force_idle</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.trg_data_select">
-            <obj_property name="ElementShortName">.trg_data_select[31:0]</obj_property>
-            <obj_property name="ObjectShortName">.trg_data_select[31:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.BCID_offset">
-            <obj_property name="ElementShortName">.BCID_offset[11:0]</obj_property>
-            <obj_property name="ObjectShortName">.BCID_offset[11:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_orbc_sync">
-            <obj_property name="ElementShortName">.reset_orbc_sync</obj_property>
-            <obj_property name="ObjectShortName">.reset_orbc_sync</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_data_counters">
-            <obj_property name="ElementShortName">.reset_data_counters</obj_property>
-            <obj_property name="ObjectShortName">.reset_data_counters</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gensync">
-            <obj_property name="ElementShortName">.reset_gensync</obj_property>
-            <obj_property name="ObjectShortName">.reset_gensync</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt_rxerror">
-            <obj_property name="ElementShortName">.reset_gbt_rxerror</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt_rxerror</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_rxph_error">
-            <obj_property name="ElementShortName">.reset_rxph_error</obj_property>
-            <obj_property name="ObjectShortName">.reset_rxph_error</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_readout">
-            <obj_property name="ElementShortName">.reset_readout</obj_property>
-            <obj_property name="ObjectShortName">.reset_readout</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_gbt">
-            <obj_property name="ElementShortName">.reset_gbt</obj_property>
-            <obj_property name="ObjectShortName">.reset_gbt</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/testbench_readout/testbench_CONTROL_REG_dynamic.reset_err_report">
-            <obj_property name="ElementShortName">.reset_err_report</obj_property>
-            <obj_property name="ObjectShortName">.reset_err_report</obj_property>
-         </wvobject>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/GBT_status">
          <obj_property name="ElementShortName">GBT_status</obj_property>
@@ -215,7 +71,6 @@
    <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/FSM_Clocks">
       <obj_property name="ElementShortName">FSM_Clocks</obj_property>
       <obj_property name="ObjectShortName">FSM_Clocks</obj_property>
-      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group235">
       <obj_property name="label">ClkSync</obj_property>
@@ -442,6 +297,19 @@
    <wvobject type="group" fp_name="group603">
       <obj_property name="label">RXDECODER</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/RX_Data_I">
+         <obj_property name="ElementShortName">RX_Data_I[79:0]</obj_property>
+         <obj_property name="ObjectShortName">RX_Data_I[79:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/RX_IsData_I">
+         <obj_property name="ElementShortName">RX_IsData_I</obj_property>
+         <obj_property name="ObjectShortName">RX_IsData_I</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/Control_register_I.BCID_offset">
          <obj_property name="ElementShortName">.BCID_offset[11:0]</obj_property>
          <obj_property name="ObjectShortName">.BCID_offset[11:0]</obj_property>
@@ -517,10 +385,40 @@
          <obj_property name="CustomSignalColor">#FFA500</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/cru_readout_mode">
+         <obj_property name="ElementShortName">cru_readout_mode</obj_property>
+         <obj_property name="ObjectShortName">cru_readout_mode</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
       <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/orbc_sync_mode">
          <obj_property name="ElementShortName">orbc_sync_mode</obj_property>
          <obj_property name="ObjectShortName">orbc_sync_mode</obj_property>
          <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/is_EOC">
+         <obj_property name="ElementShortName">is_EOC</obj_property>
+         <obj_property name="ObjectShortName">is_EOC</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/is_EOT">
+         <obj_property name="ElementShortName">is_EOT</obj_property>
+         <obj_property name="ObjectShortName">is_EOT</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/is_cru_run">
+         <obj_property name="ElementShortName">is_cru_run</obj_property>
+         <obj_property name="ObjectShortName">is_cru_run</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/is_cru_cnt">
+         <obj_property name="ElementShortName">is_cru_cnt</obj_property>
+         <obj_property name="ObjectShortName">is_cru_cnt</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/ltu_rx_decoder_comp/sync_orbit">
@@ -1327,7 +1225,6 @@
    <wvobject type="group" fp_name="group316">
       <obj_property name="label">ERROR_REPORT</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/testbench_readout/FitGbtPrg/error_report_comp/RX_Data_I">
          <obj_property name="ElementShortName">RX_Data_I[79:0]</obj_property>
          <obj_property name="ObjectShortName">RX_Data_I[79:0]</obj_property>
@@ -1408,6 +1305,7 @@
    <wvobject type="group" fp_name="group455">
       <obj_property name="label">OUTPUTS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/testbench_readout/GBT_status_reg">
          <obj_property name="ElementShortName">GBT_status_reg[0:16][31:0]</obj_property>
          <obj_property name="ObjectShortName">GBT_status_reg[0:16][31:0]</obj_property>

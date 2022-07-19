@@ -169,7 +169,7 @@ begin
                     (others => '0');
 
   rx_data_gen   <= orbit_gen_mod & x"0"&bc_gen & (trggen_hb or trggen_sox or trggen_rdstate or trggen_cnt);
-  rx_isdata_gen <= '1' when (trggen_hb or trggen_sox or trggen_cnt) /= TRG_const_void else '0';
+  rx_isdata_gen <= '1' when (trggen_hb or trggen_sox or trggen_cnt or trggen_rdstate) /= TRG_const_void else '0';
 
 end Behavioral;
 

@@ -50,12 +50,12 @@ architecture Behavioral of ltu_rx_decoder is
 
   signal post_reset_cnt : integer range 0 to 255 := 0;
 
-  signal rx_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal cru_orbit, cru_orbit_ff, sync_orbit, sync_orbit_corr : std_logic_vector(Orbit_id_bitdepth - 1 downto 0);
   signal cru_bc, cru_bc_ff, sync_bc, sync_bc_corr             : std_logic_vector(BC_id_bitdepth-1 downto 0);
-  signal cru_trigger, cru_trigger_ff, cru_trigger_source      : std_logic_vector(Trigger_bitdepth-1 downto 0);
+  signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
   signal cru_is_trg_bcidsync, cru_is_trg_bcidsync_ff          : boolean;
+  signal cru_is_trg_crurmode                                  : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun                     : std_logic;
@@ -108,6 +108,7 @@ architecture Behavioral of ltu_rx_decoder is
   -- attribute MARK_DEBUG of cru_trigger : signal is "true";
   -- attribute MARK_DEBUG of cru_is_trg  : signal is "true";
   -- attribute MARK_DEBUG of cru_is_trg_bcidsync  : signal is "true";
+  -- attribute MARK_DEBUG of cru_is_trg_crurmode  : signal is "true";
 
    -- attribute MARK_DEBUG of sync_orbit  : signal is "true";
    -- attribute MARK_DEBUG of sync_bc  : signal is "true";
@@ -126,9 +127,6 @@ begin
   bc_delay_int <= to_integer(unsigned(bc_delay));
   bc_max_int   <= to_integer(unsigned(LHC_BCID_max));
   
-  rx_data <= RX_Data_I when RX_IsData_I = '1' else (others => '0');
-
-
 
 
 -- Data ff data clk **********************************
@@ -151,12 +149,12 @@ begin
       apply_bc_delay_o    <= apply_bc_delay_ff;
       bcsync_lost_inrun_o <= bcsync_lost_inrun;
 
-      cru_orbit   <= rx_data(79 downto 48);
-      cru_bc      <= rx_data(43 downto 32);
-      cru_trigger <= rx_data(31 downto 0);
-	  cru_trigger_source <= RX_Data_I(31 downto 0);
-      cru_is_trg  <= (x"FFFF9FFF" and rx_data(31 downto 0)) /= TRG_const_void;
-      cru_is_trg_bcidsync  <= (x"00000017" and rx_data(31 downto 0)) /= TRG_const_void; -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
+      cru_orbit   <= RX_Data_I(79 downto 48);
+      cru_bc      <= RX_Data_I(43 downto 32);
+      cru_trigger <= RX_Data_I(31 downto 0);
+      cru_is_trg  <= ((x"FFFF9FFF" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1');
+      cru_is_trg_bcidsync  <= ((x"00000017" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1'); -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
+      cru_is_trg_crurmode  <= ((x"00006000" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1'); -- cru readout mode
 
       cru_orbit_ff   <= cru_orbit;
       cru_bc_ff      <= cru_bc;
@@ -193,10 +191,10 @@ begin
         if readout_mode = mode_IDLE and readout_mode_ff /= mode_IDLE then Stop_run_O  <= '1'; else Stop_run_O <= '0'; end if;
 
         if cru_is_trg_ff and (orbc_sync_mode = mode_SYNC) then Trigger_O <= cru_trigger_ff; else Trigger_O <= (others => '0'); end if;
-        if ((cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) then
+        if ((cru_trigger_ff and Control_register_I.Data_Gen.trigger_resp_mask) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) and cru_is_trg_ff then
           trg_match_resp_mask_o <= '1'; else trg_match_resp_mask_o <= '0'; end if;
 
-          if ((cru_trigger_ff and TRG_LASER_STR) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) and gbt_ready then
+          if ((cru_trigger_ff and TRG_LASER_STR) /= TRG_const_void) and (orbc_sync_mode = mode_SYNC) and cru_is_trg_ff and gbt_ready then
             laser_start_o <= '1'; else laser_start_o <= '0'; end if;
 
             -- wait time after fsm reset to skip trash
@@ -287,13 +285,13 @@ begin
       end process;
 -- ***************************************************
 
-      is_ORB     <= ((cru_trigger and TRG_const_Orbit) /= TRG_const_void);
-      is_SOC     <= ((cru_trigger and TRG_const_SOC) /= TRG_const_void);
-      is_SOT     <= ((cru_trigger and TRG_const_SOT) /= TRG_const_void);
-      is_EOC     <= ((cru_trigger_ff and TRG_const_EOC) /= TRG_const_void);
-      is_EOT     <= ((cru_trigger_ff and TRG_const_EOT) /= TRG_const_void);
-      is_cru_run <= ((cru_trigger_source and TRG_const_RS) /= TRG_const_void);
-      is_cru_cnt <= ((cru_trigger_source and TRG_const_RT) /= TRG_const_void);
+      is_ORB     <= ((cru_trigger and TRG_const_Orbit) /= TRG_const_void) and cru_is_trg;
+      is_SOC     <= ((cru_trigger and TRG_const_SOC) /= TRG_const_void) and cru_is_trg;
+      is_SOT     <= ((cru_trigger and TRG_const_SOT) /= TRG_const_void) and cru_is_trg;
+      is_EOC     <= ((cru_trigger_ff and TRG_const_EOC) /= TRG_const_void) and cru_is_trg_ff;
+      is_EOT     <= ((cru_trigger_ff and TRG_const_EOT) /= TRG_const_void) and cru_is_trg_ff;
+      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void) and cru_is_trg_crurmode;
+      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void) and cru_is_trg_crurmode;
 
 
     end Behavioral;
