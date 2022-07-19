@@ -56,7 +56,7 @@ echo "parsing bits command line:"
 echo "scp -r ./firmware/FT0/bits dfinogee@lxplus.cern.ch:/eos/user/d/dfinogee/alice-fit-fpga-artifacts/"
 echo
 echo "parsing repo command line"
-echo "rsync -avz --delete --exclude={'build','nppBackup','__pycache__','.git','.Xil','bits','*.bak','*.jou','*.log','*.tmp','*.coe'} ../alice-fit-fpga dfinogee@lxplus.cern.ch:/eos/user/d/dfinogee/alice-fit-fpga-artifacts/"
+echo "rsync -avz --delete --exclude={'build','nppBackup','__pycache__','.git','.Xil','bits','.idea','*.str','*.bak','*.vhd~','*.jou','*.log','*.tmp','*.coe'} ../alice-fit-fpga dfinogee@lxplus.cern.ch:/eos/user/d/dfinogee/alice-fit-fpga-artifacts/"
 echo
 echo "Timing summary log:"
 echo
