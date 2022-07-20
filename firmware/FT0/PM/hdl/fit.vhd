@@ -1664,6 +1664,8 @@ str_reg32 <= '1' when (reg32_str2='0') and (reg32_str1='1') else '0';
 reg_wr_data<= spi_wr_data when  (spi_wr_req='1') else  hspi_wr_data; 
 reg_wr_addr<= spi_addr when  (spi_wr_req='1') else  hspi_addr; 
 
+err_report_fifo_rden <= '1' when (str_reg32='1') and (to_integer(unsigned(hspi_addr(7 downto 0)))=16#F2#) else '0';
+
 process(TX_CLK, sreset)
 begin
 if sreset='1' then buf_vector<=x"000000000000000"; buf_cou<=x"A0"; dcs_irq<='0'; vect_clr_req<='0'; 
@@ -1678,12 +1680,12 @@ buf_lock2<=buf_lock1; buf_lock1<=buf_lock0; buf_lock0<=buf_lock;
 
 hbuf_req <= (not hspibuf_wr2) and hspibuf_wr1 and sbuf_wrena;
  
-err_report_fifo_rden <= '0';
+--err_report_fifo_rden <= '0';
 if (rd_hspi32='1') then 
    
    if (rdo_sel='1') then
      hspib_32 <=ipbus_status_reg(to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#);
-	 if (to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#) = 10 then err_report_fifo_rden <= '1';  end if;
+	 --if (to_integer(unsigned(hspi_addr(7 downto 0)))-16#E8#) = 10 then err_report_fifo_rden <= '1';  end if;
    else if (flsh_sel='1') then hspib_32 <=hspid_r32; end if;
    
    end if;

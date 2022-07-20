@@ -290,8 +290,8 @@ begin
       is_SOT     <= ((cru_trigger and TRG_const_SOT) /= TRG_const_void) and cru_is_trg;
       is_EOC     <= ((cru_trigger_ff and TRG_const_EOC) /= TRG_const_void) and cru_is_trg_ff;
       is_EOT     <= ((cru_trigger_ff and TRG_const_EOT) /= TRG_const_void) and cru_is_trg_ff;
-      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void) and cru_is_trg_crurmode;
-      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void) and cru_is_trg_crurmode;
+      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void);
+      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void);
 
 
     end Behavioral;
