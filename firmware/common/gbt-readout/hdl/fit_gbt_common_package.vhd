@@ -71,7 +71,6 @@ package fit_gbt_common_package is
 	ipbus_clk      : std_logic;
   end record;
   
-  type gbt_data_arr_t is array (natural range <>) of std_logic_vector(79 downto 0);
 -- =============================================================
 
 -- ===== CONTROL REGISTER ======================================
