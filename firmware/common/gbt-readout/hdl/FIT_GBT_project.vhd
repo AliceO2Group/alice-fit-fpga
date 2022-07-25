@@ -330,6 +330,8 @@ begin
       raw_isdata_o => raw_isdata,
       data_bcid_o  => data_bcid,
       data_bcen_o  => data_bcen,
+	  
+	  pm_data_shreg_o => FIT_GBT_STATUS.pm_data_buff,
 
       errors_o => FIT_GBT_STATUS.fsm_errors(9 downto 5)
       );

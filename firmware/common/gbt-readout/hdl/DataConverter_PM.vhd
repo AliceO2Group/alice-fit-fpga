@@ -47,7 +47,8 @@ entity DataConverter is
     -- 1 - header_fifo is not empty while start of run
     -- 2 - tcm_data_fifo is full (for tcm only)
     -- 3 - input packet corrupted: extra word 
-    -- 4 - input packet corrupted: header too early 
+    -- 4 - input packet corrupted: header too early
+	pm_data_shreg_o : out std_logic_vector(errrep_pmdat_len*80-1 downto 0);
     errors_o : out std_logic_vector(4 downto 0)
     );
 end DataConverter;
@@ -91,32 +92,35 @@ architecture Behavioral of DataConverter is
   signal data_fifo_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_rden : std_logic;
   signal data_fifo_rden   : std_logic;
+  
+  signal pm_data_shreg, pm_data_shreg_dclk : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
 
-
-
-  -- attribute mark_debug                      : string;
-  -- attribute mark_debug of reset_drop_counters : signal is "true";
-  -- attribute mark_debug of header_fifo_din     : signal is "true";
-  -- attribute mark_debug of data_fifo_din       : signal is "true";
-  -- attribute mark_debug of header_fifo_we      : signal is "true";
-  -- attribute mark_debug of data_fifo_we        : signal is "true";
-  -- attribute mark_debug of word_counter        : signal is "true";
-  -- attribute mark_debug of sending_event     : signal is "true";
-  -- attribute mark_debug of header_word         : signal is "true";
-  -- attribute mark_debug of data_word           : signal is "true";
-  -- attribute mark_debug of is_data             : signal is "true";
-  -- attribute mark_debug of is_header           : signal is "true";
-  -- attribute mark_debug of header_pcklen_ff    : signal is "true";
-  -- attribute mark_debug of header_word_latch   : signal is "true";
-  -- attribute mark_debug of header_pcklen_latch : signal is "true";
-  -- attribute mark_debug of header_fifo_empty : signal is "true";
-  -- attribute mark_debug of data_fifo_empty   : signal is "true";
-  -- attribute mark_debug of header_rawfifo_full : signal is "true";
-  -- attribute mark_debug of data_rawfifo_full   : signal is "true";
-  -- attribute mark_debug of header_fifo_data    : signal is "true";
-  -- attribute mark_debug of data_fifo_data      : signal is "true";
-  -- attribute mark_debug of header_fifo_rden    : signal is "true";
-  -- attribute mark_debug of data_fifo_rden      : signal is "true";
+  attribute mark_debug                      : string;
+  attribute mark_debug of reset_drop_counters : signal is "true";
+  attribute mark_debug of header_fifo_din     : signal is "true";
+  attribute mark_debug of data_fifo_din       : signal is "true";
+  attribute mark_debug of header_fifo_we      : signal is "true";
+  attribute mark_debug of data_fifo_we        : signal is "true";
+  attribute mark_debug of word_counter        : signal is "true";
+  attribute mark_debug of sending_event     : signal is "true";
+  attribute mark_debug of header_word         : signal is "true";
+  attribute mark_debug of data_word           : signal is "true";
+  attribute mark_debug of is_data             : signal is "true";
+  attribute mark_debug of is_header           : signal is "true";
+  attribute mark_debug of header_pcklen_ff    : signal is "true";
+  attribute mark_debug of header_word_latch   : signal is "true";
+  attribute mark_debug of header_pcklen_latch : signal is "true";
+  attribute mark_debug of header_fifo_empty : signal is "true";
+  attribute mark_debug of data_fifo_empty   : signal is "true";
+  attribute mark_debug of header_rawfifo_full : signal is "true";
+  attribute mark_debug of data_rawfifo_full   : signal is "true";
+  attribute mark_debug of header_fifo_data    : signal is "true";
+  attribute mark_debug of data_fifo_data      : signal is "true";
+  attribute mark_debug of header_fifo_rden    : signal is "true";
+  attribute mark_debug of data_fifo_rden      : signal is "true";
+  attribute mark_debug of pm_data_shreg      : signal is "true";
+  attribute mark_debug of err_extra_word      : signal is "true";
+  attribute mark_debug of err_extra_header      : signal is "true";
 
 
 begin
@@ -137,6 +141,8 @@ begin
   data_fifo_data_o   <= data_fifo_data;
   header_fifo_rden   <= header_fifo_rden_i;
   data_fifo_rden     <= data_fifo_rden_i;
+  
+  pm_data_shreg_o <= pm_data_shreg_dclk;
 
 
 ---- Raw_header_fifo =============================================
@@ -186,6 +192,8 @@ begin
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= err_extra_header&err_extra_word&'0'&errors;
       no_data_o      <= header_fifo_empty_dc = '1' and data_fifo_empty_dc = '1' and not sending_event_dc and not data_enabled;
+	  
+	  pm_data_shreg_dclk <= pm_data_shreg;
     end if;
   end process;
 
@@ -255,6 +263,11 @@ begin
         end if;
 
         if start_of_run then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+		
+		-- circle pm data buffer for error report
+		if (Board_data_I.is_data = '1') or (Board_data_I.is_header = '1') then 
+		  pm_data_shreg <= pm_data_shreg((errrep_pmdat_len-1)*80-1 downto 0)&Board_data_I.data_word;
+		end if;
 
       end if;
 

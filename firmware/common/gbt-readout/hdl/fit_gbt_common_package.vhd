@@ -70,7 +70,13 @@ package fit_gbt_common_package is
     GBT_RX_Clk     : std_logic;         --used in TESTB
 	ipbus_clk      : std_logic;
   end record;
-  
+-- =============================================================
+
+-- ===== ERRORS report types ===================================
+   constant errrep_crugbt_len    : integer := 10;
+   constant errrep_pmdat_len     : integer := 14;
+   constant errrep_fifo_len      : integer := 36;
+   type gbt_data_arr_t is array (natural range <>) of std_logic_vector(95 downto 0);
 -- =============================================================
 
 -- ===== CONTROL REGISTER ======================================
@@ -248,10 +254,13 @@ package fit_gbt_common_package is
     bcind_evt : bc_indicator_t;
     bcind_trg : bc_indicator_t;
 
-    -- readout via IPbus, used in FTM only
+    -- readout via IPbus
     ipbusrd_fifo_cnt : std_logic_vector(15 downto 0);
     ipbusrd_fifo_out : std_logic_vector(31 downto 0);
 	ipbusrd_err_report : std_logic_vector(31 downto 0);
+	
+	-- pm data circle buffer for error reporting
+	pm_data_buff : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
 
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data

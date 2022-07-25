@@ -26,6 +26,7 @@ entity snapshot_fifo is
 
     di_i : in std_logic_vector(n32_size*32-1 downto 0);
     do_o : out std_logic_vector(31 downto 0);
+	empty_o : out std_logic;
 
     wren_i : in std_logic;
     rden_i : in std_logic
@@ -137,6 +138,7 @@ begin
 
 
   do_o <= (others => '0') when end_reached_rdclk or is_empty_rdclk else ireg_rdclk(rd_cnt*32 + 31 downto rd_cnt*32);
+  empty_o <= '1' when end_reached_rdclk or is_empty_rdclk else '0';
 
 
 
