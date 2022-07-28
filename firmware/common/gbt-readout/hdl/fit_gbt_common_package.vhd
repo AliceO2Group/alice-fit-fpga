@@ -275,6 +275,7 @@ package fit_gbt_common_package is
     -- 8 - [Converter] input packet corrupted: extra word (PM)
     -- 9 - [Converter] input packet corrupted: header too early (PM)
     -- 10- [ltu_rx_decoder] bc_sync lost during the run
+    -- 11- [ltu_rx_decoder] bc_sync lost out of the run
     -- 15- [FRU]       0x1 = ready for run, all fifos are empty
     fsm_errors     : std_logic_vector(15 downto 0);
     Rx_Phase_error : std_logic;         --reg bit 9

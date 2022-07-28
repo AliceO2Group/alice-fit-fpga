@@ -378,7 +378,8 @@ end component;
    
    signal gbt_global_status : std_logic_vector(3 downto 0);
    signal readout_laser_out : std_logic;
-   
+   signal readout_err_rden : std_logic;
+
    component FIT_GBT_project is
        generic (
            IS_SIMULATION    : integer := 0
@@ -398,6 +399,8 @@ end component;
 		   
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
+   	       errors_rden_I      : in std_logic; -- status register EA (errors) was read
+
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -780,6 +783,8 @@ FitGbtPrg: FIT_GBT_project
 		
 		Board_data_I		=> TCM_data_toreadout,
 		Control_register_I	=> readout_control,
+        errors_rden_I       => readout_err_rden,
+
 		
 		MGT_RX_P_I			=>	GBT_RX_P,
 		MGT_RX_N_I			=>	GBT_RX_N,
@@ -871,6 +876,9 @@ if (RESET='1') then sreset<='1'; rstcount<=(others=>'0'); dly_rst<='0'; else
     end if;
   end if;
 end process;
+
+readout_err_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="01010") else '0'; 
+
 
 process (TX_CLK)
 begin

@@ -448,6 +448,7 @@ component TDCCHAN is
 
    signal    gbt_global_status : std_logic_vector(3 downto 0);
    signal err_report_fifo_rden : std_logic;
+   signal readout_err_rden : std_logic;
 
    component FIT_GBT_project is
        generic (
@@ -468,6 +469,7 @@ component TDCCHAN is
            
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
+	       errors_rden_I      : in std_logic; -- status register EA (errors) was read
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -624,6 +626,7 @@ end component;
   -- attribute mark_debug of hspib_32     : signal is "true";
   -- attribute mark_debug of hspi_addr     : signal is "true";
   -- attribute mark_debug of err_report_fifo_rden     : signal is "true";
+  -- attribute mark_debug of readout_err_rden     : signal is "true";
 
 
 
@@ -948,6 +951,7 @@ FitGbtPrg: FIT_GBT_project
 		
 		Board_data_I		=> PM_data_toreadout,
 		Control_register_I	=> readout_control,
+		errors_rden_I       => readout_err_rden,
 		
 		MGT_RX_P_I			=>	GBT_RX_P,
 		MGT_RX_N_I			=>	GBT_RX_N,
@@ -1665,6 +1669,7 @@ reg_wr_data<= spi_wr_data when  (spi_wr_req='1') else  hspi_wr_data;
 reg_wr_addr<= spi_addr when  (spi_wr_req='1') else  hspi_addr; 
 
 err_report_fifo_rden <= '1' when (str_reg32='1') and (to_integer(unsigned(hspi_addr(7 downto 0)))=16#F2#) else '0';
+readout_err_rden <= '1' when (str_reg32='1') and (to_integer(unsigned(hspi_addr(7 downto 0)))=16#EA#) else '0';
 
 process(TX_CLK, sreset)
 begin

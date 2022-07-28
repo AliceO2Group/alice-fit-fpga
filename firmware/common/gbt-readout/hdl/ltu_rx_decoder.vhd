@@ -42,7 +42,10 @@ entity ltu_rx_decoder is
     Data_enable_o      : out std_logic;
     apply_bc_delay_o   : out std_logic;
 
-    bcsync_lost_inrun_o : out std_logic
+    bcsync_lost_inrun_o : out std_logic;
+	
+	bcsyncl_outrun_reset_i : in std_logic;
+    bcsync_lost_outrun_o : out std_logic
     );
 end ltu_rx_decoder;
 
@@ -58,7 +61,7 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_is_trg_crurmode                                  : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
-  signal bcsync_lost_inrun                     : std_logic;
+  signal bcsync_lost_inrun, bcsync_lost_outrun : std_logic;
 
   signal gbt_ready                                       : boolean;
   signal run_not_permit, bc_apply_permit                 : boolean;
@@ -83,6 +86,7 @@ architecture Behavioral of ltu_rx_decoder is
    -- attribute MARK_DEBUG of orbc_sync_mode    : signal is "true";
   -- attribute MARK_DEBUG of orbc_sync_mode_ff : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
+  -- attribute MARK_DEBUG of bcsync_lost_outrun : signal is "true";
   -- attribute MARK_DEBUG of post_reset_cnt    : signal is "true";
 
   -- attribute MARK_DEBUG of readout_mode     : signal is "true";
@@ -148,6 +152,7 @@ begin
       CRU_Readout_Mode_O  <= cru_readout_mode;
       apply_bc_delay_o    <= apply_bc_delay_ff;
       bcsync_lost_inrun_o <= bcsync_lost_inrun;
+      bcsync_lost_outrun_o <= bcsync_lost_outrun;
 
       cru_orbit   <= RX_Data_I(79 downto 48);
       cru_bc      <= RX_Data_I(43 downto 32);
@@ -182,6 +187,7 @@ begin
         orbits_stb_counter <= (others => '0');
 
         bcsync_lost_inrun <= '0';
+        bcsync_lost_outrun <= '0';
 
       else
 
@@ -207,11 +213,12 @@ begin
             -- check syncronisation each trigger
             elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
               orbc_sync_mode                                      <= mode_LOST;
-              if readout_mode /= mode_IDLE then bcsync_lost_inrun <= '1'; end if;
+              if readout_mode /= mode_IDLE then bcsync_lost_inrun <= '1'; else bcsync_lost_outrun <= '1'; end if;
             -- incrementing sync counter then sync
             elsif orbc_sync_mode = mode_SYNC then
               if sync_bc < LHC_BCID_max then sync_bc <= sync_bc + 1;
               else sync_bc                           <= (others => '0'); sync_orbit <= sync_orbit + 1; end if;
+			  if bcsyncl_outrun_reset_i = '1' then bcsync_lost_outrun <= '0'; end if;
             end if;
 
             -- orbc resync out of run

@@ -34,6 +34,7 @@ entity FIT_GBT_project is
 
     Board_data_I       : in board_data_type;    --PM or TCM data @320MHz
     Control_register_I : in readout_control_t;  -- control registers @DataClk
+	errors_rden_I      : in std_logic; -- status register EA (errors) was read
 
     MGT_RX_P_I    : in  std_logic;
     MGT_RX_N_I    : in  std_logic;
@@ -143,7 +144,7 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
-  FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(14 downto 12) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
   FIT_GBT_STATUS.fifos_empty(7 downto 5)  <= (others => '0');
   FIT_GBT_STATUS.ipbusrd_fifo_cnt <= (others => '0');
@@ -243,7 +244,10 @@ begin
       Data_enable_o      => FIT_GBT_STATUS.data_enable,
       apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply,
 
-      bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10)
+      bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10),
+	  
+	  bcsyncl_outrun_reset_i => errors_rden_I,
+      bcsync_lost_outrun_o => FIT_GBT_STATUS.fsm_errors(11)
       );
 -- =============================================================
 
