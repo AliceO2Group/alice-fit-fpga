@@ -69,6 +69,7 @@ end hdmirx;
 
 architecture RTL of hdmirx is
 
+type vect19_arr is array (3 downto 0) of std_logic_vector (18 downto 0);
 type vect8_arr is array (3 downto 0) of std_logic_vector (7 downto 0);
 type vect6_arr is array (3 downto 0) of std_logic_vector (5 downto 0);
 type vect5_arr is array (3 downto 0) of std_logic_vector (4 downto 0);
@@ -77,7 +78,8 @@ type vect4_arr is array (3 downto 0) of std_logic_vector (3 downto 0);
 signal CLK320B, clk320_90B, lock, TD_eq, TD_bits, TD_idle, l_rdy, bitpos_ok_i : STD_LOGIC; 
 signal dly_clr, dl_ce0, dl_inc0, link_ok, link_lost, dly_clr0, dly_clr1, dly_ctrl_ena0, dly_ctrl_ena1, dl_low0, dl_high0, dl_low1, dl_high1, mast_stable_i : STD_LOGIC;
 
-signal sample, sig_loss_cou, TTsr : vect8_arr;
+signal sig_loss_cou : vect19_arr;
+signal sample, TTsr : vect8_arr;
 signal sig_stable_cou : vect6_arr;
 signal dvalue, ph_cnt : vect5_arr;
  
@@ -166,7 +168,7 @@ if (CLK320'event and CLK320='1') then
   for i in 0 to 3 loop 
     sample(i)(7 downto 4)<=sample(i)(3 downto 0);
     
-    if (edge(i)='1') then sig_loss_cou(i)<=x"00";
+    if (edge(i)='1') then sig_loss_cou(i)<= (others=>'0');
        else if (sig_lost(i)='0') then sig_loss_cou(i)<= sig_loss_cou(i)+1; end if;
     end if;
        
@@ -275,7 +277,7 @@ edge(i)<= el(i) or ((not sample(i)(5)) and sample(i)(4)) or ((not sample(i)(4)) 
 
 el(i)<= ((not sample(i)(7)) and sample(i)(6)) or ((not sample(i)(6)) and sample(i)(5));
 
-sig_lost(i)<= '1' when (sig_loss_cou(i)=x"FF") else '0'; 
+sig_lost(i)<= '1' when (sig_loss_cou(i)=320000) else '0'; 
  
 sig_stable(i)<= '1' when (sig_stable_cou(i)="111111") else '0'; 
 
