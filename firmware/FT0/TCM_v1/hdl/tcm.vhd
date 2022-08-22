@@ -378,7 +378,7 @@ end component;
    
    signal gbt_global_status : std_logic_vector(3 downto 0);
    signal readout_laser_out : std_logic;
-   signal readout_err_rden : std_logic;
+   signal readout_err_rden, err_report_fifo_rden : std_logic;
 
    component FIT_GBT_project is
        generic (
@@ -778,8 +778,8 @@ FitGbtPrg: FIT_GBT_project
 		FSM_Clocks_O        => open,
 		
 		-- not connected
-		IPbusClk_I          => '0',
-		err_report_fifo_rden_i => '0',
+		IPbusClk_I          => TX_CLK,
+		err_report_fifo_rden_i => err_report_fifo_rden,
 		
 		Board_data_I		=> TCM_data_toreadout,
 		Control_register_I	=> readout_control,
@@ -877,8 +877,8 @@ if (RESET='1') then sreset<='1'; rstcount<=(others=>'0'); dly_rst<='0'; else
   end if;
 end process;
 
-readout_err_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="01010") else '0'; 
-
+readout_err_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="01010") else '0'; -- 0xA
+err_report_fifo_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="10010") else '0'; --0x12
 
 process (TX_CLK)
 begin
