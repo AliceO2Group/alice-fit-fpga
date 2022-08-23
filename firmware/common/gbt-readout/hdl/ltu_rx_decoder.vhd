@@ -58,15 +58,17 @@ architecture Behavioral of ltu_rx_decoder is
   signal cru_trigger, cru_trigger_ff                          : std_logic_vector(Trigger_bitdepth-1 downto 0);
   signal cru_is_trg, cru_is_trg_ff, sync_is_trg               : boolean;
   signal cru_is_trg_bcidsync, cru_is_trg_bcidsync_ff          : boolean;
-  signal cru_is_trg_crurmode                                  : boolean;
+  signal cru_is_trg_crurmode, cru_is_trg_crurmode_ff          : boolean;
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun, bcsync_lost_outrun : std_logic;
 
   signal gbt_ready                                       : boolean;
   signal run_not_permit, bc_apply_permit                 : boolean;
+  signal run_restore_permit                              : boolean;
   signal orbc_sync_mode, orbc_sync_mode_ff               : bcid_sync_t;
-  signal readout_mode, readout_mode_ff, cru_readout_mode : rdmode_t;
+  signal readout_mode, readout_mode_ff : rdmode_t;
+  signal cru_readout_mode, cru_readout_mode_prev, cru_rd_restore_cmd : rdmode_t;
 
   signal is_ORB, is_SOC, is_SOT, is_EOC, is_EOT, is_cru_run, is_cru_cnt : boolean;
 
@@ -87,12 +89,15 @@ architecture Behavioral of ltu_rx_decoder is
   -- attribute MARK_DEBUG of orbc_sync_mode_ff : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_outrun : signal is "true";
-  -- attribute MARK_DEBUG of post_reset_cnt    : signal is "true";
+  -- attribute MARK_DEBUG of cru_rd_restore_cmd    : signal is "true";
 
   -- attribute MARK_DEBUG of readout_mode     : signal is "true";
   -- attribute MARK_DEBUG of readout_mode_ff  : signal is "true";
   -- attribute MARK_DEBUG of cru_readout_mode : signal is "true";
+  -- attribute MARK_DEBUG of cru_readout_mode_prev : signal is "true";
+  -- attribute MARK_DEBUG of cru_readout_mode : signal is "true";
   -- attribute MARK_DEBUG of run_not_permit   : signal is "true";
+  -- attribute MARK_DEBUG of run_restore_permit : signal is "true";
   
   -- attribute MARK_DEBUG of is_cru_run       : signal is "true";
   -- attribute MARK_DEBUG of is_cru_cnt       : signal is "true";
@@ -126,6 +131,7 @@ begin
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
   bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
+  run_restore_permit           <= Status_register_I.fifos_empty = x"1F";
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));
@@ -159,13 +165,14 @@ begin
       cru_trigger <= RX_Data_I(31 downto 0);
       cru_is_trg  <= ((x"FFFF9FFF" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1');
       cru_is_trg_bcidsync  <= ((x"00000017" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1'); -- 0x17 = 0b10111 (Ph, HBr, HB, Orbit)
-      cru_is_trg_crurmode  <= ((x"00006000" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1'); -- cru readout mode
+      cru_is_trg_crurmode  <= ((x"00000003" and RX_Data_I(31 downto 0)) /= TRG_const_void) and (RX_IsData_I = '1'); -- cru readout mode (HB, Orbit)
 
       cru_orbit_ff   <= cru_orbit;
       cru_bc_ff      <= cru_bc;
       cru_trigger_ff <= cru_trigger;
       cru_is_trg_ff  <= cru_is_trg;
       cru_is_trg_bcidsync_ff  <= cru_is_trg_bcidsync;
+	  cru_is_trg_crurmode_ff <= cru_is_trg_crurmode;
 
       readout_mode_ff   <= readout_mode;
       orbc_sync_mode_ff <= orbc_sync_mode;  -- ila triggering
@@ -226,18 +233,27 @@ begin
             -- orbc resync by command
             elsif (Control_register_I.reset_orbc_sync = '1') then orbc_sync_mode               <= mode_STR; end if;
 
-            -- CRU readout mode
+            -- CRU readout mode (get value for 1 cycle next to BC trigger)
             if (not is_cru_run) then cru_readout_mode <= mode_IDLE;
             elsif is_cru_cnt then cru_readout_mode    <= mode_CNT;
             else cru_readout_mode                     <= mode_TRG; end if;
-
+			
+            -- CRU readout mode prev, latch previous value while BC trigger, reset by EOx
+			if cru_is_trg_crurmode_ff then
+			  if is_EOC or is_EOT then
+			    cru_readout_mode_prev <= mode_IDLE;
+			  else
+			    cru_readout_mode_prev <= cru_readout_mode;
+			  end if;
+			end if;
+			
             -- XOR FSM
             if run_not_permit then readout_mode                                                  <= mode_IDLE;
             elsif (readout_mode = mode_IDLE) and is_SOC then readout_mode                        <= mode_CNT;
             elsif (readout_mode = mode_CNT) and is_EOC then readout_mode                         <= mode_IDLE;
             elsif (readout_mode = mode_IDLE) and is_SOT then readout_mode                        <= mode_TRG;
             elsif (readout_mode = mode_TRG) and is_EOT then readout_mode                         <= mode_IDLE;
-            elsif (readout_mode = mode_IDLE) and cru_readout_mode /= mode_IDLE then readout_mode <= cru_readout_mode;
+            elsif (readout_mode = mode_IDLE) and cru_rd_restore_cmd /= mode_IDLE then readout_mode <= cru_rd_restore_cmd;
             end if;
 
 
@@ -297,9 +313,11 @@ begin
       is_SOT     <= ((cru_trigger and TRG_const_SOT) /= TRG_const_void) and cru_is_trg;
       is_EOC     <= ((cru_trigger_ff and TRG_const_EOC) /= TRG_const_void) and cru_is_trg_ff;
       is_EOT     <= ((cru_trigger_ff and TRG_const_EOT) /= TRG_const_void) and cru_is_trg_ff;
-      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void);
-      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void);
-
+      is_cru_run <= ((cru_trigger and TRG_const_RS) /= TRG_const_void) and cru_is_trg_crurmode;
+      is_cru_cnt <= ((cru_trigger and TRG_const_RT) /= TRG_const_void) and cru_is_trg_crurmode;
+	  
+	  -- restoring run by CRU RUN status. If CRU currently run and prev BC was run -> restore readout if fifos are empty
+      cru_rd_restore_cmd <= cru_readout_mode when cru_readout_mode = cru_readout_mode_prev and run_restore_permit else mode_IDLE;
 
     end Behavioral;
 
