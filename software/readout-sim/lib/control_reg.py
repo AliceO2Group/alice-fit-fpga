@@ -77,6 +77,7 @@ class control_reg:
         self.reset_readout = 0
         self.reset_gbt = 0
         self.reset_rxph_error = 0
+        self.reset_err_report = 0
 
         self.RDH_FEEID = 0
         self.RDH_SYS_ID = 0
@@ -119,6 +120,7 @@ class control_reg:
         log.info("    reset_gbt: %s" % (hex(self.reset_gbt)))
         log.info("    reset_readout: %s" % (hex(self.reset_readout)))
         log.info("    reset_rxph_error: %s" % (hex(self.reset_rxph_error)))
+        log.info("    reset_err_report: %s" % (hex(self.reset_err_report)))
 
         log.info("RDH param:")
         log.info("    RDH_feeid: %s" % (hex(self.RDH_FEEID)))
@@ -129,7 +131,7 @@ class control_reg:
 
         bitarray = []
 
-        reset_field = bitstring.pack('uint:1=0, 7*uint:1', self.reset_readout, self.reset_rxph_error, self.reset_gbt,
+        reset_field = bitstring.pack('8*uint:1', self.reset_err_report, self.reset_readout, self.reset_rxph_error, self.reset_gbt,
                                      self.reset_gbt_rxerror,
                                      self.reset_gensync, self.reset_data_counters, self.reset_orbc_sync)
         rd_mode = bitstring.pack('6*uint:1', self.data_orbit_jump, self.rxclk_sync_shift, self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)

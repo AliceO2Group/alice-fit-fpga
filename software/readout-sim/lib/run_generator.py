@@ -66,11 +66,13 @@ class run_generator:
         # reset simulation generators and errors
         self.ctrl_reg.reset_gensync = 1
         self.ctrl_reg.reset_data_counters = 1
+        self.ctrl_reg.reset_err_report = 1
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(10): file.write(reg_line)
         # generate void orbits to make generators in sync
         self.ctrl_reg.reset_gensync = 0
         self.ctrl_reg.reset_data_counters = 0
+        self.ctrl_reg.reset_err_report = 0
         reg_line = self.ctrl_reg.get_reg_line_16() + '\n'
         for i in range(2*orbit_size): file.write(reg_line)
 

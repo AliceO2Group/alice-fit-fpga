@@ -106,6 +106,7 @@ begin
 
       Board_data_I       => board_data_test_const,
       Control_register_I => testbench_CONTROL_REG_dynamic,
+	  errors_rden_I      => '1', 
 
       MGT_RX_P_I    => '0',
       MGT_RX_N_I    => '0',
@@ -208,7 +209,7 @@ begin
 -- =====================================================
 
 
-
+--testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
 
 -- simulation run ======================================        
   process (FSM_Clocks_signal.Data_Clk)

@@ -124,8 +124,6 @@ package fit_gbt_common_package is
     force_idle       : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select  : std_logic_vector(Trigger_bitdepth-1 downto 0);
 
-    BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
-
     reset_orbc_sync     : std_logic;    -- sync ORBIT, BC to CRU
     reset_data_counters : std_logic;    -- reset FIFO statistic
     reset_gensync       : std_logic;    -- reset generators offset
@@ -134,6 +132,8 @@ package fit_gbt_common_package is
     reset_readout       : std_logic;    -- reset readout fsm
     reset_gbt           : std_logic;    -- reset gbt
     reset_err_report    : std_logic;    -- reset error report fifo
+	
+    BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
   end record;
 
@@ -170,8 +170,6 @@ package fit_gbt_common_package is
       rxclk_sync_shift => '0',
       trg_data_select  => x"00000000",
 
-      BCID_offset => x"000",
-
       reset_orbc_sync     => '0',
       reset_data_counters => '0',
       reset_gensync       => '0',
@@ -180,7 +178,9 @@ package fit_gbt_common_package is
       reset_gbt           => '0',
       reset_rxph_error    => '0',
       force_idle          => '0',
-	  reset_err_report    => '0'
+	  reset_err_report    => '0',
+	  
+      BCID_offset => x"000"
       );
 -- =============================================================
 
@@ -227,7 +227,7 @@ package fit_gbt_common_package is
     datagen_report : datagen_report_t;  -- header of generated data; used only in simulation
 
     Readout_Mode        : rdmode_t;
-    CRU_Readout_Mode    : rdmode_t;
+    CRU_Readout_Mode    : rdmode_t; -- !!! got value for one cycle in HB
     BCIDsync_Mode       : bcid_sync_t;
     Start_run           : std_logic;
     Stop_run            : std_logic;
@@ -259,9 +259,6 @@ package fit_gbt_common_package is
     ipbusrd_fifo_out : std_logic_vector(31 downto 0);
 	ipbusrd_err_report : std_logic_vector(31 downto 0);
 	
-	-- pm data circle buffer for error reporting
-	pm_data_buff : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
-
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data
     -- 1 - [Selector] slct_fifo is not empty when run starts
@@ -287,6 +284,10 @@ package fit_gbt_common_package is
     -- 3 - [Selector]  select
     -- 4 - [Selector]  cntpck
     fifos_empty : std_logic_vector(7 downto 0);
+	
+	-- pm data circle buffer for error reporting
+	pm_data_buff : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
+	
   end record;
 
   constant test_gbt_status_void : gbt_status_t :=
@@ -397,14 +398,6 @@ package body fit_gbt_common_package is
       cntr_reg.Trigger_Gen.usage_generator := gen_off;
     end if;
 
-    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
-    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
-    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
-    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
-    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
-    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
-    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
-    cntr_reg.reset_err_report    := cntrl_reg_addrreg(0)(15);
 
     if(cntrl_reg_addrreg(0)(19 downto 16) = x"0") then
       cntr_reg.Trigger_Gen.Readout_command := idle;
@@ -415,6 +408,18 @@ package body fit_gbt_common_package is
     else
       cntr_reg.Trigger_Gen.Readout_command := idle;
     end if;
+
+
+    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
+    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
+    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
+    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
+    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
+    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
+    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
+    cntr_reg.reset_err_report    := cntrl_reg_addrreg(0)(15);
+
+
 
     cntr_reg.is_hb_response   := cntrl_reg_addrreg(0)(20);
     cntr_reg.readout_bypass   := cntrl_reg_addrreg(0)(21);
