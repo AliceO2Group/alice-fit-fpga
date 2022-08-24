@@ -155,7 +155,6 @@ begin
 	  ORBC_ID_from_CRU_sync_O <= cru_orbit_ff & cru_bc_ff;
       BCIDsync_Mode_O     <= orbc_sync_mode;
       Readout_Mode_O      <= readout_mode;
-      CRU_Readout_Mode_O  <= cru_readout_mode;
       apply_bc_delay_o    <= apply_bc_delay_ff;
       bcsync_lost_inrun_o <= bcsync_lost_inrun;
       bcsync_lost_outrun_o <= bcsync_lost_outrun;
@@ -242,9 +241,11 @@ begin
 			if cru_is_trg_crurmode_ff then
 			  if is_EOC or is_EOT then
 			    cru_readout_mode_prev <= mode_IDLE;
+				CRU_Readout_Mode_O <= mode_IDLE;
 			  else
 			    cru_readout_mode_prev <= cru_readout_mode;
-			  end if;
+				CRU_Readout_Mode_O <= cru_readout_mode;
+			  end if;			  
 			end if;
 			
             -- XOR FSM

@@ -19,6 +19,7 @@ use work.fit_gbt_common_package.all;
 
 entity error_report is
   port (
+    RESET_I      : in std_logic;
     FSM_Clocks_I : in rdclocks_t;
 
     Status_register_I  : in readout_status_t;
@@ -49,6 +50,9 @@ architecture Behavioral of error_report is
   signal err_trg_bclost, err_trg_pmhd                  : std_logic;
   signal bcsync_lost_inrun, bcsync_lost_inrun_ff       : std_logic;
   signal pm_data_early_header, pm_data_early_header_ff : std_logic;
+  
+  -- reset signal
+  signal reset : std_logic;
 
   -- attribute mark_debug                      : string;
   -- attribute mark_debug of gbt_data_shreg    : signal is "true";
@@ -100,7 +104,7 @@ begin
     port map(
       wr_clk_i  => FSM_Clocks_I.Data_Clk,
       rd_clk_i  => FSM_Clocks_I.ipbus_clk,
-      asreset_i => Control_register_I.reset_err_report,
+      asreset_i => reset,
 
       di_i    => err_rep_mux,
       do_o    => snshot_fifo_do,
@@ -116,7 +120,7 @@ begin
   err_report_fifo_comp : entity work.err_report_fifo
     port map(
       clk   => FSM_Clocks_I.ipbus_clk,
-      srst  => Control_register_I.reset_err_report,
+      srst  => reset,
       WR_EN => snshot_fifo_rden,
       RD_EN => report_fifo_rden,
       DIN   => snshot_fifo_do,
@@ -134,6 +138,9 @@ begin
   process (FSM_Clocks_I.Data_Clk)
   begin
     if(rising_edge(FSM_Clocks_I.Data_Clk))then
+	
+	  -- reset
+	  reset <= Control_register_I.reset_err_report or RESET_I;
 
       -- errors signals
       bcsync_lost_inrun_ff    <= bcsync_lost_inrun;
@@ -146,7 +153,7 @@ begin
       err_rep_gbtcru(errrep_fifo_len*32-1 downto (errrep_crugbt_len*96)+32*4)          <= (others => '0');
 
 
-      if (Control_register_I.reset_err_report = '1') then
+      if (reset = '1') then
 
         gbt_data_counter        <= (others => '0');
         gbt_data_shreg          <= (others => '0');

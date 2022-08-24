@@ -423,6 +423,7 @@ begin
 -- ERRORs REPORT ========================================
   error_report_comp : entity work.error_report
     port map(
+	  RESET_I            => RESET_I,
       FSM_Clocks_I       => FSM_Clocks,
 
       Control_register_I => Control_register_I,
