@@ -59,6 +59,9 @@ set_property ASYNC_REG true [get_cells cnt_lock1_reg]
 set_property ASYNC_REG true [get_cells cnt_clr0_reg]
 set_property ASYNC_REG true [get_cells cnt_clr1_reg]
 set_property ASYNC_REG true [get_cells {rout_lock0_reg rout_lock1_reg}]
+set_property ASYNC_REG true [get_cells {rdout_errc0_reg rdout_errc1_reg}]
+set_property ASYNC_REG true [get_cells {rdout_errf_rd0_reg rdout_errf_rd1_reg}]
+
 set_property ASYNC_REG true [get_cells {Ccnt_clr0_reg Ccnt_clr1_reg}]
 
 create_generated_clock -name CLKA320 -source [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKIN1] -master_clock MCLKA [get_pins tcma/PLL1/inst/mmcm_adv_inst/CLKOUT0]

@@ -245,6 +245,8 @@ signal TimeAavg, TimeCavg : STD_LOGIC_VECTOR (18 downto 0);
 
 signal lasbc : STD_LOGIC;
 
+signal rdout_errf_rd, rdout_errf_rd0, rdout_errf_rd1, rdout_errf_rd2, rdout_errc, rdout_errc0, rdout_errc1, rdout_errc2  : STD_LOGIC;
+
 
 component tcm_side is
  Port (CLKA : in STD_LOGIC;
@@ -877,15 +879,17 @@ if (RESET='1') then sreset<='1'; rstcount<=(others=>'0'); dly_rst<='0'; else
   end if;
 end process;
 
-readout_err_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="01010") else '0'; -- 0xA
-err_report_fifo_rden <= '1' when (rout_lock1='1') and (rout_lock2='0') and (ipb_addr(4 downto 0)="10010") else '0'; --0x12
+readout_err_rden<='1' when (rdout_errc1='1') and (rdout_errc2='0') else '0';
+err_report_fifo_rden <= '1'when (rdout_errf_rd1='1') and (rdout_errf_rd2='0') else '0';
 
 process (TX_CLK)
 begin
 if (TX_CLK'event and TX_CLK='1') then
 
-
 rout_lock2<=rout_lock1; rout_lock1<=rout_lock0; rout_lock0<=rdouts_sel and (not rdouts_rdy);
+
+rdout_errc2<=rdout_errc1; rdout_errc1<=rdout_errc0; rdout_errc0<=rdout_errc;
+rdout_errf_rd2<=rdout_errf_rd1; rdout_errf_rd1<=rdout_errf_rd0; rdout_errf_rd0<=rdout_errf_rd;
  
 if (rout_lock1='1') and (rout_lock2='0') then rout_buf <=readout_status_reg(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#); end if;
 
@@ -1263,7 +1267,10 @@ process(ipb_clk)
 begin
 if (ipb_clk'event and ipb_clk='1') then
 
-if (rdouts_sel='0') or (rdouts_rdy='1') then rdouts_cnt<= (others=>'0'); else rdouts_cnt<=rdouts_cnt+1; end if; 
+if (rdouts_sel='0') or (rdouts_rdy='1') then rdouts_cnt<= (others=>'0'); else rdouts_cnt<=rdouts_cnt+1; end if;
+
+if (ipb_addr(4 downto 0)="01010") and (rdouts_sel='1') and (rdouts_rdy='0') then rdout_errc<='1'; else rdout_errc<='0'; end if;    
+if (ipb_addr(4 downto 0)="10010") and (rdouts_sel='1') and (rdouts_rdy='0') then rdout_errf_rd<='1'; else rdout_errf_rd<='0'; end if;
 
 if (bccorr_ack0='0') and (bccorr_rd='1') then bccorr_ack0<='1'; else  bccorr_ack0<='0'; end if;
 
