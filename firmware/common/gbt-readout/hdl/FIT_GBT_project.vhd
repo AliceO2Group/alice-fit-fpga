@@ -110,6 +110,8 @@ architecture Behavioral of FIT_GBT_project is
   signal cntpck_fifo_dout  : std_logic_vector(127 downto 0);
   signal cntpck_fifo_empty : std_logic;
   signal cntpck_fifo_rden  : std_logic;
+  
+  signal error_report_fifo_empty : std_logic;
 
 -- from data generator
   signal Board_data_from_main_gen : board_data_type;
@@ -146,7 +148,7 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.fsm_errors(14 downto 12) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
-  FIT_GBT_STATUS.fifos_empty(7 downto 5)  <= (others => '0');
+  FIT_GBT_STATUS.fifos_empty(7 downto 6)  <= (others => '0');
   FIT_GBT_STATUS.ipbusrd_fifo_cnt <= (others => '0');
   FIT_GBT_STATUS.ipbusrd_fifo_out <= (others => '0');
 
@@ -176,6 +178,7 @@ begin
       FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
       FIT_GBT_STATUS.fifos_empty(3) <= slct_fifo_empty;
       FIT_GBT_STATUS.fifos_empty(4) <= cntpck_fifo_empty;
+      FIT_GBT_STATUS.fifos_empty(5) <= error_report_fifo_empty;
     end if;
   end process;
 
@@ -433,7 +436,8 @@ begin
       RX_Data_I   => RX_Data_from_orbcgen,
 
 	  err_report_fifo_rden_i => err_report_fifo_rden_i,
-      report_fifo_o => FIT_GBT_STATUS.ipbusrd_err_report
+      report_fifo_o => FIT_GBT_STATUS.ipbusrd_err_report,
+	  report_fifo_empty_o => error_report_fifo_empty
       );
 -- =====================================================
 

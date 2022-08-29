@@ -131,7 +131,7 @@ begin
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
   bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
-  run_restore_permit           <= Status_register_I.fifos_empty = x"1F";
+  run_restore_permit           <= Status_register_I.fifos_empty(4 downto 0) = "11111";
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
   bc_delay_int <= to_integer(unsigned(bc_delay));

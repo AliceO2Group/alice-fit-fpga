@@ -29,7 +29,8 @@ entity error_report is
     RX_Data_I   : in std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
 
     err_report_fifo_rden_i : in  std_logic;
-    report_fifo_o          : out std_logic_vector(31 downto 0)
+    report_fifo_o          : out std_logic_vector(31 downto 0);
+	report_fifo_empty_o    : out std_logic
     );
 end error_report;
 
@@ -126,7 +127,7 @@ begin
       DIN   => snshot_fifo_do,
       DOUT  => report_fifo_do,
       FULL  => report_fifo_full,
-      EMPTY => open
+      EMPTY => report_fifo_empty_o
       );
 -- ===========================================================
 
