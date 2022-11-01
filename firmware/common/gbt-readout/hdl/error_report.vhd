@@ -41,16 +41,18 @@ architecture Behavioral of error_report is
   signal gbt_data_counter : std_logic_vector(15 downto 0);
 
   -- error report register
-  signal err_rep_pmdat, err_rep_gbtcru, err_rep_mux : std_logic_vector(errrep_fifo_len*32-1 downto 0);
+  signal err_rep_pmdat, err_rep_rawfull, err_rep_gbtcru, err_rep_mux : std_logic_vector(errrep_fifo_len*32-1 downto 0);
 
   -- report fifo output
   signal report_fifo_full, snshot_fifo_emtpy, snshot_fifo_rden, report_fifo_rden : std_logic;
   signal snshot_fifo_do, report_fifo_do                        : std_logic_vector(31 downto 0);
 
   -- trigger for error
-  signal err_trg_bclost, err_trg_pmhd                  : std_logic;
+  signal err_trg_bclost, err_trg_pmhd, err_sel_full    : std_logic;
   signal bcsync_lost_inrun, bcsync_lost_inrun_ff       : std_logic;
   signal pm_data_early_header, pm_data_early_header_ff : std_logic;
+  signal cnv_fifo_max_ff01, cnv_fifo_max_ff02  : std_logic_vector(15 downto 0);
+
   
   -- reset signal
   signal reset : std_logic;
@@ -86,13 +88,19 @@ begin
   err_rep_pmdat(errrep_pmdat_len*80+31 downto 32)                   <= Status_register_I.pm_data_buff;
   err_rep_pmdat(errrep_fifo_len*32-1 downto errrep_pmdat_len*80+32) <= (others => '0');
 
+  err_rep_rawfull(31 downto 0)                                        <= x"EEEE0008";  -- header
+  err_rep_rawfull((errrep_pmdat_len-1)*80+31 downto 32)                   <= Status_register_I.pm_data_buff((errrep_pmdat_len-1)*80-1 downto 0);
+  err_rep_rawfull(errrep_fifo_len*32-1 downto (errrep_pmdat_len-1)*80+32) <= x"000000000"&Status_register_I.rawdatfifo_wr_rate & x"0"&Status_register_I.rawdatfifo_rd_rate & x"0000";
+
 
 -- triggering bcid sync lost error snapshot
   err_trg_bclost <= '1' when bcsync_lost_inrun = '1' and bcsync_lost_inrun_ff = '0'       else '0';
   err_trg_pmhd   <= '1' when pm_data_early_header = '1' and pm_data_early_header_ff = '0' else '0';
+  err_sel_full   <= '1' when cnv_fifo_max_ff02(11) = '0' and cnv_fifo_max_ff01(11) = '1' else '0';
 
   err_rep_mux <= err_rep_gbtcru when err_trg_bclost='1' else
                  err_rep_pmdat  when err_trg_pmhd = '1' else
+                 err_rep_rawfull  when err_sel_full = '1' else
 				 (others => '0');
 
 
@@ -111,7 +119,7 @@ begin
       do_o    => snshot_fifo_do,
       empty_o => snshot_fifo_emtpy,
 
-      wren_i => err_trg_bclost or err_trg_pmhd,
+      wren_i => err_trg_bclost or err_trg_pmhd or err_sel_full,
       rden_i => snshot_fifo_rden
       );
   snshot_fifo_rden <= '1' when snshot_fifo_emtpy = '0' and report_fifo_full = '0' else '0';
@@ -146,6 +154,8 @@ begin
       -- errors signals
       bcsync_lost_inrun_ff    <= bcsync_lost_inrun;
       pm_data_early_header_ff <= pm_data_early_header;
+	  cnv_fifo_max_ff01 <= Status_register_I.cnv_fifo_max;
+	  cnv_fifo_max_ff02 <= cnv_fifo_max_ff01;
 
       -- errors report mapping (delayed)
       err_rep_gbtcru((errrep_crugbt_len*96)+32*2-1 downto (errrep_crugbt_len*96)+32*1) <= x"0"&Status_register_I.BCID_from_CRU & x"0"&Status_register_I.ORBC_from_CRU_sync(11 downto 0);

@@ -287,6 +287,8 @@ package fit_gbt_common_package is
 	
 	-- pm data circle buffer for error reporting
 	pm_data_buff : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
+	rawdatfifo_wr_rate : std_logic_vector(11 downto 0);
+	rawdatfifo_rd_rate : std_logic_vector(11 downto 0);
 	
   end record;
 
