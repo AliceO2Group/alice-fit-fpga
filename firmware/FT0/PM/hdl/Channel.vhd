@@ -70,7 +70,10 @@ entity Channel is
            R1_corr : in STD_LOGIC_VECTOR (11 downto 0);
            pulse_in  : out STD_LOGIC;
            chan_ena  : in STD_LOGIC;
-           trig_dis  : in STD_LOGIC
+           trig_dis  : in STD_LOGIC;
+           fdd : in STD_LOGIC;
+           CH_trig_int : in STD_LOGIC;
+           CH_trig_outtn : out STD_LOGIC
             );
            
 end Channel;
@@ -141,7 +144,8 @@ END COMPONENT;
  
 begin
 CH_ampl<=CH_ampl0;
-CH_trig_outt<=CH_trig_f;
+CH_trig_outtn<=CH_trig_f;
+CH_trig_outt<=CH_trig_f when (fdd='0') else CH_trig_f and CH_trig_int;
 CH_trig_outa<=CH_trig_a; 
 
 pulse_in<=EV_E;  
@@ -173,14 +177,18 @@ process (clk320)
 begin
 if (clk320'event and clk320='1') then
 
-TDC_rdy320_0<=TDC_rdy_in; TDC_rdy320<=TDC_rdy320_0; TDC_rdy320_1<=TDC_rdy320;
+if (chan_ena='1') then TDC_rdy320_0<=TDC_rdy_in; else TDC_rdy320_0<='0'; end if;  
+
+TDC_rdy320<=TDC_rdy320_0; TDC_rdy320_1<=TDC_rdy320;
 spi_lock0<=spi_lock;
 
 if (chan_ena='1') then EV_0<=CGE; else EV_0<='0'; end if;
  
 EV_rdy<= EV; EV<=EV_2; EV_2<=EV_1; EV_1<=EV_0; 
 
-CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
+if (chan_ena='1') then  CSTR_0<=CSTR; else CSTR_0<='0'; end if;  
+
+CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
 if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
 
   if (Cal_d='1') then
@@ -365,7 +373,7 @@ CH_tr_en<=C_FOUT(8) and Ampl_OK and Time_OK and not C_FOUT(7);
 CH_BS<=('0'& CH_0(11 downto 0)) - ('0'&CH0_Z(21 downto 10)) when (CH_0(12)='0') else
        ('0'& CH_0(11 downto 0)) - ('0'&CH1_Z(21 downto 10));
 
-CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='0') and (CH_ds='0')) or ((CH_t_trig1='1') and (CH_ds='1'))) and (trig_ena='1') else
+CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and ((fdd='0') or (CH_trig_int='1')) and (((CH_dt='0') and (CH_ds='0')) or ((CH_t_trig1='1') and (CH_ds='1'))) and (trig_ena='1') else
            CH_TIME2 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) and (trig_ena='1') else
           "0000000000";
           
