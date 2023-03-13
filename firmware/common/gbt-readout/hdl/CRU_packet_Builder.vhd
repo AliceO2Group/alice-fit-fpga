@@ -70,7 +70,7 @@ architecture Behavioral of CRU_packet_Builder is
   constant rdh_header_size    : std_logic_vector(7 downto 0)  := x"40";
   constant rdh_detector_field : std_logic_vector(31 downto 0) := x"00000000";
   constant rdh_par            : std_logic_vector(15 downto 0) := x"0000";
-  constant rdh_data_format    : std_logic_vector(7 downto 0) := x"02"; -- will be replaced by CRU
+  constant rdh_data_format    : std_logic_vector(7 downto 0) := x"00"; -- will be replaced by CRU
 
   signal rdh_feeid             : std_logic_vector(15 downto 0);
   signal rdh_sysid             : std_logic_vector(7 downto 0);
