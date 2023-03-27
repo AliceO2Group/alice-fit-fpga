@@ -111,6 +111,63 @@ def generate_sim_inputs():
     # test_ctrl_reg.rd_bypass = 0
     # # =======================================================
 
+    # # RENERATING RUN ========================================
+    # run_gen.run_comment = """
+    #     - RUN with bcid sync lost simulated error
+    #
+    #     - FSM ERROR must be presents
+    #     - RUN must be failed
+    #
+    #     """
+    # test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    # test_ctrl_reg.bcid_offset = 0x100
+    # test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    # test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    # test_ctrl_reg.data_bunch_freq = 0x16
+    # test_ctrl_reg.data_bc_start = 0x100
+    # test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    # test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    # test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    # test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 2
+    # test_ctrl_reg.trg_bc_start = 0x600
+    # test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    #
+    # test_ctrl_reg_orbit_jump = copy.copy(test_ctrl_reg)
+    # test_ctrl_reg_orbit_jump.data_orbit_jump = 1
+    #
+    # run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    # run_gen.generate_ctrl_pattern(2, test_ctrl_reg_orbit_jump)
+    # run_list.append(copy.copy(run_gen))
+    # # =======================================================
+
+    # # RENERATING RUN ========================================
+    # run_gen.run_comment = """
+    #     - RUN with force idle
+    #
+    #     - HB could be missed
+    #     - One excess stop bit should be found
+    #     """
+    # test_ctrl_reg.trg_rd_command = readout_cmd.continious
+    # test_ctrl_reg.bcid_offset = 0x100
+    # test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
+    # test_ctrl_reg.data_bunch_pattern = 0xFF011777
+    # test_ctrl_reg.data_bunch_freq = 0x16
+    # test_ctrl_reg.data_bc_start = 0x100
+    # test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
+    # test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
+    # test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
+    # test_ctrl_reg.trg_bunch_freq = cnst.orbit_size/2
+    # test_ctrl_reg.trg_bc_start = 0x600
+    # test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
+    #
+    # test_ctrl_reg_force_idle = copy.copy(test_ctrl_reg)
+    # test_ctrl_reg_force_idle.force_idle = 1
+    #
+    # run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
+    # run_gen.generate_ctrl_pattern(6, test_ctrl_reg_force_idle)
+    # run_list.append(copy.copy(run_gen))
+    # # =======================================================
+
     # RENERATING RUN ========================================
     run_gen.run_comment = """
         - CONTINIOUS RUN
@@ -135,24 +192,24 @@ def generate_sim_inputs():
     test_ctrl_reg.is_hb_reject = 0
     # =======================================================
 
-
     # RENERATING RUN ========================================
     run_gen.run_comment = """
         - RUN with force idle
+        - run recovery test
         
-        - HB could be missed
-        - One excess stop bit should be found
+        - HB must be missed
+        - One excess stop bit must be found
         """
     test_ctrl_reg.trg_rd_command = readout_cmd.continious
     test_ctrl_reg.bcid_offset = 0x100
     test_ctrl_reg.data_trg_respond_mask = cnst.TRG_const_Cal
-    test_ctrl_reg.data_bunch_pattern = 0xFF011777
-    test_ctrl_reg.data_bunch_freq = 0x16
+    test_ctrl_reg.data_bunch_pattern = 0x66666666
+    test_ctrl_reg.data_bunch_freq = 10
     test_ctrl_reg.data_bc_start = 0x100
     test_ctrl_reg.trg_pattern_0 = 0xAAFAAFAF
     test_ctrl_reg.trg_pattern_1 = 0xFFAFFAFF
     test_ctrl_reg.trg_cont_val = cnst.TRG_const_Cal
-    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size/2
+    test_ctrl_reg.trg_bunch_freq = cnst.orbit_size / 2
     test_ctrl_reg.trg_bc_start = 0x600
     test_ctrl_reg.trg_data_select = cnst.TRG_const_Cal
 
@@ -160,7 +217,7 @@ def generate_sim_inputs():
     test_ctrl_reg_force_idle.force_idle = 1
 
     run_gen.ctrl_reg = copy.copy(test_ctrl_reg)
-    run_gen.generate_ctrl_pattern(6, test_ctrl_reg_force_idle)
+    run_gen.generate_ctrl_pattern(4, test_ctrl_reg_force_idle)
     run_list.append(copy.copy(run_gen))
     # =======================================================
 

@@ -217,7 +217,7 @@ signal lpatt_cnt, Nchan_A, Nchan_C, Nchan_C0, Nchan_C1, Nchan_C2 : STD_LOGIC_VEC
 signal lpatt_sreg : STD_LOGIC_VECTOR (63 downto 0);
 signal lfreq_cnt : STD_LOGIC_VECTOR (23 downto 0);
 signal BC_cou : STD_LOGIC_VECTOR(11 downto 0);
-signal ldr : STD_LOGIC_VECTOR(3 downto 0);
+signal ldr, ldrm : STD_LOGIC_VECTOR(3 downto 0);
 signal Tmode : STD_LOGIC_VECTOR(9 downto 0);
 signal Rd_word, FIFO_in : STD_LOGIC_VECTOR(159 downto 0);
 signal gbt_wr, gbt_empty, rdoutc_sel, rdoutc_ack, rdoutc_wr, rdouts_sel, rdouts_rdy, RST_req : STD_LOGIC;
@@ -244,6 +244,8 @@ signal Nchan_S : STD_LOGIC_VECTOR (7 downto 0);
 signal TimeAavg, TimeCavg : STD_LOGIC_VECTOR (18 downto 0);
 
 signal lasbc : STD_LOGIC;
+
+signal rdout_errf_rd, rdout_errf_rd0, rdout_errf_rd1, rdout_errf_rd2, rdout_errc, rdout_errc0, rdout_errc1, rdout_errc2  : STD_LOGIC;
 
 
 component tcm_side is
@@ -378,7 +380,8 @@ end component;
    
    signal gbt_global_status : std_logic_vector(3 downto 0);
    signal readout_laser_out : std_logic;
-   
+   signal readout_err_rden, err_report_fifo_rden : std_logic;
+
    component FIT_GBT_project is
        generic (
            IS_SIMULATION    : integer := 0
@@ -393,8 +396,13 @@ end component;
            GBT_RxFrameClk_O    : out STD_LOGIC; --Rx GBT frame clk 40MHz
 		   FSM_Clocks_O      : out rdclocks_t;
            
+	       IPbusClk_I       : in  std_logic;   -- IPbus clock for error fifo read
+      	   err_report_fifo_rden_i : in std_logic; -- IPbus error report fifo read enable
+		   
            Board_data_I        : in board_data_type; --PM or TCM data
            Control_register_I    : in readout_control_t;
+   	       errors_rden_I      : in std_logic; -- status register EA (errors) was read
+
            
            MGT_RX_P_I         : in  STD_LOGIC;
            MGT_RX_N_I         : in  STD_LOGIC;
@@ -771,8 +779,14 @@ FitGbtPrg: FIT_GBT_project
 		GBT_RxFrameClk_O	=> RX_CLK,
 		FSM_Clocks_O        => open,
 		
+		-- not connected
+		IPbusClk_I          => TX_CLK,
+		err_report_fifo_rden_i => err_report_fifo_rden,
+		
 		Board_data_I		=> TCM_data_toreadout,
 		Control_register_I	=> readout_control,
+        errors_rden_I       => readout_err_rden,
+
 		
 		MGT_RX_P_I			=>	GBT_RX_P,
 		MGT_RX_N_I			=>	GBT_RX_N,
@@ -865,12 +879,17 @@ if (RESET='1') then sreset<='1'; rstcount<=(others=>'0'); dly_rst<='0'; else
   end if;
 end process;
 
+readout_err_rden<='1' when (rdout_errc1='1') and (rdout_errc2='0') else '0';
+err_report_fifo_rden <= '1'when (rdout_errf_rd1='1') and (rdout_errf_rd2='0') else '0';
+
 process (TX_CLK)
 begin
 if (TX_CLK'event and TX_CLK='1') then
 
-
 rout_lock2<=rout_lock1; rout_lock1<=rout_lock0; rout_lock0<=rdouts_sel and (not rdouts_rdy);
+
+rdout_errc2<=rdout_errc1; rdout_errc1<=rdout_errc0; rdout_errc0<=rdout_errc;
+rdout_errf_rd2<=rdout_errf_rd1; rdout_errf_rd1<=rdout_errf_rd0; rdout_errf_rd0<=rdout_errf_rd;
  
 if (rout_lock1='1') and (rout_lock2='0') then rout_buf <=readout_status_reg(to_integer(unsigned(ipb_addr(5 downto 0)))-16#28#); end if;
 
@@ -1105,6 +1124,7 @@ a_t<=not a_t; l_on1<=l_on0; l_on0 <= l_st1; l_st1 <= l_st0; l_st0 <= laser_t;
 end if;
 end process;
 
+ldrm<=ldr-1;
 
 process (LCLK160)
 begin
@@ -1123,7 +1143,7 @@ a0_t<=an_t; l_tg1<=l_tg;
  if (a0_t XOR an_t)='1' then l_cnt<="10"; else l_cnt<=l_cnt+1; end if;
 
  if (ldr(1 downto 0)=l_cnt) then
-    case ldr(3 downto 2) is
+    case ldrm(3 downto 2) is
     when "00" => l_on<= l_st1;
     when "01" => l_on<= l_on0;
     when "10" => l_on<= l_on1;
@@ -1247,7 +1267,10 @@ process(ipb_clk)
 begin
 if (ipb_clk'event and ipb_clk='1') then
 
-if (rdouts_sel='0') or (rdouts_rdy='1') then rdouts_cnt<= (others=>'0'); else rdouts_cnt<=rdouts_cnt+1; end if; 
+if (rdouts_sel='0') or (rdouts_rdy='1') then rdouts_cnt<= (others=>'0'); else rdouts_cnt<=rdouts_cnt+1; end if;
+
+if (ipb_addr(4 downto 0)="01010") and (rdouts_sel='1') and (rdouts_rdy='0') then rdout_errc<='1'; else rdout_errc<='0'; end if;    
+if (ipb_addr(4 downto 0)="10010") and (rdouts_sel='1') and (rdouts_rdy='0') then rdout_errf_rd<='1'; else rdout_errf_rd<='0'; end if;
 
 if (bccorr_ack0='0') and (bccorr_rd='1') then bccorr_ack0<='1'; else  bccorr_ack0<='0'; end if;
 

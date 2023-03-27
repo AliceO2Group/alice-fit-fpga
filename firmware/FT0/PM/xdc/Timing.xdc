@@ -179,6 +179,10 @@ set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbt
 set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/DataConverter_comp/data_enabled_sclk_reg/D]
 set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/DataConverter_comp/data_enabled_sclk_reg/D]
 
+# Error report ----------------------------------
+#set_false_path -from [get_clocks TX_CLK] -to [get_pins {FitGbtPrg/Reset_Generator_comp/Reset_SClk_O*/D}]
+#set_false_path -from [get_clocks TX_CLK] -to [get_pins {FitGbtPrg/Reset_Generator_comp/count_ready_reg*/D}]
+
 
 
 

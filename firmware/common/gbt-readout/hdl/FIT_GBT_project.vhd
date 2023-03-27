@@ -29,8 +29,12 @@ entity FIT_GBT_project is
     GBT_RxFrameClk_O : out std_logic;   --Rx GBT frame clk 40MHz
     FSM_Clocks_O     : out rdclocks_t;
 
+	IPbusClk_I       : in  std_logic;   -- IPbus clock for error fifo read
+	err_report_fifo_rden_i : in std_logic; -- IPbus error report fifo read enable
+
     Board_data_I       : in board_data_type;    --PM or TCM data @320MHz
     Control_register_I : in readout_control_t;  -- control registers @DataClk
+	errors_rden_I      : in std_logic; -- status register EA (errors) was read
 
     MGT_RX_P_I    : in  std_logic;
     MGT_RX_N_I    : in  std_logic;
@@ -106,6 +110,8 @@ architecture Behavioral of FIT_GBT_project is
   signal cntpck_fifo_dout  : std_logic_vector(127 downto 0);
   signal cntpck_fifo_empty : std_logic;
   signal cntpck_fifo_rden  : std_logic;
+  
+  signal error_report_fifo_empty : std_logic;
 
 -- from data generator
   signal Board_data_from_main_gen : board_data_type;
@@ -127,7 +133,8 @@ begin
   FSM_Clocks_O          <= FSM_Clocks;
   FSM_Clocks.System_Clk <= SysClk_I;
   FSM_Clocks.Data_Clk   <= DataClk_I;
-  FSM_Clocks.GBT_RX_Clk <= RxDataClk_I;
+  FSM_Clocks.Data_Clk   <= DataClk_I;
+  FSM_Clocks.ipbus_clk <= IPbusClk_I;
 
   -- SFP turned ON
   MGT_TX_dsbl_O <= '0';
@@ -139,9 +146,9 @@ begin
   FIT_GBT_STATUS.ORBIT_from_CRU           <= ORBC_ID_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
   FIT_GBT_STATUS.BCID_from_CRU_corrected  <= ORBC_ID_corrected_from_RXdecoder(BC_id_bitdepth-1 downto 0);
   FIT_GBT_STATUS.ORBIT_from_CRU_corrected <= ORBC_ID_corrected_from_RXdecoder(Orbit_id_bitdepth + BC_id_bitdepth-1 downto BC_id_bitdepth);
-  FIT_GBT_STATUS.fsm_errors(14 downto 11) <= (others => '0');
+  FIT_GBT_STATUS.fsm_errors(14 downto 12) <= (others => '0');
   FIT_GBT_STATUS.fsm_errors(15)           <= '0' when no_raw_data and no_sel_data else '1';
-  FIT_GBT_STATUS.fifos_empty(7 downto 5)  <= (others => '0');
+  FIT_GBT_STATUS.fifos_empty(7 downto 6)  <= (others => '0');
   FIT_GBT_STATUS.ipbusrd_fifo_cnt <= (others => '0');
   FIT_GBT_STATUS.ipbusrd_fifo_out <= (others => '0');
 
@@ -171,6 +178,7 @@ begin
       FIT_GBT_STATUS.fifos_empty(1) <= raw_data_empty;
       FIT_GBT_STATUS.fifos_empty(3) <= slct_fifo_empty;
       FIT_GBT_STATUS.fifos_empty(4) <= cntpck_fifo_empty;
+      FIT_GBT_STATUS.fifos_empty(5) <= error_report_fifo_empty;
     end if;
   end process;
 
@@ -225,6 +233,8 @@ begin
 
       ORBC_ID_from_CRU_O           => ORBC_ID_from_RXdecoder,
       ORBC_ID_from_CRU_corrected_O => ORBC_ID_corrected_from_RXdecoder,
+	  ORBC_ID_from_CRU_sync_O      => FIT_GBT_STATUS.ORBC_from_CRU_sync,
+	  
       Trigger_O                    => FIT_GBT_STATUS.Trigger_from_CRU,
       trg_match_resp_mask_o        => FIT_GBT_STATUS.trg_match_resp_mask,
       laser_start_o                => FIT_GBT_STATUS.laser_start,
@@ -237,7 +247,10 @@ begin
       Data_enable_o      => FIT_GBT_STATUS.data_enable,
       apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply,
 
-      bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10)
+      bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10),
+	  
+	  bcsyncl_outrun_reset_i => errors_rden_I,
+      bcsync_lost_outrun_o => FIT_GBT_STATUS.fsm_errors(11)
       );
 -- =============================================================
 
@@ -324,6 +337,10 @@ begin
       raw_isdata_o => raw_isdata,
       data_bcid_o  => data_bcid,
       data_bcen_o  => data_bcen,
+	  
+	  pm_data_shreg_o => FIT_GBT_STATUS.pm_data_buff,
+	  rawdatfifo_rd_rate_o => FIT_GBT_STATUS.rawdatfifo_rd_rate,
+	  rawdatfifo_wr_rate_o => FIT_GBT_STATUS.rawdatfifo_wr_rate,
 
       errors_o => FIT_GBT_STATUS.fsm_errors(9 downto 5)
       );
@@ -407,6 +424,24 @@ begin
       gbt_data_counter_o => FIT_GBT_STATUS.gbt_data_cnt
       );
 -- ===========================================================
+
+-- ERRORs REPORT ========================================
+  error_report_comp : entity work.error_report
+    port map(
+	  RESET_I            => RESET_I,
+      FSM_Clocks_I       => FSM_Clocks,
+
+      Control_register_I => Control_register_I,
+      Status_register_I  => FIT_GBT_STATUS,
+
+      RX_IsData_I => RX_IsData_from_orbcgen,
+      RX_Data_I   => RX_Data_from_orbcgen,
+
+	  err_report_fifo_rden_i => err_report_fifo_rden_i,
+      report_fifo_o => FIT_GBT_STATUS.ipbusrd_err_report,
+	  report_fifo_empty_o => error_report_fifo_empty
+      );
+-- =====================================================
 
 
 -- =============================================================

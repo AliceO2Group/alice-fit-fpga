@@ -70,7 +70,8 @@ class run_reader:
 
             # check fsm error
             if (istatus.fsm_errors & 0x7FFF) > 0 and iline > 10:
-                self.log.info("FSM ERROR in run found: %s" % istatus.get_fsm_err_msg())
+                self.log.info("FSM ERROR in run found: %s (%04x) [line %i]" % (istatus.get_fsm_err_msg(), istatus.fsm_errors, iline))
+                self.log.info(line_regs[2:])
                 return 0
 
             # collecting GBT data

@@ -47,6 +47,9 @@ entity DataConverter is
     -- 0 - data_fifo is not empty while start of run
     -- 1 - header_fifo is not empty while start of run
     -- 2 - tcm_data_fifo is full
+	pm_data_shreg_o : out std_logic_vector(errrep_pmdat_len*80-1 downto 0); -- not used
+	rawdatfifo_wr_rate_o : out std_logic_vector(11 downto 0);
+	rawdatfifo_rd_rate_o : out std_logic_vector(11 downto 0);
     errors_o : out std_logic_vector(4 downto 0)
     );
 end DataConverter;
@@ -120,6 +123,9 @@ begin
   raw_data_o   <= tcm_data_fifo_dout;
   raw_isdata_o <= not tcm_data_fifo_empty;
 
+  pm_data_shreg_o <= (others => '0');
+  rawdatfifo_wr_rate_o <= (others => '0');
+  rawdatfifo_rd_rate_o <= (others => '0');
 
 
 

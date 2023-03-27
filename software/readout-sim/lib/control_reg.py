@@ -49,6 +49,7 @@ class control_reg:
         self.data_bunch_pattern = 0
         self.data_bunch_freq = 0
         self.data_bc_start = 0
+        self.data_orbit_jump = 0
 
         self.trg_gen = gen_mode.no_gen
         self.trg_rd_command = readout_cmd.idle
@@ -64,8 +65,10 @@ class control_reg:
         self.is_hb_reject = 0
         self.trg_data_select = 0
         self.force_idle = 0
+        self.rxclk_sync_shift = 0
 
         self.bcid_offset = 0
+
 
         self.reset_orbc_sync = 0
         self.reset_data_counters = 0
@@ -74,6 +77,7 @@ class control_reg:
         self.reset_readout = 0
         self.reset_gbt = 0
         self.reset_rxph_error = 0
+        self.reset_err_report = 0
 
         self.RDH_FEEID = 0
         self.RDH_SYS_ID = 0
@@ -116,6 +120,7 @@ class control_reg:
         log.info("    reset_gbt: %s" % (hex(self.reset_gbt)))
         log.info("    reset_readout: %s" % (hex(self.reset_readout)))
         log.info("    reset_rxph_error: %s" % (hex(self.reset_rxph_error)))
+        log.info("    reset_err_report: %s" % (hex(self.reset_err_report)))
 
         log.info("RDH param:")
         log.info("    RDH_feeid: %s" % (hex(self.RDH_FEEID)))
@@ -126,13 +131,13 @@ class control_reg:
 
         bitarray = []
 
-        reset_field = bitstring.pack('uint:1=0, 7*uint:1', self.reset_readout, self.reset_rxph_error, self.reset_gbt,
+        reset_field = bitstring.pack('8*uint:1', self.reset_err_report, self.reset_readout, self.reset_rxph_error, self.reset_gbt,
                                      self.reset_gbt_rxerror,
                                      self.reset_gensync, self.reset_data_counters, self.reset_orbc_sync)
-        rd_mode = bitstring.pack('4*uint:1', self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)
+        rd_mode = bitstring.pack('6*uint:1', self.data_orbit_jump, self.rxclk_sync_shift, self.is_hb_reject, self.force_idle, self.rd_bypass, self.is_hb_response)
 
         bitarray.append(
-            bitstring.pack('uint:8=0, 2*uint:4,  uint:8, 2*uint:4', rd_mode.uint, self.trg_rd_command.value,
+            bitstring.pack('uint:6=0, uint:6, uint:4,  uint:8, 2*uint:4', rd_mode.uint, self.trg_rd_command.value,
                            reset_field.uint, self.trg_gen.value, self.data_gen.value))
         bitarray.append(bitstring.pack('uint:32', self.data_trg_respond_mask))
         bitarray.append(bitstring.pack('uint:32', self.data_bunch_pattern))
@@ -165,6 +170,9 @@ class control_reg:
         self.is_hb_response = bitarray[0][-21:-20].uint
         self.rd_bypass = bitarray[0][-22:-21].uint
         self.force_idle = bitarray[0][-23:-22].uint
+        self.is_hb_reject = bitarray[0][-24:-23].uint
+        self.rxclk_sync_shift = bitarray[0][-25:-24].uint
+        self.data_orbit_jump = bitarray[0][-26:-25].uint
 
         self.data_trg_respond_mask = bitarray[1][:].uint
         self.data_bunch_pattern = bitarray[2][:].uint

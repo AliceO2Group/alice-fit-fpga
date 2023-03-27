@@ -66,10 +66,11 @@ architecture Behavioral of CRU_packet_Builder is
   signal EOP_format      : EOP_format_type;
 
   -- header data
-  constant rdh_header_version : std_logic_vector(7 downto 0)  := x"06";
+  constant rdh_header_version : std_logic_vector(7 downto 0)  := x"07";
   constant rdh_header_size    : std_logic_vector(7 downto 0)  := x"40";
   constant rdh_detector_field : std_logic_vector(31 downto 0) := x"00000000";
   constant rdh_par            : std_logic_vector(15 downto 0) := x"0000";
+  constant rdh_data_format    : std_logic_vector(7 downto 0) := x"00"; -- will be replaced by CRU
 
   signal rdh_feeid             : std_logic_vector(15 downto 0);
   signal rdh_sysid             : std_logic_vector(7 downto 0);
@@ -97,13 +98,17 @@ begin
   rdh_feeid             <= Control_register_I.RDH_data.FEE_ID;
   rdh_sysid             <= Control_register_I.RDH_data.SYS_ID;
   rdh_priority_bit      <= Control_register_I.RDH_data.PRT_BIT;
-  rdh_offset_new_packet <= std_logic_vector(to_unsigned(((rdh_nwords+4)*16), 16));
+  rdh_offset_new_packet <= std_logic_vector(to_unsigned(((rdh_nwords+4)*16), 16)); -- will be replaced by CRU
 
   -- v6 ===================================================================================
   SOP_format(0) <= '0' & x"10000000000000000000";  -- SOP CRU
-  SOP_format(1) <= '1' & rdh_offset_new_packet & x"0000" & rdh_sysid & rdh_priority_bit & rdh_feeid & rdh_header_size & rdh_header_version;
-  SOP_format(2) <= '1' & x"0000" & rdh_orbit & x"0000_0" & rdh_bc;
+  -- RDH2[15 .. 0]  RDH1[31 .. 0]  RDH0 [31 .. 0]
+  SOP_format(1) <= '1' & rdh_offset_new_packet & x"0000" & rdh_sysid & rdh_priority_bit & rdh_feeid & rdh_header_size & rdh_header_version; 
+  -- RDH6[15 .. 0]  RDH5[31 .. 0]  RDH4 [31 .. 0]
+  SOP_format(2) <= '1' & x"00" & rdh_data_format & rdh_orbit & x"0000_0" & rdh_bc;
+  -- RDH10[15 .. 0] RDH9[31 .. 0]  RDH8 [31 .. 0]
   SOP_format(3) <= '1' & x"0000_00" & rdh_stop & rdh_pages_counter & rdh_trg;
+  -- RDH14[15 .. 0] RDH13[31 .. 0] RDH12 [31 .. 0]
   SOP_format(4) <= '1' & x"0000_0000" & rdh_par & rdh_detector_field;
   EOP_format(0) <= '0' & x"20000000000000000000";  -- eop CRU
   -- ======================================================================================    

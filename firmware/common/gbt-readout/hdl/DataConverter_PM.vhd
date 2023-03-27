@@ -47,7 +47,10 @@ entity DataConverter is
     -- 1 - header_fifo is not empty while start of run
     -- 2 - tcm_data_fifo is full (for tcm only)
     -- 3 - input packet corrupted: extra word 
-    -- 4 - input packet corrupted: header too early 
+    -- 4 - input packet corrupted: header too early
+	pm_data_shreg_o : out std_logic_vector(errrep_pmdat_len*80-1 downto 0);
+	rawdatfifo_wr_rate_o : out std_logic_vector(11 downto 0);
+	rawdatfifo_rd_rate_o : out std_logic_vector(11 downto 0);
     errors_o : out std_logic_vector(4 downto 0)
     );
 end DataConverter;
@@ -91,8 +94,12 @@ architecture Behavioral of DataConverter is
   signal data_fifo_data   : std_logic_vector(GBT_data_word_bitdepth-1 downto 0);
   signal header_fifo_rden : std_logic;
   signal data_fifo_rden   : std_logic;
-
-
+  
+  signal pm_data_shreg, pm_data_shreg_dclk : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
+  
+  signal rawdat_rate_cnt_cnt, rawdat_rate_cnt_wr, rawdat_rate_cnt_rd : std_logic_vector(11 downto 0);
+  signal rawdat_rate_wr, rawdat_rate_rd : std_logic_vector(11 downto 0);
+  signal rawdat_rate_wr_dc, rawdat_rate_rd_dc : std_logic_vector(11 downto 0);
 
   -- attribute mark_debug                      : string;
   -- attribute mark_debug of reset_drop_counters : signal is "true";
@@ -117,6 +124,9 @@ architecture Behavioral of DataConverter is
   -- attribute mark_debug of data_fifo_data      : signal is "true";
   -- attribute mark_debug of header_fifo_rden    : signal is "true";
   -- attribute mark_debug of data_fifo_rden      : signal is "true";
+  -- attribute mark_debug of pm_data_shreg      : signal is "true";
+  -- attribute mark_debug of err_extra_word      : signal is "true";
+  -- attribute mark_debug of err_extra_header      : signal is "true";
 
 
 begin
@@ -137,6 +147,10 @@ begin
   data_fifo_data_o   <= data_fifo_data;
   header_fifo_rden   <= header_fifo_rden_i;
   data_fifo_rden     <= data_fifo_rden_i;
+  
+  pm_data_shreg_o <= pm_data_shreg_dclk;
+  rawdatfifo_wr_rate_o <= rawdat_rate_wr_dc;
+  rawdatfifo_rd_rate_o <= rawdat_rate_rd_dc;
 
 
 ---- Raw_header_fifo =============================================
@@ -186,6 +200,10 @@ begin
       fifo_cnt_max_o <= "000"&rawfifo_cnt_max;
       errors_o       <= err_extra_header&err_extra_word&'0'&errors;
       no_data_o      <= header_fifo_empty_dc = '1' and data_fifo_empty_dc = '1' and not sending_event_dc and not data_enabled;
+	  
+	  pm_data_shreg_dclk <= pm_data_shreg;
+	  rawdat_rate_wr_dc <= rawdat_rate_wr;
+	  rawdat_rate_rd_dc <= rawdat_rate_rd;
     end if;
   end process;
 
@@ -255,6 +273,24 @@ begin
         end if;
 
         if start_of_run then errors <= (not header_fifo_empty) & (not data_fifo_empty); end if;
+		
+		-- circle pm data buffer for error report
+		if (Board_data_I.is_data = '1') or (Board_data_I.is_header = '1') then 
+		  pm_data_shreg <= pm_data_shreg((errrep_pmdat_len-1)*80-1 downto 0)&Board_data_I.data_word;
+		end if;
+		
+		-- raw fifo wr/rd rate
+		if rawdat_rate_cnt_cnt = x"3e8" then
+		  rawdat_rate_rd <= rawdat_rate_cnt_rd;
+		  rawdat_rate_wr <= rawdat_rate_cnt_wr;
+		  rawdat_rate_cnt_rd <= (others => '0');
+		  rawdat_rate_cnt_wr <= (others => '0');
+		  rawdat_rate_cnt_cnt <= (others => '0');
+		else
+		  rawdat_rate_cnt_cnt <= rawdat_rate_cnt_cnt+1;
+		  if data_fifo_we = '1' then rawdat_rate_cnt_wr <= rawdat_rate_cnt_wr+1; end if;
+		  if data_fifo_rden = '1' then rawdat_rate_cnt_rd <= rawdat_rate_cnt_rd+1; end if;
+		end if;
 
       end if;
 

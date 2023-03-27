@@ -199,6 +199,8 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/snapshot_fifo.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/error_report.vhd" ]\
 ]
 
 add_files -norecurse -fileset sources_1 $files
@@ -382,7 +384,7 @@ gen_report impl_1_post_route_phys_opt_report_bus_skew_0 report_bus_skew:1.1 post
 set obj [get_runs impl_1]
 set_property -name "part" -value ${part} -objects $obj
 set_property -name "strategy" -value "Performance_NetDelay_low" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "ExploreWithRemap" -objects $obj
 set_property -name "steps.place_design.args.directive" -value "ExtraNetDelay_low" -objects $obj
 set_property -name "steps.phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExplore" -objects $obj

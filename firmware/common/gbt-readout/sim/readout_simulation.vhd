@@ -101,8 +101,12 @@ begin
       RxDataClk_I      => RX_CLK,
       GBT_RxFrameClk_O => GBT_RxFrameClk,
 
+	  IPbusClk_I          => IPBUS_CLK,
+	  err_report_fifo_rden_i => '1',
+
       Board_data_I       => board_data_test_const,
       Control_register_I => testbench_CONTROL_REG_dynamic,
+	  errors_rden_I      => '1', 
 
       MGT_RX_P_I    => '0',
       MGT_RX_N_I    => '0',
@@ -190,7 +194,22 @@ begin
 
 
 
+-- IPbus clock =========================================        
+  Sys3_process : process
 
+  begin
+
+    IPBUS_CLK <= '0';
+    wait for ipbus_clock_period/2;
+
+    IPBUS_CLK <= '1';
+    wait for ipbus_clock_period/2;
+
+  end process;
+-- =====================================================
+
+
+--testbench_CONTROL_REG_dynamic <= func_CNTRREG_getcntrreg(Control_register_from_file);
 
 -- simulation run ======================================        
   process (FSM_Clocks_signal.Data_Clk)

@@ -68,7 +68,15 @@ package fit_gbt_common_package is
     System_Clk     : std_logic;
     System_Counter : std_logic_vector(3 downto 0);
     GBT_RX_Clk     : std_logic;         --used in TESTB
+	ipbus_clk      : std_logic;
   end record;
+-- =============================================================
+
+-- ===== ERRORS report types ===================================
+   constant errrep_crugbt_len    : integer := 10;
+   constant errrep_pmdat_len     : integer := 14;
+   constant errrep_fifo_len      : integer := 36;
+   type gbt_data_arr_t is array (natural range <>) of std_logic_vector(95 downto 0);
 -- =============================================================
 
 -- ===== CONTROL REGISTER ======================================
@@ -85,6 +93,7 @@ package fit_gbt_common_package is
     bunch_pattern     : std_logic_vector(31 downto 0);  -- pattern lenghts of packet 
     bunch_freq        : std_logic_vector(15 downto 0);  -- pattern frequency
     bc_start          : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- offset of freq counter to first Orbit TRG
+	orbit_jump        : std_logic; -- orbit jump to generate bcid_sync_lost in simulation
   end record;
 
   type ctrl_trggen_t is record
@@ -107,15 +116,13 @@ package fit_gbt_common_package is
     Data_Gen    : ctrl_gen_t;
     Trigger_Gen : ctrl_trggen_t;
     RDH_data    : rdh_ctrl_t;
-
+	
     readout_bypass   : std_logic;
     is_hb_response   : std_logic;
     is_hb_reject     : std_logic;
     rxclk_sync_shift : std_logic;
     force_idle       : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select  : std_logic_vector(Trigger_bitdepth-1 downto 0);
-
-    BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
     reset_orbc_sync     : std_logic;    -- sync ORBIT, BC to CRU
     reset_data_counters : std_logic;    -- reset FIFO statistic
@@ -124,6 +131,9 @@ package fit_gbt_common_package is
     reset_rxph_error    : std_logic;    -- reset gbt phase error
     reset_readout       : std_logic;    -- reset readout fsm
     reset_gbt           : std_logic;    -- reset gbt
+    reset_err_report    : std_logic;    -- reset error report fifo
+	
+    BCID_offset : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- delay between ID from TX and ID in module data
 
   end record;
 
@@ -134,7 +144,8 @@ package fit_gbt_common_package is
         trigger_resp_mask => TRG_const_void,
         bunch_pattern     => x"00000000",
         bunch_freq        => x"0000",
-        bc_start          => x"000"
+        bc_start          => x"000",
+		orbit_jump        => '0'
         ),
 
       Trigger_Gen          => (
@@ -152,14 +163,12 @@ package fit_gbt_common_package is
         SYS_ID  => x"00",
         PRT_BIT => x"00"
         ),
-
+	  
       readout_bypass   => '0',
       is_hb_response   => '1',
       is_hb_reject     => '1',
       rxclk_sync_shift => '0',
       trg_data_select  => x"00000000",
-
-      BCID_offset => x"000",
 
       reset_orbc_sync     => '0',
       reset_data_counters => '0',
@@ -168,12 +177,15 @@ package fit_gbt_common_package is
       reset_readout       => '0',
       reset_gbt           => '0',
       reset_rxph_error    => '0',
-      force_idle          => '0'
+      force_idle          => '0',
+	  reset_err_report    => '0',
+	  
+      BCID_offset => x"000"
       );
 -- =============================================================
 
 -- ===== FIT GBT STATUS ========================================
-  constant stat_reg_size            : integer := 10;
+  constant stat_reg_size            : integer := 11;
   constant stat_reg_size_sim        : integer := stat_reg_size+6;
   constant ipbusrd_stat_addr_offset : integer := 16;
   constant ipbusrd_fifo_out_addr    : integer := 8;
@@ -215,7 +227,7 @@ package fit_gbt_common_package is
     datagen_report : datagen_report_t;  -- header of generated data; used only in simulation
 
     Readout_Mode        : rdmode_t;
-    CRU_Readout_Mode    : rdmode_t;
+    CRU_Readout_Mode    : rdmode_t; -- !!! got value for one cycle in HB
     BCIDsync_Mode       : bcid_sync_t;
     Start_run           : std_logic;
     Stop_run            : std_logic;
@@ -229,6 +241,7 @@ package fit_gbt_common_package is
     ORBIT_from_CRU           : std_logic_vector(Orbit_id_bitdepth-1 downto 0);  -- ORBIT from CRUS
     BCID_from_CRU_corrected  : std_logic_vector(BC_id_bitdepth-1 downto 0);  -- BC ID from CRUS
     ORBIT_from_CRU_corrected : std_logic_vector(Orbit_id_bitdepth-1 downto 0);  -- ORBIT from CRUS
+    ORBC_from_CRU_sync  : std_logic_vector(Orbit_id_bitdepth + BC_id_bitdepth-1 downto 0);  -- BC ID sync compared for errors report
 
     rx_phase      : std_logic_vector(rx_phase_bitdepth-1 downto 0);
     cnv_fifo_max  : std_logic_vector(15 downto 0);
@@ -241,10 +254,11 @@ package fit_gbt_common_package is
     bcind_evt : bc_indicator_t;
     bcind_trg : bc_indicator_t;
 
-    -- readout via IPbus, used in FTM only
+    -- readout via IPbus
     ipbusrd_fifo_cnt : std_logic_vector(15 downto 0);
     ipbusrd_fifo_out : std_logic_vector(31 downto 0);
-
+	ipbusrd_err_report : std_logic_vector(31 downto 0);
+	
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data
     -- 1 - [Selector] slct_fifo is not empty when run starts
@@ -258,6 +272,7 @@ package fit_gbt_common_package is
     -- 8 - [Converter] input packet corrupted: extra word (PM)
     -- 9 - [Converter] input packet corrupted: header too early (PM)
     -- 10- [ltu_rx_decoder] bc_sync lost during the run
+    -- 11- [ltu_rx_decoder] bc_sync lost out of the run
     -- 15- [FRU]       0x1 = ready for run, all fifos are empty
     fsm_errors     : std_logic_vector(15 downto 0);
     Rx_Phase_error : std_logic;         --reg bit 9
@@ -269,6 +284,12 @@ package fit_gbt_common_package is
     -- 3 - [Selector]  select
     -- 4 - [Selector]  cntpck
     fifos_empty : std_logic_vector(7 downto 0);
+	
+	-- pm data circle buffer for error reporting
+	pm_data_buff : std_logic_vector(errrep_pmdat_len*80-1 downto 0);
+	rawdatfifo_wr_rate : std_logic_vector(11 downto 0);
+	rawdatfifo_rd_rate : std_logic_vector(11 downto 0);
+	
   end record;
 
   constant test_gbt_status_void : gbt_status_t :=
@@ -379,14 +400,6 @@ package body fit_gbt_common_package is
       cntr_reg.Trigger_Gen.usage_generator := gen_off;
     end if;
 
-    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
-    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
-    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
-    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
-    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
-    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
-    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
-    -- reg [0](15) is empty
 
     if(cntrl_reg_addrreg(0)(19 downto 16) = x"0") then
       cntr_reg.Trigger_Gen.Readout_command := idle;
@@ -398,12 +411,25 @@ package body fit_gbt_common_package is
       cntr_reg.Trigger_Gen.Readout_command := idle;
     end if;
 
+
+    cntr_reg.reset_orbc_sync     := cntrl_reg_addrreg(0)(8);
+    cntr_reg.reset_data_counters := cntrl_reg_addrreg(0)(9);
+    cntr_reg.reset_gensync       := cntrl_reg_addrreg(0)(10);
+    cntr_reg.reset_gbt_rxerror   := cntrl_reg_addrreg(0)(11);
+    cntr_reg.reset_gbt           := cntrl_reg_addrreg(0)(12);
+    cntr_reg.reset_rxph_error    := cntrl_reg_addrreg(0)(13);
+    cntr_reg.reset_readout       := cntrl_reg_addrreg(0)(14);
+    cntr_reg.reset_err_report    := cntrl_reg_addrreg(0)(15);
+
+
+
     cntr_reg.is_hb_response   := cntrl_reg_addrreg(0)(20);
     cntr_reg.readout_bypass   := cntrl_reg_addrreg(0)(21);
     cntr_reg.force_idle       := cntrl_reg_addrreg(0)(22);
     cntr_reg.is_hb_reject     := cntrl_reg_addrreg(0)(23);
     cntr_reg.rxclk_sync_shift := cntrl_reg_addrreg(0)(24);
-    -- reg [0](25 - 31) is empty
+	cntr_reg.Data_Gen.orbit_jump := cntrl_reg_addrreg(0)(25);
+    -- reg [0](26 - 31) is empty
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);
@@ -498,6 +524,7 @@ package body fit_gbt_common_package is
     status_reg_addrreg(7)                     := status_reg.ipbusrd_fifo_cnt & x"0000";
     status_reg_addrreg(ipbusrd_fifo_out_addr) := status_reg.ipbusrd_fifo_out;  --8
     status_reg_addrreg(9)                     := status_reg.event_counter;
+	status_reg_addrreg(10)                    := status_reg.ipbusrd_err_report;
 
     return status_reg_addrreg;
   end function;
