@@ -282,7 +282,7 @@ signal TT_mode : STD_LOGIC;
 
 signal ampl_sat : STD_LOGIC_VECTOR (11 downto 0);
 signal ampl_low : STD_LOGIC_VECTOR (3 downto 0);
-signal Event_in, DATA_rd, DATA_rdy, inp_cou, CH_trig, CH_triga, CH_do, Z_alarm, trig_bgnd, cnt_trig, trig_dis : STD_LOGIC_VECTOR (11 downto 0);
+signal Event_in, DATA_rd, DATA_rdy, inp_cou, CH_trig, CH_triga, CH_do, Z_alarm, trig_bgnd, cnt_trig, trig_dis, ch_trig_outtn : STD_LOGIC_VECTOR (11 downto 0);
 signal inp_event, EV_ID_wr, EV_ID_rd, EV_ID_empty, Event_ready, Event_ready_0, Event_free, wr_out_id, New_BCID, DATA80_rd, DATA_empty, FIFO_dis, wr_nch, ev_tout, ev_tout0 : STD_LOGIC;
 signal ev_tout_cnt : STD_LOGIC_VECTOR (7 downto 0);
 
@@ -295,7 +295,7 @@ signal xadc_a: STD_LOGIC_VECTOR (6 downto 0);
 signal EV_ID_in, EV_ID_out : STD_LOGIC_VECTOR (55 downto 0);
 signal EV_DATA80, DATA80_in, data_word : STD_LOGIC_VECTOR (79 downto 0);
 signal  is_data, is_header : STD_LOGIC;
-signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0_0, gs1_0, gs0_1, gs1_1, rdo_sel : STD_LOGIC;
+signal WR_fifo_out, wr_hspi32, rd_hspi32, flsh_sel, TCM_req, TCM_reqh, TCM_req0, TCM_req1, TCM_req2, fl_rst, rd_xadc, xadc_en, xadc_rdy, gs0_0, gs1_0, gs0_1, gs1_1, rdo_sel, fdd : STD_LOGIC;
 
 signal DATA_out : data_vector;
 
@@ -411,7 +411,10 @@ component TDCCHAN is
               R1_corr : in STD_LOGIC_VECTOR (11 downto 0);
               pulse_in : out STD_LOGIC;
               chan_ena : in STD_LOGIC;
-              trig_dis : in STD_LOGIC
+              trig_dis : in STD_LOGIC;
+              fdd : in STD_LOGIC;
+              CH_trig_int : in STD_LOGIC;
+              CH_trig_outtn : out STD_LOGIC
                );
               
    end component;
@@ -1135,62 +1138,62 @@ TDC3_CHD: TDCCHAN port map( pin_in =>CGE12i, pin_out =>CGE12, clk300 =>clk300_3,
 CHANNEL1A : channel port map (CGE =>CGE1, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC1A_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC1A, CSTR =>CSTR1, CH =>CH1, CH_shift => CH1A_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH1_0_zero, CH1_zero =>CH1_1_zero, CH_trig_outt =>CH_trig(0), CH_trig_outa =>CH_triga(0), CH_trig_bgnd=> trig_bgnd(0), CH_TIME =>CH_TIME_T(0),
                              CH_ampl =>CH_ampl0(0), DATA_out=>DATA_out(0), DATA_ready=>DATA_rdy(0), DATA_rd=>DATA_rd(0), FIFO_dis=>FIFO_dis, Event_in=>Event_in(0), Z0_cal=>CH1_Z0, Z1_cal=>CH1_Z1, Z_alarm=>Z_alarm(0), spi_lock=>spi_lock320, R0_cal=>CH1_0_rg,
-                             R1_cal=>CH1_1_rg, R0_corr=>CH1_0_rc, R1_corr=>CH1_1_rc, pulse_in=>inp_cou(0), chan_ena=>chans_ena(0), trig_dis=>trig_dis(0));
+                             R1_cal=>CH1_1_rg, R0_corr=>CH1_0_rc, R1_corr=>CH1_1_rc, pulse_in=>inp_cou(0), chan_ena=>chans_ena(0), trig_dis=>trig_dis(0), fdd=>fdd, ch_trig_int=>ch_trig_outtn(1), ch_trig_outtn=>ch_trig_outtn(0));
 
 CHANNEL1B : channel port map (CGE =>CGE2, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC1B_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC1B, CSTR =>CSTR2, CH =>CH2, CH_shift => CH1B_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH2_0_zero, CH1_zero =>CH2_1_zero, CH_trig_outt =>CH_trig(1), CH_trig_outa =>CH_triga(1), CH_trig_bgnd=> trig_bgnd(1), CH_TIME =>CH_TIME_T(1),
                              CH_ampl =>CH_ampl0(1), DATA_out=>DATA_out(1), DATA_ready=>DATA_rdy(1), DATA_rd=>DATA_rd(1), FIFO_dis=>FIFO_dis, Event_in=>Event_in(1), Z0_cal=>CH2_Z0, Z1_cal=>CH2_Z1, Z_alarm=>Z_alarm(1),  spi_lock=>spi_lock320, R0_cal=>CH2_0_rg,
-                             R1_cal=>CH2_1_rg, R0_corr=>CH2_0_rc, R1_corr=>CH2_1_rc, pulse_in=>inp_cou(1), chan_ena=>chans_ena(1), trig_dis=>trig_dis(1));
+                             R1_cal=>CH2_1_rg, R0_corr=>CH2_0_rc, R1_corr=>CH2_1_rc, pulse_in=>inp_cou(1), chan_ena=>chans_ena(1), trig_dis=>trig_dis(1), fdd=>fdd, ch_trig_int=>ch_trig_outtn(0), ch_trig_outtn=>ch_trig_outtn(1));
 
 CHANNEL1C : channel port map (CGE =>CGE3, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC1C_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC1C, CSTR =>CSTR3, CH =>CH3, CH_shift => CH1C_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH3_0_zero, CH1_zero =>CH3_1_zero, CH_trig_outt =>CH_trig(2), CH_trig_outa =>CH_triga(2), CH_trig_bgnd=> trig_bgnd(2), CH_TIME =>CH_TIME_T(2),
                              CH_ampl =>CH_ampl0(2), DATA_out=>DATA_out(2),DATA_ready=>DATA_rdy(2), DATA_rd=>DATA_rd(2), FIFO_dis=>FIFO_dis, Event_in=>Event_in(2), Z0_cal=>CH3_Z0, Z1_cal=>CH3_Z1, Z_alarm=>Z_alarm(2),  spi_lock=>spi_lock320, R0_cal=>CH3_0_rg,
-                             R1_cal=>CH3_1_rg, R0_corr=>CH3_0_rc, R1_corr=>CH3_1_rc, pulse_in=>inp_cou(2), chan_ena=>chans_ena(2), trig_dis=>trig_dis(2));
+                             R1_cal=>CH3_1_rg, R0_corr=>CH3_0_rc, R1_corr=>CH3_1_rc, pulse_in=>inp_cou(2), chan_ena=>chans_ena(2), trig_dis=>trig_dis(2), fdd=>fdd, ch_trig_int=>ch_trig_outtn(3), ch_trig_outtn=>ch_trig_outtn(2));
 
 CHANNEL1D : channel port map (CGE =>CGE4, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC1D_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC1D, CSTR =>CSTR4, CH =>CH4, CH_shift => CH1D_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH4_0_zero, CH1_zero =>CH4_1_zero, CH_trig_outt =>CH_trig(3), CH_trig_outa =>CH_triga(3), CH_trig_bgnd=> trig_bgnd(3), CH_TIME =>CH_TIME_T(3),
                              CH_ampl =>CH_ampl0(3), DATA_out=>DATA_out(3), DATA_ready=>DATA_rdy(3), DATA_rd=>DATA_rd(3), FIFO_dis=>FIFO_dis, Event_in=>Event_in(3), Z0_cal=>CH4_Z0, Z1_cal=>CH4_Z1, Z_alarm=>Z_alarm(3),  spi_lock=>spi_lock320, R0_cal=>CH4_0_rg,
-                             R1_cal=>CH4_1_rg, R0_corr=>CH4_0_rc, R1_corr=>CH4_1_rc, pulse_in=>inp_cou(3), chan_ena=>chans_ena(3), trig_dis=>trig_dis(3));
+                             R1_cal=>CH4_1_rg, R0_corr=>CH4_0_rc, R1_corr=>CH4_1_rc, pulse_in=>inp_cou(3), chan_ena=>chans_ena(3), trig_dis=>trig_dis(3), fdd=>fdd, ch_trig_int=>ch_trig_outtn(2), ch_trig_outtn=>ch_trig_outtn(3));
                              
 CHANNEL2A : channel port map (CGE =>CGE5, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2A_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2A, CSTR =>CSTR5, CH =>CH5, CH_shift => CH2A_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH5_0_zero, CH1_zero =>CH5_1_zero, CH_trig_outt =>CH_trig(4), CH_trig_outa =>CH_triga(4), CH_trig_bgnd=> trig_bgnd(4), CH_TIME =>CH_TIME_T(4),
                              CH_ampl =>CH_ampl0(4), DATA_out=>DATA_out(4), DATA_ready=>DATA_rdy(4), DATA_rd=>DATA_rd(4), FIFO_dis=>FIFO_dis, Event_in=>Event_in(4), Z0_cal=>CH5_Z0, Z1_cal=>CH5_Z1, Z_alarm=>Z_alarm(4),  spi_lock=>spi_lock320, R0_cal=>CH5_0_rg,
-                             R1_cal=>CH5_1_rg, R0_corr=>CH5_0_rc, R1_corr=>CH5_1_rc, pulse_in=>inp_cou(4), chan_ena=>chans_ena(4), trig_dis=>trig_dis(4));
+                             R1_cal=>CH5_1_rg, R0_corr=>CH5_0_rc, R1_corr=>CH5_1_rc, pulse_in=>inp_cou(4), chan_ena=>chans_ena(4), trig_dis=>trig_dis(4), fdd=>fdd, ch_trig_int=>ch_trig_outtn(5), ch_trig_outtn=>ch_trig_outtn(4));
                              
 CHANNEL2B : channel port map (CGE =>CGE6, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2B_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2B, CSTR =>CSTR6, CH =>CH6, CH_shift => CH2B_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH6_0_zero, CH1_zero =>CH6_1_zero, CH_trig_outt =>CH_trig(5), CH_trig_outa =>CH_triga(5), CH_trig_bgnd=> trig_bgnd(5), CH_TIME =>CH_TIME_T(5),
                              CH_ampl =>CH_ampl0(5), DATA_out=>DATA_out(5), DATA_ready=>DATA_rdy(5), DATA_rd=>DATA_rd(5), FIFO_dis=>FIFO_dis, Event_in=>Event_in(5), Z0_cal=>CH6_Z0, Z1_cal=>CH6_Z1, Z_alarm=>Z_alarm(5),  spi_lock=>spi_lock320, R0_cal=>CH6_0_rg,
-                             R1_cal=>CH6_1_rg, R0_corr=>CH6_0_rc, R1_corr=>CH6_1_rc, pulse_in=>inp_cou(5), chan_ena=>chans_ena(5), trig_dis=>trig_dis(5));
+                             R1_cal=>CH6_1_rg, R0_corr=>CH6_0_rc, R1_corr=>CH6_1_rc, pulse_in=>inp_cou(5), chan_ena=>chans_ena(5), trig_dis=>trig_dis(5), fdd=>fdd, ch_trig_int=>ch_trig_outtn(4), ch_trig_outtn=>ch_trig_outtn(5));
                              
 CHANNEL2C : channel port map (CGE =>CGE7, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2C_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2C, CSTR =>CSTR7, CH =>CH7, CH_shift => CH2C_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH7_0_zero, CH1_zero =>CH7_1_zero, CH_trig_outt =>CH_trig(6), CH_trig_outa =>CH_triga(6), CH_trig_bgnd=> trig_bgnd(6), CH_TIME =>CH_TIME_T(6),
                              CH_ampl =>CH_ampl0(6), DATA_out=>DATA_out(6), DATA_ready=>DATA_rdy(6), DATA_rd=>DATA_rd(6), FIFO_dis=>FIFO_dis, Event_in=>Event_in(6), Z0_cal=>CH7_Z0, Z1_cal=>CH7_Z1, Z_alarm=>Z_alarm(6),  spi_lock=>spi_lock320, R0_cal=>CH7_0_rg,
-                             R1_cal=>CH7_1_rg, R0_corr=>CH7_0_rc, R1_corr=>CH7_1_rc, pulse_in=>inp_cou(6), chan_ena=>chans_ena(6), trig_dis=>trig_dis(6));
+                             R1_cal=>CH7_1_rg, R0_corr=>CH7_0_rc, R1_corr=>CH7_1_rc, pulse_in=>inp_cou(6), chan_ena=>chans_ena(6), trig_dis=>trig_dis(6), fdd=>fdd, ch_trig_int=>ch_trig_outtn(7), ch_trig_outtn=>ch_trig_outtn(6));
                              
 CHANNEL2D : channel port map (CGE =>CGE8, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC2D_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC2D, CSTR =>CSTR8, CH =>CH8, CH_shift => CH2D_shift, 
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH8_0_zero, CH1_zero =>CH8_1_zero, CH_trig_outt =>CH_trig(7), CH_trig_outa =>CH_triga(7), CH_trig_bgnd=> trig_bgnd(7), CH_TIME =>CH_TIME_T(7),
                              CH_ampl =>CH_ampl0(7), DATA_out=>DATA_out(7), DATA_ready=>DATA_rdy(7), DATA_rd=>DATA_rd(7), FIFO_dis=>FIFO_dis, Event_in=>Event_in(7), Z0_cal=>CH8_Z0, Z1_cal=>CH8_Z1, Z_alarm=>Z_alarm(7),  spi_lock=>spi_lock320, R0_cal=>CH8_0_rg,
-                             R1_cal=>CH8_1_rg, R0_corr=>CH8_0_rc, R1_corr=>CH8_1_rc, pulse_in=>inp_cou(7), chan_ena=>chans_ena(7), trig_dis=>trig_dis(7));
+                             R1_cal=>CH8_1_rg, R0_corr=>CH8_0_rc, R1_corr=>CH8_1_rc, pulse_in=>inp_cou(7), chan_ena=>chans_ena(7), trig_dis=>trig_dis(7), fdd=>fdd, ch_trig_int=>ch_trig_outtn(6), ch_trig_outtn=>ch_trig_outtn(7));
                              
 CHANNEL3A : channel port map (CGE =>CGE9, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC3A_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC3A, CSTR =>CSTR9, CH =>CH9, CH_shift => CH3A_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH9_0_zero, CH1_zero =>CH9_1_zero, CH_trig_outt =>CH_trig(8), CH_trig_outa =>CH_triga(8), CH_trig_bgnd=> trig_bgnd(8), CH_TIME =>CH_TIME_T(8),
                              CH_ampl =>CH_ampl0(8), DATA_out=>DATA_out(8), DATA_ready=>DATA_rdy(8), DATA_rd=>DATA_rd(8), FIFO_dis=>FIFO_dis, Event_in=>Event_in(8), Z0_cal=>CH9_Z0, Z1_cal=>CH9_Z1, Z_alarm=>Z_alarm(8),  spi_lock=>spi_lock320, R0_cal=>CH9_0_rg,
-                             R1_cal=>CH9_1_rg, R0_corr=>CH9_0_rc, R1_corr=>CH9_1_rc, pulse_in=>inp_cou(8), chan_ena=>chans_ena(8), trig_dis=>trig_dis(8));
+                             R1_cal=>CH9_1_rg, R0_corr=>CH9_0_rc, R1_corr=>CH9_1_rc, pulse_in=>inp_cou(8), chan_ena=>chans_ena(8), trig_dis=>trig_dis(8), fdd=>fdd, ch_trig_int=>ch_trig_outtn(9), ch_trig_outtn=>ch_trig_outtn(8));
                                                            
 CHANNEL3B : channel port map (CGE =>CGE10, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC3B_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC3B, CSTR =>CSTR10, CH =>CH10, CH_shift => CH3B_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH10_0_zero, CH1_zero =>CH10_1_zero, CH_trig_outt =>CH_trig(9), CH_trig_outa =>CH_triga(9), CH_trig_bgnd=> trig_bgnd(9), CH_TIME =>CH_TIME_T(9),
                              CH_ampl =>CH_ampl0(9), DATA_out=>DATA_out(9), DATA_ready=>DATA_rdy(9), DATA_rd=>DATA_rd(9), FIFO_dis=>FIFO_dis, Event_in=>Event_in(9), Z0_cal=>CH10_Z0, Z1_cal=>CH10_Z1, Z_alarm=>Z_alarm(9),  spi_lock=>spi_lock320, R0_cal=>CH10_0_rg,
-                             R1_cal=>CH10_1_rg, R0_corr=>CH10_0_rc, R1_corr=>CH10_1_rc, pulse_in=>inp_cou(9), chan_ena=>chans_ena(9), trig_dis=>trig_dis(9));
+                             R1_cal=>CH10_1_rg, R0_corr=>CH10_0_rc, R1_corr=>CH10_1_rc, pulse_in=>inp_cou(9), chan_ena=>chans_ena(9), trig_dis=>trig_dis(9), fdd=>fdd, ch_trig_int=>ch_trig_outtn(8), ch_trig_outtn=>ch_trig_outtn(9));
                                                            
 CHANNEL3C : channel port map (CGE =>CGE11, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC3C_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC3C, CSTR =>CSTR11, CH =>CH11, CH_shift => CH3C_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH11_0_zero, CH1_zero =>CH11_1_zero, CH_trig_outt =>CH_trig(10), CH_trig_outa =>CH_triga(10), CH_trig_bgnd=> trig_bgnd(10), CH_TIME =>CH_TIME_T(10),
                              CH_ampl =>CH_ampl0(10), DATA_out=>DATA_out(10), DATA_ready=>DATA_rdy(10), DATA_rd=>DATA_rd(10), FIFO_dis=>FIFO_dis, Event_in=>Event_in(10), Z0_cal=>CH11_Z0, Z1_cal=>CH11_Z1, Z_alarm=>Z_alarm(10),  spi_lock=>spi_lock320, R0_cal=>CH11_0_rg,
-                             R1_cal=>CH11_1_rg, R0_corr=>CH11_0_rc, R1_corr=>CH11_1_rc, pulse_in=>inp_cou(10), chan_ena=>chans_ena(10), trig_dis=>trig_dis(10));
+                             R1_cal=>CH11_1_rg, R0_corr=>CH11_0_rc, R1_corr=>CH11_1_rc, pulse_in=>inp_cou(10), chan_ena=>chans_ena(10), trig_dis=>trig_dis(10), fdd=>fdd, ch_trig_int=>ch_trig_outtn(11), ch_trig_outtn=>ch_trig_outtn(10));
                                                            
 CHANNEL3D : channel port map (CGE =>CGE12, clk320 =>clk320, reset =>sreset, tdc_rdy_in=> TDC3D_rdy0, mt_cou =>mt_cou, bc_cou =>BC_COU(5 downto 0), TR_bc =>TR_to, TDC =>TDC3D, CSTR =>CSTR12, CH =>CH12, CH_shift => CH3D_shift,
                              gate_time_low => gate_time_low, gate_time_high =>gate_time_high, Ampl_sat =>Ampl_sat, ampl_low =>ampl_low, CH0_zero =>CH12_0_zero, CH1_zero =>CH12_1_zero, CH_trig_outt =>CH_trig(11), CH_trig_outa =>CH_triga(11), CH_trig_bgnd=> trig_bgnd(11), CH_TIME =>CH_TIME_T(11),
                              CH_ampl =>CH_ampl0(11), DATA_out=>DATA_out(11), DATA_ready=>DATA_rdy(11), DATA_rd=>DATA_rd(11), FIFO_dis=>FIFO_dis, Event_in=>Event_in(11), Z0_cal=>CH12_Z0, Z1_cal=>CH12_Z1, Z_alarm=>Z_alarm(11),  spi_lock=>spi_lock320, R0_cal=>CH12_0_rg,
-                             R1_cal=>CH12_1_rg, R0_corr=>CH12_0_rc, R1_corr=>CH12_1_rc, pulse_in=>inp_cou(11), chan_ena=>chans_ena(11), trig_dis=>trig_dis(11));
+                             R1_cal=>CH12_1_rg, R0_corr=>CH12_0_rc, R1_corr=>CH12_1_rc, pulse_in=>inp_cou(11), chan_ena=>chans_ena(11), trig_dis=>trig_dis(11), fdd=>fdd, ch_trig_int=>ch_trig_outtn(10), ch_trig_outtn=>ch_trig_outtn(11));
                              
 TRG0: trigger port map ( clk320=>clk320, mt_cou=>mt_cou, CH_trigt=>CH_trig, CH_triga=>CH_triga, CH_trigb=>trig_bgnd, CH_TIME_T=>CH_TIME_T, CH_ampl0=>CH_ampl0, tcm_req=>tcm_req, tt=>tt, ta=>ta);
  
@@ -1283,7 +1286,7 @@ if (HSCKI'event and HSCKI='0') then
              else
 
           case to_integer(unsigned(hspi_addr(7 downto 0))) is
-            when 0 => HSPI_DATA<=x"00" & gate_time_high; 
+            when 0 => HSPI_DATA<="0000000" & fdd & gate_time_high; 
             when 1 => HSPI_DATA<="000" & trig_dis(0) & CH1A_shift;
             when 2 => HSPI_DATA<="000" & trig_dis(1) & CH1B_shift; 
             when 3 => HSPI_DATA<="000" & trig_dis(2) & CH1C_shift; 
@@ -1297,7 +1300,7 @@ if (HSCKI'event and HSCKI='0') then
             when 16#B# => HSPI_DATA<="000" & trig_dis(10)  & CH3C_shift; 
             when 16#C# => HSPI_DATA<="000" & trig_dis(11) & CH3D_shift; 
 
-            when 16#D# => HSPI_DATA<=x"0" & CH1_0_zero; 
+            when 16#D# => HSPI_DATA<=x"0" & trig_dis; 
             when 16#E# => HSPI_DATA<=x"0" & CH1_1_zero;
             when 16#F# => HSPI_DATA<=x"0" & CH2_0_zero;
             when 16#10# => HSPI_DATA<=x"0" & CH2_1_zero;
@@ -1756,7 +1759,7 @@ if (cnt_rst='1') then cnt_rst<='0'; end if; if (hyst_rst='1') then hyst_rst<='0'
      else
        if (spi_wr_req='1') or  (hspi_wr_req='1') then
        case reg_wr_addr(7 downto 0) is 
-            when x"00" => gate_time_high<=reg_wr_data(7 downto 0); 
+            when x"00" => gate_time_high<=reg_wr_data(7 downto 0); if (spi_wr_req='0') then fdd<=reg_wr_data(8); end if;
             when x"01" => CH1A_shift<=reg_wr_data(11 downto 0); if (spi_wr_req='0') then trig_dis(0)<=reg_wr_data(12); end if; 
             when x"02" => CH1B_shift<=reg_wr_data(11 downto 0); if (spi_wr_req='0') then trig_dis(1)<=reg_wr_data(12); end if;
             when x"03" => CH1C_shift<=reg_wr_data(11 downto 0); if (spi_wr_req='0') then trig_dis(2)<=reg_wr_data(12); end if;
