@@ -1300,7 +1300,7 @@ if (HSCKI'event and HSCKI='0') then
             when 16#B# => HSPI_DATA<="000" & trig_dis(10)  & CH3C_shift; 
             when 16#C# => HSPI_DATA<="000" & trig_dis(11) & CH3D_shift; 
 
-            when 16#D# => HSPI_DATA<=x"0" & trig_dis; 
+            when 16#D# => HSPI_DATA<=x"0" & CH1_0_zero; 
             when 16#E# => HSPI_DATA<=x"0" & CH1_1_zero;
             when 16#F# => HSPI_DATA<=x"0" & CH2_0_zero;
             when 16#10# => HSPI_DATA<=x"0" & CH2_1_zero;
