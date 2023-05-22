@@ -123,6 +123,8 @@ package fit_gbt_common_package is
     rxclk_sync_shift : std_logic;
     force_idle       : std_logic;  -- reset phase error, sync move to start, lock CNT/TRG mode to IDLE
     trg_data_select  : std_logic_vector(Trigger_bitdepth-1 downto 0);
+	
+	errrep_slost_allgbtw : std_logic;
 
     reset_orbc_sync     : std_logic;    -- sync ORBIT, BC to CRU
     reset_data_counters : std_logic;    -- reset FIFO statistic
@@ -169,6 +171,8 @@ package fit_gbt_common_package is
       is_hb_reject     => '1',
       rxclk_sync_shift => '0',
       trg_data_select  => x"00000000",
+	  
+	  errrep_slost_allgbtw => '0',
 
       reset_orbc_sync     => '0',
       reset_data_counters => '0',
@@ -429,7 +433,8 @@ package body fit_gbt_common_package is
     cntr_reg.is_hb_reject     := cntrl_reg_addrreg(0)(23);
     cntr_reg.rxclk_sync_shift := cntrl_reg_addrreg(0)(24);
 	cntr_reg.Data_Gen.orbit_jump := cntrl_reg_addrreg(0)(25);
-    -- reg [0](26 - 31) is empty
+	cntr_reg.errrep_slost_allgbtw := cntrl_reg_addrreg(0)(26);
+    -- reg [0](27 - 31) is empty
 
     cntr_reg.Data_Gen.trigger_resp_mask                := cntrl_reg_addrreg(1);
     cntr_reg.Data_Gen.bunch_pattern                    := cntrl_reg_addrreg(2);

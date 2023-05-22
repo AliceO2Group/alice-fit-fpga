@@ -176,9 +176,9 @@ begin
         gbt_data_counter <= gbt_data_counter+1;
 
         -- shift registers for error reporting
-        --if RX_IsData_I = '1' then
-        gbt_data_shreg <= gbt_data_shreg(errrep_crugbt_len*96-97 downto 0) & "000" & RX_IsData_I & gbt_data_counter(11 downto 0) & RX_Data_I;
-        --end if;
+        if RX_IsData_I = '1' or Control_register_I.errrep_slost_allgbtw = '1' then
+          gbt_data_shreg <= gbt_data_shreg(errrep_crugbt_len*96-97 downto 0) & "000" & RX_IsData_I & gbt_data_counter(11 downto 0) & RX_Data_I;
+        end if;
 
 
       end if;
