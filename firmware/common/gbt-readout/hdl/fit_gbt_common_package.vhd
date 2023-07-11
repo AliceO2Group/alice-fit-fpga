@@ -263,6 +263,10 @@ package fit_gbt_common_package is
     ipbusrd_fifo_out : std_logic_vector(31 downto 0);
 	ipbusrd_err_report : std_logic_vector(31 downto 0);
 	
+	-- bc sync lost
+    bcsync_lost_flag  : std_logic;
+    bcsync_lost_cnt   : std_logic_vector(7 downto 0);
+	
     -- errors indicate unexpected FSM state, should be reset and debugged
     -- 0 - [RDH builder] slct_fifo is empty while reading data
     -- 1 - [Selector] slct_fifo is not empty when run starts
@@ -521,7 +525,7 @@ package body fit_gbt_common_package is
 
     status_reg_addrreg(0)                     := cru_rd_mode & "0"&status_reg.rx_phase & bcid_sync_mode & rd_mode & gbt_status;
     status_reg_addrreg(1)                     := status_reg.ORBIT_from_CRU;
-    status_reg_addrreg(2)                     := status_reg.fsm_errors & x"00" & status_reg.fifos_empty;
+    status_reg_addrreg(2)                     := status_reg.fsm_errors & status_reg.bcsync_lost_cnt & status_reg.fifos_empty;
     status_reg_addrreg(3)                     := status_reg.cnv_fifo_max & status_reg.cnv_drop_cnt;
     status_reg_addrreg(4)                     := status_reg.sel_fifo_max & status_reg.sel_drop_cnt;
     status_reg_addrreg(5)                     := status_reg.gbt_data_cnt;

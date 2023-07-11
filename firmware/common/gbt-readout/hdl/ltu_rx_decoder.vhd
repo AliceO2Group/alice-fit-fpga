@@ -43,6 +43,8 @@ entity ltu_rx_decoder is
     apply_bc_delay_o   : out std_logic;
 
     bcsync_lost_inrun_o : out std_logic;
+    bcsync_lost_flag_o  : out std_logic;
+    bcsync_lost_cnt_o   : out std_logic_vector(7 downto 0);
 	
 	bcsyncl_outrun_reset_i : in std_logic;
     bcsync_lost_outrun_o : out std_logic
@@ -62,6 +64,7 @@ architecture Behavioral of ltu_rx_decoder is
 
   signal sync_bc_int, bc_delay_int, bc_max_int : natural;
   signal bcsync_lost_inrun, bcsync_lost_outrun : std_logic;
+  signal bcsync_lost_flag : std_logic;
 
   signal gbt_ready                                       : boolean;
   signal run_not_permit, bc_apply_permit                 : boolean;
@@ -78,6 +81,10 @@ architecture Behavioral of ltu_rx_decoder is
   signal bc_apply_fsm                          : bc_apply_fsm_t;
   signal apply_bc_delay, apply_bc_delay_ff     : std_logic;
   signal orbits_stb_counter                    : std_logic_vector(3 downto 0);  -- bc_apply switched after 16 stable (HB in cync) orbits 
+  
+  signal bc_slost_cnt : std_logic_vector(3 downto 0); -- counts bc sync lost in seque
+  constant bc_slost_cnt_max : std_logic_vector(3 downto 0) := x"1"; -- max num of wrong event id
+  signal bc_slost_err_cnt : std_logic_vector(7 downto 0);
 
   constant data_en_orbit_offset_cnt_max : natural := 1;
   signal data_en_orbit_offset_cnt       : natural range 0 to 15;
@@ -88,6 +95,8 @@ architecture Behavioral of ltu_rx_decoder is
    -- attribute MARK_DEBUG of orbc_sync_mode    : signal is "true";
   -- attribute MARK_DEBUG of orbc_sync_mode_ff : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_inrun : signal is "true";
+  -- attribute MARK_DEBUG of bcsync_lost_flag : signal is "true";
+  -- attribute MARK_DEBUG of bc_slost_err_cnt : signal is "true";
   -- attribute MARK_DEBUG of bcsync_lost_outrun : signal is "true";
   -- attribute MARK_DEBUG of cru_rd_restore_cmd    : signal is "true";
 
@@ -130,7 +139,7 @@ begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
   run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
-  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and cru_readout_mode = mode_IDLE and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
+  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
   run_restore_permit           <= Status_register_I.fifos_empty(4 downto 0) = "11111";
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
@@ -157,6 +166,8 @@ begin
       Readout_Mode_O      <= readout_mode;
       apply_bc_delay_o    <= apply_bc_delay_ff;
       bcsync_lost_inrun_o <= bcsync_lost_inrun;
+      bcsync_lost_flag_o  <= bcsync_lost_flag;
+      bcsync_lost_cnt_o  <= bc_slost_err_cnt;
       bcsync_lost_outrun_o <= bcsync_lost_outrun;
 
       cru_orbit   <= RX_Data_I(79 downto 48);
@@ -179,6 +190,7 @@ begin
       if (FSM_Clocks_I.Reset_dclk = '1') then
 
         post_reset_cnt <= 0;
+		bc_slost_cnt <= (others => '0');
 
         orbc_sync_mode    <= mode_STR;
         orbc_sync_mode_ff <= mode_STR;
@@ -193,6 +205,8 @@ begin
         orbits_stb_counter <= (others => '0');
 
         bcsync_lost_inrun <= '0';
+		bcsync_lost_flag <= '0';
+		bc_slost_err_cnt <= (others => '0');
         bcsync_lost_outrun <= '0';
 
       else
@@ -216,12 +230,29 @@ begin
               sync_orbit     <= cru_orbit;
               sync_bc        <= cru_bc;
               orbc_sync_mode <= mode_SYNC;
-            -- check syncronisation each trigger
-            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
+			  bc_slost_cnt <= (others => '1'); -- next evid after sync must be correct
+            -- evid from CRU is correct
+            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and (sync_orbit = cru_orbit_ff) and (sync_bc = cru_bc_ff) then
+			  bc_slost_cnt <= (others => '0');
+            -- check syncronisation each trigger (n times before error)
+            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) and bc_slost_cnt < bc_slost_cnt_max then
+			  bc_slost_cnt <= bc_slost_cnt + 1;
+            -- sync lost after max counter
+            elsif orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) and bc_slost_cnt = bc_slost_cnt_max then
               orbc_sync_mode                                      <= mode_LOST;
               if readout_mode /= mode_IDLE then bcsync_lost_inrun <= '1'; else bcsync_lost_outrun <= '1'; end if;
+			end if;
+			
+			-- flag for error report
+            if orbc_sync_mode = mode_SYNC and cru_is_trg_bcidsync_ff and ((sync_orbit /= cru_orbit_ff) or (sync_bc /= cru_bc_ff)) then
+			  if readout_mode /= mode_IDLE then bcsync_lost_flag <= '1'; end if;
+			  bc_slost_err_cnt <= bc_slost_err_cnt + 1;
+			else
+			  bcsync_lost_flag <= '0';
+			end if;
+			  
             -- incrementing sync counter then sync
-            elsif orbc_sync_mode = mode_SYNC then
+            if orbc_sync_mode = mode_SYNC then
               if sync_bc < LHC_BCID_max then sync_bc <= sync_bc + 1;
               else sync_bc                           <= (others => '0'); sync_orbit <= sync_orbit + 1; end if;
 			  if bcsyncl_outrun_reset_i = '1' then bcsync_lost_outrun <= '0'; end if;
@@ -230,7 +261,7 @@ begin
             -- orbc resync out of run
             if (orbc_sync_mode = mode_LOST) and (readout_mode = mode_IDLE) then orbc_sync_mode <= mode_STR;
             -- orbc resync by command
-            elsif (Control_register_I.reset_orbc_sync = '1') then orbc_sync_mode               <= mode_STR; end if;
+            elsif (Control_register_I.reset_orbc_sync = '1') then orbc_sync_mode <= mode_STR; bc_slost_err_cnt <= (others => '0'); end if;
 
             -- CRU readout mode (get value for 1 cycle next to BC trigger)
             if (not is_cru_run) then cru_readout_mode <= mode_IDLE;

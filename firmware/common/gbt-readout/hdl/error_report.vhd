@@ -49,7 +49,6 @@ architecture Behavioral of error_report is
 
   -- trigger for error
   signal err_trg_bclost, err_trg_pmhd, err_sel_full    : std_logic;
-  signal bcsync_lost_inrun, bcsync_lost_inrun_ff       : std_logic;
   signal pm_data_early_header, pm_data_early_header_ff : std_logic;
   signal cnv_fifo_max_ff01, cnv_fifo_max_ff02  : std_logic_vector(15 downto 0);
 
@@ -77,7 +76,6 @@ begin
 -- signal mapping ------------------------------------------
   report_fifo_o        <= report_fifo_do;
   report_fifo_rden     <= err_report_fifo_rden_i;
-  bcsync_lost_inrun    <= Status_register_I.fsm_errors(10);
   pm_data_early_header <= Status_register_I.fsm_errors(9);
 
   -- errors report mapping
@@ -94,7 +92,7 @@ begin
 
 
 -- triggering bcid sync lost error snapshot
-  err_trg_bclost <= '1' when bcsync_lost_inrun = '1' and bcsync_lost_inrun_ff = '0'       else '0';
+  err_trg_bclost <= '1' when Status_register_I.bcsync_lost_flag = '1' else '0';
   err_trg_pmhd   <= '1' when pm_data_early_header = '1' and pm_data_early_header_ff = '0' else '0';
   err_sel_full   <= '1' when cnv_fifo_max_ff02(11) = '0' and cnv_fifo_max_ff01(11) = '1' else '0';
 
@@ -152,7 +150,6 @@ begin
 	  reset <= Control_register_I.reset_err_report or RESET_I;
 
       -- errors signals
-      bcsync_lost_inrun_ff    <= bcsync_lost_inrun;
       pm_data_early_header_ff <= pm_data_early_header;
 	  cnv_fifo_max_ff01 <= Status_register_I.cnv_fifo_max;
 	  cnv_fifo_max_ff02 <= cnv_fifo_max_ff01;
@@ -168,7 +165,6 @@ begin
 
         gbt_data_counter        <= (others => '0');
         gbt_data_shreg          <= (others => '0');
-        bcsync_lost_inrun_ff    <= '0';
         pm_data_early_header_ff <= '0';
 
       else

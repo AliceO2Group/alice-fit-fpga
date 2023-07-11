@@ -248,7 +248,9 @@ begin
       apply_bc_delay_o   => FIT_GBT_STATUS.bc_delay_apply,
 
       bcsync_lost_inrun_o => FIT_GBT_STATUS.fsm_errors(10),
-	  
+      bcsync_lost_flag_o  => FIT_GBT_STATUS.bcsync_lost_flag,
+      bcsync_lost_cnt_o   => FIT_GBT_STATUS.bcsync_lost_cnt,
+
 	  bcsyncl_outrun_reset_i => errors_rden_I,
       bcsync_lost_outrun_o => FIT_GBT_STATUS.fsm_errors(11)
       );
