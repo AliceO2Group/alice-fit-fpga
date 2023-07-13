@@ -200,7 +200,7 @@ begin
 
         sync_orbit_corr    <= (others => '0');
         sync_bc_corr       <= (others => '0');
-        bc_delay           <= (others => '0');
+        bc_delay           <= bc_delay_in ;
         bc_apply_fsm       <= s0_changed;
         orbits_stb_counter <= (others => '0');
 
