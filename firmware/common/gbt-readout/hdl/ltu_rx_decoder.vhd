@@ -104,7 +104,6 @@ architecture Behavioral of ltu_rx_decoder is
   -- attribute MARK_DEBUG of readout_mode_ff  : signal is "true";
   -- attribute MARK_DEBUG of cru_readout_mode : signal is "true";
   -- attribute MARK_DEBUG of cru_readout_mode_prev : signal is "true";
-  -- attribute MARK_DEBUG of cru_readout_mode : signal is "true";
   -- attribute MARK_DEBUG of run_not_permit   : signal is "true";
   -- attribute MARK_DEBUG of run_restore_permit : signal is "true";
   
@@ -138,8 +137,8 @@ architecture Behavioral of ltu_rx_decoder is
 begin
 
   ORBC_ID_from_CRU_corrected_O <= sync_orbit_corr & sync_bc_corr;
-  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode = mode_LOST) or (orbc_sync_mode = mode_STR) or ((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
-  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and readout_mode = mode_IDLE and cru_readout_mode = mode_IDLE and orbc_sync_mode = mode_SYNC and (orbits_stb_counter = x"F");
+  run_not_permit               <= (Control_register_I.force_idle = '1') or (orbc_sync_mode /= mode_SYNC) or (bc_apply_fsm /= s1_applied) or((x"04FF" and Status_register_I.fsm_errors) /= x"0000");
+  bc_apply_permit              <= Status_register_I.fsm_errors(15) = '0' and readout_mode = mode_IDLE;
   run_restore_permit           <= Status_register_I.fifos_empty(4 downto 0) = "11111";
 
   sync_bc_int  <= to_integer(unsigned(sync_bc));
@@ -200,7 +199,7 @@ begin
 
         sync_orbit_corr    <= (others => '0');
         sync_bc_corr       <= (others => '0');
-        bc_delay           <= bc_delay_in ;
+        bc_delay           <= (others => '0') ;
         bc_apply_fsm       <= s0_changed;
         orbits_stb_counter <= (others => '0');
 
@@ -314,14 +313,14 @@ begin
             end if;
 
             -- BC delay is applied only when out of run and with sync
-            if bc_apply_fsm = s0_changed and bc_apply_permit then
-              bc_apply_fsm   <= s1_applied;
-              bc_delay       <= bc_delay_in;
-              apply_bc_delay <= '1';
-            elsif bc_apply_fsm = s1_applied and ((bc_delay_in /= bc_delay_in_ff) or (orbc_sync_mode = mode_STR)) then
+            if bc_apply_fsm = s1_applied and bc_apply_permit and ((bc_delay_in /= bc_delay) or (orbc_sync_mode = mode_STR)) then
               bc_apply_fsm       <= s0_changed;
               orbits_stb_counter <= (others => '0');
               apply_bc_delay     <= '0';
+            elsif bc_apply_fsm = s0_changed and (orbits_stb_counter = x"F") then
+              bc_apply_fsm   <= s1_applied;
+              bc_delay       <= bc_delay_in;
+              apply_bc_delay <= '1';
             else
               apply_bc_delay <= '0';
             end if;
