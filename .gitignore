@@ -1,17 +1,23 @@
 *~
 *.jou
-*.log
 build
 *.xcix
 *.pb
 .Xil
 *.zip
+*.str
 
-simulation_inputs
-simulation_outputs
-test_data
+__pycache__
+sim_data
 
 .idea
 venv
 *.pyc
+*.run
 
+#notepad++ backup
+nppBackup
+*.run
+*.pyc
+*.log
+firmware/FT0/bits

@@ -129,7 +129,7 @@ CONFIG.READ_WRITE_MODE                              string  false      READ_WRIT
 CONFIG.RUSER_Width                                  string  false      0
 CONFIG.Read_Clock_Frequency                         string  false      1
 CONFIG.Read_Data_Count                              string  false      true
-CONFIG.Read_Data_Count_Width                        string  false      13
+CONFIG.Read_Data_Count_Width                        string  false      14
 CONFIG.Register_Slice_Mode_axis                     string  false      Fully_Registered
 CONFIG.Register_Slice_Mode_rach                     string  false      Fully_Registered
 CONFIG.Register_Slice_Mode_rdch                     string  false      Fully_Registered
@@ -157,7 +157,7 @@ CONFIG.Underflow_Sense_AXI                          string  false      Active_Hi
 CONFIG.Use_Dout_Reset                               string  false      true
 CONFIG.Use_Embedded_Registers                       string  false      false
 CONFIG.Use_Embedded_Registers_axis                  string  false      false
-CONFIG.Use_Extra_Logic                              string  false      false
+CONFIG.Use_Extra_Logic                              string  false      true
 CONFIG.Valid_Flag                                   string  false      false
 CONFIG.Valid_Sense                                  string  false      Active_High
 CONFIG.WRITE_CLK.FREQ_HZ                            string  false      100000000
@@ -167,7 +167,7 @@ CONFIG.Write_Acknowledge_Flag                       string  false      false
 CONFIG.Write_Acknowledge_Sense                      string  false      Active_High
 CONFIG.Write_Clock_Frequency                        string  false      1
 CONFIG.Write_Data_Count                             string  false      false
-CONFIG.Write_Data_Count_Width                       string  false      14
+CONFIG.Write_Data_Count_Width                       string  false      15
 CONFIG.asymmetric_port_width                        string  false      false
 CONFIG.axis_type                                    string  false      FIFO
 CONFIG.dynamic_power_saving                         string  false      false

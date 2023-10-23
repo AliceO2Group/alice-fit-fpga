@@ -44,7 +44,7 @@ architecture RTL of pin_capt is
 signal ISER_BITS : STD_LOGIC_VECTOR (3 downto 0);
 signal ISER_BITS1, ISER_COUL : STD_LOGIC_VECTOR (2 downto 0);
 signal ISER_COU : STD_LOGIC_VECTOR (1 downto 0);
-signal clk600B, clk600B_90, ena, ena1,PC_STR : STD_LOGIC;
+signal clk600B, clk600B_90, PC_STR,  clk300t, clk300t1, clk300t2 : STD_LOGIC;
 
 
 begin
@@ -85,15 +85,22 @@ ISERDES_1 : ISERDESE2
       RST => '0', 
       SHIFTIN1 => '0',  SHIFTIN2 => '0' 
    );
+process(clk300)
+begin
+
+if (clk300'event and clk300='1') then  clk300t<=not clk300t; end if;
+
+end process;
+
+str<=PC_STR;
 
 process(clk600)
 begin
 
-if (clk600'event and clk600='0') then ena1<=clk300; end if;
-
 if (clk600'event and clk600='1') then  
-ISER_BITS1<=ISER_COUL; ena<=ena1; str<=PC_STR;
-if ena='1'  then 
+
+ISER_BITS1<=ISER_COUL; clk300t2<=clk300t1; clk300t1<=clk300t; 
+if (clk300t1/=clk300t2)  then 
 		PC_STR<=ISER_BITS(0); 
 		if (PC_STR='0') and (ISER_BITS(0)='1') then ptime(2)<=ISER_BITS1(2); ptime(1 downto 0)<= ISER_COU; end if; 
 end if;

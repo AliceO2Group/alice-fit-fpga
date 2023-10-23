@@ -48,7 +48,7 @@ set_clock_groups -name ASYNC_CLOCIPB -asynchronous -group [get_clocks -include_g
 
 
 #RESET ==========================================================================
-set_false_path -from [get_cells Reset_Generator_comp/GenRes_DataClk_ff*_reg] 
+#set_false_path -from [get_cells Reset_Generator_comp/GenRes_DataClk_ff*_reg] 
 #================================================================================
 
 
@@ -58,7 +58,9 @@ set_max_delay -datapath_only -from [get_cells HDMI0/trig_data_reg[*]] -to [get_c
 set_max_delay -datapath_only -from [get_cells HDMI0/DValid_reg] -to [get_clocks SystemCLK_320] 1.000
 set_property ASYNC_REG true [get_cells {hdmi_ready0_reg hdmi_ready1_reg}]
 
-set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_ErrorDet] FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[gbtRx_Ready]}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/GBT_Status_O_reg[*]}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff*}]
+set_false_path -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtRx_ErrorDet_ff_reg FitGbtPrg/gbt_bank_gen.gbtBankDsgn/Rx_Ready_ff*}]
 
 
 
@@ -70,8 +72,14 @@ set_multicycle_path -hold -start -from [get_clocks RxWordCLK] -to [get_cells {Fi
                                                                     FitGbtPrg/gbt_bank_gen.gbtBankDsgn/gbtBank/gbtRx_param_package_src_gen.gbtRx_gen[1].gbtRx/descrambler/gbtFrameOrWideBus_gen.gbtRxDescrambler84bit_gen[?].gbtRxDescrambler21bit/feedbackRegister_reg[*]}] 2
 
 
+# RX Sync comp -------------------------------------
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_DATA_sysclk_reg[*]}] 3.000
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells {FitGbtPrg/RxData_ClkSync_comp/RX_IS_DATA_sysclk_reg*}] 3.000
+set_max_delay -datapath_only -from [get_clocks RXDataCLK] -to [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg] 2.000
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from00_reg]
 set_property ASYNC_REG true [get_cells FitGbtPrg/RxData_ClkSync_comp/RX_CLK_from01_reg]
+set_multicycle_path 8 -setup -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
+set_multicycle_path 7 -hold -end -from [get_clocks TX_CLK] -to [get_pins  FitGbtPrg/RxData_ClkSync_comp/rx_error_reset_sclk_reg/D]
 
 #================================================================================
 

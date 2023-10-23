@@ -42,15 +42,30 @@ pipeline {
       }
     }
     stage('Build FIT bitstreams') {
-      parallel {
+      stages {
+        stage('FTM_PM') {
+          steps {
+            sh('./software/ci/build.sh FTM_PM')
+          }
+        }
+        stage('FTM_TCM') {
+          steps {
+            sh('./software/ci/build.sh FTM_TCM')
+          }
+        }
         stage('PM') {
           steps {
             sh('./software/ci/build.sh PM')
           }
         }
-        stage('TCM') {
+        stage('TCM_proto') {
           steps {
-            sh('./software/ci/build.sh TCM')
+            sh('./software/ci/build.sh TCM_proto')
+          }
+        }
+        stage('TCM_v1') {
+          steps {
+            sh('./software/ci/build.sh TCM_v1')
           }
         }
       }

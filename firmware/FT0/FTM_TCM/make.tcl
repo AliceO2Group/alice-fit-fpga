@@ -1,146 +1,3 @@
-#*****************************************************************************************
-# Vivado (TM) v2018.1 (64-bit)
-#
-# make.tcl: Tcl script for re-creating and building the bitstream for the project 'FIT_TESTMODULE_v1'
-#
-# IP Build 2185939 on Wed Apr  4 20:55:05 MDT 2018
-#
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/gbt_tx/tx_dpram/xlx_k7v7_tx_dpram.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/IP/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm/xlx_k7v7_gbt_rx_frameclk_phalgnr_mmcm.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/fifo_generator_0/fifo_generator_0.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/raw_data_fifo/raw_data_fifo.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/COUNTER_FIFO/COUNTER_FIFO.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/gig_ethernet_pcs_pma_0/gig_ethernet_pcs_pma_0.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/tri_mode_ethernet_mac_0/tri_mode_ethernet_mac_0.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/MMCM320_PH_1/MMCM320_PH.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/CDM_Clk_pll/CDM_Clk_pll.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/PmClockPll/PmClockPll.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/spi_mem/spi_mem.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/ip/TCM_PLL320/TCM_PLL320.xci"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_slaves/spi_clgen.v"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_slaves/spi_shift.v"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_slaves/spi_top.v"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/fit_gbt_common_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/BC_counter.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/fit_gbt_boardPM_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/CRU_ORBC_Gen.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/DataCLK_strobe.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/DataConverter_PM.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_TESTMODULE_IPBUS_sender.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/Module_Data_Gen_PM.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_DATA_sender.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/TX_Data_Gen.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_TESTMODULE_core.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/ipbus_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_clock_div.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/clocks_7s_serdes.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/led_stretcher.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/emac_hostbus_decl.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/eth_7s_1000basex.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/ipbus_trans_decl.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_build_arp.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_build_ping.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_ipaddr_block.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_build_payload.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_build_resend.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_build_status.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_status_buffer.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_byte_sum.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_do_rx_reset.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_packet_parser.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_rxram_mux.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_dualportram.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_buffer_selector.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_rxram_shim.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_dualportram_rx.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_rxtransactor_if_simple.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_dualportram_tx.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_tx_mux.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_txtransactor_if_simple.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_clock_crossing_if.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/udp_if_flat.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/transactor_if.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/transactor_sm.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/transactor_cfg.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/transactor.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/ipbus_ctrl.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/kc705_basex_infra.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_slaves/ipbus_spi.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/PLL_Reset_Generator.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/Reset_Generator.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_bank_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/xlx_k7v7_gbt_banks_user_setup.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_bank_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/phaligner_mmcm_controller.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/rxframeclk_phalgnr/phaligner_phase_computing.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/rxframeclk_phalgnr/phaligner_phase_comparator.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/xlx_k7v7_phalgnr_std_mmcm.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/rxframeclk_phalgnr/gbt_rx_frameclk_phalgnr.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/core_sources/gbt_bank_reset.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler_21bit.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_scrambler.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_polydiv.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_rsencode.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder_gbtframe_intlver.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_encoder.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std_rdwrctrl.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_std.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx_gearbox_phasemon.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_tx/gbt_tx.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/mgt/mgt_latopt_bitslipctrl.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/xlx_k7v7_mgt_latopt.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/mgt/multi_gigabit_transceivers.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_wraddr.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_pattsearch.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_bscounter.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner_rightshift.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_framealigner.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox_latopt.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_gearbox.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_deintlver.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_lmbddet.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_errlcpoly.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_elpeval.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_chnsrch.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_rs2errcor.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_rsdec.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler_21bit.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_descrambler.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx_status.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_rx/gbt_rx.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/core_sources/gbt_bank.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/GBT_TXRX5.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/new/TCM_SPI.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/pm-spi.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sources_1/new/tcm_sc.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/tcm_sync.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_auto_phase_align.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_cpll_railing.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_gt.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_init.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_multi_gt.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_rx_startup_fsm.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_block.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_sync_pulse.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_manual_phase_align.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/GBT_project/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_TESTMODULE_v2.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_core/dss_package.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/FIT_IPBUS/ipbus_slaves/ipbus_reg_types.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/sim_1/testbench_FITTESTMODULE.vhd"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/constrs_1/FIT_GBT_kc705_io.xdc"
-#    "/home/cmayer/20200311/FIT_TESTMODULE_v20_lsfix_2020-03-04/FIT_TESTMODULE_v1.srcs/constrs_1/FIT_GBT_project_cnstrs.xdc"
-#
-# 3. The following remote source files that were added to the original project:-
-#
-#    <none>
-#
-#*****************************************************************************************
 set part "xc7k325tffg900-2"
 
 source ../../tcl/fit.tcl
@@ -154,7 +11,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "FIT_TESTMODULE_TCM"
+set project_name "FTM_TCM"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -212,7 +69,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/FIT_TESTMODULE_v1.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/FTM_TCM.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -253,7 +110,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Import local files from the original project
 set files [list \
- [file normalize "${origin_dir}/../../common/ftm/hdl/FIT_TESTMODULE_IPBUS_sender.vhd" ]\
+ [file normalize "${origin_dir}/../../common/ftm/hdl/ipbus_face.vhd" ]\
  [file normalize "${origin_dir}/../../common/ftm/hdl/PLL_Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ftm/hdl/TCM_SPI.vhd" ]\
  [file normalize "${origin_dir}/../../common/ftm/hdl/tcm_sc.vhd" ]\
@@ -269,7 +126,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_trans_decl.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_ping.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_ipaddr_block.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_payload.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_resend.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_status.vhd" ]\
@@ -290,7 +146,6 @@ set files [list \
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_if_flat.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_if.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_sm.vhd" ]\
- [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor_cfg.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/transactor.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_ctrl.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/ipbus_package.vhd" ]\
@@ -360,26 +215,25 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_manual_phase_align.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/bc_indicator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/cru_ltu_emu.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/snapshot_fifo.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/error_report.vhd" ]\
 ]
 
-#set imported_files [import_files -fileset sources_1 $files]
 add_files -norecurse -fileset sources_1 $files
-#set imported_files [add_files -norecurse  -fileset sources_1 $files]
+
 #-------------------------------------------------------------------------------
 if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset object
@@ -398,7 +252,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top" "tcm"] \
+		   "top" "FIT_TESTMODULE_v2"] \
 	[get_filesets sources_1]
 
     # Create 'constrs_1' fileset (if not found)
@@ -412,11 +266,14 @@ if {[string equal $proj_create "yes"]} {
 
     set file "[file normalize "$origin_dir/xdc/FIT_GBT_project_cnstrs.xdc"]"
     add_files -fileset constrs_1 [list $file]
+	
+    set file "[file normalize "$origin_dir/xdc/FIT_GBT_kc705_chipscope.xdc"]"
+    add_files -fileset constrs_1 [list $file]
 
     set_property -name "file_type" -value "XDC" -objects [get_files -of_objects [get_filesets constrs_1] [list "*/xdc/*.xdc"]]
 
     # Set 'constrs_1' fileset properties
-    set_property -name "target_constrs_file" -value "[get_files *xdc/FIT_GBT_kc705_io.xdc]" -objects [get_filesets constrs_1]
+    set_property -name "target_constrs_file" -value "[get_files *xdc/FIT_GBT_kc705_chipscope.xdc]" -objects [get_filesets constrs_1]
 }
 #-------------------------------------------------------------------------------
 
@@ -432,17 +289,12 @@ foreach ip [get_ips] {
 
 
 
-
-
-
-
-
-
-
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {
   create_fileset -simset sim_1
 }
+
+
 
 
 # Set 'sim_1' fileset object
@@ -458,13 +310,6 @@ add_files -norecurse -fileset sim_1 $files
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "top" -value "testbench_readout" -objects $obj
-
-
-
-
-
-
-
 
 
 
@@ -551,6 +396,7 @@ set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExpl
 set_property -name "steps.route_design.args.directive" -value "NoTimingRelaxation" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
 
 # set the current impl run
 current_run -implementation [get_runs impl_1]
@@ -561,3 +407,5 @@ update_compile_order -fileset sources_1
 reset_run -quiet synth_1
 launch_runs impl_1 -to_step write_bitstream -jobs 7
 wait_on_run impl_1
+open_run impl_1
+report_timing_summary -file impl_1_timing_summary.log

@@ -20,7 +20,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "PM"
+set project_name "PM12"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -78,7 +78,7 @@ if { $::argc > 0 } {
 # Set the directory path for the original project from where this script was exported
 set orig_proj_dir "[file normalize "$origin_dir/build"]"
 
-if {[string equal [open_project -quiet "build/PM.xpr"] ""]} {
+if {[string equal [open_project -quiet "build/PM12.xpr"] ""]} {
     set proj_create "yes"
     puts ${proj_create}
     puts ${project_name}
@@ -186,21 +186,21 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/mgt/mgt_ip_vhd/xlx_k7v7_mgt_ip_tx_startup_fsm.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/xilinx_k7v7/gbt_tx/xlx_k7v7_gbt_tx_gearbox_std_dpram.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_PM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/bc_indicator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardPM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_PM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/cru_ltu_emu.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/snapshot_fifo.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/error_report.vhd" ]\
 ]
 
 add_files -norecurse -fileset sources_1 $files
@@ -219,7 +219,7 @@ if {[string equal $proj_create "yes"]} {
     # Set 'sources_1' fileset properties
     set_property \
 	-dict [list \
-		   "top"                     "PM"\
+		   "top"                     "PM12"\
 		   "edif_extra_search_paths" "D:/proj/PM/ipcore_dir"] \
 	[get_filesets sources_1]
 
@@ -233,6 +233,7 @@ if {[string equal $proj_create "yes"]} {
 			  [file normalize "$origin_dir/xdc/Timing.xdc"]\
 			  [file normalize "$origin_dir/xdc/fit.xdc"]\
 			  [file normalize "$origin_dir/xdc/ios.xdc"]\
+			  [file normalize "$origin_dir/xdc/chipscope.xdc"]\
 			 ]
     add_files -fileset constrs_1 ${constr_files}
 
@@ -250,7 +251,7 @@ if {[string equal $proj_create "yes"]} {
     
     # Set 'constrs_1' fileset properties
     set obj [get_filesets constrs_1]
-    set_property -name "target_constrs_file" -value "[get_files *xdc/ios.xdc]" -objects $obj
+    set_property -name "target_constrs_file" -value "[get_files *xdc/chipscope.xdc]" -objects $obj
 }
 
 
@@ -339,6 +340,11 @@ set_property -name "steps.synth_design.args.shreg_min_size" -value "5" -objects 
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
+#launch_runs synth_1
+#wait_on_run synth_1
+#open_run synth_1
+#report_timing_summary -file synth_1_timing_summary.log
+
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
@@ -378,7 +384,7 @@ gen_report impl_1_post_route_phys_opt_report_bus_skew_0 report_bus_skew:1.1 post
 set obj [get_runs impl_1]
 set_property -name "part" -value ${part} -objects $obj
 set_property -name "strategy" -value "Performance_NetDelay_low" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "ExploreWithRemap" -objects $obj
 set_property -name "steps.place_design.args.directive" -value "ExtraNetDelay_low" -objects $obj
 set_property -name "steps.phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExplore" -objects $obj
@@ -396,3 +402,6 @@ update_compile_order -fileset sources_1
 reset_run -quiet synth_1
 launch_runs impl_1 -to_step write_bitstream  -jobs 7
 wait_on_run impl_1
+
+open_run impl_1
+report_timing_summary -file impl_1_timing_summary.log

@@ -47,6 +47,7 @@ entity Channel is
            gate_time_low :  in STD_LOGIC_VECTOR (7 downto 0);
            gate_time_high :  in STD_LOGIC_VECTOR (7 downto 0);
            Ampl_sat :   in STD_LOGIC_VECTOR (11 downto 0);
+           ampl_low :   in STD_LOGIC_VECTOR (3 downto 0);
            CH0_zero : out STD_LOGIC_VECTOR (11 downto 0);
            CH1_zero : out STD_LOGIC_VECTOR (11 downto 0);
            CH_trig_outt : out STD_LOGIC;
@@ -68,7 +69,11 @@ entity Channel is
            R0_corr : in STD_LOGIC_VECTOR (11 downto 0);
            R1_corr : in STD_LOGIC_VECTOR (11 downto 0);
            pulse_in  : out STD_LOGIC;
-           chan_ena  : in STD_LOGIC
+           chan_ena  : in STD_LOGIC;
+           trig_dis  : in STD_LOGIC;
+           fdd : in STD_LOGIC;
+           CH_trig_int : in STD_LOGIC;
+           CH_trig_outtn : out STD_LOGIC
             );
            
 end Channel;
@@ -97,7 +102,7 @@ signal RDF_in  : STD_LOGIC_VECTOR(32 downto 0);
 signal TDC_pause : STD_LOGIC_VECTOR(5 downto 0);
 signal TDC_load : STD_LOGIC_VECTOR(3 downto 0);
 
-signal Cal_d, Cal_d0, Cal_d1, CH_new, ev_p0, ev_p1, ev_p00, ev_p01, ch_bp, rt_sel : STD_LOGIC;
+signal Cal_d, Cal_d0, Cal_d1, CH_new, ev_p0, ev_p1, ev_p00, ev_p01, ch_bp, rt_sel, trig_ena : STD_LOGIC;
 signal mt_cou_c : STD_LOGIC_VECTOR(2 downto 0);
 signal ch_tc0, ch_tc1, ch_tc2, ch_tc : STD_LOGIC_VECTOR(1 downto 0);
 signal Z : STD_LOGIC_VECTOR(9 downto 0);
@@ -139,17 +144,19 @@ END COMPONENT;
  
 begin
 CH_ampl<=CH_ampl0;
-CH_trig_outt<=CH_trig_f;
+CH_trig_outtn<=CH_trig_f;
+CH_trig_outt<=CH_trig_f when (fdd='0') else CH_trig_f and CH_trig_int;
 CH_trig_outa<=CH_trig_a; 
 
 pulse_in<=EV_E;  
 Event_in<=Event_inp;
+trig_ena<= not trig_dis;
 
 EVENTFIFO: EVENT_FIFO port map (clk => clk320, srst =>RESET, din =>EVENTFIFO_in, wr_en => EVENTFIFO_wr, rd_en =>EVENTFIFO_rd, dout => C_FOUT, full =>open, empty =>EVENTFIFO_empty);
 
 EVENTFIFO_in <=EV_dly(3)(10 downto 9) & ampl_dat & EV_am_fl & EV_dly(3)(7 downto 0);
 
-ampl_dat <=CH_0(12)& Ampl_fin when (CH_trig_a='1') else (others=>'0'); 
+ampl_dat <=CH_0(12)& Ampl_fin when (EV_am_fl='1') else (others=>'0'); 
 
 RD_FIFO:  CHAN_RD_FIFO port map (clk => clk320, srst =>FIFO_rst, din =>RDF_in, wr_en => RDF_wr, rd_en =>DATA_rd, dout => DATA_out, full =>open, empty =>rd_empty);
 
@@ -170,14 +177,18 @@ process (clk320)
 begin
 if (clk320'event and clk320='1') then
 
-TDC_rdy320_0<=TDC_rdy_in; TDC_rdy320<=TDC_rdy320_0; TDC_rdy320_1<=TDC_rdy320;
+if (chan_ena='1') then TDC_rdy320_0<=TDC_rdy_in; else TDC_rdy320_0<='0'; end if;  
+
+TDC_rdy320<=TDC_rdy320_0; TDC_rdy320_1<=TDC_rdy320;
 spi_lock0<=spi_lock;
 
 if (chan_ena='1') then EV_0<=CGE; else EV_0<='0'; end if;
  
 EV_rdy<= EV; EV<=EV_2; EV_2<=EV_1; EV_1<=EV_0; 
 
-CSTR_0<=CSTR; CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
+if (chan_ena='1') then  CSTR_0<=CSTR; else CSTR_0<='0'; end if;  
+
+CSTR_1<=CSTR_0; CSTR_2<=CSTR_1; CSTR_3<=CSTR_2;
 if (CSTR_1='1') and (CSTR_2='0') then CH_0<=CH; end if;
 
   if (Cal_d='1') then
@@ -300,7 +311,7 @@ if (mt_cou="011") then
     EV_am_en<=EV_dly(2)(8); 
 end if;
 
-if (mt_cou="100") then EV_am_fl0<='0'; EV_am_fl<=EV_am_fl0; CH_trig_a<=EV_dly(3)(8) and  EV_am_fl0; CH_trig_bgnd<= EV_dly(3)(8) and  not EV_am_fl0;
+if (mt_cou="100") then EV_am_fl0<='0'; EV_am_fl<=EV_am_fl0; CH_trig_a<= trig_ena and  EV_am_fl0; CH_trig_bgnd<= EV_dly(3)(8) and  (not EV_am_fl0) and trig_ena;
    else 
      if (CSTR_1='1') and (CSTR_2='0') then EV_am_fl0<=EV_am_en; end if;
 end if;
@@ -346,7 +357,7 @@ ch_tc0<="11" when TDC(11 downto 9) = "011" else
         "10" when (TDC(11) = '1') or (TDC(10 downto 9) = "00") else
         "00";
 
-CH_t_trig0<= '1' when ((CH_TIME0 > "1111" & gate_time_low) OR (CH_TIME0 < "0000" & gate_time_high)) else '0';  
+CH_t_trig0<=  trig_ena when ((CH_TIME0 > "1111" & gate_time_low) OR (CH_TIME0 < "0000" & gate_time_high)) else '0';  
 
 TDC_rdy_en<=TDC_rdy320 and not TDC_rdy320_1;
 TDC_out<=(not TDC_rdy320) and TDC_rdy320_1;
@@ -362,8 +373,8 @@ CH_tr_en<=C_FOUT(8) and Ampl_OK and Time_OK and not C_FOUT(7);
 CH_BS<=('0'& CH_0(11 downto 0)) - ('0'&CH0_Z(21 downto 10)) when (CH_0(12)='0') else
        ('0'& CH_0(11 downto 0)) - ('0'&CH1_Z(21 downto 10));
 
-CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='0') and (CH_ds='0')) or ((CH_t_trig1='1') and (CH_ds='1'))) else
-           CH_TIME2 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else
+CH_TIME<=CH_TIME1 (9 downto 0) when (CH_trig_f='1') and ((fdd='0') or (CH_trig_int='1')) and (((CH_dt='0') and (CH_ds='0')) or ((CH_t_trig1='1') and (CH_ds='1'))) and (trig_ena='1') else
+           CH_TIME2 (9 downto 0) when (CH_trig_f='1') and (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) and (trig_ena='1') else
           "0000000000";
           
 rt_sel<='1' when (((CH_dt='1') and (CH_ds='0')) or ((CH_t_trig2='1') and (CH_ds='1'))) else '0';
@@ -387,7 +398,7 @@ Ampl_corr<= std_logic_vector(signed(CH_BS) * signed('0'& R_corr));
 
 Ampl_fin<= Ampl_corr(23 downto 11) when (signed(Ampl_corr(25 downto 23))<1) else '0' & x"FFF";
 
-Ampl_OK<='1' when (signed(C_FOUT(21 downto 9)) < signed('0' & Ampl_sat)) else '0';
+Ampl_OK<='1' when (C_FOUT(21)='0') and (C_FOUT(20 downto 9) <= Ampl_sat) and (C_FOUT(20 downto 9) > x"00" & Ampl_low) else '0';
  
 
 end RTL;

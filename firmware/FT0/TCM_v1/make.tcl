@@ -121,14 +121,14 @@ set obj [get_filesets sources_1]
 # Import local files from the original project
 set files [list \
  [file normalize "${origin_dir}/hdl/tcm.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/counter32.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/Flash_prog.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/pm-spi.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/cnt_ctrl.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/trigger_out.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/tcm_side.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/HDMIRX.vhd" ]\
- [file normalize "${origin_dir}/../TCM/hdl/BC_correlator.vhd" ]\
+ [file normalize "${origin_dir}/hdl/counter32.vhd" ]\
+ [file normalize "${origin_dir}/hdl/Flash_prog.vhd" ]\
+ [file normalize "${origin_dir}/hdl/pm-spi.vhd" ]\
+ [file normalize "${origin_dir}/hdl/cnt_ctrl.vhd" ]\
+ [file normalize "${origin_dir}/hdl/trigger_out.vhd" ]\
+ [file normalize "${origin_dir}/hdl/tcm_side.vhd" ]\
+ [file normalize "${origin_dir}/hdl/HDMIRX.vhd" ]\
+ [file normalize "${origin_dir}/hdl/BC_correlator.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_dualportram.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_build_arp.vhd" ]\
  [file normalize "${origin_dir}/../../common/ipbus/hdl/ipbus_core/udp_txtransactor_if_simple.vhd" ]\
@@ -219,21 +219,21 @@ set files [list \
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_bank.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-fpga/hdl/gbt_bank/core_sources/gbt_rx/gbt_rx_decoder_gbtframe_syndrom.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/GBT_TXRX5.vhd"] \
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataCLK_strobe.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/DataConverter_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RX_Data_Decoder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/BC_counter.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/ltu_rx_decoder.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/bc_indicator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Reset_Generator.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_boardTCM_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/FIT_GBT_project.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Module_Data_Gen_TCM.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_ORBC_Gen.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/cru_ltu_emu.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/TX_Data_Gen.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Event_selector.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/fit_gbt_common_package.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/RXDataClkSync.vhd" ]\
  [file normalize "${origin_dir}/../../common/gbt-readout/hdl/CRU_packet_Builder.vhd" ]\
- [file normalize "${origin_dir}/../../common/gbt-readout/hdl/Data_Packager.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/snapshot_fifo.vhd" ]\
+ [file normalize "${origin_dir}/../../common/gbt-readout/hdl/error_report.vhd" ]\
 ]
 #set imported_files [import_files -fileset sources_1 $files]
 add_files -norecurse -fileset sources_1 $files
@@ -291,6 +291,9 @@ if {[string equal $proj_create "yes"]} {
     set_property -name "target_constrs_file" -value "[get_files *xdc/tcm_pins.xdc]" -objects $obj
 }
 #-------------------------------------------------------------------------------
+
+#timing report strategy
+config_webtalk -user off
 
 # upgrade_ip [get_ips]
 generate_target synthesis [get_ips] -force
@@ -372,7 +375,7 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part ${part} -flow {Vivado Implementation 2019} -strategy "Performance_NetDelay_low" -report_strategy {Timing Closure Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Performance_NetDelay_low" [get_runs impl_1]
   set_property flow "Vivado Implementation 2019" [get_runs impl_1]
@@ -416,6 +419,7 @@ set_property -name "steps.phys_opt_design.args.directive" -value "AggressiveExpl
 set_property -name "steps.route_design.args.directive" -value "NoTimingRelaxation" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
 
 # set the current impl run
 current_run -implementation [get_runs impl_1]
@@ -426,3 +430,5 @@ update_compile_order -fileset sources_1
 reset_run -quiet synth_1
 launch_runs impl_1 -to_step write_bitstream  -jobs 7
 wait_on_run impl_1
+open_run impl_1
+report_timing_summary -file impl_1_timing_summary.log
